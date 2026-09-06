@@ -19,6 +19,10 @@ The current Agent declares `model: "auto"` with `agentic: 0.8`, `copywriting: 0.
 - Capability requirements are not Benchmark scores. Search data changes; the Judge checks execution and citations rather than fixed story titles or counts.
 - New Chat cleared the transcript and transport identity. Stop receiving response restored input and showed its cancellation limitation. Submitting while the local Agent was stopped showed an error without automatically retrying.
 
+## Uploaded Benchmark and Eval
+
+The published CLI uploaded the two-Case Benchmark and its TypeScript Judge with `gea benchmark push`, then the completed local Eval with `gea eval push`. GEA stored both artifacts and associated the Eval with the exact published Preview Agent version. The Studio results matrix showed both Cases at **100%**, with **2/2 completed Judges, average score 1.0 and zero Judge errors**. Case details displayed the Judge reason, Agent answer and message trajectory, including the real `searchStories` input and returned stories. Uploading reused the completed local result without rerunning the model. The uploaded artifacts were checked to exclude the configured model credential.
+
 ## Types, streaming and credential boundaries
 
 - Intentionally renaming Tool output `stories` to `items` made TypeScript fail at the web renderer and Benchmark Judge. Restoring the source restored passing checks. No generated binding was needed.

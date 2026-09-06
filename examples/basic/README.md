@@ -139,7 +139,22 @@ PowerShell: `@{ cwd = "packages/agent"; project = "my-project"; slug = "opengea-
 
 `cwd` is the source root even though Git root is `opengea/`. Only Agent source/reachable imports enter the archive, not the whole repository. Inspect `packages/agent/dist/*.zip`: no `apps/web`, `.env`, CR key, Project key or session secret belongs there.
 
-Push creates an immutable Worker deployment and updates Preview. Inspect that version in Studio and run Playground. For associated Evals, keep source unchanged, run `pnpm agent:eval`, then use `gea benchmark push` and `gea eval push` from the [Benchmark guide](https://musegea.com/developers/agent-benchmarks), with the real result directory.
+Push creates an immutable Worker deployment and updates Preview. Inspect that version in Studio and run Playground.
+
+### Upload the local Benchmark and Eval
+
+Keep the Agent source unchanged after publishing Preview, and run `pnpm agent:eval`. Upload the Benchmark definition, then the completed local result to the same Project:
+
+```bash
+gea benchmark push --json '{"cwd":"packages/agent","project":"my-project","benchmarkPath":"benchmarks","key":"basic-search","title":"Basic search quality"}'
+gea eval push --json '{"cwd":"packages/agent","project":"my-project","result":"<resultDirectory>","benchmarkKey":"basic-search"}'
+```
+
+Replace `my-project` with your Project slug and `<resultDirectory>` with the exact `resultDirectory` printed by the Eval command. An absolute path works; a relative path is resolved from `packages/agent`, for example `.gea/evals/<completed-run-directory>`. Keep `basic-search` consistent between both commands. These uploads use your CLI login and selected Workspace; they do not require a Project invocation API key or rerun the model.
+
+In **Project → Benchmarks**, open **Basic search quality** to inspect its two Cases and TypeScript Judge. In **Project → Evals**, open the uploaded Run to see scores, Judge reasons, Agent outputs and message/Tool trajectories. The Eval links to the published Agent version when its captured Agent and application content match that version. If you change source, publish and evaluate the new version before uploading its result. See the [Benchmark guide](https://musegea.com/developers/agent-benchmarks) for PowerShell commands and more options.
+
+### Connect Next.js to Preview
 
 In **Project → API Key**, create a key for Preview. Copy the Agent overview's stable Preview invocation URL and remove its final `/run`. Change `apps/web/.env.local`:
 
