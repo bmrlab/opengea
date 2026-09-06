@@ -1,0 +1,5 @@
+{
+  "cwd": "packages/agent",
+  "modelSource": "local",
+  "concurrency": 1
+}

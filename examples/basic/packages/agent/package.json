@@ -1,0 +1,21 @@
+{
+  "name": "@opengea/basic-agent",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./messages": {
+      "types": "./messages.ts"
+    }
+  },
+  "scripts": {
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@gea-ai/agent-sdk": "0.1.260906-alpha.0",
+    "zod": "4.3.6"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3"
+  }
+}

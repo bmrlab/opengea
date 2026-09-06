@@ -1,0 +1,30 @@
+name: Basic example
+on:
+  push:
+    branches: [main]
+    paths: ["examples/basic/**", ".github/workflows/basic.yml"]
+  pull_request:
+    paths: ["examples/basic/**", ".github/workflows/basic.yml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  linux-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: examples/basic
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: examples/basic/.node-version
+      - name: Install pnpm
+        run: npm install --global pnpm@10.30.3
+      - name: Install public dependencies
+        run: pnpm install --frozen-lockfile
+      - run: pnpm type-check
+      - run: pnpm test
+      - name: Build without CLI, Agent state or credentials
+        run: pnpm build

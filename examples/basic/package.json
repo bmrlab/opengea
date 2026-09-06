@@ -1,0 +1,25 @@
+{
+  "name": "opengea-basic",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently --kill-others --names agent,web \"pnpm dev:agent\" \"pnpm dev:web\"",
+    "dev:agent": "node scripts/dev-agent.mjs",
+    "dev:web": "pnpm --dir apps/web dev",
+    "agent:validate": "gea agent validate --json-file agent-project.json",
+    "agent:pack": "gea agent pack --json-file agent-project.json",
+    "agent:eval": "node scripts/dev-agent.mjs eval",
+    "type-check": "pnpm --dir packages/agent type-check && pnpm --dir apps/web type-check",
+    "build": "pnpm --dir apps/web build",
+    "test": "pnpm --dir apps/web test",
+    "setup:env": "node scripts/setup.mjs"
+  },
+  "devDependencies": {
+    "concurrently": "9.2.1",
+    "typescript": "5.9.3"
+  },
+  "engines": {
+    "node": ">=24.16.0"
+  },
+  "packageManager": "pnpm@10.30.3"
+}
