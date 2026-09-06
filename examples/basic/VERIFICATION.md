@@ -23,12 +23,17 @@ Last verified: 2026-09-07 (Asia/Shanghai). These are executed checks, not a clai
 
 Agent push succeeded and selected Preview in a dedicated examples Project. The final Agent source was pushed with the published CLI as Worker version **2**, deployment `01a07773-92a4-76dc-a5f2-18998a263915`. Production has not been promoted.
 
-**Hosted chat verification is currently blocked:** the production Studio API returns HTTP 500, `Studio API permission projection failed`, when creating either a Project-wide or Agent-specific preview key. The key row is created before the permission-projection error and its one-time token is not returned. Both inaccessible validation keys were revoked. This is a platform permission-projection failure, not a CLI or Next.js build failure. No fake key or authentication bypass is used.
+**Hosted chat verification passed on 2026-09-07.** The initial API-key creation failure was caused by an outdated production SpiceDB schema: `api_key`, `studio_project` and `studio_agent` were missing. The operator-approved repair applied the deployed image's additive schema and replayed Studio grants without deleting relationships. Existing definitions were unchanged and the scoped ledger/projection check passed. A new Preview Project key then succeeded; no fake key or authentication bypass was used.
 
-After the platform resolves key creation, follow README section 4: create a preview key, configure the existing Next.js server, restart, and validate the same UI. Do not treat Agent upload success as a successful hosted model run.
+The same Next.js UI rendered three real search results from GEA Preview and answered a Chinese follow-up with the first title and **907 comments**. Independent two-turn SSE verification returned HTTP 200, stream version `v1`, all three identity headers, one stable Chat ID and distinct Run IDs. First events arrived at 1.111s and 0.920s, before streams completed at 10.548s and 4.096s; no stream errors occurred. Both Runs subsequently reported `finished`, and the hosted message-history API returned HTTP 200.
+
+- Chat: `01a0777d-1b5e-754e-bbce-a25dd0642539`
+- Runs: `01a0777d-1b87-7694-80ff-4411f4267d1c`, `01a0777d-44f4-777f-8cf3-23f8e4a98189`
+
+The temporary Preview key was revoked after validation and the local Next.js configuration was restored. The two earlier inaccessible keys remain revoked. This validates the hosted Agent through a locally running Next.js application, not an externally deployed Next.js site.
 
 ## Reproducible build and remaining boundaries
 
 A fresh clone of the public repository passed install, type checking, all 8 tests and a production build on macOS without any `.env`, `.gea` or private checkout. The [Linux CI run](https://github.com/bmrlab/opengea/actions/runs/34043868862) also passed those checks at commit `172dbf6`, without credentials, Agent dev or a CLI. The [workflow](https://github.com/bmrlab/opengea/actions/workflows/basic.yml) repeats this gate for subsequent changes.
 
-A live hosted conversation, production Agent promotion and external Next.js deployment are not yet verified. Windows CLI execution was not run on this macOS machine. The example exposes stream reception stop, not acknowledged Agent cancellation, history or reconnect parity. Model and public API availability remain external dependencies.
+Production Agent promotion and external Next.js deployment have not been performed. Windows CLI execution was not run on this macOS machine. The example exposes stream reception stop, not acknowledged Agent cancellation, history or reconnect parity. Model and public API availability remain external dependencies.
