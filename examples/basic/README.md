@@ -92,9 +92,9 @@ modelRequirements: {
 },
 ```
 
-Tool execution is the main requirement; concise explanations and interactive responses also matter. This text-only example leaves `multimodal` unconstrained. Each value is a minimum from 0 to 1 in the SDK's maintained routing table, not a measured Benchmark score or latency guarantee.
+Tool execution is the main requirement; concise explanations and interactive responses also matter. This text-only example leaves `multimodal` unconstrained. Each value is a minimum capability requirement from 0 to 1, not a measured Benchmark score or latency guarantee.
 
-The SDK chooses the eligible first-party model with the lowest configured cost rank and writes its concrete ID into the package snapshot. Each published version therefore keeps its resolved model. Change capability requirements in this file, rerun `pnpm agent:eval`, and repack/push to create a new version; updating the SDK can also change future resolutions. The Benchmark tests the resulting Agent against real model and search calls.
+The SDK selects a suitable model and records it in the built Agent version. Change capability requirements in this file and rerun `pnpm agent:eval`; updating the SDK can also affect newly built versions. The Benchmark tests the resulting Agent against real model and search calls. Publish a new version when you want to use the change in GEA.
 
 ### Optional: hosted models with a local Agent
 
@@ -106,7 +106,7 @@ gea agent dev --json '{"cwd":"packages/agent","host":"127.0.0.1","port":8787,"mo
 
 PowerShell: `@{ cwd = "packages/agent"; host = "127.0.0.1"; port = 8787; modelSource = "hosted" } | ConvertTo-Json -Compress | gea agent dev --json-file -`.
 
-The hosted catalog must support the concrete first-party model ID resolved in the package snapshot. Auto selection does not inspect that catalog or verify credential access; it uses the SDK's routing table. Restart Agent dev after changing model routing. See [models](https://musegea.com/developers/agent-models).
+Hosted execution requires model access in the selected Workspace. Validate the Agent in that environment before publishing it for others. Restart Agent dev after changing model access mode or credentials. See [models](https://musegea.com/developers/agent-models).
 
 ## 3. Types and Benchmark
 
