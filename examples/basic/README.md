@@ -27,7 +27,7 @@ examples/basic/                 # command working directory unless stated otherw
     server/                    # env and signed anonymous cookies
     components/ai-elements/     # installed upstream component source
   packages/agent/
-    agent.ts                   # model and stable Agent slug
+    agent.ts                   # capability requirements and stable Agent slug
     AGENTS.md                  # instructions
     tools/index.ts             # one discovered Tool Set
     tools/_search-stories.ts   # precise input and structured output
@@ -79,6 +79,23 @@ Try “Find three stories about TypeScript”, then “Explain the first result�
 
 **Stop receiving response** closes the browser stream; it does not acknowledge Agent cancellation. Hosted GEA has explicit history/resume/cancel operations, but local dev does not expose that same managed Chat API. This example has no fake history/reconnect/cancel routes and never retries a submission automatically. A follow-up can fail while an interrupted Run is still active; start a new Chat if needed.
 
+### Declare model capabilities
+
+[`packages/agent/agent.ts`](packages/agent/agent.ts) describes the search assistant's needs instead of choosing a model:
+
+```ts
+model: "auto",
+modelRequirements: {
+  agentic: 0.8,
+  copywriting: 0.6,
+  speed: 0.6,
+},
+```
+
+Tool execution is the main requirement; concise explanations and interactive responses also matter. This text-only example leaves `multimodal` unconstrained. Each value is a minimum from 0 to 1 in the SDK's maintained routing table, not a measured Benchmark score or latency guarantee.
+
+The SDK chooses the eligible first-party model with the lowest configured cost rank and writes its concrete ID into the package snapshot. Each published version therefore keeps its resolved model. Change capability requirements in this file, rerun `pnpm agent:eval`, and repack/push to create a new version; updating the SDK can also change future resolutions. The Benchmark tests the resulting Agent against real model and search calls.
+
 ### Optional: hosted models with a local Agent
 
 Keep Next.js in `GEA_MODE=local`, sign in with `gea login`, select a Workspace with `gea workspace use`, then bypass the CR-key launcher:
@@ -89,7 +106,7 @@ gea agent dev --json '{"cwd":"packages/agent","host":"127.0.0.1","port":8787,"mo
 
 PowerShell: `@{ cwd = "packages/agent"; host = "127.0.0.1"; port = 8787; modelSource = "hosted" } | ConvertTo-Json -Compress | gea agent dev --json-file -`.
 
-The hosted catalog must support `creative-reasoning-1.5`; change `agent.ts` explicitly to a supported alias such as `gea-pro` when appropriate. Hosted aliases do not apply to direct CR requests. Restart Agent dev after changing model routing. See [models](https://musegea.com/developers/agent-models).
+The hosted catalog must support the concrete first-party model ID resolved in the package snapshot. Auto selection does not inspect that catalog or verify credential access; it uses the SDK's routing table. Restart Agent dev after changing model routing. See [models](https://musegea.com/developers/agent-models).
 
 ## 3. Types and Benchmark
 

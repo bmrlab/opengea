@@ -12,16 +12,28 @@ Last verified: 2026-09-07 (Asia/Shanghai). These are executed checks, not a clai
 
 ## Behavioral evidence
 
+The initial checks below used the original concrete model declaration. The later capability-based change is verified separately in the next section.
+
 - Browser → Next.js → local Agent: searched TypeScript, rendered three real Hacker News results, then answered a follow-up with the first returned title and **907 comments**. Values are observations, not fixtures or expected future search results.
 - New Chat clears the transcript and transport identity. Stopping stream reception during a running search restores input and shows the explicit cancellation limitation. Stopping the Agent and submitting shows the error state without retrying. The UI handles the initial Tool input-streaming state before input exists.
-- The two live Benchmark Cases (TypeScript and SQLite) completed with **2/2 Judges, average score 1.0, zero Judge errors**. The Judge requires a successful real Tool result and a citation of one of its returned discussion URLs. Initial local-binary Eval: `6011423f-447a-46a8-999e-206a28d76329`. Repeated on the final Agent source with published CLI 0.1.260906-alpha.0: `a18136bf-c1d5-4b56-b82f-32db859131e8`, again 2/2, average 1.0 and no Judge errors.
+- The two live Benchmark Cases (TypeScript and SQLite) completed with **2/2 Judges, average score 1.0, zero Judge errors**. The Judge requires a successful real Tool result and a citation of one of its returned discussion URLs. Initial local-binary Eval: `6011423f-447a-46a8-999e-206a28d76329`. Repeated with published CLI 0.1.260906-alpha.0: `a18136bf-c1d5-4b56-b82f-32db859131e8`, again 2/2, average 1.0 and no Judge errors.
 - Intentionally renamed Tool output `stories` to `items`: TypeScript failed at `apps/web/app/news-chat.tsx` and `packages/agent/benchmarks/judges/search.judge.ts`. Restored the source; checks passed. No generated binding was needed.
 - Route tests cover first/subsequent turns, identity headers, delayed streaming, another visitor/forged-cookie denial, Agent-scoped ownership, Origin and injected-field rejection, failed-start ownership retention, configured hosted credentials/server metadata, generic network errors and no automatic retries.
 - Agent archive inspection excludes the Next.js tree and all `.env` files; a byte-level check against the configured local model key found no credential in the archive. Browser code consumes Agent types only.
 
-## Hosted gate
+## Capability-based model selection
 
-Agent push succeeded and selected Preview in a dedicated examples Project. The final Agent source was pushed with the published CLI as Worker version **2**, deployment `01a07773-92a4-76dc-a5f2-18998a263915`. Production has not been promoted.
+On 2026-09-07, the Agent definition changed to `model: "auto"` with `agentic: 0.8`, `copywriting: 0.6` and `speed: 0.6`. Published SDK 0.1.260906-alpha.0 resolved these requirements to `deepseek-v4-pro`; the archive snapshot contains that concrete ID and no `modelRequirements`. This is an observed SDK resolution, not a model name the example author must configure or a guarantee about future SDK releases.
+
+- Published CLI validate and pack passed. Snapshot: `sha256:7b486d18a5c36c1cd2118ad07c91ef00174b93b93f88e8c60b2620f8524120df`. Archive boundary and credential exclusion checks passed.
+- Live Benchmark Eval `276a773c-7079-44f0-bb90-d18c2eee0c98` passed **2/2 Judges, average score 1.0, zero Judge errors**, using the resolved model and real Hacker News search. Capability thresholds are routing parameters; this Benchmark score measures the example's Tool/citation checks.
+- Type checking and all **8 behavioral tests** passed. Local browser chat rendered reasoning, three actual Tool results and an English answer, then correctly answered a Chinese follow-up with the first title and **907 comments**.
+- The same Agent source was pushed as Preview Worker version **3**, deployment `01a07789-cae1-7496-a874-818d030c7e1b`, application content hash `sha256:a2e9422c1ce1f2b14dcab2f109f6c697289118ab04bff2d46e542ecb5e121000`.
+- The AI Elements UI rendered a real Preview search. Independent two-turn SSE through Next.js returned HTTP 200, stream `v1`, all three identity headers, stable Chat identity and distinct Runs, with no stream errors. First events arrived at 0.741s and 0.428s, before completion at 8.019s and 4.487s. Chat: `01a0778b-6d65-706f-8222-10ee98286af0`; Runs: `01a0778b-6da6-735d-adf2-8e04410e8bb7` and `01a0778b-8c63-761a-a02d-465ed23e3553`. Both Runs finished and the hosted history read returned HTTP 200. The temporary key was revoked and local configuration restored.
+
+## Hosted gate: initial version
+
+Agent push succeeded and selected Preview in a dedicated examples Project. The original concrete-model Agent was pushed with the published CLI as Worker version **2**, deployment `01a07773-92a4-76dc-a5f2-18998a263915`. Production has not been promoted.
 
 **Hosted chat verification passed on 2026-09-07.** The initial API-key creation failure was caused by an outdated production SpiceDB schema: `api_key`, `studio_project` and `studio_agent` were missing. The operator-approved repair applied the deployed image's additive schema and replayed Studio grants without deleting relationships. Existing definitions were unchanged and the scoped ledger/projection check passed. A new Preview Project key then succeeded; no fake key or authentication bypass was used.
 
