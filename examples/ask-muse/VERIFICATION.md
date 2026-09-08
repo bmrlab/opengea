@@ -12,7 +12,14 @@ Last verified: 2026-09-08 (Asia/Shanghai).
 
 ## Hosted Preview
 
-The example has been published to a dedicated Ask Muse Studio Project. Preview has the non-secret `MUSEDAM_MCP_CLIENT_ID=muse-mcp` variable. A GEA-session Run returned the user-owned Connector authorization link. Hosted authorization and post-authorization search verification are still in progress; local OAuth success alone does not establish hosted Connection ownership.
+The example is published to a dedicated `ask-muse` Studio Project. Preview has the non-secret `MUSEDAM_MCP_CLIENT_ID=muse-mcp` variable.
+
+- A GEA-session Run returned the user-owned Connector authorization link. The user completed MuseDAM team selection and consent through the hosted callback.
+- A subsequent GEA-session Run discovered and called `musedam__musedam_search_assets` twice with successful MCP outputs, returned three cited assets, and finished successfully. A same-Chat follow-up reused those results with no Tool call and distinguished metadata from unread document contents.
+- Final Preview is Worker version 2, built from the final example source. Both search and follow-up Runs reported `finished`.
+- Connection isolation was tested through the published backend SDK and a temporary Preview Project key: an external `gea:` principal returned HTTP 400; the same raw user ID without the prefix received `configured: false` and a separate authorization URL, with no asset search. It could not reuse the GEA-session Connection.
+- The hosted callback redirected to `result=completed`, but the Web result page showed an `Unauthorized` route error. The successful post-callback search established that authorization and Connection storage had completed. The Web reserved-route registry was stale; the page fix is tracked in [GEA PR #390](https://github.com/bmrlab/gea/pull/390). A new Web deployment is needed for that result-page fix.
+- Temporary Preview API keys used for verification were revoked. No provider credentials or private asset results are committed.
 
 ## Boundaries
 
