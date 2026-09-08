@@ -1,0 +1,23 @@
+{
+  "name": "@opengea/ask-muse",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/run-agent.mjs dev",
+    "connect": "node scripts/run-agent.mjs connect",
+    "type-check": "tsc --noEmit",
+    "agent:validate": "gea agent validate --json-file agent-project.json",
+    "agent:pack": "gea agent pack --json-file agent-project.json"
+  },
+  "dependencies": {
+    "@gea-ai/agent-sdk": "0.1.260908-alpha.0"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3"
+  },
+  "engines": {
+    "node": ">=24.16.0"
+  },
+  "packageManager": "pnpm@10.30.3"
+}
