@@ -12,8 +12,8 @@
   },
   "dependencies": {
     "@ai-sdk/react": "4.0.10",
-    "@gea-ai/agent-sdk": "0.1.260906-alpha.0",
-    "@gea-ai/contract": "0.1.260906-alpha.0",
+    "@gea-ai/agent-sdk": "0.1.260908-alpha.0",
+    "@gea-ai/contract": "0.1.260908-alpha.0",
     "@opengea/basic-agent": "workspace:*",
     "@radix-ui/react-use-controllable-state": "^1.2.6",
     "@streamdown/cjk": "^1.0.3",

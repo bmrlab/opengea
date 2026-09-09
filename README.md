@@ -3,9 +3,10 @@
 Small, independent examples for building applications with [GEA](https://musegea.com/developers).
 Each example owns its dependencies and lockfile. There is no root workspace or shared runtime to install.
 
-| Example                  | What you build                                                                                                           |
-| ------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
-| [basic](examples/basic/) | A real Hacker News research Agent, a Benchmark, and a self-hosted Next.js chat application using AI SDK and AI Elements. |
+| Example                        | What you build                                                                                                           |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
+| [basic](examples/basic/)       | A real Hacker News research Agent, a Benchmark, and a self-hosted Next.js chat application using AI SDK and AI Elements. |
+| [ask-muse](examples/ask-muse/) | An Agent that searches user-authorized MuseDAM assets through OAuth MCP, with no UI or custom Tool wrapper.              |
 
 Start with the example README. You need Node.js, pnpm, and a Creative Reasoning API key for local model calls. Agent development additionally requires a supported GEA CLI platform. Building the Next.js application works independently of the CLI, including on Linux.
 

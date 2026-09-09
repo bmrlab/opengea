@@ -1,0 +1,27 @@
+name: Ask Muse example
+on:
+  push:
+    branches: [main]
+    paths: ["examples/ask-muse/**", ".github/workflows/ask-muse.yml"]
+  pull_request:
+    paths: ["examples/ask-muse/**", ".github/workflows/ask-muse.yml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  type-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: examples/ask-muse
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: examples/ask-muse/.node-version
+      - name: Install pnpm
+        run: npm install --global pnpm@10.30.3
+      - name: Install public dependencies
+        run: pnpm install --frozen-lockfile
+      - run: pnpm type-check

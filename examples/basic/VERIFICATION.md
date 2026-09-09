@@ -1,6 +1,17 @@
 # Verification record
 
-Last verified: 2026-09-07 (Asia/Shanghai). These checks establish the example's local development and Preview integration behavior.
+Last verified: 2026-09-08 (Asia/Shanghai). These checks establish the example's local development and Preview integration behavior.
+
+## SDK update, 2026-09-08
+
+- SDK and Contract were upgraded to published npm **0.1.260908-alpha.0** and verified with the published CLI of the same version, including its bundled Runtime. Node 24.16.0 and pnpm 10.30.3 remain unchanged.
+- Public dependency installation, type checking, all 8 existing tests, the Next.js production build, Agent validation and packaging passed.
+- Local browser search rendered real Tool results and discussion links; a Chinese follow-up retained the conversation and reused earlier results. The two-case real-model Benchmark passed with average score **1.0**, **2/2 completed Judges** and **zero Judge errors**.
+- Preview calls through both the existing Next.js UI and the published backend SDK returned real search results. Two SDK turns preserved the Chat ID, created separate Run IDs, returned the v1 stream marker and contained no stream errors. New Chat cleared the visible conversation.
+- The broader-question browser check exposed article claims inferred from titles. Agent instructions now explicitly restrict descriptions to returned metadata and require possible relevance to be labeled as such. The final Preview check returned title/metadata citations with possible relevance distinguished from article contents. A Chinese follow-up reused the first result without another Tool call. The updated instructions passed the two-case Benchmark again (score 1.0, zero errors).
+- Final Preview is Worker version **5**, built from the updated Agent source. The final two-turn SDK check returned HTTP 200/v1 without stream errors; both Runs reported `finished` and the authorized history read returned 200. Temporary test keys were revoked and local configuration restored.
+
+The following sections record the earlier 2026-09-07 acceptance. They are historical evidence, not a claim that every earlier check was repeated for this update.
 
 ## Dependencies and independent build
 
