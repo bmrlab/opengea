@@ -1,0 +1,36 @@
+name: Context management example
+on:
+  push:
+    branches: [main]
+    paths:
+      [
+        "examples/observational-memory/**",
+        ".github/workflows/observational-memory.yml",
+      ]
+  pull_request:
+    paths:
+      [
+        "examples/observational-memory/**",
+        ".github/workflows/observational-memory.yml",
+      ]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: examples/observational-memory
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: examples/observational-memory/.node-version
+      - name: Install pnpm
+        run: npm install --global pnpm@12.1.0
+      - name: Install public dependencies
+        run: pnpm install --frozen-lockfile
+      - run: pnpm type-check
+      - run: pnpm test
