@@ -2,7 +2,9 @@
 
 A small **Tech News assistant** that really calls a model and searches Hacker News through its public [Algolia API](https://hn.algolia.com/api). Results are live search metadata, not fabricated fixtures or full article reads. A Benchmark checks real Tool execution and citation of returned discussion links.
 
-The browser uses [AI SDK](https://ai-sdk.dev/) and [AI Elements](https://elements.ai-sdk.dev/), has no login step, and calls only its own Next.js backend. Anonymous signed cookies isolate Chats between browsers. The visible transcript stays in memory; refreshing starts a new Chat.
+This example explicitly selects the SDK's Rust Agent Core with `engine: agentCore()`. The SDK supplies prebuilt WASM; tools stay in TypeScript and the frontend continues to consume AI SDK UI messages.
+
+The browser uses [AI SDK](https://ai-sdk.dev/) and [AI Elements](https://elements.ai-sdk.dev/), has no login step, and calls only its own Next.js backend. Anonymous signed cookies isolate Chats between browsers. Approval cards let readers approve or decline individual Tool calls. Local transcripts stay in memory; hosted mode can restore server history while the signed session remains valid.
 
 ## Architecture and files
 
@@ -24,10 +26,11 @@ examples/basic/                 # command working directory unless stated otherw
     .env.example               # server-only application configuration
     app/news-chat.tsx           # same typed UI in both modes
     app/api/agent/run/route.ts  # session, ownership, Origin, upstream stream
+    app/api/agent/chats/        # hosted history and explicit cancellation
     server/                    # env and signed anonymous cookies
     components/ai-elements/     # installed upstream component source
   packages/agent/
-    agent.ts                   # capability requirements and stable Agent slug
+    agent.ts                   # Core engine, capability requirements and Agent slug
     AGENTS.md                  # instructions
     tools/index.ts             # one discovered Tool Set
     tools/_search-stories.ts   # precise input and structured output
@@ -51,14 +54,14 @@ pnpm test
 pnpm build
 ```
 
-These checks need no private GEA checkout, running Agent, credentials or `.gea` directory. SDK and Contract are pinned to npm **0.1.260908-alpha.0**, with AI SDK **7.0.9** and `@ai-sdk/react` **4.0.10**. CLI is not an install/build dependency: Linux Next.js hosting never needs a macOS/Windows executable.
+These checks need no private GEA checkout, running Agent, credentials or `.gea` directory. SDK and Contract are pinned to npm **0.1.260910-alpha.2**, with AI SDK **7.0.9** and `@ai-sdk/react` **4.0.10**. CLI is not an install/build dependency: Linux Next.js hosting never needs a macOS/Windows executable.
 
 ## 2. Run locally
 
-Agent development requires the current protocol in a CLI for **macOS ARM64 or Windows x64**. Linux CLI packages are not currently published. SDK and CLI releases are independent; [VERIFICATION.md](VERIFICATION.md) records the exact binary tested and any release gap.
+Use GEA CLI **0.1.260910-alpha.1** for **macOS ARM64 or Windows x64**. It includes the WASM bundler required by this example; the SDK provides the compiled Agent Core.
 
 ```bash
-npm install --global @gea-ai/cli@0.1.260908-alpha.0
+npm install --global @gea-ai/cli@0.1.260910-alpha.1
 gea agent --help
 pnpm run setup:env
 ```
@@ -77,7 +80,29 @@ If port 3000 is occupied, keep that process running, set `APP_ORIGIN=http://loca
 
 Try “Find three stories about TypeScript”, then “Explain the first result”, then **New chat**. The UI renders streamed text, reasoning when available, Tool progress, structured results, errors and copyable answers. Attachments and regeneration are unavailable in the current API and are not exposed.
 
-**Stop receiving response** closes the browser stream; it does not acknowledge Agent cancellation. Hosted GEA has explicit history/resume/cancel operations, but local dev does not expose that same managed Chat API. This example has no fake history/reconnect/cancel routes and never retries a submission automatically. A follow-up can fail while an interrupted Run is still active; start a new Chat if needed.
+**Stop receiving response** closes the local browser stream; it does not acknowledge Agent cancellation. Local dev has no managed history/cancel endpoints: refreshing starts a new Chat, and a follow-up can fail while an interrupted Run is still active. Start a new Chat if needed. Hosted controls are described below.
+
+### Rust Agent Core
+
+[`packages/agent/agent.ts`](packages/agent/agent.ts) imports `agentCore` from
+`@gea-ai/agent-sdk/agent-core` and selects it explicitly. The framework's default
+engine remains AI SDK; this example demonstrates the Core option.
+
+The SDK already contains the compiled WASM. A compatible CLI embeds those bytes
+in the Worker bundle, so Agent authors do not compile Rust or supply a separate
+WASM file. Rust owns the model protocol and loop, while the existing TypeScript
+search Tool, approval policy and AI SDK UI remain in use. Capability-based model
+selection is unchanged.
+
+### Search approval (enabled by default)
+
+Search requires approval by default, including when `REQUIRE_SEARCH_APPROVAL` is absent. To disable it, set `REQUIRE_SEARCH_APPROVAL=false` in **`examples/basic/.env`** and restart the Agent. Hosted execution uses the same default; configure this declared Agent environment value in the target Preview or Production environment to override it. It belongs to the Agent, not the Next.js environment.
+
+Each search displays its parameters with **Approve** and **Decline** buttons. For a parallel batch, decide every pending call before continuation is submitted. Approved calls may execute; declined calls return a denial to the model. The composer stays disabled while decisions are pending. If sending the decisions fails, **Retry sending decisions** intentionally resubmits them; ordinary failed messages are not automatically retried. Approval changes execution permission, not the Tool arguments.
+
+Try asking for separate TypeScript and SQLite searches in one step, then approve one and decline the other. The model may choose a different call pattern; the interface renders the calls it actually makes. After a denial, the Agent is instructed not to repeat or substitute the search without a new request.
+
+`pnpm agent:eval` disables approval only in the Benchmark child process because Benchmarks have no interactive approver. It does not change `.env` or the running browser demo. When invoking `gea agent eval` directly, set `REQUIRE_SEARCH_APPROVAL=false` in that process environment.
 
 ### Declare model capabilities
 
@@ -141,6 +166,11 @@ PowerShell: `@{ cwd = "packages/agent"; project = "my-project"; slug = "opengea-
 
 Push creates an immutable Worker deployment and updates Preview. Inspect that version in Studio and run Playground.
 
+Engine selection lives in the Worker bundle; current SDK snapshots omit
+`engine`. Rebuild the Agent after upgrading the SDK because previously built
+archives retain their original snapshot. Other declared capabilities still
+require compatible server and Runtime versions.
+
 ### Upload the local Benchmark and Eval
 
 Keep the Agent source unchanged after publishing Preview, and run `pnpm agent:eval`. Upload the Benchmark definition, then the completed local result to the same Project:
@@ -164,7 +194,15 @@ GEA_AGENT_URL=https://preview--worker--<worker-id>.<gea-apex>/gea/agents/tech-ne
 GEA_PROJECT_API_KEY=<your-preview-project-key>
 ```
 
-Keep `APP_ORIGIN` and `SESSION_SECRET`, restart Next.js and start a **new Chat**. The same browser transport still calls `/api/agent/run`. Server `StudioAgentClient` fixes the URL/key; the browser cannot choose either. No `agentId` is required in the request: URL and key select the environment.
+The key needs **`runs:write`** for execution/cancellation and **`chats:read`** for history and Run status. Keep `APP_ORIGIN` and `SESSION_SECRET`, restart Next.js and start a **new Chat**. The same browser transport still calls `/api/agent/run`. Server `StudioAgentClient` fixes the URL/key; the browser cannot choose either. No `agentId` is required in the request: URL and key select the environment.
+
+### Hosted history and cancellation
+
+The application records the Chat in `?chat=...` and keeps its latest Run identity in the signed ownership cookie. Reloading the page or choosing **Refresh conversation** reads the latest 100 server messages and the last known Run's status. Older messages remain on the server; this example does not page through them. Starting a new Chat cancels any pending history load so old results cannot replace the new conversation.
+
+**Disconnect stream** stops reception while the hosted execution may continue. Refresh retrieves the current server snapshot; it does not replay buffered SSE or resubmit a message. This example keeps explicit history refresh. SDK 0.1.260910-alpha.0 includes the optional `StudioAgentChatTransport.onReplay` callback, but this UI does not enable it; automatic replay additionally requires the matching hosted server baseline. Replaying a whole Run over partial history without that callback can duplicate text and lose approval context.
+
+**Cancel Agent execution** calls GEA's explicit cancellation endpoint, including after disconnecting. `abort_requested` means the request was accepted, not that every Tool has already stopped. The UI keeps that distinction and allows refreshing to retrieve the final status. The composer is disabled while the last retrieved execution is active. Both history and cancellation check the signed visitor/Chat/Agent binding; cancellation also verifies that the supplied Run belongs to that Chat before issuing the effect. Lost or expired cookies cannot recover an anonymous Chat merely from its URL.
 
 After preview validation, use **Promote to Production** in Agent details for the exact active preview version. There is no `gea agent deploy` command here. Copy the Production URL and create a production key. Promotion does not copy environment values, rotate keys or deploy Next.js. See [API keys and environments](https://musegea.com/developers/agent-studio-configuration).
 

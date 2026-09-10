@@ -14,6 +14,11 @@ const child = spawn(
   ["agent", operation, "--json-file", `agent-${operation}.json`],
   {
     stdio: "inherit",
+    // Benchmarks have no interactive approver; keep the browser demo's default.
+    env:
+      operation === "eval"
+        ? { ...process.env, REQUIRE_SEARCH_APPROVAL: "false" }
+        : process.env,
     shell: process.platform === "win32",
   },
 );

@@ -20,6 +20,10 @@ export default defineTool({
   description:
     "Search live Hacker News stories by topic, ranked by relevance. Returns metadata, not article contents.",
   input: searchInput,
+  approval: (_input, context) =>
+    context.env.REQUIRE_SEARCH_APPROVAL === "false"
+      ? "approved"
+      : "user-approval",
   connectors: { hackerNews },
   execute: async ({ query, limit }, context) => {
     // Network access goes through the SDK's declared Connector capability.
