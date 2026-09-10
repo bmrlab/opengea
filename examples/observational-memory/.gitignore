@@ -1,0 +1,8 @@
+node_modules/
+.gea/
+.local/
+results/
+.env*
+!.env.example
+*.tsbuildinfo
+dist/

@@ -1,0 +1,30 @@
+{
+  "name": "@opengea/observational-memory",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "verify": "node scripts/verify.mjs",
+    "agent:validate": "gea agent validate --json-file agent-project.json",
+    "agent:pack": "gea agent pack --json-file agent-project.json",
+    "test": "node --import ./scripts/test-runtime.mjs --import tsx --test context/*.test.ts scripts/*.test.mjs",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@gea-ai/agent-sdk": "0.1.260909-alpha.0",
+    "ai": "7.0.9",
+    "zod": "4.3.6"
+  },
+  "devDependencies": {
+    "@ai-sdk/provider": "4.0.1",
+    "@gea-ai/cli": "0.1.260909-alpha.0",
+    "@types/node": "24.10.1",
+    "tsx": "4.20.5",
+    "typescript": "5.9.3"
+  },
+  "engines": {
+    "node": ">=24.16.0"
+  },
+  "packageManager": "pnpm@12.1.0"
+}
