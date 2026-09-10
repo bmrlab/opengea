@@ -1,0 +1,29 @@
+name: Feishu Channel example
+on:
+  push:
+    branches: [main]
+    paths:
+      ["examples/feishu-channel/**", ".github/workflows/feishu-channel.yml"]
+  pull_request:
+    paths:
+      ["examples/feishu-channel/**", ".github/workflows/feishu-channel.yml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  type-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: examples/feishu-channel
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: examples/feishu-channel/.node-version
+      - name: Install pnpm
+        run: npm install --global pnpm@12.1.0
+      - name: Install public dependencies
+        run: pnpm install --frozen-lockfile
+      - run: pnpm type-check

@@ -1,0 +1,24 @@
+{
+  "name": "@opengea/feishu-channel",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/gea.mjs agent dev --json-file agent-dev.json",
+    "gea": "node scripts/gea.mjs",
+    "agent:validate": "node scripts/gea.mjs agent validate --json-file agent-project.json",
+    "agent:pack": "node scripts/gea.mjs agent pack --json-file agent-project.json",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@gea-ai/agent-sdk": "0.1.260910-alpha.3",
+    "zod": "4.3.6"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3"
+  },
+  "engines": {
+    "node": ">=24.16.0"
+  },
+  "packageManager": "pnpm@12.1.0"
+}
