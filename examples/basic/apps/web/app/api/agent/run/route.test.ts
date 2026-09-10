@@ -118,6 +118,31 @@ test("a second anonymous visitor and a forged cookie cannot continue another vis
   expect(forged.status).toBe(404);
   expect(calls).toBe(1);
 });
+
+test("approval decisions require Chat ownership and preserve the assistant continuation", async () => {
+  const first = await POST(request({ message: "Search with approval" }));
+  await first.text();
+  const message = {
+    id: randomUUID(),
+    role: "assistant",
+    parts: [
+      {
+        type: "tool-searchStories",
+        toolCallId: "search-call",
+        state: "approval-responded",
+        input: { query: "TypeScript", limit: 3 },
+        approval: { id: "approval-id", approved: false },
+      },
+    ],
+  };
+  const denied = await POST(request({ chatId, message }));
+  expect(denied.status).toBe(404);
+  expect(calls).toBe(1);
+  const continued = await POST(request({ chatId, message }, cookies(first)));
+  expect(continued.status).toBe(200);
+  expect(lastBody).toEqual({ chatId, message });
+  await continued.text();
+});
 test("rejects cross-origin writes and browser-supplied identity, metadata and upstream selection", async () => {
   expect(
     (

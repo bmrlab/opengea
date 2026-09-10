@@ -6,6 +6,7 @@ const claimsSchema = z.strictObject({
   sessionId: z.uuid(),
   expires: z.number().int(),
   chatId: z.uuid().optional(),
+  runId: z.uuid().optional(),
   audience: z.string().optional(),
 });
 type Claims = z.infer<typeof claimsSchema>;
@@ -50,6 +51,27 @@ export function cookieValue(request: Request, name: string) {
     .map((part) => part.trim())
     .find((part) => part.startsWith(`${name}=`))
     ?.slice(name.length + 1);
+}
+export function ownedChat(
+  request: Request,
+  chatId: string,
+  env: { SESSION_SECRET: string; GEA_AGENT_URL: string },
+) {
+  const session = readClaims(
+    cookieValue(request, sessionCookie),
+    env.SESSION_SECRET,
+  );
+  const grant = readClaims(
+    cookieValue(request, chatCookie(chatId)),
+    env.SESSION_SECRET,
+  );
+  return session &&
+    grant &&
+    grant.sessionId === session.sessionId &&
+    grant.chatId === chatId &&
+    grant.audience === env.GEA_AGENT_URL
+    ? grant
+    : null;
 }
 export function setClaims(
   headers: Headers,

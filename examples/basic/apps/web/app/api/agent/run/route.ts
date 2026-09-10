@@ -5,6 +5,7 @@ import {
   chatCookie,
   cookieValue,
   newSession,
+  ownedChat,
   readClaims,
   sessionCookie,
   setClaims,
@@ -41,20 +42,8 @@ export async function POST(request: Request) {
     const session =
       readClaims(cookieValue(request, sessionCookie), env.SESSION_SECRET) ??
       newSession();
-    if (input.chatId) {
-      const grant = readClaims(
-        cookieValue(request, chatCookie(input.chatId)),
-        env.SESSION_SECRET,
-      );
-      if (
-        !grant ||
-        grant.sessionId !== session.sessionId ||
-        grant.chatId !== input.chatId ||
-        grant.audience !== env.GEA_AGENT_URL
-      ) {
-        return error(404, "Conversation is unavailable. Start a new chat.");
-      }
-    }
+    if (input.chatId && !ownedChat(request, input.chatId, env))
+      return error(404, "Conversation is unavailable. Start a new chat.");
     const upstream =
       env.GEA_MODE === "hosted"
         ? await new StudioAgentClient({
@@ -100,6 +89,10 @@ export async function POST(request: Request) {
       return error(502, "Invalid Agent response.");
     }
     const secure = new URL(env.APP_ORIGIN).protocol === "https:";
+    const returnedRunId =
+      studioAgentClientRunInputSchema.shape.chatId.safeParse(
+        headers.get("x-gea-agent-run-id"),
+      );
     setClaims(headers, sessionCookie, session, env.SESSION_SECRET, secure);
     if (returnedId.success && returnedId.data) {
       if (input.chatId && returnedId.data !== input.chatId) {
@@ -110,7 +103,14 @@ export async function POST(request: Request) {
       setClaims(
         headers,
         chatCookie(returnedId.data),
-        { ...session, chatId: returnedId.data, audience: env.GEA_AGENT_URL },
+        {
+          ...session,
+          chatId: returnedId.data,
+          ...(returnedRunId.success && returnedRunId.data
+            ? { runId: returnedRunId.data }
+            : {}),
+          audience: env.GEA_AGENT_URL,
+        },
         env.SESSION_SECRET,
         secure,
       );
