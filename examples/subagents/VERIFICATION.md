@@ -1,7 +1,8 @@
 # Verification record
 
-Last verified: 2026-09-11. This record distinguishes local execution from the
-hosted Preview test. It is not a claim that every deployed subagent path works.
+Last verified: 2026-09-11. Local and hosted Preview checks now pass after the
+Web host fix in GEA PR #418. Earlier failures are retained below for diagnosis;
+the final section records the successful recheck and its scope.
 
 ## Toolchain and local result
 
@@ -31,7 +32,7 @@ continuation with `Agent is not in the source Worker deployment.` The complete
 run above was repeated after reloads settled, with unchanged sources. Live code
 replacement is outside this example's checks.
 
-## Hosted Preview result: blocked
+## Initial hosted Preview result: blocked
 
 The example initially deployed as Preview version 1 in the dedicated
 `opengea-subagents` Studio Project. API discovery exposes two public entries,
@@ -93,7 +94,56 @@ Both authenticated entry paths reproduce the child HTTP 500:
   `2142bc989be68aa30683aced1bfde589`. Persisted history contains the actual
   working receipt, failed task update and automatically resumed parent summary.
 
-This rules out a failure restricted to Project key callers. It does not identify
-the underlying server exception. The browser required sign-in; the developer
+At that point, this ruled out a failure restricted to Project key callers without
+identifying the underlying server exception. The browser required sign-in; the developer
 check used the authenticated Studio API, not browser UI automation. The recheck
 key was revoked after testing.
+
+## Hosted recheck after the Web host fix: passed
+
+Production Web logs identified `new Request(call, ...)` in the child callback
+adapter: Nitro/srvx supplies a lazy Request wrapper, and Node Undici throws
+`Cannot read private member #state from an object whose class did not declare it`.
+[GEA PR #418](https://github.com/bmrlab/gea/pull/418) fixes construction from the
+URL, method, headers and streaming body while preserving cancellation.
+
+After the reported Web rollout, the public-SDK `pnpm verify` matrix passed at
+07:06–07:07 UTC. No SDK upgrade, repack or Agent push was performed for this
+recheck. Studio inspection confirms the same Preview v2 deployment
+`01a08f01-e5cb-710f-a208-fc5279d2027d` and Agent version
+`01a08f01-eddd-7496-a5b7-6f2b9d04731d` remain active.
+
+- Verification: `224a024a-319d-490c-80c9-6aa97d66c208`
+- Parent chat: `01a08f49-a624-7628-9f55-5dcf6ff86a59`
+- Parallel batch initial trace: `574d684246a12037cc77b6a5a9582744`
+- Continuation initial trace: `5303af076a94f91e82dc7ac488c4ec84`
+- Fresh-child initial trace: `3ce236ee2b83ac6a775c8c8cf699bbbd`
+
+| Scenario | Observed result |
+| --- | --- |
+| Private researcher → calculator | Both completed; 26 × 12 = 312, with distinct child chats |
+| Explicit top-level reviewer reference | Completed; 26 + 12 = 38, with the supplied random marker |
+| Self copy | Completed; 26 − 12 = 14, in another child chat |
+| Parent continuation | Working receipts followed by persisted completed notifications and automatic parent summaries |
+| Continue reviewer with agentId | Same handle/chat, new taskId, recalled 38 and the marker without receiving them again |
+| Fresh reviewer without agentId | New handle/chat; prior value and marker both null |
+
+The existing reviewer handle was `7fd0be71-d636-46bc-81c5-ba191edd4312`;
+continuation created task `cbbdcafe-11f4-455b-a92e-19b3b89ac0d8`. The fresh
+reviewer handle was `14058bb2-32e6-451e-b418-9ed36292c49d`. The continuation
+answer repeated its earlier `runId`; this verifier checks the new task and
+retained child chat/history, not whether the model refreshes its reported run ID.
+
+The authenticated developer Studio API also passed a separate reviewer call
+for 23 + 29 = 52. Its working receipt, completed notification, automatic parent
+summary and cleared active stream were verified:
+
+- Chat: `01a08f4a-eaca-74f8-a80d-77277736f8d8`
+- Initial run: `01a08f4a-eb18-76aa-b838-8c525a75350f`
+- Parent continuation: `01a08f4b-33b8-70db-a9bb-23fe1eb124a7`
+- Traces: `0aa17449b6780f559340cfb58f8c1e19`, `e8549d2b36a48f9ca860ea5f3f55744d`
+
+The temporary Project key was revoked at 07:08 UTC and removed from `.env`.
+This verifies the within-Worker example on the hosted Preview deployment;
+cross-Worker calls, hosted cancellation, crash recovery, URL upgrades and browser
+UI are outside this recheck. Production promotion was not performed.

@@ -4,9 +4,9 @@ A small arithmetic team that demonstrates how Agent definitions and task calls
 fit together. It uses real models and the published Agent SDK; the verification
 script can use the local native Runtime or the public hosted Agent HTTP API.
 
-The local real-model checks pass. Hosted Preview currently reproduces a child
-invocation HTTP 500; see [the verification record](VERIFICATION.md) for evidence
-and the checks that remain blocked.
+The local and hosted Preview real-model checks pass. Hosted verification uses
+the same example bundle after the Web host fix in GEA PR #418; see
+[the verification record](VERIFICATION.md) for results and scope.
 
 ```text
 coordinator                     public entrypoint; may create a self copy
