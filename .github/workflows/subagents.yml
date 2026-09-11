@@ -1,0 +1,27 @@
+name: Subagents example
+on:
+  push:
+    branches: [main]
+    paths: ["examples/subagents/**", ".github/workflows/subagents.yml"]
+  pull_request:
+    paths: ["examples/subagents/**", ".github/workflows/subagents.yml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: examples/subagents
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: examples/subagents/.node-version
+      - name: Install pnpm
+        run: npm install --global pnpm@12.1.0
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm type-check
+      - run: pnpm test

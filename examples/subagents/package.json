@@ -1,0 +1,27 @@
+{
+  "name": "@opengea/subagents",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "gea": "node scripts/gea.mjs",
+    "dev": "node scripts/gea.mjs agent dev --json-file agent-dev.json",
+    "agent:validate": "node scripts/gea.mjs agent validate --json-file agent-project.json",
+    "agent:pack": "node scripts/gea.mjs agent pack --json-file agent-project.json",
+    "type-check": "tsc --noEmit",
+    "test": "node --test scripts/*.test.mjs",
+    "verify": "node scripts/verify.mjs",
+    "verify:local": "node scripts/verify.mjs --local"
+  },
+  "dependencies": {
+    "@gea-ai/agent-sdk": "0.1.260911-alpha.0",
+    "zod": "4.3.6"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3"
+  },
+  "engines": {
+    "node": ">=24.16.0"
+  },
+  "packageManager": "pnpm@12.1.0"
+}
