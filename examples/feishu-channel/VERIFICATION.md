@@ -1,10 +1,46 @@
 # Verification
 
-Last verified: 2026-09-10.
+Last verified: 2026-09-11.
 
 This record distinguishes local Agent checks from real Feishu message delivery.
-The CLI was built locally with Bun 1.3.14 and the native Worker Runtime with Rust
-1.94.1. The npm CLI release was not used.
+
+## Streaming SDK upgrade
+
+The example now uses public SDK and Contract `0.1.260911-alpha.2`, with the
+published CLI `0.1.260911-alpha.0` and its bundled native Runtime. No private
+CLI build or workspace-linked SDK was used for these checks.
+
+| Check                                                | Result                                                                                                                                  |
+| ---------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| Frozen public dependency installation and TypeScript | Passed                                                                                                                                  |
+| Published CLI `agent validate`                       | Passed; one Agent, one Channel and one custom Tool                                                                                      |
+| Published CLI `agent pack`                           | Passed; eight payload files                                                                                                             |
+| Published preset smoke check                         | Stream update and terminal card passed; receiptless operator confirmation and stale-delivery correlation passed against a local fixture |
+| Existing Preview upgrade                             | Published as version 5; receiver ready on the new deployment with no last error                                                         |
+| Real hosted model request                            | `Reply with pong only` returned `pong`, finish reason `stop`, on version 5                                                              |
+
+The package archive content hash is
+`sha256:fb58965fb0d38a62606396bff04f111b2de360032b4de9d78ea4045bc8076a2c`.
+Before switching Preview, new input was paused, the receiver acknowledged its
+stop, and the existing test conversation had nine sent deliveries, no paused
+delivery, and a successful latest operation. The existing installation was
+resumed on the new deployment; its credentials and history were retained.
+Production was not promoted.
+
+The local preset fixture makes no Feishu requests. The hosted `pong` check uses
+the Studio entrypoint, so neither check establishes real Feishu card rendering.
+Processing-reaction, incremental-card, terminal-card and reaction-removal
+acceptance on version 5 is pending a new private message to the test bot.
+
+The previous deployment's persisted Feishu replies also confirm that
+`current_sender` returned a stable sender-scoped `feishu:` principal in Preview,
+and that the same conversation recalled its test code in later messages. These
+are historical delivery records, separate from version 5 streaming acceptance.
+
+## Earlier validation
+
+The checks below were performed on 2026-09-10 with a locally built CLI (Bun
+1.3.14) and native Worker Runtime (Rust 1.94.1).
 
 ## Packaging and local execution
 
@@ -70,14 +106,13 @@ and delivery status is `sent` at attempt 1, with no paused delivery or last
 error. The same installation now runs the clean public-SDK bundle and reports
 `ready`; temporary recovery code is absent from that bundle.
 
-Remaining real-message checks:
+Remaining real-message checks beyond the persisted sender-Tool result:
 
-- Invoke `current_sender` from Feishu and verify a stable `feishu:` principal.
 - Compare two users' principals and conversation history.
 - Preserve the conversation after restarting the local receiver.
 - Reject new messages when the sender allowlist is `[]`.
 - Confirm duplicate delivery of the same event does not execute or reply twice.
 
 Real private-message ingress, Agent completion, Feishu reply delivery and recovery
-of the original blocked operation are verified. The sender Tool and other checks
-listed above remain separate acceptance checks.
+of the original blocked operation are verified. The other checks listed above
+remain separate acceptance checks.

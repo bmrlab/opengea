@@ -2,7 +2,8 @@
 
 A small Agent that receives private text messages through a Feishu bot's long
 connection and replies in the same chat. No public webhook or web application is
-needed for local development.
+needed for local development. The bot adds a processing reaction, streams its
+answer into a Markdown card, and splits long answers into follow-up cards.
 
 `channels/feishu.ts` configures the SDK's built-in `feishuChannel` using declared
 `ctx.env` values. `agent.ts` is an ordinary Agent. The `current_sender` Tool shows
@@ -18,9 +19,13 @@ pnpm install --frozen-lockfile
 cp .env.example .env
 ```
 
-The example uses the public `@gea-ai/agent-sdk` package. It needs a CLI with
-Channels support and a matching native Worker Runtime. The older published CLI
-`0.1.260909-alpha.0` cannot build this example.
+The example pins the public `@gea-ai/agent-sdk` package to
+`0.1.260911-alpha.2`. Install a CLI with Channels support and its matching native
+Worker Runtime:
+
+```bash
+npm install -g @gea-ai/cli@0.1.260911-alpha.0
+```
 
 To use a locally built CLI, put the executable paths in your private `.env`:
 
@@ -39,8 +44,11 @@ work on Linux. No private repository is needed to install the example's packages
 
 Create a Feishu enterprise custom app and enable its bot capability. Configure
 long-connection event delivery and subscribe to `im.message.receive_v1`. Grant
-the app the permissions needed to receive private messages and reply as the bot,
-then make the app available to your test users. Feishu documents the
+the app the permissions needed to receive private messages and reply as the bot.
+For streaming cards and reactions, also grant `cardkit:card:write`,
+`im:message.reactions:write_only`, and `im:message:update` (or an applicable
+broader message-update permission). Publish the updated Feishu app version so
+these grants take effect, then make the app available to your test users. Feishu documents the
 [event subscription setup](https://open.feishu.cn/document/server-docs/event-subscription-guide/event-subscription-configure-/request-url-configuration-case),
 [receive-message event](https://open.feishu.cn/document/server-docs/im-v1/message/events/receive),
 and [reply-message API](https://open.feishu.cn/document/server-docs/im-v1/message/reply).
@@ -91,7 +99,8 @@ Use `Ctrl+C` to stop the CLI and its Runtime.
 
 Open a private chat with the bot and try:
 
-1. `Reply with pong only` — the bot should reply `pong`.
+1. `Reply with pong only` — the bot should show a processing reaction, finish
+   with a card containing `pong`, and remove the reaction.
 2. `Call current_sender and show its JSON result` — the Tool should report a
    `user` principal with a stable `feishu:` ID and the `local` environment.
 3. `Remember my test code: ORCHID-42`, followed by `What is my test code?` — check
@@ -101,6 +110,12 @@ Open a private chat with the bot and try:
    should not be visible.
 5. Set `FEISHU_ALLOWED_SENDERS=[]`, restart, and send a new message — it should
    not execute the Agent or produce a reply.
+6. Ask for a multi-paragraph answer — confirm that text updates in the card
+   before completion. Try a longer answer to check ordered continuation cards.
+
+Definitive card failures fall back to text. Reaction failures do not block the
+answer. An uncertain delivery outcome stays in Channel diagnostics for explicit
+recovery; it does not automatically send a duplicate fallback reply.
 
 The principal is an opaque identity derived from the app, tenant and sender. It
 is not the installer's GEA identity and does not contain a display name or email.
@@ -142,3 +157,15 @@ Hosted execution needs the Channels database migration and matching Web, Worker,
 and Worker Runtime services. Updating npm packages alone does not deploy them.
 The local model key is not needed in Studio; hosted model access is configured
 by the platform.
+
+## Upgrade an existing installation
+
+Pause new Channel input and let accepted work and pending deliveries finish
+before switching builds. Upgrade the SDK in the Agent project, reinstall
+dependencies, then run `agent push` for the same Studio Project and Worker slug.
+Resume the installation after its receiver is ready on the new deployment.
+
+Publishing an SDK version alone does not update an existing Agent bundle.
+After the streaming adapter has written its new output state, returning to the
+old text-only SDK requires an explicit state migration; a direct downgrade is
+not supported.
