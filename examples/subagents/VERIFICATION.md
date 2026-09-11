@@ -33,7 +33,7 @@ replacement is outside this example's checks.
 
 ## Hosted Preview result: blocked
 
-The example successfully deployed as Preview version 1 in the dedicated
+The example initially deployed as Preview version 1 in the dedicated
 `opengea-subagents` Studio Project. API discovery exposes two public entries,
 `coordinator` and `reviewer`; the private definitions remain internal.
 
@@ -71,3 +71,29 @@ the saved response and a behavioral regression test verify this correction.
 The temporary Preview keys were revoked after verification. No Production
 promotion or CLI release was performed. Raw reports and traces remain under
 ignored `.gea/`; credentials and model trace bodies are not committed.
+
+## Preview v2 recheck
+
+On 2026-09-11 at 05:47 UTC the same Agent snapshot was redeployed to the same
+Studio Project as Preview v2, deployment
+`01a08f01-e5cb-710f-a208-fc5279d2027d` (status `ready`).
+
+Both authenticated entry paths reproduce the child HTTP 500:
+
+- Project key, `pnpm verify`: verification
+  `95193450-6caa-48bf-a648-78dae39db078`, chat
+  `01a08f02-a0ed-76a9-a2e2-c176596a54f2`. All three child tasks failed.
+  First trace `b17268bb26374a67530f3321574980f6`; automatic parent continuation
+  trace `0acbe8fa5a16aa14cde712b8658318ec`.
+- Authenticated developer, `studioAgents.startRun` with `environment: preview`:
+  one reviewer task to calculate 19 + 23 failed identically. Chat
+  `01a08f04-2e97-7639-8fdf-b6cb4e8ac898`, initial run
+  `01a08f04-2f26-706b-b526-ebf52e2f2f60`, traces
+  `620d34b5f5ab4e6a3617f025770a9a50` and
+  `2142bc989be68aa30683aced1bfde589`. Persisted history contains the actual
+  working receipt, failed task update and automatically resumed parent summary.
+
+This rules out a failure restricted to Project key callers. It does not identify
+the underlying server exception. The browser required sign-in; the developer
+check used the authenticated Studio API, not browser UI automation. The recheck
+key was revoked after testing.
