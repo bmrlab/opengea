@@ -1,0 +1,7 @@
+allowBuilds:
+  "@mongodb-js/zstd": false
+  node-liblzma: false
+  protobufjs: true
+minimumReleaseAgeExclude:
+  - "@gea-ai/agent-sdk@0.1.260911-alpha.0"
+  - "@gea-ai/contract@0.1.260911-alpha.0"
