@@ -27,10 +27,18 @@ delivery, and a successful latest operation. The existing installation was
 resumed on the new deployment; its credentials and history were retained.
 Production was not promoted.
 
-The local preset fixture makes no Feishu requests. The hosted `pong` check uses
-the Studio entrypoint, so neither check establishes real Feishu card rendering.
-Processing-reaction, incremental-card, terminal-card and reaction-removal
-acceptance on version 5 is pending a new private message to the test bot.
+Three subsequent real private messages completed on version 5. For each message,
+Feishu acknowledged the processing reaction, card creation and reply, streaming
+closure, final card update, and reaction removal. All 20 delivery tasks succeeded
+on their first attempt, with no paused delivery or last error. A reply in the
+existing conversation recalled its test code from before the SDK upgrade.
+
+The first two answers were short and produced no intermediate `stream-update`.
+The third answer updated the same CardKit card twice before finalization; both
+incremental updates were acknowledged by Feishu. Ordered continuation cards for
+answers exceeding the per-card limit remain a separate real-message check.
+The local preset fixture makes no Feishu requests and remains distinct from
+these provider acknowledgements; no Feishu UI screenshot was captured.
 
 The previous deployment's persisted Feishu replies also confirm that
 `current_sender` returned a stable sender-scoped `feishu:` principal in Preview,
