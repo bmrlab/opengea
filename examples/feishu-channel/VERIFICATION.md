@@ -28,9 +28,29 @@ tarball URL still returned 404; installation succeeded after the public tarball
 became available. The final manifest uses an exact version, and the lockfile uses
 normal registry resolution without a cache-busting URL or local tarball.
 
-These checks made no real Feishu requests. Preview and Production were not
-updated in this increment. Live animation and generation-time acceptance remain
-separate; the version 5 evidence below belongs to the previous SDK.
+The local checks above made no real Feishu requests. Live animation and
+generation-time acceptance remain separate from the deployment readiness below;
+the version 5 delivery evidence belongs to the previous SDK.
+
+## Preview v6 rollout (2026-09-12)
+
+The existing test installation was paused before publication. Its receiver
+acknowledged `stopped`; all 12 recorded operations in the existing test
+conversation had succeeded, and its 29 delivery records had no pending item,
+paused delivery or last error.
+
+The example was rebuilt with public SDK `0.1.260911-alpha.3` and pushed to the
+same Studio Project and Worker. Preview version 6 is active on deployment
+`01a09142-8ba7-76cc-84c1-947a331319bb`, with Agent version
+`01a09142-9082-74b1-b616-07c6b9db5167`. The Worker content hash is
+`sha256:4cb2350b77486c1b38a40c8f030992afde6af2c34193a336961564334065cefc`.
+
+The original installation was resumed. Receiver revision 46 reports `ready`,
+with matching desired and active targets on the new deployment and no last
+error. Installation identity, environment configuration and conversation history
+were retained. Production was not promoted. This verifies Preview publication
+and receiver readiness; the tester still needs to check the new cards and
+animation in a real Feishu conversation.
 
 ## Previous streaming SDK upgrade (2026-09-11)
 
