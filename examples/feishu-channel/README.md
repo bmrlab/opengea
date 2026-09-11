@@ -2,8 +2,10 @@
 
 A small Agent that receives private text messages through a Feishu bot's long
 connection and replies in the same chat. No public webhook or web application is
-needed for local development. The bot adds a processing reaction, streams its
-answer into a Markdown card, and splits long answers into follow-up cards.
+needed for local development. The bot adds a processing reaction and updates one
+Markdown card with the current answer or Tool call. Active Tools show a rotating
+character spinner; the final card keeps the last answer or Tool and displays
+elapsed generation time. Long answers continue in follow-up cards.
 
 `channels/feishu.ts` configures the SDK's built-in `feishuChannel` using declared
 `ctx.env` values. `agent.ts` is an ordinary Agent. The `current_sender` Tool shows
@@ -20,7 +22,7 @@ cp .env.example .env
 ```
 
 The example pins the public `@gea-ai/agent-sdk` package to
-`0.1.260911-alpha.2`. Install a CLI with Channels support and its matching native
+`0.1.260911-alpha.3`. Install a CLI with Channels support and its matching native
 Worker Runtime:
 
 ```bash
@@ -100,9 +102,12 @@ Use `Ctrl+C` to stop the CLI and its Runtime.
 Open a private chat with the bot and try:
 
 1. `Reply with pong only` — the bot should show a processing reaction, finish
-   with a card containing `pong`, and remove the reaction.
+   with a card containing `pong` and elapsed time, and remove the reaction.
 2. `Call current_sender and show its JSON result` — the Tool should report a
-   `user` principal with a stable `feishu:` ID and the `local` environment.
+   `user` principal with a stable `feishu:` ID and the `local` environment. The
+   card shows the current Tool's name, parameters, result and status before
+   subsequent answer text replaces it. This Tool is fast, so its intermediate
+   states may coalesce before delivery.
 3. `Remember my test code: ORCHID-42`, followed by `What is my test code?` — check
    conversation continuity, including after restarting development.
 4. From a second user, ask for the first user's test code and call
@@ -112,6 +117,16 @@ Open a private chat with the bot and try:
    not execute the Agent or produce a reply.
 6. Ask for a multi-paragraph answer — confirm that text updates in the card
    before completion. Try a longer answer to check ordered continuation cards.
+
+Tools that remain active display a rotating character spinner, normally updated
+about once per second through the existing Channel delivery loop. Provider
+latency and rate limits can slow updates. Results, errors, approval waits and
+subsequent answer text stop the animation; the final card contains no spinner.
+Elapsed generation time includes model and Tool execution, excludes delivery
+retries, and reports unavailable when event timestamps are missing.
+
+The example uses the SDK's default presentation. For different reply styles or
+reaction emoji, implement the desired behavior with `defineChannel` handlers.
 
 Definitive card failures fall back to text. Reaction failures do not block the
 answer. An uncertain delivery outcome stays in Channel diagnostics for explicit
