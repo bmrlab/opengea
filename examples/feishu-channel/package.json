@@ -11,7 +11,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@gea-ai/agent-sdk": "0.1.260911-alpha.2",
+    "@gea-ai/agent-sdk": "0.1.260911-alpha.3",
     "zod": "4.3.6"
   },
   "devDependencies": {

@@ -1,12 +1,60 @@
 # Verification
 
-Last verified: 2026-09-11.
+Last verified: 2026-09-12.
 
 This record distinguishes local Agent checks from real Feishu message delivery.
 
-## Streaming SDK upgrade
+## Current Tool progress SDK upgrade
 
-The example now uses public SDK and Contract `0.1.260911-alpha.2`, with the
+The example pins public SDK and Contract `0.1.260911-alpha.3`. Checks used the
+published CLI `0.1.260911-alpha.0` with Node.js 24.16.0 and pnpm 12.1.0.
+
+| Check                                 | Result                                                                                                                                                                                                                 |
+| ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Public dependency installation        | Passed; SDK and Contract resolve to `0.1.260911-alpha.3` with registry integrity hashes                                                                                                                                |
+| Frozen installation and TypeScript    | Passed without `--force` after updating the lockfile                                                                                                                                                                   |
+| Published CLI `agent validate`        | Passed; one Agent, one Channel and one custom Tool                                                                                                                                                                     |
+| Published CLI `agent pack`            | Passed; eight payload files                                                                                                                                                                                            |
+| Published preset progress smoke check | Passed against a local provider fixture: one card, current Tool parameters/result, 12 spinner frames without new model events, animation stopping, final-answer replacement, 12.4-second duration and terminal cleanup |
+| Published preset recovery smoke check | Passed; receiptless confirmation and stale-delivery correlation                                                                                                                                                        |
+
+The package content hash is
+`sha256:0354876eb4cb72e1c560c8e2a5ec37a4874e4360df8a395197e93273111fba57`.
+The archive SHA-256 is
+`aa4acc7392536e8dc87095d3cec61134f77ef21dfe82e7554b4ce851a1c1739d`.
+
+Immediately after publication, npm exposed the version metadata while its default
+tarball URL still returned 404; installation succeeded after the public tarball
+became available. The final manifest uses an exact version, and the lockfile uses
+normal registry resolution without a cache-busting URL or local tarball.
+
+The local checks above made no real Feishu requests. Live animation and
+generation-time acceptance remain separate from the deployment readiness below;
+the version 5 delivery evidence belongs to the previous SDK.
+
+## Preview v6 rollout (2026-09-12)
+
+The existing test installation was paused before publication. Its receiver
+acknowledged `stopped`; all 12 recorded operations in the existing test
+conversation had succeeded, and its 29 delivery records had no pending item,
+paused delivery or last error.
+
+The example was rebuilt with public SDK `0.1.260911-alpha.3` and pushed to the
+same Studio Project and Worker. Preview version 6 is active on deployment
+`01a09142-8ba7-76cc-84c1-947a331319bb`, with Agent version
+`01a09142-9082-74b1-b616-07c6b9db5167`. The Worker content hash is
+`sha256:4cb2350b77486c1b38a40c8f030992afde6af2c34193a336961564334065cefc`.
+
+The original installation was resumed. Receiver revision 46 reports `ready`,
+with matching desired and active targets on the new deployment and no last
+error. Installation identity, environment configuration and conversation history
+were retained. Production was not promoted. This verifies Preview publication
+and receiver readiness; the tester still needs to check the new cards and
+animation in a real Feishu conversation.
+
+## Previous streaming SDK upgrade (2026-09-11)
+
+The previous check used public SDK and Contract `0.1.260911-alpha.2`, with the
 published CLI `0.1.260911-alpha.0` and its bundled native Runtime. No private
 CLI build or workspace-linked SDK was used for these checks.
 
@@ -79,7 +127,7 @@ was attempted.
 
 After the journal fix was published, the example was upgraded to public SDK and
 Contract `0.1.260910-alpha.3`. Type-checking, validation and packaging passed
-again. The current archive has eight payload files and content hash
+again. That upgrade's archive had eight payload files and content hash
 `sha256:964c5890ce10002ac1878a5d6c51daa46e181a9d6bd162b9626db4a124422793`.
 
 ## Feishu acceptance
