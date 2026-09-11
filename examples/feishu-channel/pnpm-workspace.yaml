@@ -3,5 +3,5 @@ allowBuilds:
   node-liblzma: false
   protobufjs: true
 minimumReleaseAgeExclude:
-  - "@gea-ai/agent-sdk@0.1.260910-alpha.3"
-  - "@gea-ai/contract@0.1.260910-alpha.3"
+  - "@gea-ai/agent-sdk@0.1.260911-alpha.2"
+  - "@gea-ai/contract@0.1.260911-alpha.2"
