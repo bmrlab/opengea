@@ -16,7 +16,7 @@ All acceptance gates passed: recall, smaller context, exact projection restorati
 
 The original CLI ignored `LLM_MODEL_CATALOG_JSON` in local Creative Reasoning mode, dropping the auxiliary model. GEA PR #440 preserves explicit catalogs. The example now supplies the catalog's required pricing entries and uses the updated context tracing test contract.
 
-Preview version 4, deployment `01a09e5c-48c4-7009-86d5-c989f16643b6`, contains the final public alpha.1 SDK. All three hosted Agents returned `pong` with HTTP 200 and no SSE error after Web v0.51.1 was deployed. Initial connection failures are not included as successes. The full restart/recall comparison is local evidence; hosted failover and Production promotion were not tested.
+Preview version 4, deployment `01a09e5c-48c4-7009-86d5-c989f16643b6`, contains the final public alpha.1 SDK. All three hosted Agents returned `pong` with HTTP 200 and no SSE error after Web v0.51.1 was deployed. All three hosted entrypoints were also rechecked successfully after the production Runtime memory adjustment and sequential Pod replacement. Initial connection failures are not included as successes. The full restart/recall comparison is local evidence; hosted context-state failover and Production promotion were not tested.
 
 ## Original local comparison
 
