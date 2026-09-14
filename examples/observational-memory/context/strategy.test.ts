@@ -109,6 +109,18 @@ test("observation and reflection usage survive activation and interrupted projec
       durableObjects: {} as never,
       signal: new AbortController().signal,
       model: async () => model(),
+      tracing: {
+        currentSpan: undefined,
+        async withSpan() {
+          throw new Error("unexpected tracing");
+        },
+        async withResultSpan() {
+          throw new Error("unexpected tracing");
+        },
+        inject() {
+          throw new Error("unexpected tracing");
+        },
+      },
       writeToolOutput: null,
       recordUsage: (entry) => records.push(entry),
       waitUntil() {

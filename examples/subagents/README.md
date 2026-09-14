@@ -38,12 +38,17 @@ pnpm test
 cp .env.example .env
 ```
 
-The SDK is pinned to public version `0.1.260911-alpha.0`. Building and running
-the example requires the matching **subagent-capable CLI and Worker Runtime**.
-The currently published CLI `0.1.260910-alpha.1` predates that support. Until
-its successor is published, set `GEA_CLI_BIN` to a compatible local executable;
-the optional Runtime override paths are shown in `.env.example`. SDK dependencies
-remain public npm packages, with no private workspace links.
+The SDK is pinned to public version `0.1.260914-alpha.1`. Install CLI
+`0.1.260914-alpha.2`, which includes Session inbox and subagent support:
+
+```sh
+npm install --global @gea-ai/cli@0.1.260914-alpha.1
+```
+
+For local CLI development, `GEA_CLI_BIN` can select an executable; optional
+Runtime overrides are shown in `.env.example`. SDK dependencies remain public
+npm packages. Hosted verification requires the Web `v0.51.1` Session dispatch
+fix in addition to the `v0.51.0` Runtime.
 
 ```sh
 pnpm agent:validate

@@ -20,11 +20,11 @@ cp .env.example .env
 ```
 
 The example pins the public `@gea-ai/agent-sdk` package to
-`0.1.260911-alpha.2`. Install a CLI with Channels support and its matching native
+`0.1.260914-alpha.1`. Install a CLI with Channels support and its matching native
 Worker Runtime:
 
 ```bash
-npm install -g @gea-ai/cli@0.1.260911-alpha.0
+npm install -g @gea-ai/cli@0.1.260914-alpha.1
 ```
 
 To use a locally built CLI, put the executable paths in your private `.env`:
@@ -141,11 +141,11 @@ values, keep `FEISHU_APP_SECRET` classified as a secret, and use `*` for the
 allowlist if every verified sender should be accepted. This does not require
 putting the Feishu credentials in a local `.env` file.
 
-Create the first Channel installation with the CLI, using the Agent ID returned
-by publication:
+On GEA 0.51, publishing the declared Channel creates or updates its installation.
+After setting the Preview environment, inspect the installation using the Agent ID
+returned by publication:
 
 ```bash
-pnpm gea agent channel create --json '{"agentId":"your-studio-agent-id","channelKey":"feishu","environment":"preview"}'
 pnpm gea agent channel list --json '{"agentId":"your-studio-agent-id"}'
 ```
 
@@ -160,10 +160,11 @@ by the platform.
 
 ## Upgrade an existing installation
 
-Pause new Channel input and let accepted work and pending deliveries finish
-before switching builds. Upgrade the SDK in the Agent project, reinstall
-dependencies, then run `agent push` for the same Studio Project and Worker slug.
-Resume the installation after its receiver is ready on the new deployment.
+Upgrade the SDK, reinstall dependencies, and run `agent push` for the same Studio
+Project and Worker slug. The hosted switch checks readiness and drains the old
+receiver before replacing its target. Existing installation settings, credentials
+and history stay attached to that installation. Confirm the receiver is `ready`
+on the new deployment before repeating the private-message checks.
 
 Publishing an SDK version alone does not update an existing Agent bundle.
 After the streaming adapter has written its new output state, returning to the

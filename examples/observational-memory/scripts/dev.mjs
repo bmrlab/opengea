@@ -60,7 +60,8 @@ export async function startAgent({ quiet = false, port } = {}) {
           `${url}/gea/agents/sessions/readiness/v1/model-context`,
           { signal: AbortSignal.timeout(1000) },
         );
-        if (response.ok) return { url, stop, models: runtime.models };
+        if (response.ok)
+          return { url, stop, models: runtime.models, cli: runtime.cli };
       } catch {
         /* The startup probe retries until the local listener is ready. */
       }

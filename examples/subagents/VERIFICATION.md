@@ -1,8 +1,19 @@
 # Verification record
 
-Last verified: 2026-09-11. Local and hosted Preview checks now pass after the
-Web host fix in GEA PR #418. Earlier failures are retained below for diagnosis;
-the final section records the successful recheck and its scope.
+Last verified: 2026-09-14 (Asia/Shanghai). See the current release scope and remaining checks below.
+
+## SDK 0.51 upgrade verification, 2026-09-14
+
+- Public npm Agent SDK `0.1.260914-alpha.1`, Node 24.16.0 and pnpm 12.1.0. Frozen installation, TypeScript, all five verifier tests, Agent validation and packaging passed. The verifier uses the public client `token` option. CLI validation uses the local build from GEA `413f2bd83`; the next CLI publication is paused.
+- The complete local verifier passed after the final coordinator instruction change: `f7f067cf-7bc0-4e99-9f20-75779537474d`. This covers three concurrent tasks, a nested private calculator, automatic parent continuation, continued-child recall and fresh-child isolation.
+- On Web v0.51.0, children completed but parent resumption repeatedly failed with `Message id conflicts with existing message ownership`. GEA PR #441 fixes the persisted Run metadata and hidden wake message. After the operator deployed Web v0.51.1, parent continuation worked. A developer-authenticated hosted run completed all three jobs and the nested calculator: Chat `01a09e65-8099-7678-848e-d2ec1332886f`.
+- The Project-key run `52e7676f-e992-497c-8563-6cd48f6ff18c` also executed all children successfully, but its coordinator omitted `calculator` from the final summary. Trace `08e6112ab17f8946ee8c265f98dfe9a1` confirms that the researcher returned the complete object and the parent's model received it. The coordinator instructions now explicitly retain every nested result field. The strict verifier assertion remains unchanged.
+- Current Preview is version 5, deployment `01a09e74-3c61-73a7-8bf0-3a8f64414d93`, including that instruction fix. The hosted verifier attempt `eec6a25f-c942-4ceb-b6b3-8d684c71485c` failed at its initial request with HTTP 500. The matching Runtime log at 13:47:18 CST reports `Worker Durable Object resident capacity is exhausted`.
+- Earlier failures at 13:21–13:24 had the same capacity error; the observed `Descendant cancellation failed (500)` was a downstream symptom. Runtime logs also show separate S3 authority-read connection failures at 13:28 and 13:40. Logs confirm Runtime image v0.51.0 and later successful evictions. The live settings were subsequently verified: two Pods, each with a 1 GiB container limit, 700 MiB pressure threshold and 64 resident-object limit. The historical failure log does not identify which limit fired.
+- After the operator authorized direct cluster adjustment, each Runtime Pod received a 1 GiB memory request, 2 GiB limit and 1536 MiB pressure threshold. Both Pods were replaced sequentially using the existing OnDelete strategy, retaining the v0.51.0 image and all other settings. The complete Project-key hosted verifier then passed on unchanged Preview v5: `500d330b-19ea-4e2b-a063-ce0d119dd3a5`, parent Chat `01a09e96-122b-7062-90fe-5654897da11d`. All three batches passed: parallel children and nested calculator (29 × 17 = 493), automatic parent continuation, same-handle recall and fresh-handle isolation. Assertions were unchanged.
+- During the post-rollout example tests, the larger Pod reached a sampled working set of about 819 MiB, exceeding the old threshold; neither Pod recorded an OOM or new capacity rejection. This establishes acceptance of this test workload, not a concurrency capacity guarantee. A separate S3 ownership-read connection failure recurred at 14:35 CST and remains unresolved. No Agent Production promotion or new CLI release is claimed. Earlier checks below describe their recorded versions only.
+
+The sections below retain the earlier v0.50-era checks, including the successful PR #418 recheck.
 
 ## Toolchain and local result
 
@@ -119,14 +130,14 @@ recheck. Studio inspection confirms the same Preview v2 deployment
 - Continuation initial trace: `5303af076a94f91e82dc7ac488c4ec84`
 - Fresh-child initial trace: `3ce236ee2b83ac6a775c8c8cf699bbbd`
 
-| Scenario | Observed result |
-| --- | --- |
-| Private researcher → calculator | Both completed; 26 × 12 = 312, with distinct child chats |
-| Explicit top-level reviewer reference | Completed; 26 + 12 = 38, with the supplied random marker |
-| Self copy | Completed; 26 − 12 = 14, in another child chat |
-| Parent continuation | Working receipts followed by persisted completed notifications and automatic parent summaries |
-| Continue reviewer with agentId | Same handle/chat, new taskId, recalled 38 and the marker without receiving them again |
-| Fresh reviewer without agentId | New handle/chat; prior value and marker both null |
+| Scenario                              | Observed result                                                                               |
+| ------------------------------------- | --------------------------------------------------------------------------------------------- |
+| Private researcher → calculator       | Both completed; 26 × 12 = 312, with distinct child chats                                      |
+| Explicit top-level reviewer reference | Completed; 26 + 12 = 38, with the supplied random marker                                      |
+| Self copy                             | Completed; 26 − 12 = 14, in another child chat                                                |
+| Parent continuation                   | Working receipts followed by persisted completed notifications and automatic parent summaries |
+| Continue reviewer with agentId        | Same handle/chat, new taskId, recalled 38 and the marker without receiving them again         |
+| Fresh reviewer without agentId        | New handle/chat; prior value and marker both null                                             |
 
 The existing reviewer handle was `7fd0be71-d636-46bc-81c5-ba191edd4312`;
 continuation created task `cbbdcafe-11f4-455b-a92e-19b3b89ac0d8`. The fresh

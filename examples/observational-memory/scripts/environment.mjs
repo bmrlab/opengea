@@ -17,6 +17,18 @@ export function runtimeEnvironment() {
       { id: MAIN_MODEL, target: `creative-reasoning/${main}` },
       { id: MEMORY_MODEL, target: `creative-reasoning/${memory}` },
     ],
+    // Local verification reports tokens, without assigning provider prices.
+    pricing: Object.fromEntries(
+      [main, memory].map((model) => [
+        `creative-reasoning/${model}`,
+        {
+          providerRates: {
+            inputMicrosPerMillion: 0,
+            outputMicrosPerMillion: 0,
+          },
+        },
+      ]),
+    ),
     providers: {
       "creative-reasoning": {
         type: "creative-reasoning",
@@ -38,11 +50,12 @@ export function runtimeEnvironment() {
   );
   return {
     // Own the native process so stop/restart also shuts down its Runtime.
-    cli: join(distributionRoot, executable),
+    cli: process.env.GEA_CLI_BIN?.trim() || join(distributionRoot, executable),
     models: { main, memory },
     env: {
       ...process.env,
-      GEA_CLI_DISTRIBUTION_ROOT: distributionRoot,
+      GEA_CLI_DISTRIBUTION_ROOT:
+        process.env.GEA_CLI_DISTRIBUTION_ROOT || distributionRoot,
       CREATIVE_REASONING_BASE_URL: "https://api.creative-reasoning.com",
       LLM_MODEL_CATALOG_JSON: JSON.stringify(catalog),
     },

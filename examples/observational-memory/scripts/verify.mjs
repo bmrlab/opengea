@@ -39,6 +39,7 @@ let agent = await startAgent({ quiet: true, port: 0 });
 const report = {
   id,
   models: agent.models,
+  cliExecutable: agent.cli,
   packages: {
     "@gea-ai/agent-sdk": sdkPackage.version,
     "@gea-ai/cli": cliPackage.version,
