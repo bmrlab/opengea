@@ -6,12 +6,13 @@ Each example owns its dependencies and lockfile. There is no root workspace or s
 | Example                                                | What you build                                                                                                                                 |
 | ------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------- |
 | [basic](examples/basic/)                               | A real Hacker News research Agent, a Benchmark, and a self-hosted Next.js chat application using AI SDK and AI Elements.                       |
+| [oauth-app](examples/oauth-app/)                       | A third-party web app with GEA user OAuth, verified profile, backend token rotation and Agent chat over HTTP, deployable on Vercel.            |
 | [ask-muse](examples/ask-muse/)                         | An Agent that searches user-authorized MuseDAM assets through OAuth MCP, with no UI or custom Tool wrapper.                                    |
 | [observational-memory](examples/observational-memory/) | Configurable context management: raw history, default summaries and a chat DO observations strategy, with recall and prompt-cache comparisons. |
 | [feishu-channel](examples/feishu-channel/)             | A Feishu bot backed by an Agent, with WebSocket message delivery, typed runtime credentials and sender isolation.                              |
 | [subagents](examples/subagents/)                       | Private nested Agents, explicit same-Worker references and self copies, with automatic parent continuation and isolated child history.         |
 
-Start with the example README. You need Node.js, pnpm, and a Creative Reasoning API key for local model calls. Agent development additionally requires a supported GEA CLI platform. Building the Next.js application works independently of the CLI, including on Linux.
+Start with the example README. You need Node.js and pnpm. Agent examples need a Creative Reasoning API key for local model calls; OAuth app uses a GEA application registration and PostgreSQL. Agent development additionally requires a supported GEA CLI platform. Building the Next.js application works independently of the CLI, including on Linux.
 
 [Developer documentation](https://musegea.com/developers) · [Agent + Next.js guide](https://musegea.com/developers/agent-nextjs) · [Agent Studio configuration](https://musegea.com/developers/agent-studio-configuration)
 
