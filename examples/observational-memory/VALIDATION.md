@@ -1,4 +1,22 @@
-# Context verification — 2026-09-09
+# Context verification
+
+## SDK 0.51 upgrade, 2026-09-14
+
+The example now installs public Agent SDK `0.1.260914-alpha.1` and published CLI `0.1.260914-alpha.1`. Frozen installation, TypeScript, all six Node tests, Agent validation and packaging passed. Final validation used the local CLI from GEA `413f2bd83`; the next CLI release is paused. Local execution can explicitly select `GEA_CLI_BIN` and `GEA_CLI_DISTRIBUTION_ROOT`, and new reports include the executable path.
+
+The complete real-model comparison during this upgrade used SDK `0.1.260914-alpha.0`, the local CLI containing the explicit-model-catalog fix, and the native v0.51 Runtime. Run: `2026-09-14T04-33-20.967Z-2c6c6a90`. The alpha.1 change fixes approval continuation; the full comparison was not repeated for that unrelated change.
+
+| Strategy             | Recall | Final main input | All main input | Auxiliary input | Total input | Total output | Seconds |
+| -------------------- | ------ | ---------------- | -------------- | --------------- | ----------- | ------------ | ------- |
+| raw                  | 15/15  | 26119            | 200229         | 0               | 200229      | 275          | 48.7    |
+| summary              | 15/15  | 6282             | 97832          | 47822           | 145654      | 31730        | 603.8   |
+| observational-memory | 15/15  | 1945             | 79367          | 18608           | 97975       | 10549        | 235.6   |
+
+All acceptance gates passed: recall, smaller context, exact projection restoration after Runtime restart, fresh-chat isolation, actual observation/reflection execution and complete provider usage. Final main input decreased by 92.6% for observations versus raw history. Main model: `creative-reasoning-1.5`; auxiliary model: `crr-q-flash-20260826`. The catalog supplies zero accounting rates for this token-only local experiment; these are not provider prices or a monetary-savings claim. The earlier report's package CLI field describes the installed package, while this run used an explicit locally built executable.
+
+The original CLI ignored `LLM_MODEL_CATALOG_JSON` in local Creative Reasoning mode, dropping the auxiliary model. GEA PR #440 preserves explicit catalogs. The example now supplies the catalog's required pricing entries and uses the updated context tracing test contract.
+
+Preview version 4, deployment `01a09e5c-48c4-7009-86d5-c989f16643b6`, contains the final public alpha.1 SDK. All three hosted Agents returned `pong` with HTTP 200 and no SSE error after Web v0.51.1 was deployed. Initial connection failures are not included as successes. The full restart/recall comparison is local evidence; hosted failover and Production promotion were not tested.
 
 ## Original local comparison
 

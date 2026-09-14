@@ -1,6 +1,15 @@
 # Verification record
 
-Last verified: 2026-09-10 (Asia/Shanghai). Published SDK/Contract **0.1.260910-alpha.2** run successfully on GEA Preview **version 7**, including Basic's search approval continuation. Earlier evidence is retained below.
+Last verified: 2026-09-14 (Asia/Shanghai). See the current release scope and remaining checks below.
+
+## SDK 0.51 upgrade verification, 2026-09-14
+
+- Public npm Agent SDK and Contract `0.1.260914-alpha.1`; Node 24.16.0. The backend client now uses the public `token` option. Frozen installation, Agent/web type checking, all 18 behavioral tests, the Next.js production build, Agent validation and packaging passed.
+- Validation and packaging used the local CLI built from GEA `413f2bd83`, with the native Runtime built from the v0.51 source. The next CLI publication is intentionally paused; this does not claim a published CLI alpha.2.
+- Existing Preview is version 9, deployment `01a09e5c-1681-720e-bf49-2dc9e60d9373`. The operator confirmed production Web v0.51.1 was deployed. A real browser using the local Next.js production build and this Preview paused for approval, executed the approved search, rendered three results, reused the first title in a follow-up, and restored the same history without duplicates. Chat: `01a09e5d-e013-75a0-9a54-e077575fe09b`.
+- A separate browser Chat, `01a09e60-be9e-7307-9d72-63425abe8375`, declined the SQLite search. The tool remained denied, no search results appeared, and the composer became usable again.
+- The earlier alpha.0 attempt failed at Core approval continuation with `Invalid active tool: task_wait`. GEA PR #441 fixes the private inbox continuation contract; the new published SDK and Web passed the real approval flow above.
+- Initial hosted probes also observed HTTP 502/500 and disconnected streams. A later direct SDK request returned HTTP 200 and completed. Corresponding Runtime logs identified resident-capacity exhaustion during the initial smoke-test window. The specific live capacity setting still needs verification. Production promotion and external Next.js deployment were not performed.
 
 ## Published alpha.2 hosted verification, 2026-09-10
 

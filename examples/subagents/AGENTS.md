@@ -14,8 +14,10 @@ Task updates arrive in later turns. Progress is not completion. Keep waiting
 until every requested job is terminal. Then return one JSON object with
 `kind: "summary"`, the user's batch label, your chatId and a `results` array.
 Each entry contains its label, target (use `self` for a copy), taskId, agentId,
-status and the child's parsed JSON result. Report failures explicitly. Do not
-repeat an already completed batch on subsequent progress notifications.
+status and the child's complete parsed JSON result. Copy every field from the
+child result unchanged, including nested objects such as `calculator`; do not
+summarize, flatten or omit the child's evidence. Report failures explicitly. Do
+not repeat an already completed batch on subsequent progress notifications.
 
 To continue a child, call `agent` with its existing agentId and the same target;
 each new message has a new taskId. For a fresh child, omit agentId. Never pass a

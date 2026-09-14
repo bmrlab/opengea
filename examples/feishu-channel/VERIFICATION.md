@@ -1,6 +1,13 @@
 # Verification
 
-Last verified: 2026-09-11.
+Last verified: 2026-09-14 (Asia/Shanghai). See the current release scope and remaining checks below.
+
+## SDK 0.51 upgrade verification, 2026-09-14
+
+- Public npm Agent SDK `0.1.260914-alpha.1`, Node 24.16.0 and pnpm 12.1.0. Frozen installation, TypeScript, Agent validation and packaging passed with local CLI source `413f2bd83` and the native v0.51 Runtime. The next CLI publication remains paused.
+- Local HTTP execution called `current_sender` and a second turn recalled the supplied test code in the same Chat. This verifies the local Agent path, not Feishu provider delivery.
+- Existing Preview is version 8, deployment `01a09e5c-fdf6-74fc-976f-4dc57857231a`. The existing installation `01a08b77-19d3-7017-b382-c2ac0e60148b` was retained. Its receiver reported `ready`, revision 55, matching active and desired targets, and no last error. Credentials, sender configuration and conversation history were preserved. The README now documents automatic Channel installation during publication.
+- Actual private-message receipt, sender identity and same-conversation recall on version 8 are pending a message from the operator. Historical Feishu acknowledgements below do not establish delivery on this new version. No Production promotion was performed.
 
 This record distinguishes local Agent checks from real Feishu message delivery.
 

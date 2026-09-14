@@ -48,7 +48,7 @@ export async function POST(request: Request) {
       env.GEA_MODE === "hosted"
         ? await new StudioAgentClient({
             api: env.GEA_AGENT_URL,
-            apiKey: env.GEA_PROJECT_API_KEY ?? "",
+            token: env.GEA_PROJECT_API_KEY ?? "",
           }).run(
             input.chatId
               ? input

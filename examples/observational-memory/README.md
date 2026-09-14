@@ -8,14 +8,14 @@ See [the recorded local verification](VALIDATION.md) for the original 15-field r
 
 ## Setup
 
-Use Node 24.16.0 and pnpm 12.1.0. The example pins published packages: Agent SDK `0.1.260909-alpha.0` and CLI `0.1.260909-alpha.0`. The SDK brings the matching Contract version. No local GEA checkout or SDK tarballs are required.
+Use Node 24.16.0 and pnpm 12.1.0. The example pins published packages: Agent SDK `0.1.260914-alpha.1` and CLI `0.1.260914-alpha.1`. The SDK brings the matching Contract version. No local GEA checkout or SDK tarballs are required.
 
 ```sh
 pnpm install --frozen-lockfile
 cp .env.example .env
 ```
 
-Set `CREATIVE_REASONING_API_KEY` in `.env`. `GEA_ENV_FILE` optionally points to an existing credentials file. The installed CLI supplies its native Runtime and system workers. Running the Agent requires macOS Apple Silicon or Windows x64, the platforms supported by this CLI release; type checking and the Node tests also work on Linux.
+Set `CREATIVE_REASONING_API_KEY` in `.env`. `GEA_ENV_FILE` optionally points to an existing credentials file. The installed CLI supplies its native Runtime and system workers. Developers testing a local CLI build can set `GEA_CLI_BIN` and `GEA_CLI_DISTRIBUTION_ROOT`; the generated report records the executable used. Running the Agent requires macOS Apple Silicon or Windows x64, the platforms supported by this CLI release; type checking and the Node tests also work on Linux.
 
 `models.ts` selects independent public model IDs for the main Agent and memory calls: `creative-reasoning-1.5` and `crr-q-flash-20260826`. Edit that file to change the immutable model selection for both local and hosted execution. The same model must be available to the local API key and the hosted model catalog. `.env` values `MAIN_MODEL` and `MEMORY_MODEL` optionally override the local gateway targets for experiments; they do not change a Studio deployment. `auto` is an SDK routing policy, not a gateway target. Model-call records retain model identity and actual provider usage.
 

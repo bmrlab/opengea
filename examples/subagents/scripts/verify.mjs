@@ -15,7 +15,7 @@ if (!local && (!env.api || !env.apiKey))
 // The published client validates HTTPS and rejects URL credentials/redirects.
 const client = local
   ? null
-  : new StudioAgentClient({ api: env.api, apiKey: env.apiKey });
+  : new StudioAgentClient({ api: env.api, token: env.apiKey });
 const api = (local ? env.localApi : env.api).replace(/\/$/u, "");
 if (
   local &&

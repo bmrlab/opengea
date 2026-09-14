@@ -1,6 +1,13 @@
 # Verification record
 
-Last verified: 2026-09-08 (Asia/Shanghai).
+Last verified: 2026-09-14 (Asia/Shanghai). See the current release scope and remaining checks below.
+
+## SDK 0.51 upgrade verification, 2026-09-14
+
+- Public npm Agent SDK `0.1.260914-alpha.1`; Node 24.16.0. Frozen installation, TypeScript, Agent validation and packaging passed with local CLI source `413f2bd83`. No local SDK links are required. The next CLI publication remains paused.
+- Existing Preview is version 4, deployment `01a09e5c-2921-779a-950e-615220d729ce`. After the operator updated Web to v0.51.1, the existing user-owned OAuth connection successfully performed real MuseDAM asset and folder searches. Both MCP results had `isError: false`, and the Agent returned three actual asset titles. Chat `01a09e63-5680-77fd-96e4-a584e63d2662`, Run `01a09e63-5705-74fd-ac7c-e45d271cd019`, status `finished`.
+- An earlier request in this upgrade failed with a disconnected stream and another start request returned HTTP 500. The matching failed-start Runtime log at 13:24:04 CST reports resident-capacity exhaustion. The subsequent successful request is recorded separately; the specific live capacity setting remains unverified.
+- No new OAuth consent, credential replacement, asset mutation or Production promotion was performed. Provider results and signed asset URLs stay in ignored local verification output.
 
 ## Public packages and local execution
 
