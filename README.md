@@ -7,6 +7,7 @@ Each example owns its dependencies and lockfile. There is no root workspace or s
 | ------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------- |
 | [basic](examples/basic/)                               | A real Hacker News research Agent, a Benchmark, and a self-hosted Next.js chat application using AI SDK and AI Elements.                       |
 | [oauth-app](examples/oauth-app/)                       | A third-party web app with GEA user OAuth, verified profile, backend token rotation and Agent chat over HTTP, deployable on Vercel.            |
+| [agents-api](examples/agents-api/)                     | One HTTP flow for Local and Preview: prepare a Session, upload files, edit Computer, run an Agent and reuse its outputs.                       |
 | [ask-muse](examples/ask-muse/)                         | An Agent that searches user-authorized MuseDAM assets through OAuth MCP, with no UI or custom Tool wrapper.                                    |
 | [observational-memory](examples/observational-memory/) | Configurable context management: raw history, default summaries and a chat DO observations strategy, with recall and prompt-cache comparisons. |
 | [feishu-channel](examples/feishu-channel/)             | A Feishu bot backed by an Agent, with WebSocket message delivery, typed runtime credentials and sender isolation.                              |

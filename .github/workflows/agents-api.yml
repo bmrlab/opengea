@@ -1,0 +1,28 @@
+name: Agents API example
+on:
+  push:
+    branches: [main]
+    paths: ["examples/agents-api/**", ".github/workflows/agents-api.yml"]
+  pull_request:
+    paths: ["examples/agents-api/**", ".github/workflows/agents-api.yml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: examples/agents-api
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: examples/agents-api/.node-version
+      - name: Install pnpm
+        run: npm install --global pnpm@12.1.0
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm type-check
+      - run: node --check scripts/verify.mjs
+      - run: node --check scripts/gea.mjs

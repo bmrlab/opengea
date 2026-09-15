@@ -1,6 +1,13 @@
 # Verification record
 
-Last verified: 2026-09-14 (Asia/Shanghai). See the current release scope and remaining checks below.
+Last verified: 2026-09-15 (Asia/Shanghai). See the current release scope and remaining checks below.
+
+## SDK 0.52 upgrade verification, 2026-09-15
+
+- Public npm Agent SDK and Contract `0.1.260915-alpha.0`; frozen dependency installation passed.
+- Agent/web type checking, all 18 behavioral tests and the Next.js production build passed.
+- Agent validation and packaging passed with the locally built CLI from GEA `170cf55f` plus the local Agents API fixes described in [the acceptance record](../agents-api/VERIFICATION.md). No workspace-linked SDK dependencies were used.
+- This records local checks. It does not update earlier Preview/Production deployment evidence or claim the new CLI has been published.
 
 ## SDK 0.51 upgrade verification, 2026-09-14
 

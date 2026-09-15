@@ -7,6 +7,11 @@ after a reload or a new login. All GEA calls use backend HTTP `fetch`; there is 
 API key, tenant token, or caller-supplied principal. AI SDK only decodes the
 relayed UI message stream in the browser.
 
+For a smaller HTTP example covering Session preparation, file upload and Computer
+before running the Agent, see [agents-api](../agents-api/). Its caller switches
+between Local and Preview through URL, environment and OAuth-token configuration.
+This OAuth app retains its hosted sign-in flow and PostgreSQL session store.
+
 This is the replacement for `zhuojg/gea-oauth-example`. It is independent of the
 other examples and needs no GEA CLI. `ask-muse` demonstrates the opposite OAuth
 direction: an Agent connecting to an external service.

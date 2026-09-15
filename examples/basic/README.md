@@ -6,6 +6,10 @@ This example explicitly selects the SDK's Rust Agent Core with `engine: agentCor
 
 The browser uses [AI SDK](https://ai-sdk.dev/) and [AI Elements](https://elements.ai-sdk.dev/), has no login step, and calls only its own Next.js backend. Anonymous signed cookies isolate Chats between browsers. Approval cards let readers approve or decline individual Tool calls. Local transcripts stay in memory; hosted mode can restore server history while the signed session remains valid.
 
+For direct `/api/v1` calls that share persisted Session history across Local and
+Preview, including file uploads and Computer preparation, see
+[agents-api](../agents-api/). This example keeps its existing Worker chat transport.
+
 ## Architecture and files
 
 ```text
@@ -54,14 +58,14 @@ pnpm test
 pnpm build
 ```
 
-These checks need no private GEA checkout, running Agent, credentials or `.gea` directory. SDK and Contract are pinned to npm **0.1.260914-alpha.1**, with AI SDK **7.0.9** and `@ai-sdk/react` **4.0.10**. CLI is not an install/build dependency: Linux Next.js hosting never needs a macOS/Windows executable.
+These checks need no private GEA checkout, running Agent, credentials or `.gea` directory. SDK and Contract are pinned to npm **0.1.260915-alpha.0**, with AI SDK **7.0.9** and `@ai-sdk/react` **4.0.10**. CLI is not an install/build dependency: Linux Next.js hosting never needs a macOS/Windows executable.
 
 ## 2. Run locally
 
 Use GEA CLI **0.1.260914-alpha.2** for **macOS ARM64 or Windows x64**. It includes the WASM bundler required by this example; the SDK provides the compiled Agent Core.
 
 ```bash
-npm install --global @gea-ai/cli@0.1.260914-alpha.1
+npm install --global @gea-ai/cli@0.1.260914-alpha.2
 gea agent --help
 pnpm run setup:env
 ```

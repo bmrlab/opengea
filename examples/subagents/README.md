@@ -38,11 +38,11 @@ pnpm test
 cp .env.example .env
 ```
 
-The SDK is pinned to public version `0.1.260914-alpha.1`. Install CLI
+The SDK is pinned to public version `0.1.260915-alpha.0`. Install CLI
 `0.1.260914-alpha.2`, which includes Session inbox and subagent support:
 
 ```sh
-npm install --global @gea-ai/cli@0.1.260914-alpha.1
+npm install --global @gea-ai/cli@0.1.260914-alpha.2
 ```
 
 For local CLI development, `GEA_CLI_BIN` can select an executable; optional
