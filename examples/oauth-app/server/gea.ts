@@ -11,9 +11,16 @@ export const tokenSchema = z.object({
   scope: z.string(),
   application: z.object({ id: z.uuid() }),
   authorization: z.object({ id: z.uuid() }),
-  organization: z.object({ id: z.uuid(), name: z.string().min(1), slug: z.string().min(1) }),
+  organization: z.object({
+    id: z.uuid(),
+    name: z.string().min(1),
+    slug: z.string().min(1),
+  }),
 });
-export const userSchema = z.object({ sub: z.string().min(1), name: z.string().nullish() });
+export const userSchema = z.object({
+  sub: z.string().min(1),
+  name: z.string().nullish(),
+});
 export type Token = z.infer<typeof tokenSchema>;
 
 export class HttpError extends Error {
@@ -104,9 +111,12 @@ export async function userInfo(accessToken: string) {
 export async function agentFetch(path: string, accessToken: string, init: RequestInit = {}) {
   return fetch(`${getEnv().GEA_BASE_URL}/api/v1${path}`, {
     ...init,
-    headers: { authorization: `Bearer ${accessToken}`, "content-type": "application/json" },
+    headers: {
+      authorization: `Bearer ${accessToken}`,
+      ...(init.body instanceof FormData ? {} : { "content-type": "application/json" }),
+    },
     cache: "no-store",
-    redirect: "error",
+    redirect: init.redirect ?? "error",
     credentials: "omit",
     signal: init.signal ?? AbortSignal.timeout(25000),
   });

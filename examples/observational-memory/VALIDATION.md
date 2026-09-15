@@ -1,5 +1,12 @@
 # Context verification
 
+## SDK 0.52 upgrade verification, 2026-09-15
+
+- Public npm Agent SDK `0.1.260915-alpha.0`; frozen dependency installation passed.
+- Type checking and all six Node tests passed. The real-model memory comparison was not repeated.
+- Agent validation and packaging passed with the locally built CLI from GEA `170cf55f` plus the local Agents API fixes described in [the acceptance record](../agents-api/VERIFICATION.md). No workspace-linked SDK dependencies were used.
+- This records local checks. It does not update earlier Preview/Production deployment evidence or claim the new CLI has been published.
+
 ## SDK 0.51 upgrade, 2026-09-14
 
 The example now installs public Agent SDK `0.1.260914-alpha.1` and published CLI `0.1.260914-alpha.1`. Frozen installation, TypeScript, all six Node tests, Agent validation and packaging passed. Final validation used the local CLI from GEA `413f2bd83`; the next CLI release is paused. Local execution can explicitly select `GEA_CLI_BIN` and `GEA_CLI_DISTRIBUTION_ROOT`, and new reports include the executable path.

@@ -13,12 +13,12 @@ The Connector uses `require({ scopes: ["musedam"], exposeToModel: true })`. It d
 
 ## Install and validate
 
-Use Node **24.16.0**, pnpm **10.30.3**, and SDK **0.1.260914-alpha.1** and CLI **0.1.260914-alpha.2**. From this directory:
+Use Node **24.16.0**, pnpm **10.30.3**, and SDK **0.1.260915-alpha.0** and CLI **0.1.260914-alpha.2**. From this directory:
 
 ```bash
 pnpm install --frozen-lockfile
 pnpm type-check
-npm install --global @gea-ai/cli@0.1.260914-alpha.1
+npm install --global @gea-ai/cli@0.1.260914-alpha.2
 pnpm agent:validate
 pnpm agent:pack
 ```
