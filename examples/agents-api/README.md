@@ -27,24 +27,20 @@ pnpm type-check
 Set `CREATIVE_REASONING_API_KEY` in `.env`. Local execution calls an external
 model provider; it does not imply offline inference.
 
-This example needs the CLI containing **local Agents API** and its matching
-Worker Runtime. At this change, SDK publication is complete and the new CLI
-release is pending. Set these build overrides in your shell or `.env`, using
-your own paths:
+Install public CLI **0.1.260915-alpha.0**, which includes the local Agents API
+and its matching Worker Runtime for macOS ARM64 and Windows x64:
 
 ```bash
-export GEA_CLI_BIN=/absolute/path/to/gea-darwin-arm64
-export GEA_WORKER_RUNTIME_BINARY=/absolute/path/to/gea-worker-runtime
-export WORKER_RUNTIME_SYSTEM_WORKER_ROOT=/absolute/path/to/system-workers
+pnpm add -g @gea-ai/cli@0.1.260915-alpha.0
 pnpm agent:validate
 pnpm agent:pack
 pnpm dev
 ```
 
-The launcher also accepts a Windows x64 executable. If the CLI distribution
-contains its matching Runtime and system workers, only `GEA_CLI_BIN` is needed.
-Once a compatible CLI is published, install it normally and omit these build
-overrides. SDK dependencies always come from npm.
+For a local CLI build, the launcher also accepts `GEA_CLI_BIN=/absolute/path/to/gea`.
+An unpackaged build can additionally set `GEA_WORKER_RUNTIME_BINARY` and
+`WORKER_RUNTIME_SYSTEM_WORKER_ROOT` to its matching Runtime and system workers.
+The published CLI needs none of these overrides. SDK dependencies always come from npm.
 
 `agent-dev.json` selects Worker port **8794** and Agents API port **8795**. Choose
 free ports if either is occupied, and update `GEA_AGENTS_API_URL` to match

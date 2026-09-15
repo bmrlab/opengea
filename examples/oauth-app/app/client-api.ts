@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { DefaultChatTransport, readUIMessageStream, validateUIMessages, type UIMessage } from "ai";
-import type { AgentView, ConversationSummary } from "../server/routes";
-export type { ConversationSummary } from "../server/routes";
+import type { AgentView, ConversationSummary, ArtifactView, FileView } from "../server/routes";
+export type { ConversationSummary, ArtifactView, FileView } from "../server/routes";
 
 export type SessionView = {
   user: { sub: string; name?: string | null };
@@ -61,6 +61,57 @@ export async function readHistory(
   const query = new URLSearchParams({ chatId });
   if (cursor) query.set("cursor", cursor);
   return (await checked(await fetch(`/api/chat?${query}`, { cache: "no-store", signal }))).json();
+}
+export async function readArtifacts(
+  chatId: string,
+  cursor?: string | null,
+  signal?: AbortSignal,
+): Promise<{ items: ArtifactView[]; next_cursor: string | null }> {
+  const query = new URLSearchParams({ chatId });
+  if (cursor) query.set("cursor", cursor);
+  return (
+    await checked(await fetch(`/api/artifacts?${query}`, { cache: "no-store", signal }))
+  ).json();
+}
+export async function readConversation(chatId: string, signal?: AbortSignal) {
+  const [history, artifacts] = await Promise.all([
+    readHistory(chatId, signal),
+    readArtifacts(chatId, null, signal),
+  ]);
+  return { ...history, artifacts };
+}
+export async function createConversation(
+  agentId: string,
+  title: string,
+  signal?: AbortSignal,
+): Promise<ConversationSummary> {
+  return (
+    await checked(
+      await fetch("/api/conversations", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ agentId, title }),
+        signal,
+      }),
+    )
+  ).json();
+}
+export async function uploadFile(
+  chatId: string,
+  file: File,
+  signal?: AbortSignal,
+): Promise<FileView> {
+  const form = new FormData();
+  form.set("file", file);
+  return (
+    await checked(
+      await fetch(`/api/files?chatId=${encodeURIComponent(chatId)}`, {
+        method: "POST",
+        body: form,
+        signal,
+      }),
+    )
+  ).json();
 }
 class StreamDecoder extends DefaultChatTransport<UIMessage> {
   decode(stream: ReadableStream<Uint8Array>) {

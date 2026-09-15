@@ -2,8 +2,8 @@
 
 A standalone Next.js app that lets a user sign in to **GEA**, authorize access to
 an organization, see a verified profile, and chat with an Agent belonging to the
-application. Browse saved conversations, load earlier messages, and continue them
-after a reload or a new login. All GEA calls use backend HTTP `fetch`; there is no GEA SDK, Project
+application. Upload message attachments, browse generated Artifacts, download files,
+and continue saved conversations after a reload or a new login. All GEA calls use backend HTTP `fetch`; there is no GEA SDK, Project
 API key, tenant token, or caller-supplied principal. AI SDK only decodes the
 relayed UI message stream in the browser.
 
@@ -43,7 +43,7 @@ requires an organization selector; its credentials cannot be substituted here.
    environment release, and configure that application environment for the
    consuming organization. Adjust installation configuration only when needed
    (see below). The example discovers authorized entries with `GET /api/v1/agents`;
-   no Worker URL or manually copied Agent ID is needed. Use a basic text Agent without interactive tool
+   no Worker URL or manually copied Agent ID is needed. Use an Agent without interactive tool
    approvals for this example. The [basic example](../basic/) shows Agent
    development and richer tool UI. An arbitrary Agent from a different application
    will be denied by GEA, even with a valid OAuth token.
@@ -109,29 +109,32 @@ environment. `GEA_AGENT_URL` and `GEA_AGENT_NAME` are no longer used.
 
 ## HTTP contract
 
-This example requires a GEA host exposing the new `/api/v1` Agents API
-(introduced in GEA commit `420d7c25f`, after Web v0.51.2). Check the public
+This example requires a GEA host exposing the `/api/v1` Agents API, including
+Session preparation, Files and Session Artifacts (GEA PR #458). Check the public
 [OpenAPI contract](https://musegea.com/api/v1/openapi.json) and
 [Agents API guide](https://musegea.com/developers/agent-api). OAuth discovery is at
 [`/api/auth/.well-known/openid-configuration`](https://musegea.com/api/auth/.well-known/openid-configuration).
 The original 2026-07 app-sdk README and package-based developer guide do not
 fully describe this newer application model. No GEA package is needed here.
 
-| Operation            | Backend → GEA                                                                                                                                                                   |
-| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Sign in              | Browser redirects to `GET /api/auth/oauth2/authorize`, with `response_type=code`, registered redirect URI, random `state`, and S256 PKCE. GEA owns `/oauth/tenant` and consent. |
-| Code exchange        | `POST /api/auth/oauth2/token`, form-encoded `grant_type=authorization_code`, `code`, `code_verifier`, exact `redirect_uri`; `client_secret_basic`.                              |
-| Restore credentials  | Same token endpoint with `grant_type=refresh_token`; persist the **new pair** before unlocking.                                                                                 |
-| Verified profile     | `GET /api/auth/oauth2/userinfo`, using the user's bearer token.                                                                                                                 |
-| Discover Agents      | `GET /api/v1/agents?environment=production`, following opaque `next_cursor`, including sparse pages.                                                                            |
-| New conversation     | `POST /api/v1/sessions` with `{agent_id, environment, title, input, stream:true}`. IDs are returned as `x-gea-agent-session-id` and `x-gea-agent-run-id`.                       |
-| Conversation history | `GET /api/v1/sessions?environment=production&limit=20`; `GET /api/v1/sessions/<id>` verifies each selected conversation.                                                        |
-| Continue             | `POST /api/v1/sessions/<id>/runs` with `{input, stream:true}`.                                                                                                                  |
-| Persisted messages   | `GET /api/v1/sessions/<id>/messages?limit=20&cursor=<opaque cursor>`. Pages contain messages in display order; prepend older pages.                                             |
-| Run status           | `GET /api/v1/runs/<id>`.                                                                                                                                                        |
-| Reconnect            | `GET /api/v1/runs/<id>/stream`. Decode the `: gea-replay` baseline before UI-message SSE. Retry only attachment `503`, at most three times; `204` means read saved history.     |
-| Cancel run           | `POST /api/v1/runs/<id>/cancel` with `{}` JSON. Disconnecting alone does not cancel execution.                                                                                  |
-| Sign out             | `POST /api/auth/oauth2/revoke` with the current refresh token and `client_secret_basic`; GEA also invalidates its associated access tokens.                                     |
+| Operation            | Backend → GEA                                                                                                                                                                                       |
+| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Sign in              | Browser redirects to `GET /api/auth/oauth2/authorize`, with `response_type=code`, registered redirect URI, random `state`, and S256 PKCE. GEA owns `/oauth/tenant` and consent.                     |
+| Code exchange        | `POST /api/auth/oauth2/token`, form-encoded `grant_type=authorization_code`, `code`, `code_verifier`, exact `redirect_uri`; `client_secret_basic`.                                                  |
+| Restore credentials  | Same token endpoint with `grant_type=refresh_token`; persist the **new pair** before unlocking.                                                                                                     |
+| Verified profile     | `GET /api/auth/oauth2/userinfo`, using the user's bearer token.                                                                                                                                     |
+| Discover Agents      | `GET /api/v1/agents?environment=production`, following opaque `next_cursor`, including sparse pages.                                                                                                |
+| Prepare conversation | `POST /api/v1/sessions` with `{agent_id, environment, title}` and no input. Returns the Session without starting a Run.                                                                             |
+| Upload attachment    | `POST /api/v1/files`, multipart fields `file` and configured `environment`. Returns the managed file ID.                                                                                            |
+| Conversation history | `GET /api/v1/sessions?environment=production&limit=20`; `GET /api/v1/sessions/<id>` verifies each selected conversation.                                                                            |
+| Send message         | `POST /api/v1/sessions/<id>/runs` with `{input, stream:true}`. Text uses a string; attachments use a user message with text and `{type:"file", file_id}` parts. Run IDs arrive in response headers. |
+| Generated files      | `GET /api/v1/sessions/<id>/artifacts?limit=20&cursor=<opaque cursor>`.                                                                                                                              |
+| Download content     | `GET /api/v1/files/<id>/content`. The backend redirects the authorized signed URL or streams the response bytes.                                                                                    |
+| Persisted messages   | `GET /api/v1/sessions/<id>/messages?limit=20&cursor=<opaque cursor>`. Pages contain messages in display order; prepend older pages.                                                                 |
+| Run status           | `GET /api/v1/runs/<id>`.                                                                                                                                                                            |
+| Reconnect            | `GET /api/v1/runs/<id>/stream`. Decode the `: gea-replay` baseline before UI-message SSE. Retry only attachment `503`, at most three times; `204` means read saved history.                         |
+| Cancel run           | `POST /api/v1/runs/<id>/cancel` with `{}` JSON. Disconnecting alone does not cancel execution.                                                                                                      |
+| Sign out             | `POST /api/auth/oauth2/revoke` with the current refresh token and `client_secret_basic`; GEA also invalidates its associated access tokens.                                                         |
 
 Token responses contain `application`, `authorization`, and `organization`.
 The app trusts organization information only from this server-to-server response,
@@ -143,6 +146,39 @@ package app's `resources:read` or `agent_chats:write` ORPC surface. Here the rea
 read-only API demonstration includes userinfo, authorized Agent discovery and conversation
 history. Access to Agent data remains subject to GEA's user/application/tenant/
 environment checks on every request.
+
+## Uploads and Artifacts
+
+1. Select an Agent, then choose **Attach files**. The app first prepares a Session
+   if needed and uploads each file through its backend. Neither step runs the Agent.
+2. Review attachments, add an optional message, then **Send**. The app submits their
+   `file_id` values to the Session's Run. A file-only message is supported.
+3. After the Run, **Artifacts** lists files generated in the current conversation.
+   **Load more artifacts** follows the API cursor. Reloading or switching conversations
+   reloads that Session's messages and outputs from GEA.
+4. **Download** and history attachment links use the backend's OAuth-authorized
+   content route. Access tokens never appear in a browser URL or reach the object store.
+
+Files are independent managed resources; upload does not require an Agent or Session
+ID in GEA. This example checks the selected Session before uploading and uses its
+configured application environment. Uploading alone does not attach a file to a
+message, copy it into Computer, or make it a Session output. Removing an attachment
+from the draft only removes the reference from the next message; it does not delete
+the uploaded file. Unsent attachments are not restored after a reload.
+
+`file_id` and `artifact_id` refer to the same underlying file. Generated output IDs
+can be used as later `file_id` inputs. The sidebar lists generated outputs; input
+uploads remain visible in their message history. To see outputs, use an Agent that
+saves managed Artifacts, such as [agents-api](../agents-api/) with `ctx.artifacts`.
+This example offers file downloads, without an inline document viewer or output-reuse control.
+
+The demo allows **10 files per message, 4 MiB per file**, uploaded one at a time.
+The cap leaves room for multipart overhead under
+[Vercel's function payload limit](https://vercel.com/docs/functions/limitations).
+Larger files need the Files API's streaming upload grant flow. Writes are not
+automatically retried; successfully uploaded attachments remain in the draft if
+a later upload fails. An ambiguous write failure may have created a resource on GEA.
+The file UI adds no application database tables or migrations.
 
 ## Sessions, refresh and errors
 
@@ -169,8 +205,8 @@ environment checks on every request.
   not anonymous success. There is no localStorage token, in-memory token store,
   application-global user token, or encrypted token cookie.
 - Chat writes are not idempotent. They are sent once. On an ambiguous failure,
-  use **Restore conversation** before sending again. A create-and-invoke failure
-  retains the created session ID when GEA supplies it. Refreshing history also
+  use **Restore conversation** before sending again. The UI prepares the Session
+  before invoking it and retains its ID if Run submission fails. Refreshing history also
   recovers a created conversation if the response was lost.
 - Conversation history comes from GEA, scoped to OAuth tenant, user, application
   and environment. Select a conversation to continue it, **Load more conversations**
@@ -191,9 +227,9 @@ environment checks on every request.
   a recorded Run ID. Sending a new turn records the new Run.
 - Only conversations created through the Agents API appear in its list. Existing
   Worker-only chats remain on their original API and are not migrated here.
-- This is a text chat example: it displays reasoning and tool status, but does
-  not submit tool approvals, tool outputs, files or rich artifacts. Choose an
-  Agent whose flow does not require those interactions.
+- The app displays reasoning and tool status, but does not submit interactive
+  tool approvals or tool outputs. Choose an Agent whose flow does not require
+  those interactions.
 
 The app doesn't make an OAuth exchange and a PostgreSQL commit atomic. A process
 crash after GEA rotates a token but before the database commit can require a fresh

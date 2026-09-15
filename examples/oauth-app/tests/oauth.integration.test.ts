@@ -23,6 +23,7 @@ let failedRun = false;
 let runStopped = false;
 let denied = false;
 let createFails = false;
+let contentGone = false;
 const apiRequests: { method: string; path: string; body: unknown }[] = [];
 const disabledAccessTokens = new Set<string>();
 const ids = {
@@ -33,6 +34,8 @@ const ids = {
   run: "018f0000-0000-7000-8000-000000000005",
   agent: "018f0000-0000-7000-8000-000000000006",
   older: "018f0000-0000-7000-8000-000000000007",
+  file: "018f0000-0000-7000-8000-000000000008",
+  artifact: "018f0000-0000-7000-8000-000000000009",
 };
 function tokens(suffix = "initial") {
   return {
@@ -43,13 +46,21 @@ function tokens(suffix = "initial") {
     scope: "openid profile offline_access agents:invoke",
     application: { id: ids.app },
     authorization: { id: ids.authorization },
-    organization: { id: ids.org, name: "Verified organization", slug: "verified" },
+    organization: {
+      id: ids.org,
+      name: "Verified organization",
+      slug: "verified",
+    },
   };
 }
 function request(path: string, cookie = "", body?: unknown) {
   return new Request(`http://localhost:4000${path}`, {
     method: body === undefined ? "GET" : "POST",
-    headers: { cookie, origin: "http://localhost:4000", "content-type": "application/json" },
+    headers: {
+      cookie,
+      origin: "http://localhost:4000",
+      "content-type": "application/json",
+    },
     body: body === undefined ? undefined : JSON.stringify(body),
   });
 }
@@ -82,6 +93,37 @@ const conversation = (id = ids.chat) => ({
   created_at: "2026-09-14T00:00:00.000Z",
   updated_at: "2026-09-14T00:00:00.000Z",
 });
+const fileRecord = (id = ids.file) => ({
+  id,
+  object: "file",
+  filename: "notes.txt",
+  media_type: "text/plain",
+  size: 4,
+  title: "Notes",
+  created_at: "2026-09-15T00:00:00.000Z",
+  deleted_at: null,
+});
+const artifactRecord = () => ({
+  ...fileRecord(ids.artifact),
+  object: "artifact",
+  session_id: ids.chat,
+  run_id: ids.run,
+});
+function uploadRequest(
+  cookies: string,
+  file = new File([new Uint8Array([0, 255, 128, 1])], "notes.txt", {
+    type: "text/plain",
+  }),
+) {
+  const form = new FormData();
+  form.set("file", file);
+  form.set("environment", "preview"); // The app's configured environment wins.
+  return new Request(`http://localhost:4000/api/files?chatId=${ids.chat}`, {
+    method: "POST",
+    headers: { cookie: cookies, origin: "http://localhost:4000" },
+    body: form,
+  });
+}
 beforeAll(async () => {
   server = createServer(async (req, res) => {
     const chunks: Buffer[] = [];
@@ -90,11 +132,32 @@ beforeAll(async () => {
     const body = new URLSearchParams(raw);
     const url = new URL(req.url!, "http://provider");
     if (url.pathname.startsWith("/api/v1")) {
-      apiRequests.push({ method: req.method!, path: req.url!, body: raw ? JSON.parse(raw) : null });
+      let payload: unknown = raw
+        ? req.headers["content-type"]?.startsWith("multipart/form-data")
+          ? null
+          : JSON.parse(raw)
+        : null;
+      if (req.headers["content-type"]?.startsWith("multipart/form-data")) {
+        const form = await new Request("http://provider/upload", {
+          method: "POST",
+          headers: { "content-type": req.headers["content-type"] },
+          body: Buffer.concat(chunks),
+        }).formData();
+        const file = form.get("file") as File;
+        payload = {
+          environment: form.get("environment"),
+          filename: file.name,
+          media_type: file.type,
+          bytes: [...new Uint8Array(await file.arrayBuffer())],
+        };
+      }
+      apiRequests.push({ method: req.method!, path: req.url!, body: payload });
       if (!req.headers.authorization?.startsWith("Bearer access-") || denied) {
         res.statusCode = denied ? 404 : 401;
         res.end(
-          JSON.stringify({ error: { code: "NOT_FOUND", message: "private upstream detail" } }),
+          JSON.stringify({
+            error: { code: "NOT_FOUND", message: "private upstream detail" },
+          }),
         );
         return;
       }
@@ -164,6 +227,33 @@ beforeAll(async () => {
           next_cursor: url.searchParams.has("cursor") ? null : "opaque+/cursor=",
         }),
       );
+    } else if (url.pathname === "/api/v1/files" && req.method === "POST") {
+      res.statusCode = 201;
+      res.end(JSON.stringify(fileRecord()));
+    } else if (url.pathname === `/api/v1/sessions/${ids.chat}/artifacts`) {
+      res.end(
+        JSON.stringify({
+          items: [artifactRecord()],
+          next_cursor: url.searchParams.has("cursor") ? null : ids.artifact,
+        }),
+      );
+    } else if (url.pathname === `/api/v1/files/${ids.artifact}/content`) {
+      if (contentGone) {
+        res.statusCode = 410;
+        res.end("{}");
+        return;
+      }
+      res.statusCode = 302;
+      res.setHeader("location", `${origin}/signed/report.txt?signature=download-capability`);
+      res.setHeader("set-cookie", "upstream-private=secret");
+      res.end();
+    } else if (
+      url.pathname === "/api/v1/sessions" &&
+      req.method === "POST" &&
+      !JSON.parse(raw).input
+    ) {
+      res.statusCode = 201;
+      res.end(JSON.stringify(conversation()));
     } else if (
       req.method === "GET" &&
       [ids.chat, ids.older].some((id) => url.pathname === `/api/v1/sessions/${id}`)
@@ -191,7 +281,13 @@ beforeAll(async () => {
       res.end(
         JSON.stringify({
           items: url.searchParams.has("cursor")
-            ? [{ id: "old", role: "user", parts: [{ type: "text", text: "Older message" }] }]
+            ? [
+                {
+                  id: "old",
+                  role: "user",
+                  parts: [{ type: "text", text: "Older message" }],
+                },
+              ]
             : failedRun
               ? [
                   {
@@ -217,7 +313,12 @@ beforeAll(async () => {
         JSON.parse(Buffer.concat(chunks).toString());
       } catch {
         res.statusCode = 400;
-        res.end(JSON.stringify({ code: "BAD_REQUEST", data: { reason: "invalid_json" } }));
+        res.end(
+          JSON.stringify({
+            code: "BAD_REQUEST",
+            data: { reason: "invalid_json" },
+          }),
+        );
         return;
       }
       runStopped = true;
@@ -264,6 +365,7 @@ beforeEach(async () => {
   calls = 0;
   denied = false;
   createFails = false;
+  contentGone = false;
   apiRequests.length = 0;
   failedRun = false;
   runStopped = false;
@@ -278,6 +380,153 @@ afterAll(async () => {
     await new Promise<void>((resolve, reject) => server.close((e) => (e ? reject(e) : resolve())));
 });
 describe("GEA OAuth HTTP application", () => {
+  it("prepares a Session, uploads exact bytes and references uploaded and generated Files in a Run", async () => {
+    const loggedIn = await signIn();
+    const prepared = await app.createConversation(
+      request("/api/conversations", loggedIn, {
+        agentId: ids.agent,
+        title: "Files first",
+      }),
+    );
+    expect(prepared.status).toBe(201);
+    expect((await prepared.json()).id).toBe(ids.chat);
+    expect(calls).toBe(0);
+    expect(apiRequests.at(-1)?.body).toEqual({
+      agent_id: ids.agent,
+      environment: "production",
+      title: "Files first",
+    });
+    const uploaded = await app.uploadFile(uploadRequest(loggedIn));
+    expect(uploaded.status).toBe(201);
+    expect((await uploaded.json()).id).toBe(ids.file);
+    expect(apiRequests.at(-1)).toEqual({
+      method: "POST",
+      path: "/api/v1/files",
+      body: {
+        environment: "production",
+        filename: "notes.txt",
+        media_type: "text/plain",
+        bytes: [0, 255, 128, 1],
+      },
+    });
+    expect(calls).toBe(0);
+    const response = await app.run(
+      request("/api/chat", loggedIn, {
+        chatId: ids.chat,
+        message: "Read both",
+        fileIds: [ids.file, ids.artifact],
+      }),
+    );
+    expect(response.status).toBe(200);
+    expect(apiRequests.at(-1)?.body).toEqual({
+      input: {
+        role: "user",
+        parts: [
+          { type: "text", text: "Read both" },
+          { type: "file", file_id: ids.file },
+          { type: "file", file_id: ids.artifact },
+        ],
+      },
+      stream: true,
+    });
+    expect(calls).toBe(1);
+  });
+  it("accepts a file-only turn and rejects an empty turn or invalid file reference", async () => {
+    const loggedIn = await signIn();
+    expect(
+      (
+        await app.run(
+          request("/api/chat", loggedIn, {
+            chatId: ids.chat,
+            message: "",
+            fileIds: [ids.file],
+          }),
+        )
+      ).status,
+    ).toBe(200);
+    expect(apiRequests.at(-1)?.body).toEqual({
+      input: { role: "user", parts: [{ type: "file", file_id: ids.file }] },
+      stream: true,
+    });
+    expect(
+      (
+        await app.run(
+          request("/api/chat", loggedIn, {
+            chatId: ids.chat,
+            message: "",
+            fileIds: [],
+          }),
+        )
+      ).status,
+    ).toBe(400);
+    expect(
+      (
+        await app.run(
+          request("/api/chat", loggedIn, {
+            chatId: ids.chat,
+            message: "Hi",
+            fileIds: ["not-a-file"],
+          }),
+        )
+      ).status,
+    ).toBe(400);
+    expect(calls).toBe(1);
+  });
+  it("pages authorized Session artifacts and downloads through the backend without leaking OAuth credentials", async () => {
+    const loggedIn = await signIn();
+    const first = await app.artifacts(
+      request(`/api/artifacts?chatId=${ids.chat}&limit=1`, loggedIn),
+    );
+    expect(first.status).toBe(200);
+    const page = await first.json();
+    expect(page.items[0].id).toBe(ids.artifact);
+    expect(page.items[0].session_id).toBe(ids.chat);
+    const second = await app.artifacts(
+      request(`/api/artifacts?chatId=${ids.chat}&cursor=${page.next_cursor}&limit=1`, loggedIn),
+    );
+    expect((await second.json()).next_cursor).toBeNull();
+    expect(apiRequests.at(-1)?.path).toBe(
+      `/api/v1/sessions/${ids.chat}/artifacts?limit=1&cursor=${ids.artifact}`,
+    );
+    const download = await app.downloadFile(
+      request(`/api/files/content?fileId=${ids.artifact}`, loggedIn),
+    );
+    expect(download.status).toBe(302);
+    expect(download.headers.get("location")).toBe(
+      `${origin}/signed/report.txt?signature=download-capability`,
+    );
+    expect(download.headers.get("set-cookie")).toBeNull();
+    expect(download.headers.get("cache-control")).toBe("no-store");
+    expect(JSON.stringify([...download.headers])).not.toMatch(/access-initial|refresh-initial/);
+    contentGone = true;
+    const removed = await app.downloadFile(
+      request(`/api/files/content?fileId=${ids.artifact}`, loggedIn),
+    );
+    expect(removed.status).toBe(410);
+    expect((await removed.json()).message).toContain("deleted");
+    denied = true;
+    expect(
+      (await app.artifacts(request(`/api/artifacts?chatId=${ids.chat}`, loggedIn))).status,
+    ).toBe(404);
+    expect(
+      (await app.downloadFile(request(`/api/files/content?fileId=${ids.artifact}`, loggedIn)))
+        .status,
+    ).toBe(404);
+    expect((await app.uploadFile(uploadRequest(loggedIn))).status).toBe(404);
+  });
+  it("rejects anonymous, cross-origin, malformed and oversized uploads before a file write", async () => {
+    const loggedIn = await signIn();
+    expect((await app.uploadFile(uploadRequest(""))).status).toBe(401);
+    const crossOrigin = uploadRequest(loggedIn);
+    crossOrigin.headers.set("origin", "https://attacker.example");
+    expect((await app.uploadFile(crossOrigin)).status).toBe(403);
+    expect(
+      (await app.uploadFile(request(`/api/files?chatId=${ids.chat}`, loggedIn, {}))).status,
+    ).toBe(415);
+    const tooLarge = new File([new Uint8Array(4 * 1024 * 1024 + 1)], "large.bin");
+    expect((await app.uploadFile(uploadRequest(loggedIn, tooLarge))).status).toBe(413);
+    expect(apiRequests.some((entry) => entry.path === "/api/v1/files")).toBe(false);
+  });
   it("binds a one-time code to the browser and S256 verifier; ignores forged organization metadata", async () => {
     const flow = await begin();
     expect(flow.url.origin).toBe(origin);
@@ -397,7 +646,12 @@ describe("GEA OAuth HTTP application", () => {
     ).toBe(200);
     const recovered = await app.session(request("/api/session", loggedIn));
     expect((await recovered.json()).agents).toEqual([
-      { id: ids.agent, name: "Test Agent", environment: "production", description: null },
+      {
+        id: ids.agent,
+        name: "Test Agent",
+        environment: "production",
+        description: null,
+      },
     ]);
   });
   it("discovers across sparse pages and pages conversations and older messages after a new login", async () => {
@@ -428,7 +682,10 @@ describe("GEA OAuth HTTP application", () => {
     expect(older.messages[0].parts[0].text).toBe("Older message");
     expect(older.nextCursor).toBeNull();
     const continued = await app.run(
-      request("/api/chat", loggedIn, { chatId: ids.older, message: "Continue" }),
+      request("/api/chat", loggedIn, {
+        chatId: ids.older,
+        message: "Continue",
+      }),
     );
     // This fake provider intentionally returns a different identity; the app fails closed.
     expect(continued.status).toBe(502);
@@ -491,8 +748,14 @@ describe("GEA OAuth HTTP application", () => {
   it("reattaches the recorded Run after signing in again", async () => {
     const loggedIn = await signIn();
     expect(
-      (await app.run(request("/api/chat", loggedIn, { agentId: ids.agent, message: "Hello" })))
-        .status,
+      (
+        await app.run(
+          request("/api/chat", loggedIn, {
+            agentId: ids.agent,
+            message: "Hello",
+          }),
+        )
+      ).status,
     ).toBe(200);
     const newLogin = await signIn();
     const response = await app.stream(request(`/api/chat/stream?chatId=${ids.chat}`, newLogin));
@@ -529,7 +792,12 @@ describe("GEA OAuth HTTP application", () => {
     const body = await response.json();
     expect(body.run.status).toBe("error");
     expect(body.messages).toEqual([
-      { id: "empty-assistant", role: "assistant", parts: [], metadata: { finishReason: "error" } },
+      {
+        id: "empty-assistant",
+        role: "assistant",
+        parts: [],
+        metadata: { finishReason: "error" },
+      },
     ]);
   });
   it("keeps failed revocation retryable while blocking API use", async () => {

@@ -16,6 +16,20 @@ Last verified: 2026-09-15 (Asia/Shanghai).
 - Actual Creative Reasoning model calls using the Agent's `model: "auto"`
   selection and Rust/WASM Agent Core.
 
+## Published CLI recheck
+
+CLI `0.1.260915-alpha.0` was released from merged GEA main `f06e0c904`.
+[Release workflow](https://github.com/bmrlab/gea/actions/runs/34973131005)
+passed its macOS ARM64 and Windows x64 build/smoke jobs and npm publication.
+The wrapper and both platform packages are publicly available with matching
+`latest` tags; downloaded tarballs match the tested CI artifacts byte-for-byte.
+
+The macOS release artifact was installed in an isolated consumer with its bundled
+Runtime. This example's full real-model HTTP verification passed again: Session
+preparation, Computer operations, upload, Run completion, exact output bytes,
+output reuse in another Session and paginated history. The broader checks below
+record the earlier source-build acceptance; they were not all rerun for release.
+
 ## Passed checks
 
 | Check                                                                          | Result                                                                                      |
@@ -76,4 +90,4 @@ disk. This differs from source hot reload, which preserves the live environment.
 This example's Local flow was executed. Its Preview configuration uses the cloud
 HTTP contract, but this new Agent was not published to Preview and its OAuth flow
 was not exercised against production. The operator's production-cluster update
-is separate from these local results. The new CLI has not been published.
+is separate from these local results. CLI publication is verified separately above.

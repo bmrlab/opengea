@@ -2,6 +2,7 @@ import "server-only";
 import { z } from "zod";
 import { validateUIMessages } from "ai";
 import { getEnv } from "./env";
+import { maxMessageFiles, maxUploadBytes } from "../lib/files";
 import {
   authorizationUrl,
   agentFetch,
@@ -79,7 +80,10 @@ export async function login(request: Request) {
     );
     const response = new Response(null, {
       status: 303,
-      headers: { location: authorizationUrl(state, hash(verifier)), "cache-control": "no-store" },
+      headers: {
+        location: authorizationUrl(state, hash(verifier)),
+        "cache-control": "no-store",
+      },
     });
     setCookie(response.headers, flowCookie, proof, 300);
     return response;
@@ -203,7 +207,11 @@ const conversationOutput = z.object({
   created_at: z.iso.datetime(),
   updated_at: z.iso.datetime(),
 });
-const runOutput = z.object({ id: z.uuid(), session_id: z.uuid(), status: z.string() });
+const runOutput = z.object({
+  id: z.uuid(),
+  session_id: z.uuid(),
+  status: z.string(),
+});
 const cursorOutput = z.string().min(1).nullable();
 const pageQuery = z.object({
   cursor: z.string().min(1).max(1024).optional(),
@@ -213,9 +221,26 @@ const runInput = z
   .strictObject({
     chatId: z.uuid().optional(),
     agentId: z.uuid().optional(),
-    message: z.string().trim().min(1).max(8000),
+    message: z.string().trim().max(8000),
+    fileIds: z.array(z.uuid()).max(maxMessageFiles).default([]),
   })
-  .refine((v) => Boolean(v.chatId) !== Boolean(v.agentId));
+  .refine((v) => Boolean(v.chatId) !== Boolean(v.agentId))
+  .refine((v) => Boolean(v.message) || v.fileIds.length > 0);
+const fileOutput = z.object({
+  id: z.uuid(),
+  filename: z.string(),
+  media_type: z.string(),
+  size: z.number().int().nonnegative(),
+  title: z.string(),
+  created_at: z.iso.datetime(),
+  deleted_at: z.iso.datetime().nullable(),
+});
+const artifactOutput = fileOutput.extend({
+  session_id: z.uuid().nullable(),
+  run_id: z.uuid().nullable(),
+});
+export type FileView = z.infer<typeof fileOutput>;
+export type ArtifactView = z.infer<typeof artifactOutput>;
 const emptyAssistant = z.object({
   id: z.string().min(1),
   role: z.literal("assistant"),
@@ -244,15 +269,19 @@ async function assertUpstream(response: Response) {
   if (!response.ok) {
     await response.body?.cancel();
     throw new HttpError(
-      [401, 403, 404, 409, 429, 503].includes(response.status) ? response.status : 502,
+      [401, 403, 404, 409, 410, 413, 429, 503].includes(response.status) ? response.status : 502,
       "agent_failed",
       response.status === 403
         ? "GEA has not granted this user and application access to the Agent. Check the application's environment setup."
         : response.status === 404
-          ? "This conversation or Agent is unavailable to your GEA account."
-          : response.status === 409
-            ? "This conversation already has an active run. Restore it before sending another message."
-            : "The Agent request failed. Refresh history to check whether a conversation was created before sending again.",
+          ? "This conversation, file or Agent is unavailable to your GEA account."
+          : response.status === 410
+            ? "This file's content has been deleted."
+            : response.status === 413
+              ? "The file exceeds the GEA server's upload limit."
+              : response.status === 409
+                ? "This conversation already has an active run. Restore it before sending another message."
+                : "The Agent request failed. Refresh history to check whether a conversation was created before sending again.",
     );
   }
 }
@@ -260,7 +289,10 @@ async function discoverAgents(token: string) {
   const agents: AgentView[] = [];
   let cursor: string | null = null;
   do {
-    const query = new URLSearchParams({ environment: getEnv().GEA_ENVIRONMENT, limit: "100" });
+    const query = new URLSearchParams({
+      environment: getEnv().GEA_ENVIRONMENT,
+      limit: "100",
+    });
     if (cursor) query.set("cursor", cursor);
     const response = await agentFetch(`/agents?${query}`, token);
     await assertUpstream(response);
@@ -286,9 +318,139 @@ export async function conversations(request: Request) {
     await assertUpstream(response);
     return json(
       z
-        .object({ items: z.array(conversationOutput), next_cursor: cursorOutput })
+        .object({
+          items: z.array(conversationOutput),
+          next_cursor: cursorOutput,
+        })
         .parse(await response.json()),
     );
+  } catch (error) {
+    return failure(error);
+  }
+}
+export async function createConversation(request: Request) {
+  try {
+    sameOrigin(request);
+    const parsed = z
+      .strictObject({
+        agentId: z.uuid(),
+        title: z.string().trim().min(1).max(80),
+      })
+      .safeParse(await inputJson(request));
+    if (!parsed.success)
+      throw new HttpError(400, "invalid_input", "Choose an Agent and a conversation title.");
+    const current = await loadSession(request);
+    const response = await agentFetch("/sessions", current.token.access_token, {
+      method: "POST",
+      body: JSON.stringify({
+        agent_id: parsed.data.agentId,
+        environment: getEnv().GEA_ENVIRONMENT,
+        title: parsed.data.title,
+      }),
+    });
+    await assertUpstream(response);
+    const conversation = conversationOutput.parse(await response.json());
+    if (
+      conversation.agent_id !== parsed.data.agentId ||
+      conversation.environment !== getEnv().GEA_ENVIRONMENT
+    )
+      throw new HttpError(
+        502,
+        "invalid_agent_response",
+        "Unexpected conversation identity. Refresh history before trying again.",
+      );
+    return json(conversation, 201);
+  } catch (error) {
+    return failure(error);
+  }
+}
+export async function uploadFile(request: Request) {
+  try {
+    sameOrigin(request);
+    const chatId = z.uuid().safeParse(new URL(request.url).searchParams.get("chatId"));
+    if (!chatId.success)
+      throw new HttpError(400, "invalid_input", "Choose a conversation before uploading.");
+    const current = await loadSession(request);
+    if (!request.headers.get("content-type")?.startsWith("multipart/form-data"))
+      throw new HttpError(415, "invalid_input", "Send a multipart file upload.");
+    if (Number(request.headers.get("content-length") ?? 0) > maxUploadBytes + 64 * 1024)
+      throw new HttpError(413, "file_too_large", "Choose a file no larger than 4 MiB.");
+    const form = await request.formData();
+    const file = form.get("file");
+    if (!(file instanceof File) || form.getAll("file").length !== 1)
+      throw new HttpError(400, "invalid_input", "Upload one file at a time.");
+    if (file.size > maxUploadBytes)
+      throw new HttpError(413, "file_too_large", "Choose a file no larger than 4 MiB.");
+    await authorizedConversation(chatId.data, current.token.access_token);
+    const upstreamForm = new FormData();
+    upstreamForm.set("file", file);
+    upstreamForm.set("environment", getEnv().GEA_ENVIRONMENT);
+    const response = await agentFetch("/files", current.token.access_token, {
+      method: "POST",
+      body: upstreamForm,
+    });
+    await assertUpstream(response);
+    return json(fileOutput.parse(await response.json()), 201);
+  } catch (error) {
+    return failure(error);
+  }
+}
+export async function artifacts(request: Request) {
+  try {
+    const query = pageQuery
+      .extend({ chatId: z.uuid() })
+      .safeParse(Object.fromEntries(new URL(request.url).searchParams));
+    if (!query.success)
+      throw new HttpError(400, "invalid_input", "Invalid conversation or artifact cursor.");
+    const current = await loadSession(request);
+    await authorizedConversation(query.data.chatId, current.token.access_token);
+    const params = new URLSearchParams({ limit: String(query.data.limit) });
+    if (query.data.cursor) params.set("cursor", query.data.cursor);
+    const response = await agentFetch(
+      `/sessions/${query.data.chatId}/artifacts?${params}`,
+      current.token.access_token,
+    );
+    await assertUpstream(response);
+    return json(
+      z
+        .object({ items: z.array(artifactOutput), next_cursor: cursorOutput })
+        .parse(await response.json()),
+    );
+  } catch (error) {
+    return failure(error);
+  }
+}
+export async function downloadFile(request: Request) {
+  try {
+    const fileId = z.uuid().safeParse(new URL(request.url).searchParams.get("fileId"));
+    if (!fileId.success) throw new HttpError(400, "invalid_input", "Invalid file reference.");
+    const current = await loadSession(request);
+    // Never forward the OAuth token to the object store. Only the signed URL is redirected.
+    const response = await agentFetch(`/files/${fileId.data}/content`, current.token.access_token, {
+      redirect: "manual",
+    });
+    if (response.status === 302) {
+      const location = z.url().parse(response.headers.get("location"));
+      if (!["http:", "https:"].includes(new URL(location).protocol))
+        throw new HttpError(502, "invalid_file_response", "Invalid file download URL.");
+      await response.body?.cancel();
+      return new Response(null, {
+        status: 302,
+        headers: {
+          location,
+          "cache-control": "no-store",
+          "referrer-policy": "no-referrer",
+        },
+      });
+    }
+    await assertUpstream(response);
+    const headers = new Headers({
+      "cache-control": "no-store",
+      "x-content-type-options": "nosniff",
+      "content-disposition": response.headers.get("content-disposition") ?? "attachment",
+    });
+    headers.set("content-type", response.headers.get("content-type") ?? "application/octet-stream");
+    return new Response(response.body, { headers });
   } catch (error) {
     return failure(error);
   }
@@ -325,10 +487,19 @@ export async function run(request: Request) {
       throw new HttpError(
         400,
         "invalid_input",
-        "Choose an Agent or conversation and enter a message of at most 8,000 characters.",
+        "Choose an Agent or conversation, then send a message of at most 8,000 characters or up to 10 files.",
       );
     const current = await loadSession(request);
-    const { chatId, agentId, message } = parsed.data;
+    const { chatId, agentId, message, fileIds } = parsed.data;
+    const input = fileIds.length
+      ? {
+          role: "user",
+          parts: [
+            ...(message ? [{ type: "text", text: message }] : []),
+            ...fileIds.map((id) => ({ type: "file", file_id: id })),
+          ],
+        }
+      : message;
     if (chatId) await authorizedConversation(chatId, current.token.access_token);
     // Exactly one write. Never replay a user turn after an ambiguous network failure.
     const upstream = await agentFetch(
@@ -338,12 +509,12 @@ export async function run(request: Request) {
         method: "POST",
         body: JSON.stringify(
           chatId
-            ? { input: message, stream: true }
+            ? { input, stream: true }
             : {
                 agent_id: agentId,
                 environment: getEnv().GEA_ENVIRONMENT,
-                title: message.slice(0, 80),
-                input: message,
+                title: message.slice(0, 80) || "File conversation",
+                input,
                 stream: true,
               },
         ),

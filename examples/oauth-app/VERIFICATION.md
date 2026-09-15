@@ -1,8 +1,43 @@
 # Verification · OAuth app
 
-Date: 2026-09-14. Branch: `codex/oauth-app-example`.
+Last verified: 2026-09-15 (Asia/Shanghai).
 
-## Latest: Agents API and conversation history
+## File attachments and Session Artifacts
+
+Branch: `codex/update-agents-api-examples`. Checked the Files and Artifacts
+contract against GEA main `f06e0c904`, including independent uploads, shared
+file/output IDs and managed content URLs in persisted messages.
+
+- PostgreSQL 17 and a real local HTTP provider: **26 behavioral tests passed**.
+  New tests first failed against the earlier implementation. They cover empty
+  Session preparation without a Run, exact multipart binary bytes, configured
+  environment, uploaded/output `file_id` inputs, file-only messages, Artifact
+  cursors, denied access, origin checks, anonymous calls and oversized uploads.
+- Signed downloads return the authorized URL without forwarding OAuth credentials
+  or upstream cookies. Deleted content preserves HTTP 410; its regression first
+  reproduced the previous generic 502 mapping.
+- Type-check, Next.js production build and Vite+ formatting passed. No dependency
+  upgrade or database migration was needed for the OAuth file UI.
+- Chrome browser acceptance used the real Next.js backend and a separate PostgreSQL
+  database with a local HTTP OAuth/Agents fixture. Uploading a synthetic text file
+  created the Session first, preserved its exact bytes and made no Run. Sending
+  only that attachment produced the expected `file_id` input. The sidebar paged
+  through two generated outputs, Download reached the authenticated content route,
+  and reload restored the saved attachment link and Session output list.
+- Starting a new conversation cleared the previous messages and Artifacts.
+  Desktop and 390 px viewport screenshots were checked; the page had no horizontal
+  overflow. A MetaMask browser extension emitted its own connection errors during
+  this check; those were unrelated to the app's file requests.
+
+The browser fixture does not call a model or prove production OAuth compatibility.
+The available local client configuration was a placeholder (`not-configured`), so
+this new file UI was **not exercised against production**. No manual production
+Vercel deployment, tenant authorization or Agent publication was performed.
+Earlier real-service text-chat checks below remain historical evidence.
+
+## 2026-09-14: Agents API and conversation history
+
+Branch: `codex/oauth-app-example`.
 
 Checked GEA `origin/main` at `c53496e26` and the production
 `https://musegea.com/api/v1/openapi.json` on 2026-09-14. The new Agents API is
