@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { consume, openStream } from "../app/client-api";
+import { consume, openStream } from "../src/routes/-client-api";
 afterEach(() => vi.unstubAllGlobals());
 describe("HTTP conversation recovery", () => {
   it("decodes real AI SDK stream frames into a visible assistant message", async () => {
@@ -13,7 +13,8 @@ describe("HTTP conversation recovery", () => {
     const received: string[] = [];
     await consume(
       new Response(
-        events.map((e) => `data: ${JSON.stringify(e)}\n\n`).join("") + "data: [DONE]\n\n",
+        events.map((e) => `data: ${JSON.stringify(e)}\n\n`).join("") +
+          "data: [DONE]\n\n",
       ),
       (message) => {
         received.push(
@@ -75,9 +76,9 @@ describe("HTTP conversation recovery", () => {
         "\n\n",
     );
     const output = vi.fn();
-    await expect(consume(response, output, { chatId: "chat", runId: "run" })).rejects.toThrow(
-      /identity/,
-    );
+    await expect(
+      consume(response, output, { chatId: "chat", runId: "run" }),
+    ).rejects.toThrow(/identity/);
     expect(output).not.toHaveBeenCalled();
   });
   it("treats a completed run's 204 response as an empty stream", async () => {
@@ -98,7 +99,9 @@ describe("HTTP conversation recovery", () => {
     ]);
   });
   it("does not retry authorization denial or arbitrary upstream failures", async () => {
-    const fetchMock = vi.fn().mockResolvedValue(new Response(null, { status: 403 }));
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(new Response(null, { status: 403 }));
     vi.stubGlobal("fetch", fetchMock);
     expect((await openStream("chat-1")).status).toBe(403);
     expect(fetchMock).toHaveBeenCalledTimes(1);

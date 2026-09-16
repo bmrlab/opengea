@@ -1,0 +1,11 @@
+# Use a separate GEA application for local and production callback hosts.
+APP_ORIGIN=http://localhost:4000
+# Generate: node -e 'console.log(require("node:crypto").randomBytes(32).toString("base64"))'
+TOKEN_ENCRYPTION_KEY=replace-with-a-base64-encoded-32-byte-key
+
+OAUTH_ISSUER_URL=https://musegea.com
+OAUTH_CLIENT_ID=app_replace_me
+OAUTH_CLIENT_SECRET=gea_secret_replace_me
+# Agents are discovered through GET /api/v1/agents using this user's OAuth token.
+# Preview requires separate tenant authorization; production is the default.
+AGENT_ENVIRONMENT=production

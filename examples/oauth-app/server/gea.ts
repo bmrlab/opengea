@@ -1,6 +1,5 @@
-import "server-only";
 import { z } from "zod";
-import { getEnv } from "./env";
+import { getEnv, type AuthConfig } from "./env";
 
 export const scopes = ["openid", "profile", "offline_access", "agents:invoke"];
 export const tokenSchema = z.object({
@@ -34,9 +33,9 @@ export class HttpError extends Error {
 }
 export function authorizationUrl(state: string, codeChallenge: string) {
   const env = getEnv();
-  const url = new URL("/api/auth/oauth2/authorize", env.GEA_BASE_URL);
+  const url = new URL("/api/auth/oauth2/authorize", env.OAUTH_ISSUER_URL);
   url.search = new URLSearchParams({
-    client_id: env.GEA_CLIENT_ID,
+    client_id: env.OAUTH_CLIENT_ID,
     redirect_uri: `${env.APP_ORIGIN}/auth/callback`,
     response_type: "code",
     scope: scopes.join(" "),
@@ -46,24 +45,26 @@ export function authorizationUrl(state: string, codeChallenge: string) {
   }).toString();
   return url.href;
 }
-async function oauthPost(path: "token" | "revoke", body: URLSearchParams) {
-  const env = getEnv();
-  return fetch(`${env.GEA_BASE_URL}/api/auth/oauth2/${path}`, {
+async function oauthPost(
+  path: "token" | "revoke",
+  body: URLSearchParams,
+  env: AuthConfig,
+) {
+  return fetch(`${env.OAUTH_ISSUER_URL}/api/auth/oauth2/${path}`, {
     method: "POST",
     body,
     headers: {
-      authorization: `Basic ${Buffer.from(`${encodeURIComponent(env.GEA_CLIENT_ID)}:${encodeURIComponent(env.GEA_CLIENT_SECRET)}`).toString("base64")}`,
+      authorization: `Basic ${btoa(`${encodeURIComponent(env.OAUTH_CLIENT_ID)}:${encodeURIComponent(env.OAUTH_CLIENT_SECRET)}`)}`,
       "content-type": "application/x-www-form-urlencoded",
       accept: "application/json",
+      "cache-control": "no-store",
     },
-    cache: "no-store",
-    redirect: "error",
-    credentials: "omit",
+    redirect: "manual",
     signal: AbortSignal.timeout(15000),
   });
 }
-export async function tokenRequest(body: URLSearchParams) {
-  const response = await oauthPost("token", body);
+export async function tokenRequest(body: URLSearchParams, config = getEnv()) {
+  const response = await oauthPost("token", body, config);
   if (!response.ok)
     throw new HttpError(
       502,
@@ -79,10 +80,11 @@ export async function tokenRequest(body: URLSearchParams) {
     );
   return token;
 }
-export async function revokeRefreshToken(token: string) {
+export async function revokeRefreshToken(token: string, config = getEnv()) {
   const response = await oauthPost(
     "revoke",
     new URLSearchParams({ token, token_type_hint: "refresh_token" }),
+    config,
   );
   if (!response.ok)
     throw new HttpError(
@@ -93,13 +95,17 @@ export async function revokeRefreshToken(token: string) {
   await response.body?.cancel();
 }
 export async function userInfo(accessToken: string) {
-  const response = await fetch(`${getEnv().GEA_BASE_URL}/api/auth/oauth2/userinfo`, {
-    headers: { authorization: `Bearer ${accessToken}` },
-    cache: "no-store",
-    redirect: "error",
-    credentials: "omit",
-    signal: AbortSignal.timeout(15000),
-  });
+  const response = await fetch(
+    `${getEnv().OAUTH_ISSUER_URL}/api/auth/oauth2/userinfo`,
+    {
+      headers: {
+        authorization: `Bearer ${accessToken}`,
+        "cache-control": "no-store",
+      },
+      redirect: "manual",
+      signal: AbortSignal.timeout(15000),
+    },
+  );
   if (!response.ok)
     throw new HttpError(
       response.status === 401 ? 401 : 502,
@@ -108,16 +114,21 @@ export async function userInfo(accessToken: string) {
     );
   return userSchema.parse(await response.json());
 }
-export async function agentFetch(path: string, accessToken: string, init: RequestInit = {}) {
-  return fetch(`${getEnv().GEA_BASE_URL}/api/v1${path}`, {
+export async function agentFetch(
+  path: string,
+  accessToken: string,
+  init: RequestInit = {},
+) {
+  return fetch(`${getEnv().OAUTH_ISSUER_URL}/api/v1${path}`, {
     ...init,
     headers: {
       authorization: `Bearer ${accessToken}`,
-      ...(init.body instanceof FormData ? {} : { "content-type": "application/json" }),
+      "cache-control": "no-store",
+      ...(init.body instanceof FormData
+        ? {}
+        : { "content-type": "application/json" }),
     },
-    cache: "no-store",
-    redirect: init.redirect ?? "error",
-    credentials: "omit",
+    redirect: init.redirect ?? "manual",
     signal: init.signal ?? AbortSignal.timeout(25000),
   });
 }

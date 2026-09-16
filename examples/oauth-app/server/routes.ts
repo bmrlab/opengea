@@ -1,4 +1,3 @@
-import "server-only";
 import { z } from "zod";
 import { validateUIMessages } from "ai";
 import { getEnv } from "./env";
@@ -7,20 +6,20 @@ import {
   authorizationUrl,
   agentFetch,
   HttpError,
-  revokeRefreshToken,
   tokenRequest,
   userInfo,
 } from "./gea";
-import { getPool, hash, randomSecret, seal, transaction, unseal } from "./store";
+import { hash, randomSecret } from "./store";
 import {
   cookieValue,
   flowCookie,
   loadSession,
-  payloadSchema,
   saveSession,
   sessionCookie,
   setCookie,
-  type SessionRow,
+  loginFlow,
+  oauthSession,
+  conversationRuns,
 } from "./session";
 
 const json = (body: unknown, status = 200) =>
@@ -45,7 +44,8 @@ function failure(error: unknown) {
     : json(
         {
           code: "request_failed",
-          message: "The request could not be completed. Retry or check the server configuration.",
+          message:
+            "The request could not be completed. Retry or check the server configuration.",
         },
         502,
       );
@@ -54,7 +54,7 @@ async function inputJson(request: Request) {
   if (!request.headers.get("content-type")?.startsWith("application/json"))
     throw new HttpError(415, "invalid_input", "Send a JSON request.");
   const body = await request.text();
-  if (Buffer.byteLength(body) > 32768)
+  if (new TextEncoder().encode(body).byteLength > 32768)
     throw new HttpError(413, "invalid_input", "The message is too long.");
   try {
     return JSON.parse(body) as unknown;
@@ -68,20 +68,18 @@ export async function login(request: Request) {
     const proof = randomSecret(),
       state = randomSecret(),
       verifier = randomSecret();
-    const key = hash(proof);
+    const key = await hash(proof);
     const previous = cookieValue(request, flowCookie);
-    if (previous)
-      await getPool().query("DELETE FROM oauth_example_flows WHERE browser_key = $1", [
-        hash(previous),
-      ]);
-    await getPool().query(
-      "INSERT INTO oauth_example_flows (browser_key, state_hash, payload, expires_at) VALUES ($1,$2,$3,now() + interval '5 minutes')",
-      [key, hash(state), seal({ verifier }, key)],
+    if (previous) await loginFlow(await hash(previous)).remove();
+    await loginFlow(key).create(
+      await hash(state),
+      verifier,
+      getEnv().TOKEN_ENCRYPTION_KEY,
     );
     const response = new Response(null, {
       status: 303,
       headers: {
-        location: authorizationUrl(state, hash(verifier)),
+        location: authorizationUrl(state, await hash(verifier)),
         "cache-control": "no-store",
       },
     });
@@ -100,24 +98,27 @@ export async function callback(request: Request) {
     if (
       !proof ||
       !state ||
-      ["state", "code", "error", "error_description"].some((k) => params.getAll(k).length > 1)
+      ["state", "code", "error", "error_description"].some(
+        (k) => params.getAll(k).length > 1,
+      )
     )
       return redirect("invalid_state");
-    const key = hash(proof);
-    // DELETE RETURNING atomically consumes state before any code exchange.
-    const { rows } = await getPool().query<{ payload: string }>(
-      "DELETE FROM oauth_example_flows WHERE browser_key = $1 AND state_hash = $2 AND expires_at > now() RETURNING payload",
-      [key, hash(state)],
+    const key = await hash(proof);
+    const flow = await loginFlow(key).consume(
+      await hash(state),
+      getEnv().TOKEN_ENCRYPTION_KEY,
     );
-    if (!rows[0]) return redirect("invalid_state");
+    if (!flow) return redirect("invalid_state");
     if (params.has("error"))
       response = redirect(
-        params.get("error") === "access_denied" ? "access_denied" : "oauth_failed",
+        params.get("error") === "access_denied"
+          ? "access_denied"
+          : "oauth_failed",
       );
     else {
       const code = params.get("code");
       if (!code || code.length > 8192) return redirect("oauth_failed");
-      const { verifier } = z.object({ verifier: z.string() }).parse(unseal(rows[0].payload, key));
+      const { verifier } = flow;
       const token = await tokenRequest(
         new URLSearchParams({
           grant_type: "authorization_code",
@@ -127,7 +128,7 @@ export async function callback(request: Request) {
         }),
       );
       const session = randomSecret();
-      await saveSession(hash(session), token);
+      await saveSession(await hash(session), token);
       response = redirect();
       setCookie(response.headers, sessionCookie, session, 7 * 86400);
     }
@@ -142,15 +143,19 @@ export async function session(request: Request) {
     const current = await loadSession(request);
     const user = await userInfo(current.token.access_token);
     if (user.sub !== current.user.sub)
-      throw new HttpError(401, "sign_in_required", "The GEA identity changed. Sign in again.");
+      throw new HttpError(
+        401,
+        "sign_in_required",
+        "The GEA identity changed. Sign in again.",
+      );
     const env = getEnv();
     return json({
       user,
       organization: current.token.organization,
       scopes: current.token.scope.split(/\s+/),
-      expiresAt: current.row.expires_at.toISOString(),
+      expiresAt: new Date(current.expiresAt).toISOString(),
       agents: await discoverAgents(current.token.access_token),
-      environment: env.GEA_ENVIRONMENT,
+      environment: env.AGENT_ENVIRONMENT,
     });
   } catch (error) {
     return failure(error);
@@ -161,29 +166,7 @@ export async function logout(request: Request) {
     sameOrigin(request);
     const cookie = cookieValue(request, sessionCookie);
     const succeeded =
-      !cookie ||
-      (await transaction(async (client) => {
-        const key = hash(cookie);
-        const { rows } = await client.query<SessionRow>(
-          "SELECT * FROM oauth_example_sessions WHERE session_key = $1 FOR UPDATE",
-          [key],
-        );
-        if (!rows[0]) return true;
-        const { token } = payloadSchema.parse(unseal(rows[0].payload, key));
-        // Shares the refresh lock: logout cannot race a refresh and resurrect tokens.
-        try {
-          // GEA also invalidates the access tokens associated with this refresh token.
-          await revokeRefreshToken(token.refresh_token);
-        } catch {
-          await client.query(
-            "UPDATE oauth_example_sessions SET status = 'logout_pending' WHERE session_key = $1",
-            [key],
-          );
-          return false;
-        }
-        await client.query("DELETE FROM oauth_example_sessions WHERE session_key = $1", [key]);
-        return true;
-      }));
+      !cookie || (await oauthSession(await hash(cookie)).revoke(getEnv()));
     const response = redirect(succeeded ? undefined : "revoke_failed");
     if (succeeded) setCookie(response.headers, sessionCookie, "", 0);
     return response;
@@ -269,7 +252,9 @@ async function assertUpstream(response: Response) {
   if (!response.ok) {
     await response.body?.cancel();
     throw new HttpError(
-      [401, 403, 404, 409, 410, 413, 429, 503].includes(response.status) ? response.status : 502,
+      [401, 403, 404, 409, 410, 413, 429, 503].includes(response.status)
+        ? response.status
+        : 502,
       "agent_failed",
       response.status === 403
         ? "GEA has not granted this user and application access to the Agent. Check the application's environment setup."
@@ -290,7 +275,7 @@ async function discoverAgents(token: string) {
   let cursor: string | null = null;
   do {
     const query = new URLSearchParams({
-      environment: getEnv().GEA_ENVIRONMENT,
+      environment: getEnv().AGENT_ENVIRONMENT,
       limit: "100",
     });
     if (cursor) query.set("cursor", cursor);
@@ -306,15 +291,21 @@ async function discoverAgents(token: string) {
 }
 export async function conversations(request: Request) {
   try {
-    const query = pageQuery.safeParse(Object.fromEntries(new URL(request.url).searchParams));
-    if (!query.success) throw new HttpError(400, "invalid_input", "Invalid history cursor.");
+    const query = pageQuery.safeParse(
+      Object.fromEntries(new URL(request.url).searchParams),
+    );
+    if (!query.success)
+      throw new HttpError(400, "invalid_input", "Invalid history cursor.");
     const current = await loadSession(request);
     const params = new URLSearchParams({
-      environment: getEnv().GEA_ENVIRONMENT,
+      environment: getEnv().AGENT_ENVIRONMENT,
       limit: String(query.data.limit),
     });
     if (query.data.cursor) params.set("cursor", query.data.cursor);
-    const response = await agentFetch(`/sessions?${params}`, current.token.access_token);
+    const response = await agentFetch(
+      `/sessions?${params}`,
+      current.token.access_token,
+    );
     await assertUpstream(response);
     return json(
       z
@@ -338,13 +329,17 @@ export async function createConversation(request: Request) {
       })
       .safeParse(await inputJson(request));
     if (!parsed.success)
-      throw new HttpError(400, "invalid_input", "Choose an Agent and a conversation title.");
+      throw new HttpError(
+        400,
+        "invalid_input",
+        "Choose an Agent and a conversation title.",
+      );
     const current = await loadSession(request);
     const response = await agentFetch("/sessions", current.token.access_token, {
       method: "POST",
       body: JSON.stringify({
         agent_id: parsed.data.agentId,
-        environment: getEnv().GEA_ENVIRONMENT,
+        environment: getEnv().AGENT_ENVIRONMENT,
         title: parsed.data.title,
       }),
     });
@@ -352,7 +347,7 @@ export async function createConversation(request: Request) {
     const conversation = conversationOutput.parse(await response.json());
     if (
       conversation.agent_id !== parsed.data.agentId ||
-      conversation.environment !== getEnv().GEA_ENVIRONMENT
+      conversation.environment !== getEnv().AGENT_ENVIRONMENT
     )
       throw new HttpError(
         502,
@@ -367,24 +362,45 @@ export async function createConversation(request: Request) {
 export async function uploadFile(request: Request) {
   try {
     sameOrigin(request);
-    const chatId = z.uuid().safeParse(new URL(request.url).searchParams.get("chatId"));
+    const chatId = z
+      .uuid()
+      .safeParse(new URL(request.url).searchParams.get("chatId"));
     if (!chatId.success)
-      throw new HttpError(400, "invalid_input", "Choose a conversation before uploading.");
+      throw new HttpError(
+        400,
+        "invalid_input",
+        "Choose a conversation before uploading.",
+      );
     const current = await loadSession(request);
     if (!request.headers.get("content-type")?.startsWith("multipart/form-data"))
-      throw new HttpError(415, "invalid_input", "Send a multipart file upload.");
-    if (Number(request.headers.get("content-length") ?? 0) > maxUploadBytes + 64 * 1024)
-      throw new HttpError(413, "file_too_large", "Choose a file no larger than 4 MiB.");
+      throw new HttpError(
+        415,
+        "invalid_input",
+        "Send a multipart file upload.",
+      );
+    if (
+      Number(request.headers.get("content-length") ?? 0) >
+      maxUploadBytes + 64 * 1024
+    )
+      throw new HttpError(
+        413,
+        "file_too_large",
+        "Choose a file no larger than 4 MiB.",
+      );
     const form = await request.formData();
     const file = form.get("file");
     if (!(file instanceof File) || form.getAll("file").length !== 1)
       throw new HttpError(400, "invalid_input", "Upload one file at a time.");
     if (file.size > maxUploadBytes)
-      throw new HttpError(413, "file_too_large", "Choose a file no larger than 4 MiB.");
+      throw new HttpError(
+        413,
+        "file_too_large",
+        "Choose a file no larger than 4 MiB.",
+      );
     await authorizedConversation(chatId.data, current.token.access_token);
     const upstreamForm = new FormData();
     upstreamForm.set("file", file);
-    upstreamForm.set("environment", getEnv().GEA_ENVIRONMENT);
+    upstreamForm.set("environment", getEnv().AGENT_ENVIRONMENT);
     const response = await agentFetch("/files", current.token.access_token, {
       method: "POST",
       body: upstreamForm,
@@ -401,7 +417,11 @@ export async function artifacts(request: Request) {
       .extend({ chatId: z.uuid() })
       .safeParse(Object.fromEntries(new URL(request.url).searchParams));
     if (!query.success)
-      throw new HttpError(400, "invalid_input", "Invalid conversation or artifact cursor.");
+      throw new HttpError(
+        400,
+        "invalid_input",
+        "Invalid conversation or artifact cursor.",
+      );
     const current = await loadSession(request);
     await authorizedConversation(query.data.chatId, current.token.access_token);
     const params = new URLSearchParams({ limit: String(query.data.limit) });
@@ -422,17 +442,28 @@ export async function artifacts(request: Request) {
 }
 export async function downloadFile(request: Request) {
   try {
-    const fileId = z.uuid().safeParse(new URL(request.url).searchParams.get("fileId"));
-    if (!fileId.success) throw new HttpError(400, "invalid_input", "Invalid file reference.");
+    const fileId = z
+      .uuid()
+      .safeParse(new URL(request.url).searchParams.get("fileId"));
+    if (!fileId.success)
+      throw new HttpError(400, "invalid_input", "Invalid file reference.");
     const current = await loadSession(request);
     // Never forward the OAuth token to the object store. Only the signed URL is redirected.
-    const response = await agentFetch(`/files/${fileId.data}/content`, current.token.access_token, {
-      redirect: "manual",
-    });
+    const response = await agentFetch(
+      `/files/${fileId.data}/content`,
+      current.token.access_token,
+      {
+        redirect: "manual",
+      },
+    );
     if (response.status === 302) {
       const location = z.url().parse(response.headers.get("location"));
       if (!["http:", "https:"].includes(new URL(location).protocol))
-        throw new HttpError(502, "invalid_file_response", "Invalid file download URL.");
+        throw new HttpError(
+          502,
+          "invalid_file_response",
+          "Invalid file download URL.",
+        );
       await response.body?.cancel();
       return new Response(null, {
         status: 302,
@@ -447,9 +478,13 @@ export async function downloadFile(request: Request) {
     const headers = new Headers({
       "cache-control": "no-store",
       "x-content-type-options": "nosniff",
-      "content-disposition": response.headers.get("content-disposition") ?? "attachment",
+      "content-disposition":
+        response.headers.get("content-disposition") ?? "attachment",
     });
-    headers.set("content-type", response.headers.get("content-type") ?? "application/octet-stream");
+    headers.set(
+      "content-type",
+      response.headers.get("content-type") ?? "application/octet-stream",
+    );
     return new Response(response.body, { headers });
   } catch (error) {
     return failure(error);
@@ -459,23 +494,33 @@ async function authorizedConversation(chatId: string, token: string) {
   const response = await agentFetch(`/sessions/${chatId}`, token);
   await assertUpstream(response);
   const conversation = conversationOutput.parse(await response.json());
-  if (conversation.id !== chatId || conversation.environment !== getEnv().GEA_ENVIRONMENT)
+  if (
+    conversation.id !== chatId ||
+    conversation.environment !== getEnv().AGENT_ENVIRONMENT
+  )
     throw new HttpError(404, "chat_unavailable", "Conversation unavailable.");
   return conversation;
 }
 // GEA has no list-Runs/latest-Run field. Retain only the returned Run reference;
 // messages and session ownership are always read from GEA, including after a new login.
-async function rememberedRun(chatId: string, token: string) {
-  const { rows } = await getPool().query<{ run_id: string }>(
-    "SELECT run_id FROM oauth_example_runs WHERE session_id = $1",
-    [chatId],
+async function rememberedRun(
+  chatId: string,
+  current: Awaited<ReturnType<typeof loadSession>>,
+) {
+  const runId = await conversationRuns(current).getRun(chatId);
+  if (!runId) return null;
+  const response = await agentFetch(
+    `/runs/${runId}`,
+    current.token.access_token,
   );
-  if (!rows[0]) return null;
-  const response = await agentFetch(`/runs/${rows[0].run_id}`, token);
   await assertUpstream(response);
   const run = runOutput.parse(await response.json());
-  if (run.session_id !== chatId || run.id !== rows[0].run_id)
-    throw new HttpError(502, "invalid_agent_response", "Unexpected execution identity.");
+  if (run.session_id !== chatId || run.id !== runId)
+    throw new HttpError(
+      502,
+      "invalid_agent_response",
+      "Unexpected execution identity.",
+    );
   return run;
 }
 export async function run(request: Request) {
@@ -500,7 +545,20 @@ export async function run(request: Request) {
           ],
         }
       : message;
-    if (chatId) await authorizedConversation(chatId, current.token.access_token);
+    const selectedAgent = chatId
+      ? (await authorizedConversation(chatId, current.token.access_token))
+          .agent_id
+      : agentId!;
+    const readiness = await readConnections(
+      selectedAgent,
+      current.token.access_token,
+    );
+    if (!readiness.ready)
+      throw new HttpError(
+        409,
+        "connection_required",
+        "Connect MuseDAM before sending a message. Check Connections on this page.",
+      );
     // Exactly one write. Never replay a user turn after an ambiguous network failure.
     const upstream = await agentFetch(
       chatId ? `/sessions/${chatId}/runs` : "/sessions",
@@ -512,7 +570,7 @@ export async function run(request: Request) {
             ? { input, stream: true }
             : {
                 agent_id: agentId,
-                environment: getEnv().GEA_ENVIRONMENT,
+                environment: getEnv().AGENT_ENVIRONMENT,
                 title: message.slice(0, 80) || "File conversation",
                 input,
                 stream: true,
@@ -524,18 +582,21 @@ export async function run(request: Request) {
     const sessionId = upstream.headers.get("x-gea-agent-session-id"),
       runId = upstream.headers.get("x-gea-agent-run-id");
     if (
-      (sessionId && (!z.uuid().safeParse(sessionId).success || (chatId && chatId !== sessionId))) ||
+      (sessionId &&
+        (!z.uuid().safeParse(sessionId).success ||
+          (chatId && chatId !== sessionId))) ||
       (runId && (!sessionId || !z.uuid().safeParse(runId).success))
     ) {
       await upstream.body?.cancel();
-      throw new HttpError(502, "invalid_agent_response", "Unexpected conversation identity.");
+      throw new HttpError(
+        502,
+        "invalid_agent_response",
+        "Unexpected conversation identity.",
+      );
     }
     createdId = sessionId;
     if (sessionId && runId)
-      await getPool().query(
-        "INSERT INTO oauth_example_runs (session_id, run_id) VALUES ($1,$2) ON CONFLICT (session_id) DO UPDATE SET run_id = EXCLUDED.run_id",
-        [sessionId, runId],
-      );
+      await conversationRuns(current).remember(sessionId, runId);
     await assertUpstream(upstream);
     if (!sessionId || !runId) {
       await upstream.body?.cancel();
@@ -559,15 +620,25 @@ export async function history(request: Request) {
       .extend({ chatId: z.uuid() })
       .safeParse(Object.fromEntries(new URL(request.url).searchParams));
     if (!query.success)
-      throw new HttpError(400, "invalid_input", "Invalid conversation or history cursor.");
+      throw new HttpError(
+        400,
+        "invalid_input",
+        "Invalid conversation or history cursor.",
+      );
     const { chatId, cursor, limit } = query.data;
     const current = await loadSession(request);
-    const conversation = await authorizedConversation(chatId, current.token.access_token);
+    const conversation = await authorizedConversation(
+      chatId,
+      current.token.access_token,
+    );
     const params = new URLSearchParams({ limit: String(limit) });
     if (cursor) params.set("cursor", cursor);
     const [response, run] = await Promise.all([
-      agentFetch(`/sessions/${chatId}/messages?${params}`, current.token.access_token),
-      cursor ? Promise.resolve(null) : rememberedRun(chatId, current.token.access_token),
+      agentFetch(
+        `/sessions/${chatId}/messages?${params}`,
+        current.token.access_token,
+      ),
+      cursor ? Promise.resolve(null) : rememberedRun(chatId, current),
     ]);
     await assertUpstream(response);
     const page = z
@@ -578,7 +649,9 @@ export async function history(request: Request) {
       messages: await Promise.all(
         page.items.map(async (item) => {
           const empty = emptyAssistant.safeParse(item);
-          return empty.success ? empty.data : (await validateUIMessages({ messages: [item] }))[0]!;
+          return empty.success
+            ? empty.data
+            : (await validateUIMessages({ messages: [item] }))[0]!;
         }),
       ),
       run,
@@ -590,16 +663,27 @@ export async function history(request: Request) {
 }
 export async function stream(request: Request) {
   try {
-    const chatId = z.uuid().safeParse(new URL(request.url).searchParams.get("chatId"));
-    if (!chatId.success) throw new HttpError(400, "invalid_input", "Invalid conversation.");
+    const chatId = z
+      .uuid()
+      .safeParse(new URL(request.url).searchParams.get("chatId"));
+    if (!chatId.success)
+      throw new HttpError(400, "invalid_input", "Invalid conversation.");
     const current = await loadSession(request);
     await authorizedConversation(chatId.data, current.token.access_token);
-    const run = await rememberedRun(chatId.data, current.token.access_token);
+    const run = await rememberedRun(chatId.data, current);
     if (!run)
-      throw new HttpError(404, "run_unavailable", "No recorded run. Refresh conversation history.");
-    const upstream = await agentFetch(`/runs/${run.id}/stream`, current.token.access_token, {
-      signal: request.signal,
-    });
+      throw new HttpError(
+        404,
+        "run_unavailable",
+        "No recorded run. Refresh conversation history.",
+      );
+    const upstream = await agentFetch(
+      `/runs/${run.id}/stream`,
+      current.token.access_token,
+      {
+        signal: request.signal,
+      },
+    );
     if (upstream.status !== 503) await assertUpstream(upstream);
     return relay(upstream);
   } catch (error) {
@@ -609,21 +693,154 @@ export async function stream(request: Request) {
 export async function cancel(request: Request) {
   try {
     sameOrigin(request);
-    const parsed = z.strictObject({ chatId: z.uuid() }).safeParse(await inputJson(request));
+    const parsed = z
+      .strictObject({ chatId: z.uuid() })
+      .safeParse(await inputJson(request));
     if (!parsed.success)
-      throw new HttpError(400, "invalid_input", "Choose a conversation to stop.");
+      throw new HttpError(
+        400,
+        "invalid_input",
+        "Choose a conversation to stop.",
+      );
     const current = await loadSession(request);
-    await authorizedConversation(parsed.data.chatId, current.token.access_token);
-    const run = await rememberedRun(parsed.data.chatId, current.token.access_token);
-    if (!run) throw new HttpError(404, "run_unavailable", "No recorded run to cancel.");
-    const stopped = await agentFetch(`/runs/${run.id}/cancel`, current.token.access_token, {
-      method: "POST",
-      body: "{}",
-    });
+    await authorizedConversation(
+      parsed.data.chatId,
+      current.token.access_token,
+    );
+    const run = await rememberedRun(parsed.data.chatId, current);
+    if (!run)
+      throw new HttpError(404, "run_unavailable", "No recorded run to cancel.");
+    const stopped = await agentFetch(
+      `/runs/${run.id}/cancel`,
+      current.token.access_token,
+      {
+        method: "POST",
+        body: "{}",
+      },
+    );
     await assertUpstream(stopped);
     return json(
-      z.object({ status: z.enum(["abort_requested", "not_running"]) }).parse(await stopped.json()),
+      z
+        .object({ status: z.enum(["abort_requested", "not_running"]) })
+        .parse(await stopped.json()),
     );
+  } catch (error) {
+    return failure(error);
+  }
+}
+
+const connectionOutput = z.object({
+  key: z.string(),
+  name: z.string(),
+  owner: z.enum(["user", "shared"]),
+  authorization: z.enum([
+    "none",
+    "api_key",
+    "oauth2",
+    "lark_cli",
+    "interactive",
+  ]),
+  status: z.enum([
+    "connected",
+    "authorization_required",
+    "reauthorization_required",
+    "administrator_configuration_required",
+    "no_authorization_needed",
+  ]),
+  required_scopes: z.array(z.string()),
+  granted_scopes: z.array(z.string()).nullable(),
+  actions: z.array(z.enum(["authorize", "write", "disconnect"])),
+});
+export type ConnectionView = z.infer<typeof connectionOutput>;
+async function readConnections(agentId: string, token: string) {
+  const query = new URLSearchParams({
+    environment: getEnv().AGENT_ENVIRONMENT,
+  });
+  const response = await agentFetch(
+    `/agents/${agentId}/connections?${query}`,
+    token,
+  );
+  await assertUpstream(response);
+  const { items } = z
+    .object({ items: z.array(connectionOutput) })
+    .parse(await response.json());
+  // MuseDAM is an explicit prerequisite of this example. Missing declarations are not readiness.
+  const musedam = items.find((item) => item.key === "musedam");
+  return {
+    items,
+    ready: musedam?.owner === "user" && musedam.status === "connected",
+  };
+}
+export async function connections(request: Request) {
+  try {
+    const agentId = z
+      .uuid()
+      .safeParse(new URL(request.url).searchParams.get("agentId"));
+    if (!agentId.success)
+      throw new HttpError(400, "invalid_input", "Choose an Agent.");
+    const current = await loadSession(request);
+    return json(
+      await readConnections(agentId.data, current.token.access_token),
+    );
+  } catch (error) {
+    return failure(error);
+  }
+}
+export async function authorizeConnection(request: Request) {
+  try {
+    sameOrigin(request);
+    const input = z
+      .object({ agentId: z.uuid(), key: z.literal("musedam") })
+      .safeParse(Object.fromEntries(new URL(request.url).searchParams));
+    if (!input.success)
+      throw new HttpError(
+        400,
+        "invalid_input",
+        "Choose the MuseDAM connection.",
+      );
+    const current = await loadSession(request);
+    const { items } = await readConnections(
+      input.data.agentId,
+      current.token.access_token,
+    );
+    const connector = items.find((item) => item.key === input.data.key);
+    if (connector?.owner !== "user" || !connector.actions.includes("authorize"))
+      throw new HttpError(
+        409,
+        "configuration_required",
+        "The Agent administrator needs to configure MuseDAM first.",
+      );
+    const query = new URLSearchParams({
+      environment: getEnv().AGENT_ENVIRONMENT,
+    });
+    const response = await agentFetch(
+      `/agents/${input.data.agentId}/connections/musedam/authorize?${query}`,
+      current.token.access_token,
+      { method: "POST", body: "{}" },
+    );
+    await assertUpstream(response);
+    const result = z
+      .object({ authorization_url: z.url(), expires_at: z.iso.datetime() })
+      .parse(await response.json());
+    const target = new URL(result.authorization_url);
+    if (
+      target.origin !== getEnv().OAUTH_ISSUER_URL ||
+      target.username ||
+      target.password
+    )
+      throw new HttpError(
+        502,
+        "invalid_authorization_url",
+        "GEA returned an unexpected authorization URL.",
+      );
+    return new Response(null, {
+      status: 303,
+      headers: {
+        location: target.href,
+        "cache-control": "no-store",
+        "referrer-policy": "no-referrer",
+      },
+    });
   } catch (error) {
     return failure(error);
   }

@@ -1,55 +1,65 @@
-import "server-only";
-import { createCipheriv, createDecipheriv, createHash, randomBytes } from "node:crypto";
-import { Pool, type PoolClient } from "pg";
-import { getEnv } from "./env";
+const encoder = new TextEncoder();
 
-let pool: Pool | undefined;
-export function getPool() {
-  return (pool ??= new Pool({
-    connectionString: getEnv().DATABASE_URL,
-    max: 3,
-    idleTimeoutMillis: 10000,
-    connectionTimeoutMillis: 10000,
-  }));
+function base64(bytes: Uint8Array) {
+  return btoa(Array.from(bytes, (byte) => String.fromCharCode(byte)).join(""));
 }
-export const randomSecret = () => randomBytes(32).toString("base64url");
-export const hash = (value: string) => createHash("sha256").update(value).digest("base64url");
-export function seal(value: unknown, rowKey: string) {
-  const iv = randomBytes(12);
-  const cipher = createCipheriv(
-    "aes-256-gcm",
-    Buffer.from(getEnv().TOKEN_ENCRYPTION_KEY, "base64"),
-    iv,
-  );
-  cipher.setAAD(Buffer.from(rowKey));
-  const encrypted = Buffer.concat([cipher.update(JSON.stringify(value), "utf8"), cipher.final()]);
-  return Buffer.concat([iv, cipher.getAuthTag(), encrypted]).toString("base64");
+function bytes(value: string) {
+  return Uint8Array.from(atob(value), (character) => character.charCodeAt(0));
 }
-export function unseal(value: string, rowKey: string): unknown {
-  const bytes = Buffer.from(value, "base64");
-  const cipher = createDecipheriv(
-    "aes-256-gcm",
-    Buffer.from(getEnv().TOKEN_ENCRYPTION_KEY, "base64"),
-    bytes.subarray(0, 12),
-  );
-  cipher.setAAD(Buffer.from(rowKey));
-  cipher.setAuthTag(bytes.subarray(12, 28));
-  return JSON.parse(
-    Buffer.concat([cipher.update(bytes.subarray(28)), cipher.final()]).toString("utf8"),
+function base64url(value: Uint8Array) {
+  return base64(value)
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
+}
+export function randomSecret() {
+  return base64url(crypto.getRandomValues(new Uint8Array(32)));
+}
+export async function hash(value: string) {
+  return base64url(
+    new Uint8Array(
+      await crypto.subtle.digest("SHA-256", encoder.encode(value)),
+    ),
   );
 }
-// PostgreSQL is the shared synchronization boundary for serverless instances.
-export async function transaction<T>(work: (client: PoolClient) => Promise<T>) {
-  const client = await getPool().connect();
-  try {
-    await client.query("BEGIN");
-    const result = await work(client);
-    await client.query("COMMIT");
-    return result;
-  } catch (error) {
-    await client.query("ROLLBACK");
-    throw error;
-  } finally {
-    client.release();
-  }
+export async function seal(value: unknown, rowKey: string, secret: string) {
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const key = await crypto.subtle.importKey(
+    "raw",
+    bytes(secret),
+    "AES-GCM",
+    false,
+    ["encrypt"],
+  );
+  const encrypted = await crypto.subtle.encrypt(
+    { name: "AES-GCM", iv, additionalData: encoder.encode(rowKey) },
+    key,
+    encoder.encode(JSON.stringify(value)),
+  );
+  return `${base64(iv)}.${base64(new Uint8Array(encrypted))}`;
+}
+export async function unseal(
+  value: string,
+  rowKey: string,
+  secret: string,
+): Promise<unknown> {
+  const parts = value.split(".");
+  if (parts.length !== 2) throw new Error("Invalid encrypted session record.");
+  const key = await crypto.subtle.importKey(
+    "raw",
+    bytes(secret),
+    "AES-GCM",
+    false,
+    ["decrypt"],
+  );
+  const decrypted = await crypto.subtle.decrypt(
+    {
+      name: "AES-GCM",
+      iv: bytes(parts[0]!),
+      additionalData: encoder.encode(rowKey),
+    },
+    key,
+    bytes(parts[1]!),
+  );
+  return JSON.parse(new TextDecoder().decode(decrypted));
 }

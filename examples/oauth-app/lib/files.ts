@@ -1,4 +1,4 @@
-// Keep a multipart upload below the example's serverless request-body limit.
+// An explicit demo limit for buffered multipart uploads; larger inputs use GEA upload grants.
 export const maxUploadBytes = 4 * 1024 * 1024;
 export const maxMessageFiles = 10;
 

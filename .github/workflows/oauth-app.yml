@@ -12,17 +12,6 @@ jobs:
   verify:
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    services:
-      postgres:
-        image: postgres:17-alpine
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: oauth_test
-        ports: ["5432:5432"]
-        options: >-
-          --health-cmd "pg_isready -U postgres -d oauth_test"
-          --health-interval 2s --health-timeout 2s --health-retries 20
     defaults:
       run:
         working-directory: examples/oauth-app
@@ -33,9 +22,6 @@ jobs:
           node-version-file: examples/oauth-app/.node-version
       - run: npm install --global pnpm@10.30.3
       - run: pnpm install --frozen-lockfile
+      - name: Build and test Worker HTTP routes with SQLite
+        run: pnpm test
       - run: pnpm type-check
-      - run: pnpm test
-        env:
-          TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/oauth_test
-      - name: Build without GEA credentials or CLI
-        run: pnpm build
