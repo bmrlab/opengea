@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@gea-ai/agent-sdk':
-        specifier: 0.1.260916-alpha.0
-        version: 0.1.260916-alpha.0(esbuild@0.28.1)
+        specifier: 0.1.260916-alpha.1
+        version: 0.1.260916-alpha.1(esbuild@0.28.1)
       '@radix-ui/react-use-controllable-state':
         specifier: ^1.2.6
         version: 1.2.6(@types/react@19.2.7)(react@19.2.8)
@@ -638,8 +638,8 @@ packages:
   '@floating-ui/utils@0.2.12':
     resolution: {integrity: sha512-HpCo8tmWzLVad5s2d19EhAz5zqrrQ6s69qd6moPMQvkOuSwDT1YgRfWSVuc4ennqrgv3OHppiOGMQ7oC13yIww==}
 
-  '@gea-ai/agent-sdk@0.1.260916-alpha.0':
-    resolution: {integrity: sha512-xf061n6Pbkjcp3w8jp/5nuqPp9OdNuvRS9CqDgLdb1OBRqooZijV1yKreREv69RerwjO7TjT3LyewYVTQ4rTZQ==}
+  '@gea-ai/agent-sdk@0.1.260916-alpha.1':
+    resolution: {integrity: sha512-ZG+N1+7nHykarVfTvTfbsrQP7y2BJnbA4vpdbGwowJnkqJBuW/60Jqsx9eIArN/eM7omWBi1JZQfygAnrbgvsA==}
     peerDependencies:
       esbuild: ^0.28.0
     peerDependenciesMeta:
@@ -663,8 +663,8 @@ packages:
     os: [darwin, win32]
     hasBin: true
 
-  '@gea-ai/contract@0.1.260916-alpha.0':
-    resolution: {integrity: sha512-4xKsTaM7YgMnQ0uM6AB6J1NwOIAeXnDHsMbYAg/XDuUZ1PCOHfaZuR/okoAmcVZmYoD7Pyfp5Kj1fXDjeHFqyg==}
+  '@gea-ai/contract@0.1.260916-alpha.1':
+    resolution: {integrity: sha512-3rIkaWpvWXkQD0ATjjfaQcep5pQxE97H/DgBhXaJnqFKhixmDM74yNhmGFlS0Do/QqXvAkomjp6bZhgZ6jw8PA==}
 
   '@hono/node-server@2.1.1':
     resolution: {integrity: sha512-ELuehkj5VCBdgEw9zs+ivkKwyzzUCSQuE96YmiPvn1ECBoZCczbFXJLeEGMTYjphP6gydh4pHMqEYPVMYUVgQg==}
@@ -5133,7 +5133,7 @@ snapshots:
 
   '@floating-ui/utils@0.2.12': {}
 
-  '@gea-ai/agent-sdk@0.1.260916-alpha.0(esbuild@0.28.1)':
+  '@gea-ai/agent-sdk@0.1.260916-alpha.1(esbuild@0.28.1)':
     dependencies:
       '@ai-sdk/anthropic': 4.0.37(zod@4.3.6)
       '@ai-sdk/openai': 4.0.4(zod@4.3.6)
@@ -5141,7 +5141,7 @@ snapshots:
       '@ai-sdk/otel': 1.0.9(zod@4.3.6)
       '@ai-sdk/provider': 4.0.1
       '@ai-sdk/provider-utils': 5.0.2(zod@4.3.6)
-      '@gea-ai/contract': 0.1.260916-alpha.0
+      '@gea-ai/contract': 0.1.260916-alpha.1
       '@opentelemetry/api': 1.9.1
       '@opentelemetry/context-async-hooks': 2.10.0(@opentelemetry/api@1.9.1)
       '@opentelemetry/core': 2.10.0(@opentelemetry/api@1.9.1)
@@ -5179,7 +5179,7 @@ snapshots:
       '@gea-ai/cli-darwin-arm64': 0.1.260915-alpha.0
       '@gea-ai/cli-win32-x64': 0.1.260915-alpha.0
 
-  '@gea-ai/contract@0.1.260916-alpha.0':
+  '@gea-ai/contract@0.1.260916-alpha.1':
     dependencies:
       '@bufbuild/protobuf': 2.13.0
       '@opentelemetry/api': 1.9.1

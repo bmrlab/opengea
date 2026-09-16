@@ -26,7 +26,7 @@ and Connector credentials never reach browser JavaScript.
 
 ## Prerequisites
 
-- Node **24.16.0**, pnpm **10.30.3**, published `@gea-ai/agent-sdk@0.1.260916-alpha.0`.
+- Node **24.16.0**, pnpm **10.30.3**, published `@gea-ai/agent-sdk@0.1.260916-alpha.1`.
 - A GEA deployment supporting Worker cookies, managed environment variables,
   SQLite Durable Objects, stable Worker namespaces and the public Agents API.
 - A CLI with Agent application `gea.worker.json` support. Published
@@ -226,6 +226,15 @@ Tests always run on GEA Worker Runtime, using the published CLI's bundled Runtim
 by default. HTTP fixtures simulate external APIs; real-service authorization and
 chat acceptance are recorded separately. Runtime overrides above also apply to
 tests. `GEA_TEST_WORKER_DIR` selects an extracted combined Agent artifact.
+
+## SDK upgrades and existing conversations
+
+The Rust cloud Agents API requires the Worker transport in SDK
+`0.1.260916-alpha.1` for stream reconnection and Worker-observed cancellation.
+After upgrading the dependency, rebuild and redeploy the Agent Worker and publish
+the matching Preview release. Updating only the API service does not update SDK
+code already bundled in a Worker. Validate with a new Run: older Runs lack the
+per-Run event boundaries needed by the new replay transport.
 
 ## Session and deployment guarantees
 

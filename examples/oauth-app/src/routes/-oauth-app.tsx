@@ -217,7 +217,7 @@ export function OAuthApp() {
         selectId(id);
         display(state);
         if (activeRun(state.run?.status)) {
-          // Reconnect uses the Run's baseline, never the already rendered partial output.
+          // Reconnect rebuilds the Run's message instead of appending to partial output.
           await consume(await openStream(id, abort.signal), upsert, {
             chatId: id,
             runId: state.run!.id,

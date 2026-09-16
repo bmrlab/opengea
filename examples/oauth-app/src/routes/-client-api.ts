@@ -161,8 +161,8 @@ export async function consume(
     throw new Error("No response stream. Restore this conversation.");
   let previous: UIMessage | undefined;
   if (replayIdentity) {
-    // GEA prefixes a replay with the pre-Run assistant message. Reset to it before
-    // decoding the buffered deltas; the current UI may already contain those deltas.
+    // Worker replay starts at the Run boundary; legacy streams supply a baseline.
+    // Neither should append deltas to the already rendered partial message.
     const reader = response.body
       .pipeThrough(new TextDecoderStream())
       .getReader();
@@ -176,36 +176,43 @@ export async function consume(
       }
       const end = prefix.indexOf("\n");
       const line = prefix.slice(0, end);
-      if (!line.startsWith(": gea-replay "))
-        throw new Error("Missing replay baseline. Restore history.");
-      const replay = z
-        .object({
-          version: z.literal(1),
-          chatId: z.string(),
-          runId: z.string(),
-          message: z.object({
-            id: z.string(),
-            role: z.literal("assistant"),
-            parts: z.array(z.unknown()),
-            metadata: z.unknown().optional(),
-          }),
-        })
-        .parse(JSON.parse(line.slice(": gea-replay ".length)));
-      if (
-        replay.chatId !== replayIdentity.chatId ||
-        replay.runId !== replayIdentity.runId
-      )
+      let remainder = prefix;
+      if (line.startsWith(": gea-replay ")) {
+        const replay = z
+          .object({
+            version: z.literal(1),
+            chatId: z.string(),
+            runId: z.string(),
+            message: z.object({
+              id: z.string(),
+              role: z.literal("assistant"),
+              parts: z.array(z.unknown()),
+              metadata: z.unknown().optional(),
+            }),
+          })
+          .parse(JSON.parse(line.slice(": gea-replay ".length)));
+        if (
+          replay.chatId !== replayIdentity.chatId ||
+          replay.runId !== replayIdentity.runId
+        )
+          throw new Error("Unexpected replay identity. Restore history.");
+        previous = replay.message.parts.length
+          ? (await validateUIMessages({ messages: [replay.message] }))[0]!
+          : {
+              id: replay.message.id,
+              role: "assistant",
+              parts: [],
+              metadata: replay.message.metadata,
+            };
+        onMessage(previous);
+        remainder = prefix.slice(end + 1);
+      } else if (
+        response.headers.get("x-gea-agent-session-id") !==
+          replayIdentity.chatId ||
+        response.headers.get("x-gea-agent-run-id") !== replayIdentity.runId
+      ) {
         throw new Error("Unexpected replay identity. Restore history.");
-      previous = replay.message.parts.length
-        ? (await validateUIMessages({ messages: [replay.message] }))[0]!
-        : {
-            id: replay.message.id,
-            role: "assistant",
-            parts: [],
-            metadata: replay.message.metadata,
-          };
-      onMessage(previous);
-      const remainder = prefix.slice(end + 1);
+      }
       response = new Response(
         new ReadableStream<string>({
           start(controller) {

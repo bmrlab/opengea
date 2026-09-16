@@ -64,6 +64,57 @@ describe("HTTP conversation recovery", () => {
     );
     expect(answer).toBe("Earlier turn. Recovered output");
   });
+  it("replays a Worker Run from the beginning without duplicating partial output", async () => {
+    const frames = [
+      { type: "start", messageId: "answer" },
+      { type: "text-start", id: "text" },
+      { type: "text-delta", id: "text", delta: "Recovered output" },
+      { type: "text-end", id: "text" },
+      { type: "finish", finishReason: "stop" },
+    ]
+      .map((event) => `data: ${JSON.stringify(event)}\n\n`)
+      .join("");
+    const messages = new Map<string, string>([["answer", "Recovered"]]);
+    await consume(
+      new Response(frames + "data: [DONE]\n\n", {
+        headers: {
+          "x-gea-agent-session-id": "chat",
+          "x-gea-agent-run-id": "run",
+        },
+      }),
+      (message) =>
+        messages.set(
+          message.id,
+          message.parts
+            .filter((part) => part.type === "text")
+            .map((part) => part.text)
+            .join(""),
+        ),
+      { chatId: "chat", runId: "run" },
+    );
+    expect([...messages.entries()]).toEqual([["answer", "Recovered output"]]);
+  });
+  it.each(["other", null])(
+    "rejects a Worker replay with Run header %s before rendering",
+    async (runId) => {
+      const headers = new Headers({ "x-gea-agent-session-id": "chat" });
+      if (runId) headers.set("x-gea-agent-run-id", runId);
+      const output = vi.fn();
+      await expect(
+        consume(
+          new Response('data: {"type":"start","messageId":"answer"}\n\n', {
+            headers,
+          }),
+          output,
+          {
+            chatId: "chat",
+            runId: "run",
+          },
+        ),
+      ).rejects.toThrow(/identity/);
+      expect(output).not.toHaveBeenCalled();
+    },
+  );
   it("rejects a replay belonging to another run before rendering", async () => {
     const response = new Response(
       ": gea-replay " +

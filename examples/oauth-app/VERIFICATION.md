@@ -1,21 +1,22 @@
 # Verification · single-Worker OAuth application
 
 Last verified: 2026-09-16. This example uses published
-`@gea-ai/agent-sdk@0.1.260916-alpha.0` and one root lockfile. Earlier Next.js and
+`@gea-ai/agent-sdk@0.1.260916-alpha.1` and one root lockfile. Earlier Next.js and
 two-Worker deployments are historical checks, not proof of the combined deployment.
 
 ## Completed local checks
 
 - Node 24.16.0 and pnpm 10.30.3; type-check and TanStack Start build pass without
   OAuth credentials.
-- 37 app tests pass on native GEA Worker Runtime: 26 OAuth HTTP integration
-  tests, two local-API HTTP tests, six stream tests, two Markdown rendering tests
+- 40 app tests pass on native GEA Worker Runtime: 26 OAuth HTTP integration
+  tests, two local-API HTTP tests, nine stream tests, two Markdown rendering tests
   and the build-output check. No Miniflare or Wrangler dependency remains.
 - A current-source macOS CLI validates and packs one combined Worker: web handler,
   client assets, MuseDAM Agent/Connector, Agent Session objects and app SQLite
   objects. The manifest retains app variables and stable Worker namespaces.
-- 29 HTTP cases pass against the extracted combined artifact on native GEA
-  Worker Runtime, including local API mode and combined application serving. SQLite, encryption, RPC, egress and HTTP dispatch are real;
+- 27 OAuth HTTP cases pass against the extracted combined artifact on native GEA
+  Worker Runtime, including combined application serving. SQLite, encryption, RPC,
+  egress and HTTP dispatch are real;
   only remote GEA/provider HTTP is simulated.
 - A combined-artifact check serves the actual app HTML and confirms anonymous
   invocation of its embedded Agent returns HTTP 401.
@@ -53,11 +54,25 @@ share one source Worker and deployment. The new Agent is linked to the existing
 independent application with a Preview release and enabled tenant installation;
 Production remains disabled.
 
-Chrome confirmed the original app cookie, signed-in account and earlier
-conversation history survive the deployment. The app discovers the newly linked
-Agent, detects its missing per-user MuseDAM connection, blocks Send, and opens the
-real MuseDAM team-authorization page. Completing this new connection and a real
-combined-deployment chat/upload remains pending team selection.
+The SDK was upgraded to `0.1.260916-alpha.1`, rebuilt and deployed to the same
+Worker. Chrome confirmed the original app cookie, signed-in account and earlier
+history survive. The bundled Agent's per-user MuseDAM connection is ready.
+A new Session accepted an uploaded text file; the real Agent read its validation
+marker, searched MuseDAM once, read offloaded results with `readToolOutput` and
+returned ten asset summaries. After disconnecting the initial stream, the same
+active Run reconnected with HTTP 200 SSE and completed; a later reconnect returned
+204. These checks use the bundled Agent through hosted user OAuth.
+
+The new Worker transport replays standard AI SDK events from the Run boundary.
+The example accepts this format using exact Session/Run response headers, while
+retaining the legacy `gea-replay` baseline format. Behavioral tests cover replacing
+partial output without duplication and rejecting missing/mismatched Run identity.
+On final Preview v7, refreshing during execution and clicking Restore conversation
+returns HTTP 200 SSE and displays the complete answer. An explicit cancel returns
+`abort_requested`; the Run subsequently settles as `aborted`.
+
+Concurrent Run admission still surfaced as a generic 502 in the earlier API
+rollout check. This backend error classification is outside this SDK/example update.
 
 ## Earlier real-service acceptance
 
