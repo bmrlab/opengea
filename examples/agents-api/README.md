@@ -111,7 +111,7 @@ cancel with `POST /runs/{id}/cancel`. [oauth-app](../oauth-app/) implements
 streaming chat, reconnection and cancellation.
 
 This Agent declares no Connectors, so its Connections list is empty. See
-[Ask Muse](../ask-muse/) for OAuth Connector declarations and the
+[the complete OAuth Worker app](../oauth-app/) for OAuth Connector declarations and the
 [Connections reference](https://musegea.com/developers/agent-api-connections)
 for authorization, revision-checked updates and disconnects. Credentials are
 stored per service and are not copied when switching URLs.

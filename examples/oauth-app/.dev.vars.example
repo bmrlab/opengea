@@ -1,0 +1,13 @@
+# Default pnpm dev mode: app backend -> local Agents API -> local Worker Agent.
+APP_ORIGIN=http://127.0.0.1:4000
+AGENT_ENVIRONMENT=local
+MUSEDAM_MCP_CLIENT_ID=replace-with-your-musedam-oauth-client-id
+# LOCAL_AGENTS_API_URL is supplied automatically by the Vite plugin.
+
+# Optional hosted OAuth mode: set AGENT_ENVIRONMENT=preview (or production).
+# Register a separate localhost OAuth client with APP_ORIGIN/auth/callback.
+# TOKEN_ENCRYPTION_KEY: generate with node -e 'console.log(require("node:crypto").randomBytes(32).toString("base64"))'
+# TOKEN_ENCRYPTION_KEY=replace-with-a-base64-encoded-32-byte-key
+# OAUTH_ISSUER_URL=https://musegea.com
+# OAUTH_CLIENT_ID=app_replace_me
+# OAUTH_CLIENT_SECRET=gea_secret_replace_me

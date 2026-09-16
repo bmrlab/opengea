@@ -1,0 +1,58 @@
+{
+  "main": "worker.ts",
+  "assets": {
+    "directory": "dist/client",
+    "binding": "ASSETS"
+  },
+  "compatibilityDate": "2026-09-15",
+  "compatibilityFlags": [
+    "nodejs_compat"
+  ],
+  "durableObjectBindings": [
+    {
+      "name": "LOGIN_FLOWS",
+      "className": "LoginFlow",
+      "namespace": "worker"
+    },
+    {
+      "name": "OAUTH_SESSIONS",
+      "className": "OAuthSession",
+      "namespace": "worker"
+    },
+    {
+      "name": "CONVERSATION_RUNS",
+      "className": "ConversationRuns",
+      "namespace": "worker"
+    }
+  ],
+  "environment": [
+    {
+      "name": "APP_ORIGIN",
+      "secret": false
+    },
+    {
+      "name": "OAUTH_ISSUER_URL",
+      "secret": false
+    },
+    {
+      "name": "OAUTH_CLIENT_ID",
+      "secret": false
+    },
+    {
+      "name": "AGENT_ENVIRONMENT",
+      "secret": false
+    },
+    {
+      "name": "OAUTH_CLIENT_SECRET",
+      "secret": true
+    },
+    {
+      "name": "TOKEN_ENCRYPTION_KEY",
+      "secret": true
+    },
+    {
+      "name": "LOCAL_AGENTS_API_URL",
+      "secret": false
+    }
+  ]
+}

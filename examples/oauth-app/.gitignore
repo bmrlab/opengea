@@ -1,8 +1,12 @@
 node_modules/
-.next/
+dist/
+.wrangler/
+.gea/
 .env*
 !.env.example
-.vercel/
+.dev.vars*
+!.dev.vars.example
 *.tsbuildinfo
 coverage/
-.vercel
+src/routeTree.gen.ts
+.vercel/

@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { consume, openStream } from "../app/client-api";
+import { consume, openStream } from "../src/routes/-client-api";
 afterEach(() => vi.unstubAllGlobals());
 describe("HTTP conversation recovery", () => {
   it("decodes real AI SDK stream frames into a visible assistant message", async () => {
@@ -13,7 +13,8 @@ describe("HTTP conversation recovery", () => {
     const received: string[] = [];
     await consume(
       new Response(
-        events.map((e) => `data: ${JSON.stringify(e)}\n\n`).join("") + "data: [DONE]\n\n",
+        events.map((e) => `data: ${JSON.stringify(e)}\n\n`).join("") +
+          "data: [DONE]\n\n",
       ),
       (message) => {
         received.push(
@@ -63,6 +64,57 @@ describe("HTTP conversation recovery", () => {
     );
     expect(answer).toBe("Earlier turn. Recovered output");
   });
+  it("replays a Worker Run from the beginning without duplicating partial output", async () => {
+    const frames = [
+      { type: "start", messageId: "answer" },
+      { type: "text-start", id: "text" },
+      { type: "text-delta", id: "text", delta: "Recovered output" },
+      { type: "text-end", id: "text" },
+      { type: "finish", finishReason: "stop" },
+    ]
+      .map((event) => `data: ${JSON.stringify(event)}\n\n`)
+      .join("");
+    const messages = new Map<string, string>([["answer", "Recovered"]]);
+    await consume(
+      new Response(frames + "data: [DONE]\n\n", {
+        headers: {
+          "x-gea-agent-session-id": "chat",
+          "x-gea-agent-run-id": "run",
+        },
+      }),
+      (message) =>
+        messages.set(
+          message.id,
+          message.parts
+            .filter((part) => part.type === "text")
+            .map((part) => part.text)
+            .join(""),
+        ),
+      { chatId: "chat", runId: "run" },
+    );
+    expect([...messages.entries()]).toEqual([["answer", "Recovered output"]]);
+  });
+  it.each(["other", null])(
+    "rejects a Worker replay with Run header %s before rendering",
+    async (runId) => {
+      const headers = new Headers({ "x-gea-agent-session-id": "chat" });
+      if (runId) headers.set("x-gea-agent-run-id", runId);
+      const output = vi.fn();
+      await expect(
+        consume(
+          new Response('data: {"type":"start","messageId":"answer"}\n\n', {
+            headers,
+          }),
+          output,
+          {
+            chatId: "chat",
+            runId: "run",
+          },
+        ),
+      ).rejects.toThrow(/identity/);
+      expect(output).not.toHaveBeenCalled();
+    },
+  );
   it("rejects a replay belonging to another run before rendering", async () => {
     const response = new Response(
       ": gea-replay " +
@@ -75,9 +127,9 @@ describe("HTTP conversation recovery", () => {
         "\n\n",
     );
     const output = vi.fn();
-    await expect(consume(response, output, { chatId: "chat", runId: "run" })).rejects.toThrow(
-      /identity/,
-    );
+    await expect(
+      consume(response, output, { chatId: "chat", runId: "run" }),
+    ).rejects.toThrow(/identity/);
     expect(output).not.toHaveBeenCalled();
   });
   it("treats a completed run's 204 response as an empty stream", async () => {
@@ -98,7 +150,9 @@ describe("HTTP conversation recovery", () => {
     ]);
   });
   it("does not retry authorization denial or arbitrary upstream failures", async () => {
-    const fetchMock = vi.fn().mockResolvedValue(new Response(null, { status: 403 }));
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(new Response(null, { status: 403 }));
     vi.stubGlobal("fetch", fetchMock);
     expect((await openStream("chat-1")).status).toBe(403);
     expect(fetchMock).toHaveBeenCalledTimes(1);

@@ -1,6 +1,0 @@
-node_modules/
-.gea/
-dist/
-.env*
-!.env.example
-*.tsbuildinfo
