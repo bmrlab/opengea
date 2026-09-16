@@ -41,6 +41,11 @@ The Cloudflare Vite adapter provides local development and a standard Fetch
 handler build. Deployment targets GEA; no Cloudflare account or D1 database is
 needed. See [verification](VERIFICATION.md) for exactly what has been checked.
 
+The former Vercel target is retired. This directory disables automatic Git
+deployments with Vercel's
+[`git.deploymentEnabled`](https://vercel.com/docs/project-configuration/git-configuration)
+setting; it does not delete any existing Vercel deployment.
+
 ## Project layout
 
 ```text
