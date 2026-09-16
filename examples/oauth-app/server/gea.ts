@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { getEnv, type AuthConfig } from "./env";
+import { getEnv, getAppEnv, type AuthConfig } from "./env";
 
 export const scopes = ["openid", "profile", "offline_access", "agents:invoke"];
 export const tokenSchema = z.object({
@@ -116,13 +116,16 @@ export async function userInfo(accessToken: string) {
 }
 export async function agentFetch(
   path: string,
-  accessToken: string,
+  accessToken: string | undefined,
   init: RequestInit = {},
 ) {
-  return fetch(`${getEnv().OAUTH_ISSUER_URL}/api/v1${path}`, {
+  const app = getAppEnv();
+  const local = app.AGENT_ENVIRONMENT === "local";
+  const origin = local ? app.LOCAL_AGENTS_API_URL! : getEnv().OAUTH_ISSUER_URL;
+  return fetch(`${origin}/api/v1${path}`, {
     ...init,
     headers: {
-      authorization: `Bearer ${accessToken}`,
+      ...(!local ? { authorization: `Bearer ${accessToken}` } : {}),
       "cache-control": "no-store",
       ...(init.body instanceof FormData
         ? {}

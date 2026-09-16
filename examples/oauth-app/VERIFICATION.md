@@ -8,13 +8,14 @@ two-Worker deployments are historical checks, not proof of the combined deployme
 
 - Node 24.16.0 and pnpm 10.30.3; type-check and TanStack Start build pass without
   OAuth credentials.
-- 35 app tests pass with Miniflare and real SQLite: 26 HTTP integration tests,
-  six stream tests, two Markdown rendering tests and the build-output check.
+- 37 app tests pass on native GEA Worker Runtime: 26 OAuth HTTP integration
+  tests, two local-API HTTP tests, six stream tests, two Markdown rendering tests
+  and the build-output check. No Miniflare or Wrangler dependency remains.
 - A current-source macOS CLI validates and packs one combined Worker: web handler,
   client assets, MuseDAM Agent/Connector, Agent Session objects and app SQLite
   objects. The manifest retains app variables and stable Worker namespaces.
-- The same 26 HTTP tests pass against the extracted combined artifact on native
-  GEA Worker Runtime. SQLite, encryption, RPC, egress and HTTP dispatch are real;
+- 29 HTTP cases pass against the extracted combined artifact on native GEA
+  Worker Runtime, including local API mode and combined application serving. SQLite, encryption, RPC, egress and HTTP dispatch are real;
   only remote GEA/provider HTTP is simulated.
 - A combined-artifact check serves the actual app HTML and confirms anonymous
   invocation of its embedded Agent returns HTTP 401.
@@ -25,8 +26,24 @@ exact file uploads, file-only messages, authorized history, reconnect, cancellat
 Artifact downloads, and user/environment isolation. Upstream credentials/cookies
 are not relayed to the browser or signed object-store requests.
 
-The output check rejects local secrets and generated Wrangler configuration in
+The output check rejects local secrets and deployment configuration in
 upload directories. Generated artifacts and test credentials are not committed.
+
+## Local Vite and Agents API acceptance
+
+With the current-source CLI, `pnpm dev` starts the plain Vite browser server plus
+native Runtime and Rust Agents API. Chrome renders the Local developer identity,
+Agent discovery and the missing MuseDAM connection gate. Real local API calls
+create a Session, upload a text file and obtain a Connector authorization ticket.
+Vite configuration restart releases the SQLite owner before replacement startup;
+source edits rebuild the Worker and refresh the page, preserving history.
+
+The CLI's native end-to-end tests also exercise real Agent execution, stream
+disconnect, file/Connector resources, reload, failure recovery and SQLite restart.
+The app's local HTTP tests simulate the public API to cover token-free proxying,
+file input, streamed chat, remembered Run recovery and public-origin rejection.
+Real MuseDAM authorization/chat in local mode remains unverified. Model execution
+uses the CLI's provider configuration, not a browser OAuth token.
 
 ## Combined Preview acceptance
 
@@ -70,7 +87,7 @@ Run `pnpm install --frozen-lockfile`, `pnpm type-check`, `pnpm test`, then use a
 compatible CLI for `pnpm worker:validate` and `pnpm worker:pack`.
 
 For combined native tests, extract the generated Agent ZIP into a temporary folder,
-set `GEA_TEST_WORKER_DIR` to it, set `GEA_WORKER_RUNTIME_BIN` and
+set `GEA_TEST_WORKER_DIR` to it, set `GEA_WORKER_RUNTIME_BINARY` and
 `WORKER_RUNTIME_SYSTEM_WORKER_ROOT`, then run:
 
 ```sh

@@ -10,7 +10,7 @@ permissions:
   contents: read
 jobs:
   verify:
-    runs-on: ubuntu-latest
+    runs-on: macos-15
     timeout-minutes: 15
     defaults:
       run:
@@ -22,6 +22,6 @@ jobs:
           node-version-file: examples/oauth-app/.node-version
       - run: npm install --global pnpm@10.30.3
       - run: pnpm install --frozen-lockfile
-      - name: Build and test Worker HTTP routes with SQLite
+      - name: Build and test on GEA Worker Runtime with SQLite
         run: pnpm test
       - run: pnpm type-check

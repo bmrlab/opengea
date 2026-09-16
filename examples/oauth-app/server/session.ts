@@ -1,4 +1,4 @@
-import { getEnv, storageScope, workerEnv } from "./env";
+import { getEnv, getAppEnv, storageScope, workerEnv } from "./env";
 import { hash } from "./store";
 import { HttpError, userInfo, type Token } from "./gea";
 
@@ -52,15 +52,33 @@ export async function saveSession(key: string, token: Token) {
   const user = await userInfo(token.access_token);
   await oauthSession(key).create({ token, user }, getEnv());
 }
+export async function loadAgentSession(request: Request) {
+  const app = getAppEnv();
+  if (app.AGENT_ENVIRONMENT === "local") {
+    const origin = request.headers.get("origin");
+    if (origin && origin !== app.APP_ORIGIN)
+      throw new HttpError(403, "invalid_origin", "Invalid request origin.");
+    return { accessToken: undefined, identity: "local-user" };
+  }
+  const current = await loadSession(request);
+  return {
+    accessToken: current.token.access_token,
+    identity: JSON.stringify([
+      current.token.application.id,
+      current.token.organization.id,
+      current.user.sub,
+    ]),
+  };
+}
 export function conversationRuns(
-  current: Awaited<ReturnType<typeof loadSession>>,
+  current: Awaited<ReturnType<typeof loadAgentSession>>,
 ) {
-  const identity = JSON.stringify([
-    current.token.application.id,
-    current.token.organization.id,
-    current.user.sub,
-  ]);
+  const app = getAppEnv();
+  const scope =
+    app.AGENT_ENVIRONMENT === "local"
+      ? JSON.stringify([app.APP_ORIGIN, "local"])
+      : storageScope(getEnv());
   return workerEnv.CONVERSATION_RUNS.getByName(
-    `${storageScope(getEnv())}:runs:${identity}`,
+    `${scope}:runs:${current.identity}`,
   );
 }

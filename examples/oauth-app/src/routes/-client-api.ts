@@ -22,9 +22,9 @@ export type SessionView = {
   user: { sub: string; name?: string | null };
   organization: { id: string; name: string; slug: string };
   scopes: string[];
-  expiresAt: string;
+  expiresAt: string | null;
   agents: AgentView[];
-  environment: "preview" | "production";
+  environment: "local" | "preview" | "production";
 };
 export type ConversationView = {
   messages: UIMessage[];

@@ -1,4 +1,4 @@
-import { Miniflare, Log, LogLevel } from "miniflare";
+import { geaInstallation } from "../scripts/runtime";
 import {
   cp,
   mkdtemp,
@@ -21,6 +21,7 @@ const names = {
 };
 
 export async function createTestRuntime(bindings: Record<string, string>) {
+  const installation = geaInstallation();
   const bundle = process.env.GEA_TEST_WORKER_DIR;
   const manifest = bundle
     ? JSON.parse(await readFile(join(bundle, "gea.agent-package.json"), "utf8"))
@@ -39,43 +40,13 @@ export async function createTestRuntime(bindings: Record<string, string>) {
       namespace: "worker",
     }));
   const root = await mkdtemp(join(tmpdir(), "opengea-oauth-sqlite-"));
-  if (process.env.GEA_WORKER_RUNTIME_BIN)
-    await cp(bundle ?? resolve("dist"), bundle ? root : join(root, "dist"), {
-      recursive: true,
-    });
-  let mf: Miniflare | undefined;
+  await cp(bundle ?? resolve("dist"), bundle ? root : join(root, "dist"), {
+    recursive: true,
+  });
   let child: ChildProcess | undefined;
   let runtimeOrigin = "";
   let logs = "";
   async function start() {
-    if (!process.env.GEA_WORKER_RUNTIME_BIN) {
-      mf = new Miniflare({
-        name: "oauth-app",
-        modules: true,
-        scriptPath: resolve(bundle ?? ".", main),
-        modulesRules: [
-          { type: "ESModule", include: ["**/*.js"], fallthrough: true },
-        ],
-        compatibilityDate: "2026-03-12",
-        compatibilityFlags: ["nodejs_compat"],
-        bindings,
-        assets: {
-          directory: resolve("dist/client"),
-          binding: "ASSETS",
-          routerConfig: { has_user_worker: true },
-        },
-        durableObjects: Object.fromEntries(
-          Object.entries(names).map(([name, className]) => [
-            name,
-            { className, useSQLite: true },
-          ]),
-        ),
-        durableObjectsPersist: join(root, "data"),
-        log: new Log(LogLevel.ERROR),
-      });
-      await mf.ready;
-      return;
-    }
     const listener = createServer();
     listener.listen(0, "127.0.0.1");
     await once(listener, "listening");
@@ -113,9 +84,10 @@ export async function createTestRuntime(bindings: Record<string, string>) {
         ],
       }),
     );
-    child = spawn(process.env.GEA_WORKER_RUNTIME_BIN, [], {
+    child = spawn(installation.runtime, [], {
       env: {
         ...process.env,
+        WORKER_RUNTIME_SYSTEM_WORKER_ROOT: installation.systemWorkers,
         WORKER_RUNTIME_CONFIG: config,
         WORKER_RUNTIME_LISTEN_ADDR: `127.0.0.1:${address.port}`,
       },
@@ -138,10 +110,6 @@ export async function createTestRuntime(bindings: Record<string, string>) {
     throw new Error(`GEA Runtime did not start: ${logs}`);
   }
   async function stop() {
-    if (mf) {
-      await mf.dispose();
-      mf = undefined;
-    }
     if (child && child.exitCode === null) {
       child.kill("SIGTERM");
       await once(child, "exit");
@@ -174,13 +142,6 @@ export async function createTestRuntime(bindings: Record<string, string>) {
           : undefined,
         redirect: "manual" as const,
       };
-      if (mf) {
-        const response = await mf.dispatchFetch(request.url, init);
-        return new Response(
-          response.body as ReadableStream<Uint8Array> | null,
-          { status: response.status, headers: [...response.headers] },
-        );
-      }
       const url = new URL(request.url);
       return fetch(`${runtimeOrigin}${url.pathname}${url.search}`, {
         ...init,
