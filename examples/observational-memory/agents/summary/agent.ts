@@ -1,7 +1,9 @@
 import { defineAgent } from "@gea-ai/agent-sdk";
+import { agentCore } from "@gea-ai/agent-sdk/agent-core";
 import { defaultContext } from "@gea-ai/agent-sdk/context";
 import { MAIN_MODEL, MEMORY_MODEL } from "../../models";
 export default defineAgent({
+  engine: agentCore(),
   name: "summary",
   slug: "summary",
   model: MAIN_MODEL,

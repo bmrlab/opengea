@@ -1,5 +1,15 @@
 # Verification record
 
+## SDK / Agent Core recheck, 2026-09-17
+
+- Public Agent SDK and Contract `0.1.260917-alpha.0`; frozen install, TypeScript, all 18 tests and the Next.js production build passed.
+- Public CLI `0.1.260916-alpha.0` validated and packed the Agent; its bundled Runtime also passed both real-model Benchmarks using the existing local provider configuration. Catalog v2 live acceptance used a matching source CLI/Runtime (GEA `261f19618`, with the Runtime behavior from #479); no workspace-linked SDK was used.
+- The unchanged two Hacker News Benchmarks passed with the example's Core engine. Temporary copies then ran both Core and AI SDK with the same two cases against CR Responses (`crr-o-20260710`), Messages (`creative-reasoning-1.5`) and Completions (`crr-q-pro-20260804`): all 12 results scored 1.0. Only model selection and engine differed; search approval was disabled for unattended Benchmarks.
+- Real local Agents API acceptance covered approval/denial, search results, a disconnected subscription while execution stayed running, replay on reconnect, explicit cancellation to `aborted`, and a follow-up in the same Session. Persisted model-call IDs were unique. Session: `f32abb20-cfd7-4b9c-84e3-1a8b858e978d`.
+- A separate Messages probe applied the catalog low-thinking preset as request defaults. After approval pause/resume and a further user turn, the persisted model context retained an Anthropic thinking signature and the model reused the prior search results. Session: `af3d1f97-d4bd-4a56-8737-c55947650539`.
+- This is local native Runtime / public SDK evidence, not a new hosted Preview, browser UAT or Production promotion. Raw model responses, temporary comparison copies and generated archives remain ignored under `.gea` / `dist`.
+
+
 Last verified: 2026-09-15 (Asia/Shanghai). See the current release scope and remaining checks below.
 
 ## SDK 0.52 upgrade verification, 2026-09-15

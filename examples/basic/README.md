@@ -58,14 +58,14 @@ pnpm test
 pnpm build
 ```
 
-These checks need no private GEA checkout, running Agent, credentials or `.gea` directory. SDK and Contract are pinned to npm **0.1.260915-alpha.0**, with AI SDK **7.0.9** and `@ai-sdk/react` **4.0.10**. CLI is not an install/build dependency: Linux Next.js hosting never needs a macOS/Windows executable.
+These checks need no private GEA checkout, running Agent, credentials or `.gea` directory. SDK and Contract are pinned to npm **0.1.260917-alpha.0**, with AI SDK **7.0.9** and `@ai-sdk/react` **4.0.10**. CLI is not an install/build dependency: Linux Next.js hosting never needs a macOS/Windows executable.
 
 ## 2. Run locally
 
-Use GEA CLI **0.1.260914-alpha.2** for **macOS ARM64 or Windows x64**. It includes the WASM bundler required by this example; the SDK provides the compiled Agent Core.
+Use GEA CLI **0.1.260916-alpha.0** for **macOS ARM64 or Windows x64**. It includes the WASM bundler required by this example; the SDK provides the compiled Agent Core.
 
 ```bash
-npm install --global @gea-ai/cli@0.1.260914-alpha.2
+npm install --global @gea-ai/cli@0.1.260916-alpha.0
 gea agent --help
 pnpm run setup:env
 ```

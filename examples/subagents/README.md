@@ -1,5 +1,7 @@
 # Independent subagents
 
+All four Agent definitions explicitly select `engine: agentCore()` from the public SDK. The Rust loop runs the coordinator, private researcher/calculator and top-level reviewer; TypeScript tools and the automatic parent continuation contract stay the same. The SDK framework default remains AI SDK.
+
 A small arithmetic team that demonstrates how Agent definitions and task calls
 fit together. It uses real models and the published Agent SDK; the verification
 script can use the local native Runtime or the public hosted Agent HTTP API.
@@ -38,11 +40,11 @@ pnpm test
 cp .env.example .env
 ```
 
-The SDK is pinned to public version `0.1.260915-alpha.0`. Install CLI
-`0.1.260914-alpha.2`, which includes Session inbox and subagent support:
+The SDK is pinned to public version `0.1.260917-alpha.0`. Install CLI
+`0.1.260916-alpha.0`, which includes Session inbox and subagent support:
 
 ```sh
-npm install --global @gea-ai/cli@0.1.260914-alpha.2
+npm install --global @gea-ai/cli@0.1.260916-alpha.0
 ```
 
 For local CLI development, `GEA_CLI_BIN` can select an executable; optional

@@ -1,5 +1,12 @@
 # Verification
 
+## SDK / Agent Core recheck, 2026-09-17
+
+- Public Agent SDK and Contract `0.1.260917-alpha.0`; frozen install and TypeScript passed. Public CLI `0.1.260916-alpha.0` validated and packed the unchanged Core Agent.
+- The complete `pnpm verify` flow passed against the matching Catalog v2 source CLI/Runtime (GEA `261f19618`, Runtime behavior from #479): empty Session preparation, Computer read/write/exec, multipart upload, real model/tool execution, exact output bytes, output reuse in another Session and paginated history. Initial Session: `2990edc9-0722-49fe-9179-2659f524cc8b`.
+- SDK dependencies came from npm, not workspace links. This recheck was local; no new Preview deployment or Production promotion is claimed.
+
+
 Last verified: 2026-09-15 (Asia/Shanghai).
 
 ## Environment

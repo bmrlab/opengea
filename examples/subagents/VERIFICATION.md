@@ -1,5 +1,13 @@
 # Verification record
 
+## Agent Core adoption, 2026-09-17
+
+- Public Agent SDK `0.1.260917-alpha.0`; coordinator, private researcher, nested calculator and reviewer now explicitly use `agentCore()`.
+- Frozen installation, TypeScript and all five verifier tests passed. Public CLI `0.1.260916-alpha.0` validated and packed the complete application.
+- The unchanged strict real-model verifier passed against the matching Catalog v2 source CLI/Runtime (GEA `261f19618`, Runtime behavior from #479). Verification ID: `998fc2dc-b8b1-466c-a7ee-f324cac1765f`. All three batches passed: three concurrent children plus the nested calculator, automatic parent continuation, continued-child recall and fresh-child isolation.
+- All four definitions use Core; TypeScript tools, identity checks, task receipts and history-isolation assertions are unchanged. The SDK framework default remains AI SDK. This records local acceptance, without updating earlier Preview or Production deployments.
+
+
 Last verified: 2026-09-15 (Asia/Shanghai). See the current release scope and remaining checks below.
 
 ## SDK 0.52 upgrade verification, 2026-09-15
