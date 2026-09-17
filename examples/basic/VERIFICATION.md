@@ -1,5 +1,14 @@
 # Verification record
 
+## SDK alpha.2 and published CLI acceptance, 2026-09-17
+
+- Public SDK/Contract `0.1.260917-alpha.2` and CLI `0.1.260917-alpha.0`. Frozen installation, Agent/web type checks, all 18 tests, production Next.js build, Agent validation and packaging passed.
+- Both unchanged Basic Benchmarks passed with explicit Core. Temporary copies omitted `engine` or selected `aiSdk()` and used the production Catalog through `modelSource: "hosted"`: Responses (`crr-o-20260710`), Messages (`creative-reasoning-1.5`) and Completions (`crr-q-pro-20260804`) all scored 1.0, 12 cases total. No source CLI or linked SDK was used.
+- The published native Runtime passed eight standalone `env.AI` calls: `generateText` and `streamText` with those three models and `auto` plus speed requirements. Auto resolved to `deepseek-v4-flash`; all calls returned the requested marker, nonempty usage and unique call IDs.
+- Rebuilt Preview version 11 on the production cluster. Capability-based selection chose `deepseek-v4-pro`. The actual Studio `/api/chat` flow paused for approval, continued the TypeScript search after approval and returned real Hacker News discussion links. Chat: `01a0afc7-5b8b-76df-8a13-34bd30f91923`. Production version 10 was not promoted or replaced.
+- An initial test mistakenly used the legacy Chat approval RPC, which left that probe queued. Its cancellation request returned HTTP 204 while the legacy read model still showed queued; that test chat was archived. The supported Studio transport passed; the legacy probe is not counted as an SDK/Core regression or successful acceptance.
+- Raw benchmark and binding reports remain in ignored `.gea/upgrade-alpha2-20260917-222155` and `.gea/alpha2-ai-binding`. This run did not repeat browser interaction, cancellation/replay or signature-specific checks below.
+
 ## SDK / Agent Core recheck, 2026-09-17
 
 - Public Agent SDK and Contract `0.1.260917-alpha.0`; frozen install, TypeScript, all 18 tests and the Next.js production build passed.
@@ -8,7 +17,6 @@
 - Real local Agents API acceptance covered approval/denial, search results, a disconnected subscription while execution stayed running, replay on reconnect, explicit cancellation to `aborted`, and a follow-up in the same Session. Persisted model-call IDs were unique. Session: `f32abb20-cfd7-4b9c-84e3-1a8b858e978d`.
 - A separate Messages probe applied the catalog low-thinking preset as request defaults. After approval pause/resume and a further user turn, the persisted model context retained an Anthropic thinking signature and the model reused the prior search results. Session: `af3d1f97-d4bd-4a56-8737-c55947650539`.
 - This is local native Runtime / public SDK evidence, not a new hosted Preview, browser UAT or Production promotion. Raw model responses, temporary comparison copies and generated archives remain ignored under `.gea` / `dist`.
-
 
 Historical baseline: 2026-09-15 (Asia/Shanghai). See the current release scope and remaining checks below.
 

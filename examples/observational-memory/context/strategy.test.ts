@@ -108,6 +108,15 @@ test("observation and reflection usage survive activation and interrupted projec
       environment: "production",
       durableObjects: {} as never,
       signal: new AbortController().signal,
+      // This example retains the legacy model adapter; built-in summaries use ai.
+      ai: {
+        async generateText() {
+          throw new Error("legacy strategy uses model()");
+        },
+        async streamText() {
+          throw new Error("legacy strategy uses model()");
+        },
+      },
       model: async () => model(),
       tracing: {
         currentSpan: undefined,

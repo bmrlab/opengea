@@ -58,14 +58,14 @@ pnpm test
 pnpm build
 ```
 
-These checks need no private GEA checkout, running Agent, credentials or `.gea` directory. SDK and Contract are pinned to npm **0.1.260917-alpha.0**, with AI SDK **7.0.9** and `@ai-sdk/react` **4.0.10**. CLI is not an install/build dependency: Linux Next.js hosting never needs a macOS/Windows executable.
+These checks need no private GEA checkout, running Agent, credentials or `.gea` directory. SDK and Contract are pinned to npm **0.1.260917-alpha.2**, with AI SDK **7.0.9** and `@ai-sdk/react` **4.0.10**. CLI is not an install/build dependency: Linux Next.js hosting never needs a macOS/Windows executable.
 
 ## 2. Run locally
 
-Use GEA CLI **0.1.260916-alpha.0** for **macOS ARM64 or Windows x64**. It includes the WASM bundler required by this example; the SDK provides the compiled Agent Core.
+Use GEA CLI **0.1.260917-alpha.0** for **macOS ARM64 or Windows x64**. It includes the WASM bundler required by this example; the SDK provides the compiled Agent Core.
 
 ```bash
-npm install --global @gea-ai/cli@0.1.260916-alpha.0
+npm install --global @gea-ai/cli@0.1.260917-alpha.0
 gea agent --help
 pnpm run setup:env
 ```
@@ -90,7 +90,7 @@ Try “Find three stories about TypeScript”, then “Explain the first result�
 
 [`packages/agent/agent.ts`](packages/agent/agent.ts) imports `agentCore` from
 `@gea-ai/agent-sdk/agent-core` and selects it explicitly. The framework's default
-engine remains AI SDK; this example demonstrates the Core option.
+engine is also Agent Core. Select `aiSdk()` from `@gea-ai/agent-sdk/ai-sdk` to use the AI SDK loop instead.
 
 The SDK already contains the compiled WASM. A compatible CLI embeds those bytes
 in the Worker bundle, so Agent authors do not compile Rust or supply a separate

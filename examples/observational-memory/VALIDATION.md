@@ -1,5 +1,27 @@
 # Context verification
 
+## SDK alpha.2 and native summary binding, 2026-09-17
+
+- Public SDK `0.1.260917-alpha.2` and CLI `0.1.260917-alpha.0`; frozen installation, type-check, six Node tests, Agent validation and packaging passed. The test Runtime fixture now includes the SDK's required `ai` capability; the custom strategy still exercises the compatible legacy `model()` path and manual usage accounting. Built-in summaries use the new native AI binding.
+- Full real-model local run: `2026-09-17T14-18-35.952Z-02cd9f15`. Same scenario, model IDs, thresholds, prompts and strict scoring as before.
+
+| Strategy             | Recall | Final main input | Total input | Total output | Seconds |
+| -------------------- | ------ | ---------------- | ----------- | ------------ | ------- |
+| raw                  | 15/15  | 26119            | 200229      | 275          | 47.2    |
+| summary              | 15/15  | 6473             | 147835      | 34900        | 597.6   |
+| observational-memory | 14/15  | 1987             | 101380      | 11503        | 180.4   |
+
+The unchanged strict recall gate failed only for observations: `blocker` was
+`"signed DPA"`, expected `"DPA"` (the question requests the document name without
+status). Preserve this failed result; it is not a full-pass comparison. All
+three modes restored their projections exactly after Runtime restart and passed
+fresh-chat isolation. Three observe calls and one reflection completed; usage
+was complete. Final observations input was 92.4% smaller than raw history in
+this single synthetic run, not a general quality or cost claim.
+
+The observations application was rebuilt as production-cluster Preview version 5. A separate hosted `summary` conversation completed six turns, including four native summary calls, and recalled its original unique marker. All main/auxiliary usage was present with unique call IDs. Chat: `01a0afcb-7bf3-779f-8232-cc678a440bac`; its temporary Preview key was revoked. No Production promotion was performed. Earlier validation below retains its
+original version and scope.
+
 ## Agent Core adoption, 2026-09-17
 
 - Public Agent SDK `0.1.260917-alpha.0`; all three definitions now explicitly use `agentCore()`. Frozen installation, TypeScript and all six Node tests passed. Public CLI `0.1.260916-alpha.0` validated and packed the application.
@@ -8,11 +30,11 @@
 
 Run: `2026-09-17T06-00-48.126Z-b26752e3`.
 
-| Strategy | Recall | Final main input | Total input including auxiliary | Total output | Seconds |
-| --- | --- | --- | --- | --- | --- |
-| raw | 15/15 | 26119 | 200229 | 275 | 56.6 |
-| summary | 15/15 | 6614 | 146407 | 31804 | 784.6 |
-| observational-memory | 15/15 | 2193 | 100463 | 8567 | 257.7 |
+| Strategy             | Recall | Final main input | Total input including auxiliary | Total output | Seconds |
+| -------------------- | ------ | ---------------- | ------------------------------- | ------------ | ------- |
+| raw                  | 15/15  | 26119            | 200229                          | 275          | 56.6    |
+| summary              | 15/15  | 6614             | 146407                          | 31804        | 784.6   |
+| observational-memory | 15/15  | 2193             | 100463                          | 8567         | 257.7   |
 
 All three projections restored exactly after Runtime restart. Observational
 memory executed three observation calls and one reflection call, retained all
