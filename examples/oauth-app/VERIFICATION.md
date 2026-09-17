@@ -1,6 +1,15 @@
 # Verification · single-Worker OAuth application
 
-Last verified: 2026-09-16. This example uses published
+## SDK alpha.2 and public development Runtime, 2026-09-17
+
+- Public SDK `0.1.260917-alpha.2`, CLI `0.1.260917-alpha.0`; frozen installation, TanStack Start build, type-check, Worker validation and combined packaging passed without source-built binaries.
+- 40 tests passed, one optional combined-artifact test was skipped in the normal suite. A separate run against the extracted combined Worker then passed all 27 OAuth integration cases, including that artifact case. HTTP fixtures execute against the published native Runtime and real SQLite; they are not a live external OAuth/MuseDAM test.
+- `pnpm dev` with the pinned public CLI served app HTML and `/api/session` returned the Local developer identity plus the embedded MuseDAM Agent discovered through the local Agents API. Temporary processes were stopped after verification.
+- The embedded Agent uses the new Core default. No new OAuth Preview deployment, live MuseDAM authorization/chat, or Production promotion was performed in this upgrade.
+
+## Historical baseline, 2026-09-16
+
+This earlier verification used published
 `@gea-ai/agent-sdk@0.1.260916-alpha.1` and one root lockfile. Earlier Next.js and
 two-Worker deployments are historical checks, not proof of the combined deployment.
 
@@ -60,8 +69,7 @@ history survive. The bundled Agent's per-user MuseDAM connection is ready.
 A new Session accepted an uploaded text file; the real Agent read its validation
 marker, searched MuseDAM once, read offloaded results with `readToolOutput` and
 returned ten asset summaries. After disconnecting the initial stream, the same
-active Run reconnected with HTTP 200 SSE and completed; a later reconnect returned
-204. These checks use the bundled Agent through hosted user OAuth.
+active Run reconnected with HTTP 200 SSE and completed; a later reconnect returned 204. These checks use the bundled Agent through hosted user OAuth.
 
 The new Worker transport replays standard AI SDK events from the Run boundary.
 The example accepts this format using exact Session/Run response headers, while

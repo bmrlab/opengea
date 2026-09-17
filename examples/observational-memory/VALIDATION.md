@@ -1,5 +1,62 @@
 # Context verification
 
+## SDK alpha.2 and native summary binding, 2026-09-17
+
+- Public SDK `0.1.260917-alpha.2` and CLI `0.1.260917-alpha.0`; frozen installation, type-check, six Node tests, Agent validation and packaging passed. The test Runtime fixture now includes the SDK's required `ai` capability; the custom strategy still exercises the compatible legacy `model()` path and manual usage accounting. Built-in summaries use the new native AI binding.
+- Full real-model local run: `2026-09-17T14-18-35.952Z-02cd9f15`. Same scenario, model IDs, thresholds, prompts and strict scoring as before.
+
+| Strategy             | Recall | Final main input | Total input | Total output | Seconds |
+| -------------------- | ------ | ---------------- | ----------- | ------------ | ------- |
+| raw                  | 15/15  | 26119            | 200229      | 275          | 47.2    |
+| summary              | 15/15  | 6473             | 147835      | 34900        | 597.6   |
+| observational-memory | 14/15  | 1987             | 101380      | 11503        | 180.4   |
+
+The unchanged strict recall gate failed only for observations: `blocker` was
+`"signed DPA"`, expected `"DPA"` (the question requests the document name without
+status). Preserve this failed result; it is not a full-pass comparison. All
+three modes restored their projections exactly after Runtime restart and passed
+fresh-chat isolation. Three observe calls and one reflection completed; usage
+was complete. Final observations input was 92.4% smaller than raw history in
+this single synthetic run, not a general quality or cost claim.
+
+The observations application was rebuilt as production-cluster Preview version 5. A separate hosted `summary` conversation completed six turns, including four native summary calls, and recalled its original unique marker. All main/auxiliary usage was present with unique call IDs. Chat: `01a0afcb-7bf3-779f-8232-cc678a440bac`; its temporary Preview key was revoked. No Production promotion was performed. Earlier validation below retains its
+original version and scope.
+
+## Agent Core adoption, 2026-09-17
+
+- Public Agent SDK `0.1.260917-alpha.0`; all three definitions now explicitly use `agentCore()`. Frozen installation, TypeScript and all six Node tests passed. Public CLI `0.1.260916-alpha.0` validated and packed the application.
+- Real Catalog v2 calls used the matching source CLI/Runtime (GEA `261f19618`, Runtime behavior from #479), with publicly installed SDK packages. The immutable model IDs, prompts, context strategies, thresholds and scoring assertions were unchanged.
+- Main model: `creative-reasoning-1.5` through Messages; auxiliary model: `crr-q-flash-20260826` through Completions. This is one synthetic local trial, not a general performance or monetary-savings claim.
+
+Run: `2026-09-17T06-00-48.126Z-b26752e3`.
+
+| Strategy             | Recall | Final main input | Total input including auxiliary | Total output | Seconds |
+| -------------------- | ------ | ---------------- | ------------------------------- | ------------ | ------- |
+| raw                  | 15/15  | 26119            | 200229                          | 275          | 56.6    |
+| summary              | 15/15  | 6614             | 146407                          | 31804        | 784.6   |
+| observational-memory | 15/15  | 2193             | 100463                          | 8567         | 257.7   |
+
+All three projections restored exactly after Runtime restart. Observational
+memory executed three observation calls and one reflection call, retained all
+15 facts and reduced final main input by 91.6% relative to raw history. Provider
+usage was complete and model-call IDs were unique. Main loops used Core; auxiliary
+context calls retained the existing AI SDK path.
+
+The original full run completed every training and recall call, but stopped at
+the final fresh-chat isolation probe: the upstream provider timed out waiting
+for response headers after 120 seconds, followed by the runner's 180-second
+timeout. Trace `d72ed222098c32394148ee099316ae99` records that failure.
+A separate new-chat isolation probe then returned unknown project/owner as null,
+passing the unchanged assertion. No original write was replayed and no source
+behavior or scoring threshold was changed to get a pass. The original failed
+`report.json` and the successful `isolation-recheck.json` remain together under
+ignored `.gea/verification/<run-id>/`. All seven acceptance gates are satisfied
+across the completed run and this independent recheck. As in prior reports,
+isolation probes are excluded from the comparison's usage and latency totals.
+
+No new hosted Preview, Production promotion, or default-engine switch is claimed.
+Earlier acceptance records below retain their original scope and versions.
+
 ## SDK 0.52 upgrade verification, 2026-09-15
 
 - Public npm Agent SDK `0.1.260915-alpha.0`; frozen dependency installation passed.

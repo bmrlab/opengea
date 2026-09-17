@@ -1,6 +1,20 @@
 # Verification record
 
-Last verified: 2026-09-15 (Asia/Shanghai). See the current release scope and remaining checks below.
+## SDK alpha.2 and published CLI acceptance, 2026-09-17
+
+- Public SDK `0.1.260917-alpha.2` and CLI `0.1.260917-alpha.0`; frozen installation, type-check, all five verifier tests, validation and packaging passed.
+- Local native Runtime acceptance passed all three batches: parallel private/nested/reviewer/self-copy execution, automatic parent continuation, same-child recall and fresh-child isolation. Report: `.gea/verification/e6f6304b-e0f4-4307-bd12-5788fc2922e2/report.json`.
+- Rebuilt production-cluster Preview version 6. The hosted verifier reached the parent summary after the parallel batch, but failed its existing strict schema: `results[0].result.calculator` omitted `chatId` and `runId`. The hosted continuation and fresh-child batches therefore did not run. Do not describe the hosted suite as passed or attribute the missing fields to transport without further evidence.
+- Failed report and parent messages remain under `.gea/verification/cb1fbf47-4707-4c6a-9538-e94efcd4446d`; parent Chat `01a0afc9-5e88-739b-a2b8-339cd45fb03e`. The temporary Preview API key was revoked. No scoring/schema rules or prompts were loosened, and no Production promotion was performed.
+
+## Agent Core adoption, 2026-09-17
+
+- Public Agent SDK `0.1.260917-alpha.0`; coordinator, private researcher, nested calculator and reviewer now explicitly use `agentCore()`.
+- Frozen installation, TypeScript and all five verifier tests passed. Public CLI `0.1.260916-alpha.0` validated and packed the complete application.
+- The unchanged strict real-model verifier passed against the matching Catalog v2 source CLI/Runtime (GEA `261f19618`, Runtime behavior from #479). Verification ID: `998fc2dc-b8b1-466c-a7ee-f324cac1765f`. All three batches passed: three concurrent children plus the nested calculator, automatic parent continuation, continued-child recall and fresh-child isolation.
+- All four definitions use Core; TypeScript tools, identity checks, task receipts and history-isolation assertions are unchanged. The SDK framework default remains AI SDK. This records local acceptance, without updating earlier Preview or Production deployments.
+
+Historical baseline: 2026-09-15 (Asia/Shanghai). See the current release scope and remaining checks below.
 
 ## SDK 0.52 upgrade verification, 2026-09-15
 

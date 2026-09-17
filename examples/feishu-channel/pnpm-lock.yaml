@@ -110,8 +110,8 @@ importers:
   .:
     dependencies:
       '@gea-ai/agent-sdk':
-        specifier: 0.1.260915-alpha.0
-        version: 0.1.260915-alpha.0
+        specifier: 0.1.260917-alpha.2
+        version: 0.1.260917-alpha.2
       zod:
         specifier: 4.3.6
         version: 4.3.6
@@ -176,16 +176,16 @@ packages:
   '@bufbuild/protobuf@2.13.0':
     resolution: {integrity: sha512-acq7c49vxfm1ggJ95P70TX7ABDM0vxr1SYD3BB0o0jnBLB4OAqeHyKuN+cD3w80gXEDQ2zxHpR6CUeA+O/aU9g==}
 
-  '@gea-ai/agent-sdk@0.1.260915-alpha.0':
-    resolution: {integrity: sha512-acIUZkLUzVbbFaxR4YSTM9yxYPQKcc1rBZ+r0pJibcsjeGFoD/wMIqEuag5bZUC1pk76V1xGTNGJqxiiBQBMoQ==}
+  '@gea-ai/agent-sdk@0.1.260917-alpha.2':
+    resolution: {integrity: sha512-W/IpXfKwlcd+K54K1vwCl9M0HWymjWbaq8MoW43hGxG/vAOYneC+RtNVzKUkfh/AJsNjIXuzzNWL0UWAHAAl9g==}
     peerDependencies:
       esbuild: ^0.28.0
     peerDependenciesMeta:
       esbuild:
         optional: true
 
-  '@gea-ai/contract@0.1.260915-alpha.0':
-    resolution: {integrity: sha512-QAm2Sfj6AKQOGkmd4GzP/wR9qJ8yv1ar2/Wk1mxZEQrmdvmvOVlQLCl70CvbASk+/vb+Sr6JGK4EmNKnQna67A==}
+  '@gea-ai/contract@0.1.260917-alpha.2':
+    resolution: {integrity: sha512-tgJtmBLP93DjdhRhMwGYxbx8GXri+wHRHxEv9UtPs5ImnrzSQEygndeIiYaZLMSv+AZG8mq9PSDn0M6r+IJlow==}
 
   '@jitl/quickjs-ffi-types@0.32.0':
     resolution: {integrity: sha512-v9T+GQpmk43VDJ7d72sf0Nexhk+ArvtUihW27dy7lqAl0zBObFKtSBBIm5RBjwIhE8VwsPPm9PNuvPvNqLWUEg==}
@@ -715,7 +715,7 @@ snapshots:
 
   '@bufbuild/protobuf@2.13.0': {}
 
-  '@gea-ai/agent-sdk@0.1.260915-alpha.0':
+  '@gea-ai/agent-sdk@0.1.260917-alpha.2':
     dependencies:
       '@ai-sdk/anthropic': 4.0.37(zod@4.3.6)
       '@ai-sdk/openai': 4.0.4(zod@4.3.6)
@@ -723,7 +723,7 @@ snapshots:
       '@ai-sdk/otel': 1.0.9(zod@4.3.6)
       '@ai-sdk/provider': 4.0.1
       '@ai-sdk/provider-utils': 5.0.2(zod@4.3.6)
-      '@gea-ai/contract': 0.1.260915-alpha.0
+      '@gea-ai/contract': 0.1.260917-alpha.2
       '@opentelemetry/api': 1.9.1
       '@opentelemetry/context-async-hooks': 2.10.0(@opentelemetry/api@1.9.1)
       '@opentelemetry/core': 2.10.0(@opentelemetry/api@1.9.1)
@@ -742,7 +742,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@gea-ai/contract@0.1.260915-alpha.0':
+  '@gea-ai/contract@0.1.260917-alpha.2':
     dependencies:
       '@bufbuild/protobuf': 2.13.0
       '@opentelemetry/api': 1.9.1

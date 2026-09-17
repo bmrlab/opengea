@@ -1,5 +1,10 @@
 # Verification
 
+## SDK alpha.2 packaging verification, 2026-09-17
+
+- Public SDK `0.1.260917-alpha.2` and published CLI `0.1.260917-alpha.0`; frozen installation, type-check, Agent validation and packaging passed.
+- The definition omits `engine`, so newly built Workers use the SDK's Agent Core default. This run did not send Feishu messages, exercise sender isolation or update the hosted bot; earlier live checks below remain historical.
+
 Last verified: 2026-09-15 (Asia/Shanghai). See the current release scope and remaining checks below.
 
 ## SDK 0.52 upgrade verification, 2026-09-15
