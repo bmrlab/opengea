@@ -8,7 +8,7 @@
 - All four definitions use Core; TypeScript tools, identity checks, task receipts and history-isolation assertions are unchanged. The SDK framework default remains AI SDK. This records local acceptance, without updating earlier Preview or Production deployments.
 
 
-Last verified: 2026-09-15 (Asia/Shanghai). See the current release scope and remaining checks below.
+Historical baseline: 2026-09-15 (Asia/Shanghai). See the current release scope and remaining checks below.
 
 ## SDK 0.52 upgrade verification, 2026-09-15
 

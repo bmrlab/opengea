@@ -10,7 +10,7 @@
 - This is local native Runtime / public SDK evidence, not a new hosted Preview, browser UAT or Production promotion. Raw model responses, temporary comparison copies and generated archives remain ignored under `.gea` / `dist`.
 
 
-Last verified: 2026-09-15 (Asia/Shanghai). See the current release scope and remaining checks below.
+Historical baseline: 2026-09-15 (Asia/Shanghai). See the current release scope and remaining checks below.
 
 ## SDK 0.52 upgrade verification, 2026-09-15
 

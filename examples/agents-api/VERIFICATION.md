@@ -7,7 +7,7 @@
 - SDK dependencies came from npm, not workspace links. This recheck was local; no new Preview deployment or Production promotion is claimed.
 
 
-Last verified: 2026-09-15 (Asia/Shanghai).
+Historical baseline: 2026-09-15 (Asia/Shanghai).
 
 ## Environment
 

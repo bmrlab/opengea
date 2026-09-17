@@ -2,13 +2,15 @@
 
 An Agent that maintains observations in a chat-scoped Durable Object, plus a real-model comparison against uncompressed history and the SDK's default summarizer. It demonstrates the public `prepareStep`, `onStepEnd`, `onEnd`, `model`, `recordUsage`, `updateMessages` and `waitUntil` APIs.
 
+All three Agent definitions explicitly select `engine: agentCore()`. The Rust loop runs their main model calls; the TypeScript context hooks and their auxiliary AI SDK model calls keep the same policy. The SDK framework default remains AI SDK.
+
 Compare three context configurations: disabled compression (`context: false`), the configurable SDK default (`defaultContext`), and a custom observation/reflection strategy with chat-scoped memory.
 
 See [the recorded local verification](VALIDATION.md) for the original 15-field recall, token, latency, restart and prompt-cache results.
 
 ## Setup
 
-Use Node 24.16.0 and pnpm 12.1.0. The example pins published packages: Agent SDK `0.1.260915-alpha.0` and CLI `0.1.260914-alpha.1`. The SDK brings the matching Contract version. No local GEA checkout or SDK tarballs are required.
+Use Node 24.16.0 and pnpm 12.1.0. The example pins published packages: Agent SDK `0.1.260917-alpha.0` and CLI `0.1.260914-alpha.1`. The SDK brings the matching Contract version. No local GEA checkout or SDK tarballs are required.
 
 ```sh
 pnpm install --frozen-lockfile
