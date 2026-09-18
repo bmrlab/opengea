@@ -110,8 +110,8 @@ importers:
   .:
     dependencies:
       '@gea-ai/agent-sdk':
-        specifier: 0.1.260917-alpha.2
-        version: 0.1.260917-alpha.2(esbuild@0.28.0)
+        specifier: 0.1.260918-alpha.0
+        version: 0.1.260918-alpha.0(esbuild@0.28.0)
       ai:
         specifier: 7.0.9
         version: 7.0.9(zod@4.3.6)
@@ -506,8 +506,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@gea-ai/agent-sdk@0.1.260917-alpha.2':
-    resolution: {integrity: sha512-W/IpXfKwlcd+K54K1vwCl9M0HWymjWbaq8MoW43hGxG/vAOYneC+RtNVzKUkfh/AJsNjIXuzzNWL0UWAHAAl9g==}
+  '@gea-ai/agent-sdk@0.1.260918-alpha.0':
+    resolution: {integrity: sha512-+hpw8ZIvNQbmp9nIGTeUttJyy+CrkCogJLe0OCfsVAkI7hhkPn3EM3JTPn81sqOH4pwejfO8jb5tQH+RJ9hPqg==}
     peerDependencies:
       esbuild: ^0.28.0
     peerDependenciesMeta:
@@ -531,8 +531,8 @@ packages:
     os: [darwin, win32]
     hasBin: true
 
-  '@gea-ai/contract@0.1.260917-alpha.2':
-    resolution: {integrity: sha512-tgJtmBLP93DjdhRhMwGYxbx8GXri+wHRHxEv9UtPs5ImnrzSQEygndeIiYaZLMSv+AZG8mq9PSDn0M6r+IJlow==}
+  '@gea-ai/contract@0.1.260918-alpha.0':
+    resolution: {integrity: sha512-UC9ytsodHNc7OYO4Ffn1zuMA6NETVSbSPN3abOETEaN0qSRCm0Ioye7rhKdO2VBWOf+kf3dREu6LryQBjGLYBg==}
 
   '@img/colour@1.1.0':
     resolution: {integrity: sha512-Td76q7j57o/tLVdgS746cYARfSyxk8iEfRxewL9h4OMzYhbW4TAcppl0mT4eyqXddh6L/jwoM75mo7ixa/pCeQ==}
@@ -1409,7 +1409,7 @@ snapshots:
   '@esbuild/win32-x64@0.28.0':
     optional: true
 
-  '@gea-ai/agent-sdk@0.1.260917-alpha.2(esbuild@0.28.0)':
+  '@gea-ai/agent-sdk@0.1.260918-alpha.0(esbuild@0.28.0)':
     dependencies:
       '@ai-sdk/anthropic': 4.0.37(zod@4.3.6)
       '@ai-sdk/openai': 4.0.4(zod@4.3.6)
@@ -1417,7 +1417,7 @@ snapshots:
       '@ai-sdk/otel': 1.0.9(zod@4.3.6)
       '@ai-sdk/provider': 4.0.1
       '@ai-sdk/provider-utils': 5.0.2(zod@4.3.6)
-      '@gea-ai/contract': 0.1.260917-alpha.2
+      '@gea-ai/contract': 0.1.260918-alpha.0
       '@opentelemetry/api': 1.9.1
       '@opentelemetry/context-async-hooks': 2.10.0(@opentelemetry/api@1.9.1)
       '@opentelemetry/core': 2.10.0(@opentelemetry/api@1.9.1)
@@ -1455,7 +1455,7 @@ snapshots:
       '@gea-ai/cli-darwin-arm64': 0.1.260917-alpha.0
       '@gea-ai/cli-win32-x64': 0.1.260917-alpha.0
 
-  '@gea-ai/contract@0.1.260917-alpha.2':
+  '@gea-ai/contract@0.1.260918-alpha.0':
     dependencies:
       '@bufbuild/protobuf': 2.13.0
       '@opentelemetry/api': 1.9.1
