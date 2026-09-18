@@ -4,7 +4,7 @@
 
 - Updated public SDK/Contract dependencies and lockfiles to `0.1.260918-alpha.0`; no workspace-linked SDK. Node 24.16.0. Frozen installation, type checking, Agent validation and packaging passed.
 - Packaging used the Session/Run-capable source CLI from GEA `73864e902`; CLI npm dependencies remain at their previous published version. No CLI release was triggered.
-- Build and 40 tests passed, with 1 existing native-runtime-only test skipped by the default test mode.
+- Build and 40 tests passed, with 1 packaged-Worker-only test skipped by default. The extracted Agent Worker archive was then tested against the matching native Runtime: all 27 OAuth integration tests passed, including the packaged Agent route check.
 - This records local checks, not a Production deployment.
 
 ## SDK alpha.2 and public development Runtime, 2026-09-17
