@@ -26,13 +26,13 @@ and Connector credentials never reach browser JavaScript.
 
 ## Prerequisites
 
-- Node **24.16.0**, pnpm **10.30.3**, published `@gea-ai/agent-sdk@0.1.260917-alpha.2`.
+- Node **24.16.0**, pnpm **10.30.3**, published `@gea-ai/agent-sdk@0.1.260920-alpha.3`.
 - A GEA deployment supporting Worker cookies, managed environment variables,
   SQLite Durable Objects, stable Worker namespaces and the public Agents API.
-- Published `@gea-ai/cli@0.1.260917-alpha.0`, pinned in this example. It includes
+- Published `@gea-ai/cli@0.1.260920-alpha.1`, pinned in this example. It includes
   Agent application `gea.worker.json` support and the native development Runtime.
   Keep the declared environment variables and stable Worker namespaces.
-- A Studio Project and an independent GEA application with external OAuth.
+- A Studio Project with OAuth enabled.
 - A MuseDAM OAuth client registered for GEA's Connector callback.
 
 Plain Vite builds the standard Fetch handler. Native GEA Worker Runtime executes

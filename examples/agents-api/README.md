@@ -16,22 +16,23 @@ Preparing a Session does not call the model.
 ## Install and run locally
 
 Use Node **24.16.0**, pnpm **12.1.0** and public Agent SDK
-**0.1.260917-alpha.2** (pinned in the lockfile):
+**0.1.260920-alpha.3** (pinned in the lockfile):
 
 ```bash
 pnpm install --frozen-lockfile
 cp .env.example .env
 pnpm type-check
+pnpm test
 ```
 
 Set `CREATIVE_REASONING_API_KEY` in `.env`. Local execution calls an external
 model provider; it does not imply offline inference.
 
-Install public CLI **0.1.260917-alpha.0**, which includes the local Agents API
+Install public CLI **0.1.260920-alpha.1**, which includes the local Agents API
 and its matching Worker Runtime for macOS ARM64 and Windows x64:
 
 ```bash
-pnpm add -g @gea-ai/cli@0.1.260917-alpha.0
+pnpm add -g @gea-ai/cli@0.1.260920-alpha.1
 pnpm agent:validate
 pnpm agent:pack
 pnpm dev
@@ -62,14 +63,17 @@ filesystem storage does not promise to resume the same live execution environmen
 
 ## Use the same caller against Preview
 
-Publish this Agent to the target project's Preview and grant your GEA application
-access. Obtain a **user OAuth access token** through the flow in
+Publish this Agent to the target project's Preview. For a server caller, create a
+Project API Key with project grants `chats:read`, `chats:write`, `runs:write`,
+`files:read`, `files:write`, `computer:execute` and `connections:read`. This path does not require an
+Application or OAuth installation. Alternatively, grant your GEA application
+access and obtain a **user OAuth access token** through
 [oauth-app](../oauth-app/). Set caller configuration in `.env`:
 
 ```dotenv
 GEA_AGENTS_API_URL=https://musegea.com/api/v1
 GEA_ENVIRONMENT=preview
-GEA_ACCESS_TOKEN=your-user-oauth-access-token
+GEA_ACCESS_TOKEN=your-project-api-key-or-user-oauth-access-token
 GEA_AGENT_ID=the-agent-uuid-returned-by-the-cloud-agents-api
 ```
 
@@ -79,10 +83,17 @@ and selects `preview` when listing Agents and creating Sessions. Local mode uses
 with `environment: "production"`. IDs and stored files belong to each service;
 a local Session ID cannot address a cloud Session.
 
-Supply a current access token for this script; refresh-token handling belongs
-to the OAuth application example. Tokens stay on the calling server. A Project
-API Key for a Worker's custom routes is a different credential and cannot replace
-the user OAuth token here.
+Supply a current credential for this script; OAuth refresh-token handling belongs
+to the OAuth application example. Tokens stay on the calling server. Project Keys
+act as the project's service identity and cannot access a user's OAuth Sessions,
+files or Connections. Existing keys need the grants listed above; upgrading the
+SDK does not expand their permissions. Revoke temporary verification keys when done.
+The verifier honors the retry delay for rate-limited GET requests, but never
+retries writes because a lost response may hide an accepted Run or upload.
+
+Set the multipart upload `environment` to match the Session; cloud uploads default
+to Production. Content endpoints may return 302 with a signed HTTPS download URL.
+Fetch that URL without forwarding the Project API Key or OAuth token.
 
 ## HTTP contract illustrated
 

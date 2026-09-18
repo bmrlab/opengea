@@ -20,11 +20,11 @@ cp .env.example .env
 ```
 
 The example pins the public `@gea-ai/agent-sdk` package to
-`0.1.260917-alpha.2`. Install a CLI with Channels support and its matching native
+`0.1.260920-alpha.3`. Install a CLI with Channels support and its matching native
 Worker Runtime:
 
 ```bash
-npm install -g @gea-ai/cli@0.1.260917-alpha.0
+npm install -g @gea-ai/cli@0.1.260920-alpha.1
 ```
 
 To use a locally built CLI, put the executable paths in your private `.env`:

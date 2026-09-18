@@ -9,10 +9,11 @@
     "agent:validate": "node scripts/gea.mjs agent validate --json-file agent-project.json",
     "agent:pack": "node scripts/gea.mjs agent pack --json-file agent-project.json",
     "type-check": "tsc --noEmit",
-    "verify": "node scripts/verify.mjs"
+    "verify": "node scripts/verify.mjs",
+    "test": "node --test scripts/*.test.mjs"
   },
   "dependencies": {
-    "@gea-ai/agent-sdk": "0.1.260917-alpha.2",
+    "@gea-ai/agent-sdk": "0.1.260920-alpha.3",
     "zod": "4.3.6"
   },
   "devDependencies": {

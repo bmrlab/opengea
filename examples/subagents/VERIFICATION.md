@@ -1,5 +1,70 @@
 # Verification record
 
+## Hosted recheck after Web restart, 2026-09-20
+
+- Unchanged Preview v15 / public SDK alpha.3 passed the full strict verifier
+  after the operator restarted Web v0.55.5. Report:
+  `.gea/verification/be4553d1-792d-40ac-b958-f4380caa1411/report.json`.
+  Parent Session: `dc8bf36a-22ed-4594-b585-c7931ba050eb`.
+- Parallel private/nested/reviewer/self-copy execution, automatic continuation,
+  explicit `runWait`, same-child recall, fresh-child isolation and sibling
+  `sessionSend` delivery all passed. All four parent streams match saved history,
+  and later batches create distinct assistant messages. Parent Runs:
+  `01a0bf29-0203-75da-ab4b-0556976a77ef`,
+  `01a0bf29-e527-77ea-8183-c7357e727d88`,
+  `01a0bf2a-6ba1-7759-995a-59d2abd935b7`,
+  `01a0bf2b-b608-7301-8805-f5380be91af3`.
+- This establishes standard hosted SSE/history acceptance for this version.
+  The separate waiting-user steering/reconnect test remains locally verified
+  only. Some Web `Session dispatch rejected` warnings still log empty errors;
+  their cause is unresolved, despite the passing matrix. No capacity refusal
+  appeared in the inspected Runtime logs. The temporary Key was revoked; no
+  Production promotion and no changes to the strict verifier.
+
+## SDK 0.1.260920-alpha.3, 2026-09-20
+
+- Public SDK alpha.3: frozen install, types and eight protocol tests passed.
+- Final Preview v15 was pushed with the alpha.1 macOS artifact, deployment `01a0bebd-2af7-73fb-98de-1c6806605c9d`. Its content hash matches v14 below; no Production promotion.
+- The alpha.1 macOS CI artifact passed validation/pack and the complete strict local matrix: `.gea/verification/4618c6e4-758b-4058-9075-0d17b11a03af/report.json`, parent Session `bdf2c8e6-4ee3-4a2a-8119-16c400039284`. Parallel private/nested/reviewer/self-copy execution, implicit and explicit waits, child recall, fresh-child isolation, peer delivery and all four SSE/history message checks passed. The native API listener closed on shutdown.
+- The previously failing waiting-user SSE boundary now passes with that native CLI artifact: Session `1c218a03-ba24-4310-a6b3-b5d9d151684f`, Run `7a9ca006-a9b6-4d3b-883b-3be85520e535`. Original and reconnected streams each contain exactly one assistant start/finish and no errors; assistants `a2cb1dcb-50a0-4a1f-b8ca-91f2e071ea99` and `7ca6cb34-b750-470a-80ad-4418b168d4b4` are distinct, and the old text marker is absent from the new message. Report: `/tmp/opengea-alpha3-steering-report.json`. This local result does not establish the hosted boundary.
+- Preview v14 is ready: deployment `01a0beb0-05d9-7389-9914-2f7565dc495c`, content `sha256:37cdf9a05fdbb2afcde9034cf231380189e452b3cc697ebf030a9dc5c4890860`. This push used published CLI alpha.0 while alpha.1 was building.
+- Hosted report `.gea/verification/417154d5-5029-4e09-8fe8-0492b68e256d/report.json` failed with a response timeout. Run `01a0beb0-925d-7467-90e7-74a5c0ea1f31`, Trace `01b5b693bbc9b1f3ef9c8f6a59c11c41` records a rejected child invocation (500), not an explicit capacity cause. Do not mark the previous hosted SSE/history regression fixed. The temporary Key was revoked; no Production promotion.
+
+## SDK 0.1.260920-alpha.2, 2026-09-20
+
+- Frozen installation, types, eight protocol checks and validation/pack passed. Corrected the nested researcher's remaining `run_wait` instruction to `runWait`.
+- Complete local real-model matrix passed: nested private calculator, top-level reviewer, self copy, implicit joining, explicit `runWait`, child recall, fresh-session isolation and sibling `sessionSend`. Report: `.gea/verification/6518d30e-543e-488f-8273-09d8278c4890/report.json`. All four saved parent responses also passed the new SSE/history assertions when checked against their captured streams; later user batches had different assistant IDs.
+- The verifier now accepts a summary in a separate text part of the original waiting assistant, without relaxing the nested-result schema. It requires one start/finish, identical streamed/saved text, completed `runWait` outputs and a fresh assistant ID for a later user batch. New behavioral tests were observed failing before implementation.
+- **Hosted streaming acceptance fails on Web/Worker/Runtime v0.55.3.** Report `.gea/verification/a9daf3a9-4e93-4559-82b6-f58e4041a3e5/report.json`: Session `93ba7e3e-580d-4393-ae3c-3f0ec80776fb`, Run `01a0bd76-33ce-766c-95ba-226d6d88dabb`, assistant `01a0bd76-5059-758d-a0c8-bad5daa1687b`. SSE emitted only `WAITING`, then `finish(stop)` with `sessionStatus: waiting` and `[DONE]` at 06:18:02 UTC. The Run finished at 06:20:26 UTC and history held `WAITING` plus the complete strict summary under the same assistant ID. The final result was absent from the original stream. The new assertion correctly fails; passing persisted results is not passing live delivery.
+- **Waiting-user boundary also fails in the published CLI HTTP stream.** A separate live probe sent `POST /sessions/{id}/messages` with `mode: steering` after `runWait` appeared. Session `761260fc-8e1a-47d8-976a-2ff801952137`, Run `6a9f55bb-8f25-4df8-9306-981e2c3b97a5`: history correctly marks the old wait `output-error` / "Wait interrupted by a new user message." and separates assistants `a525d708-d0c8-425b-bbfa-3379ec0b8a79` and `40fd4927-f19f-4ebc-810c-1ec077e089b3`. But the original HTTP SSE contains both `start` events with an intervening `finish(other)`; the one-message assertion fails. Evidence: `/tmp/opengea-alpha2-steering-report.json`. This is different from a later batch after a completed Run. The current native API `crates/api/src/local.rs` tails all Run events without a message boundary; a CLI follow-up is needed before claiming this path fixed. Reconnection after completion correctly returns 204.
+- An earlier hosted attempt (`01a0bd71-677e-712d-89c0-092640a457b5`, Trace `61119b1220c186cc7902f9eabfd366a9`) aborted its parent invocation while children continued. Keep this separate from the reproducible premature stream completion above. Temporary Keys were revoked.
+- Existing Preview Worker v13 is ready: deployment `01a0bd75-2c7d-719b-a821-25ad16120ad2`, content `sha256:f798c17ae8d1e8ac9097fe150c8607cbf7a5671bfa8cb93f6f2e7b4539be362e`. No Production promotion.
+
+## Web v0.55.1 hosted recheck, 2026-09-20
+
+- Retested Preview v10 against the updated production Web. Report `a769508d-6a4a-4034-8ce6-534d79dd17f2` failed before the first batch completed: `terminated (SocketError: other side closed)`. The temporary Key was revoked.
+- Runtime remains v0.55.0. Older pinned deployments still produce protocol rejection/alarm errors in current logs; this alone does not establish the cause of this socket failure. Hosted acceptance remains incomplete.
+
+## SDK 0.1.260920-alpha.0, 2026-09-20
+
+- Published SDK installation, types, six unit tests and validation/pack passed. CLI release `0.1.260920-alpha.0` is now published and verified identical to the tested macOS CI artifacts.
+- Fixed stale verifier/tool instructions: model-facing `runWait` and `sessionSend` replaced old `run_wait` / `chat_send` checks, and the send input uses `sessionId`. Clarified the current batch's waiting mode and required `result` field. Completion, identity, isolation, exact child data and message-delivery assertions remain strict.
+- Local real-model matrix `2af302bf-de6c-425e-8922-85a559307fed` passed all cases: parallel private/nested/reviewer/self-copy execution, implicit and explicit waits with a stable parent Run ID, retained child history, fresh-session isolation, sibling Session delivery and its finished new Run.
+- Final source was pushed to Preview v10, deployment `01a0bc66-8601-73c4-81b4-dbea43867bb2`.
+- Earlier v8 hosted verification failed on Session polling HTTP 500, request `1a465430-15f8-47bc-8f28-aad6b2f72deb`, Session `1d68f7a0-1d74-46e0-acd9-8885125103fe`, Run `01a0bab9-1306-700b-8048-fce4853149b7`. Its Trace separately recorded an internal Worker Host network error. Later completion does not make that verifier pass.
+- v9 hosted retry `1bdd3166-820d-49b0-a676-dd908977fe06` also failed: two child streams ended with `UND_ERR_SOCKET` at 01:02:42 UTC; children then reported expired execution lease / aborted response persistence. Runtime logged memory admission pressure at the same time. Parent Run `01a0bc55-da15-70cb-a7e7-e59161da339d`, Trace `675e2beb4395853bd5c09343b0349bdb`. A shared cause is under investigation; hosted acceptance is not complete.
+- Temporary hosted Keys were revoked. No Production promotion.
+
+## Session/Run SDK upgrade, 2026-09-18
+
+- Public SDK `0.1.260918-alpha.0`; frozen installation, types, six verifier tests, source-CLI validation and packaging passed. The CLI remains unreleased; `GEA_CLI_BIN` selected the compatible source entry with Node 24.16.0 and the native Runtime. No SDK/CLI version was bumped or released by this update.
+- Replaced obsolete Task/child-handle assumptions with Agents API Session/Run requests. The verifier now checks stable parent Run IDs through implicit join and explicit `run_wait`, actual child Run registration/parent links, Session reads, exact receipts, retained history and fresh-session isolation. It also exercises `chat_send` to a sibling Session.
+- Local real-model verification `32424655-d47f-4645-b678-66e1be29b107` passed parallel private/nested/reviewer/self-copy execution, implicit joining, explicit waits, same-session recall with new Run IDs and fresh-session isolation. The relay sender successfully invoked `chat_send`, but the recipient did not start its new Run: the strict overall result remains **failed**, not passed. Report remains in ignored `.gea/verification/32424655-d47f-4645-b678-66e1be29b107/report.json`.
+- This exposed a GEA host bug: a completed child's retained transport reused the old Run's parent callback for later Session messages. The matching [CLI/server fix](https://github.com/bmrlab/gea/pull/489) limits that callback to the original Run; local standalone dispatch also honors custom Worker URLs. After the fix, all 27 native Run integration tests passed, including same-service and cross-service remote wait/cancel/timeout/continuation and follow-up to a completed child; all 11 hosted Session Host tests and the full GEA type check passed. Those tests use real native Runtime/storage with a controlled model edge, not a hosted real-model pass.
+- Preview v7 was rebuilt with public SDK `0.1.260918-alpha.0`: deployment `01a0b518-3602-7599-a654-17fb1284ee28`, Worker `01a08ef0-7e45-77c4-8402-0d329e7abba2`. No Production promotion. The hosted verifier first hit API read-rate limits, then failed with TLS `CERT_HAS_EXPIRED` from `https://musegea.com`. Read-only 429 polling now honors the server delay; writes are never retried. Both temporary keys created for the attempts were revoked.
+- After TLS recovery on 2026-09-19 (Asia/Shanghai), local real-model verification `534ad7c5-6084-4870-91db-2f0a7b0daba7` passed the complete matrix with the source CLI fix: parallel/nested/self-copy, implicit and explicit waits, continued-child recall, fresh-session isolation, and sibling message delivery followed by a finished new Run.
+- Hosted retry `bad0d8ff-190e-42a1-972e-859aa9be7aa9` passed parallel, continued and fresh child checks but remains **failed**: the sender attempted `chat_send` twice and both tool results were errors; its final response reported host HTTP 403. This is no longer a TLS blocker. The temporary key was revoked. Hosted messaging authorization and deployment of the host fix still require validation; do not describe this upgrade as fully hosted-verified. Earlier records below concern older SDK/host versions.
+
 ## SDK alpha.2 and published CLI acceptance, 2026-09-17
 
 - Public SDK `0.1.260917-alpha.2` and CLI `0.1.260917-alpha.0`; frozen installation, type-check, all five verifier tests, validation and packaging passed.

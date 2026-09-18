@@ -2,36 +2,27 @@ import assert from "node:assert/strict";
 import { randomInt, randomUUID } from "node:crypto";
 import { mkdir, writeFile } from "node:fs/promises";
 import { setTimeout } from "node:timers/promises";
-import { StudioAgentClient } from "@gea-ai/agent-sdk/studio-server";
-import { z } from "zod";
 import { env } from "./env.mjs";
-import { checkSummary, findSummary, parseRun } from "./protocol.mjs";
+import {
+  checkSummary,
+  checkStreamMessage,
+  findSummary,
+  parseRun,
+} from "./protocol.mjs";
 
 const local = process.argv.includes("--local");
-if (!local && (!env.api || !env.apiKey))
-  throw new Error(
-    "Set GEA_AGENT_URL and GEA_PROJECT_API_KEY for a hosted Preview Agent.",
-  );
-// The published client validates HTTPS and rejects URL credentials/redirects.
-const client = local
-  ? null
-  : new StudioAgentClient({ api: env.api, token: env.apiKey });
-const api = (local ? env.localApi : env.api).replace(/\/$/u, "");
-if (
-  local &&
-  !["127.0.0.1", "localhost", "[::1]"].includes(new URL(api).hostname)
-)
-  throw new Error("Local verification requires a loopback Agent URL.");
-const messageSchema = z.object({
-  role: z.string(),
-  parts: z.array(
-    z.object({ type: z.string(), text: z.string().optional() }).passthrough(),
-  ),
-});
-const pageSchema = z.object({ items: z.array(messageSchema) });
-const stateSchema = z.object({
-  messages: z.array(z.object({ message: messageSchema })),
-});
+const api = (local ? env.localApi : env.api)?.replace(/\/$/u, "");
+assert.ok(api, "Set GEA_AGENTS_API_URL to the /api/v1 root");
+const url = new URL(api);
+const loopback = ["127.0.0.1", "localhost", "[::1]"].includes(url.hostname);
+assert.ok(url.protocol === "https:" || (url.protocol === "http:" && loopback));
+assert.ok(!url.username && !url.password && !url.search && !url.hash);
+assert.ok(!local || loopback, "Local verification requires a loopback API");
+assert.ok(
+  local || env.apiKey,
+  "Set GEA_PROJECT_API_KEY for hosted verification",
+);
+const environment = local ? "local" : "preview";
 const id = randomUUID();
 const directory = `.gea/verification/${id}`;
 await mkdir(directory, { recursive: true });
@@ -45,90 +36,190 @@ const report = {
 const save = () =>
   writeFile(`${directory}/report.json`, JSON.stringify(report, null, 2));
 
-async function verifyBatch(batch, jobs, chatId) {
+// Never retry writes: a transport failure may hide an accepted invocation.
+async function request(method, path, body, attempt = 0) {
+  const response = await fetch(`${api}${path}`, {
+    method,
+    headers: {
+      ...(local ? {} : { Authorization: `Bearer ${env.apiKey}` }),
+      ...(body === undefined ? {} : { "Content-Type": "application/json" }),
+    },
+    body: body === undefined ? undefined : JSON.stringify(body),
+    redirect: "error",
+    signal: AbortSignal.timeout(120_000),
+  });
+  if (method === "GET" && response.status === 429 && attempt < 5) {
+    const failure = await response.json();
+    const seconds = Number(
+      response.headers.get("retry-after") ??
+        failure.error?.data?.retryAfterSeconds ??
+        5,
+    );
+    await setTimeout(
+      (Number.isFinite(seconds) ? Math.max(1, Math.min(60, seconds)) : 5) *
+        1000,
+    );
+    return request(method, path, body, attempt + 1);
+  }
+  if (!response.ok)
+    throw new Error(
+      `${method} ${path}: HTTP ${response.status} ${await response.text()}`,
+    );
+  return response;
+}
+async function json(method, path, body) {
+  return (await request(method, path, body)).json();
+}
+
+async function verifyBatch(batch, jobs, sessionId, waitMode = "implicit") {
+  if (!sessionId) {
+    const agents = await json("GET", `/agents?environment=${environment}`);
+    const agent = agents.items.find((item) =>
+      env.agentId
+        ? item.id === env.agentId
+        : item.name === "subagent-coordinator",
+    );
+    assert.ok(agent, "Start/publish the coordinator, or set GEA_AGENT_ID");
+    const session = await json("POST", "/sessions", {
+      agent_id: agent.id,
+      environment,
+      title: batch,
+    });
+    sessionId = session.id;
+  }
   const parentMarker = randomUUID();
   const input = {
     batch,
+    waitMode,
     parentOnlyMarker: parentMarker,
-    jobs: jobs.map(({ label, target, agentId, message }) => ({
+    jobs: jobs.map(({ label, target, sessionId, message }) => ({
       label,
       target,
-      agentId,
+      sessionId,
       message,
     })),
   };
-  const message = `Execute this batch exactly. Do not send parentOnlyMarker to any child. Call agent once for each job using its exact message, optional target and optional agentId. After starting all jobs, reply WAITING and end the turn. On later task updates, return the summary JSON required by your instructions.\n${JSON.stringify(input)}`;
-  const request = { ...(chatId ? { chatId } : {}), message };
-  const signal = AbortSignal.timeout(120_000);
-  const response = client
-    ? await client.run(request, { signal })
-    : await fetch(`${api}/run`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(request),
-        redirect: "error",
-        signal,
-      });
+  const waitInstruction =
+    waitMode === "explicit"
+      ? "For THIS batch, call runWait with every returned runId before summarizing, even if the children already appear finished."
+      : "For THIS batch, do not call runWait. Reply WAITING after starting the jobs and let the runtime resume you.";
+  const message = `Execute this batch exactly. Do not send parentOnlyMarker to any child. Call execution_info again for THIS batch, even if earlier history has your identity. Start all jobs before waiting. ${waitInstruction} Return the complete summary after all child Runs finish.\n${JSON.stringify(input)}`;
+  const response = await request("POST", `/sessions/${sessionId}/runs`, {
+    input: message,
+    stream: true,
+  });
+  const runId = response.headers.get("x-gea-agent-run-id");
   const body = await response.text();
-  const entry = { batch, input, httpStatus: response.status, body };
+  const entry = { batch, input, sessionId, runId, body, observations: [] };
   report.batches.push(entry);
   await save();
-  if (!response.ok)
-    throw new Error(`Run failed: HTTP ${response.status}; see ${directory}`);
-  const parentChatId = response.headers.get("x-gea-agent-chat-id");
-  assert.ok(parentChatId, "missing parent Chat ID");
-  if (chatId) assert.equal(parentChatId, chatId);
-  entry.chatId = parentChatId;
-  const run = parseRun(body);
+  assert.ok(runId, "missing parent Run ID");
+  assert.equal(response.headers.get("x-gea-agent-session-id"), sessionId);
+  const initial = parseRun(body);
   assert.equal(
-    run.receipts.length,
+    initial.receipts.length,
     jobs.length,
-    "initial turn must start every requested job",
+    "initial invocation must start every requested job",
   );
-  const calls = run.events.filter(
+  const calls = initial.events.filter(
     (event) =>
       event.type === "tool-input-available" && event.toolName === "agent",
   );
   assert.equal(calls.length, jobs.length);
   assert.ok(
     calls.every((call) => !JSON.stringify(call.input).includes(parentMarker)),
-    "parent-only history must not be copied to children",
+    "parent history must not leak",
   );
-  const deadline = Date.now() + 180_000;
-  while (Date.now() < deadline) {
-    const history = await fetch(
-      local
-        ? `${api}/sessions/${parentChatId}/v1/state`
-        : `${api}/chats/${parentChatId}/messages?limit=100`,
-      {
-        headers: local ? {} : { Authorization: `Bearer ${env.apiKey}` },
-        redirect: "error",
-        signal: AbortSignal.timeout(20_000),
-      },
+  if (waitMode === "explicit")
+    assert.ok(
+      initial.events.some(
+        (event) =>
+          event.type === "tool-input-available" &&
+          event.toolName === "runWait",
+      ),
+      "explicit wait must invoke runWait",
     );
-    if (!history.ok)
-      throw new Error(`History lookup failed: HTTP ${history.status}`);
-    const data = await history.json();
-    entry.messages = local
-      ? stateSchema.parse(data).messages.map(({ message }) => message)
-      : pageSchema.parse(data).items;
-    const summary = findSummary(entry.messages, batch);
-    if (summary) {
+  if (waitMode === "implicit")
+    assert.ok(
+      !initial.events.some(
+        (event) =>
+          event.type === "tool-input-available" &&
+          event.toolName === "runWait",
+      ),
+      "implicit joining must not use runWait",
+    );
+  const deadline = Date.now() + 240_000;
+  while (Date.now() < deadline) {
+    const [run, session, page] = await Promise.all([
+      json("GET", `/runs/${runId}`),
+      json("GET", `/sessions/${sessionId}`),
+      json("GET", `/sessions/${sessionId}/messages?limit=100`),
+    ]);
+    assert.equal(run.id, runId);
+    assert.equal(run.session_id, sessionId);
+    if (session.active_run)
+      assert.equal(
+        session.active_run.id,
+        runId,
+        "wait/resume must keep the parent Run ID",
+      );
+    entry.observations.push({ run, activeRun: session.active_run });
+    entry.messages = page.items;
+    if (run.status === "finished") {
+      const summary = findSummary(page.items, batch);
+      assert.ok(summary, "finished Run must contain the requested summary");
+      assert.equal(
+        summary.runId,
+        runId,
+        "summary must keep the logical parent Run ID",
+      );
+      checkSummary(summary, jobs, initial.receipts, sessionId);
+      entry.messageId = checkStreamMessage(initial.events, page.items);
+      for (const earlier of report.batches.filter(
+        (item) => item !== entry && item.sessionId === sessionId,
+      ))
+        assert.notEqual(
+          entry.messageId,
+          earlier.messageId,
+          "a new user batch must create a new assistant message",
+        );
       entry.summary = summary;
-      checkSummary(summary, jobs, run.receipts, parentChatId);
+      entry.children = [];
+      for (const receipt of initial.receipts) {
+        const [childRun, childSession, childMessages] = await Promise.all([
+          json("GET", `/runs/${receipt.runId}`),
+          json("GET", `/sessions/${receipt.sessionId}`),
+          json("GET", `/sessions/${receipt.sessionId}/messages?limit=100`),
+        ]);
+        assert.equal(childRun.status, "finished");
+        assert.equal(childRun.session_id, receipt.sessionId);
+        assert.equal(childRun.parent_run_id, runId);
+        assert.equal(childSession.id, receipt.sessionId);
+        assert.ok(
+          !JSON.stringify(childMessages).includes(parentMarker),
+          "child history must not contain parent-only marker",
+        );
+        entry.children.push({
+          run: childRun,
+          session: childSession,
+          messages: childMessages.items,
+        });
+      }
       entry.status = "passed";
       await save();
       console.log(
-        `${batch}: ${jobs.length} task(s) completed; parent resumed automatically`,
+        `${batch}: ${jobs.length} child Runs finished; ${waitMode} waiting preserved Run ID`,
       );
-      return { chatId: parentChatId, summary, receipts: run.receipts };
+      return { sessionId, summary, receipts: initial.receipts };
     }
+    assert.ok(
+      ["queued", "running", "waiting"].includes(run.status),
+      `Parent Run ${runId}: ${run.status}`,
+    );
     await save();
-    await setTimeout(1000);
+    await setTimeout(local ? 1000 : 5000);
   }
-  throw new Error(
-    `Timed out waiting for automatic parent continuation: ${batch}`,
-  );
+  throw new Error(`Timed out waiting for Run ${runId}`);
 }
 
 try {
@@ -167,29 +258,30 @@ try {
       {
         label: "recall",
         target: "reviewer",
-        agentId: previous.agentId,
+        sessionId: previous.sessionId,
         message:
           "RECALL label=recall. Return the marker and arithmetic value previously supplied in your own conversation; do not delegate.",
         value: a + b,
         marker,
       },
     ],
-    parallel.chatId,
+    parallel.sessionId,
+    "explicit",
   );
   assert.equal(
-    continued.receipts[0].agentId,
-    previous.agentId,
-    "continuation must reuse the child handle",
+    continued.receipts[0].sessionId,
+    previous.sessionId,
+    "continuation must reuse the child Session",
   );
   assert.notEqual(
-    continued.receipts[0].taskId,
-    previous.taskId,
-    "continuation must create a new task",
+    continued.receipts[0].runId,
+    previous.runId,
+    "continuation must create a new run",
   );
   assert.equal(
-    continued.summary.results[0].result.chatId,
-    previous.result.chatId,
-    "continuation must preserve the child chat",
+    continued.summary.results[0].result.sessionId,
+    previous.result.sessionId,
+    "continuation must preserve the child Session",
   );
   const fresh = await verifyBatch(
     `fresh-child-${id}`,
@@ -203,17 +295,78 @@ try {
         marker: null,
       },
     ],
-    parallel.chatId,
+    parallel.sessionId,
   );
-  assert.notEqual(fresh.receipts[0].agentId, previous.agentId);
+  assert.notEqual(fresh.receipts[0].sessionId, previous.sessionId);
   assert.notEqual(
-    fresh.summary.results[0].result.chatId,
-    previous.result.chatId,
+    fresh.summary.results[0].result.sessionId,
+    previous.result.sessionId,
+  );
+  const peerMarker = `peer-${randomUUID()}`;
+  const peerMessage = `LEAF label=inbox. Calculate ${a} + ${b}. Remember marker ${peerMarker}.`;
+  const relay = await verifyBatch(
+    `relay-${id}`,
+    [
+      {
+        label: "relay",
+        target: "reviewer",
+        sessionId: previous.sessionId,
+        message: `SEND label=relay targetSessionId=${fresh.receipts[0].sessionId}. Use sessionSend to send exactly this message: ${peerMessage}. Return value null and marker null with your current execution identities.`,
+        value: null,
+        marker: null,
+      },
+    ],
+    parallel.sessionId,
+    "explicit",
+  );
+  const sender = report.batches.at(-1).children[0];
+  const sendCall = sender.messages
+    .filter((m) => m.run_id === relay.receipts[0].runId)
+    .flatMap((m) => m.parts)
+    .find((p) => p.type === "tool-sessionSend" && p.state === "output-available");
+  assert.ok(sendCall, "sender must actually call sessionSend");
+  assert.equal(sendCall.input.sessionId, fresh.receipts[0].sessionId);
+  assert.equal(sendCall.input.message, peerMessage);
+  const deadline = Date.now() + 120_000;
+  let received = false;
+  while (Date.now() < deadline) {
+    const page = await json(
+      "GET",
+      `/sessions/${fresh.receipts[0].sessionId}/messages?limit=100`,
+    );
+    report.peerMessages = page.items;
+    const answer = page.items.find(
+      (m) =>
+        m.role === "assistant" &&
+        m.run_id !== fresh.receipts[0].runId &&
+        m.parts.some((p) => p.type === "text" && p.text.includes(peerMarker)),
+    );
+    if (answer) {
+      const run = await json("GET", `/runs/${answer.run_id}`);
+      if (run.status === "finished") {
+        assert.equal(run.session_id, fresh.receipts[0].sessionId);
+        report.peerRun = run;
+        received = true;
+        break;
+      }
+    }
+    await save();
+    await setTimeout(local ? 1000 : 5000);
+  }
+  assert.ok(
+    received,
+    "peer Session must receive the message and finish its new Run",
+  );
+  console.log(
+    "peer communication: sessionSend delivered to sibling Session and produced a finished Run",
   );
   report.status = "passed";
 } catch (error) {
   report.status = "failed";
-  report.error = error instanceof Error ? error.message : String(error);
+  report.error =
+    error instanceof Error
+      ? `${error.message}${error.cause ? ` (${String(error.cause)})` : ""}`
+      : String(error);
   process.exitCode = 1;
 } finally {
   await save();
