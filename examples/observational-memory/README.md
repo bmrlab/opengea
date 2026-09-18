@@ -10,7 +10,7 @@ See [the recorded local verification](VALIDATION.md) for the original 15-field r
 
 ## Setup
 
-Use Node 24.16.0 and pnpm 12.1.0. The example pins published packages: Agent SDK `0.1.260917-alpha.2` and CLI `0.1.260917-alpha.0`. The SDK brings the matching Contract version. No local GEA checkout or SDK tarballs are required.
+Use Node 24.16.0 and pnpm 12.1.0. The example pins published packages: Agent SDK `0.1.260920-alpha.3` and CLI `0.1.260920-alpha.1`. The SDK brings the matching Contract version. No local GEA checkout or SDK tarballs are required.
 
 ```sh
 pnpm install --frozen-lockfile
@@ -29,7 +29,7 @@ pnpm agent:pack
 pnpm dev
 ```
 
-The default URL is `http://127.0.0.1:8791/gea/agents/run`. Send `{ "chatId": "my-project", "message": "..." }` as a JSON POST and consume the AI SDK SSE stream. Reuse `chatId` to continue. Native DO data lives in `.gea/agent-dev-state` and survives process restarts. The local proxy supplies a trusted development identity. Hosted HTTP authentication remains protected by default.
+The default URL is `http://127.0.0.1:8791/gea/agents/run`. Send `{ "chatId": "dc75f914-2f73-4d69-92b4-0947e8ec1256", "message": "..." }` as a JSON POST and consume the AI SDK SSE stream. Generate a UUID for each new `chatId`; reuse it to continue. Native DO data lives in `.gea/agent-dev-state` and survives process restarts. The local proxy supplies a trusted development identity. Hosted HTTP authentication remains protected by default.
 
 The two controls are `/gea/agents/raw/run` and `/gea/agents/summary/run`. All three use identical assistant instructions and the same main model. They have separate AgentSession namespaces.
 

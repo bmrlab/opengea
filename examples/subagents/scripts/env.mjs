@@ -5,9 +5,10 @@ if (process.env.GEA_ENV_FILE) process.loadEnvFile(process.env.GEA_ENV_FILE);
 
 export const env = {
   cli: process.env.GEA_CLI_BIN?.trim() || "gea",
-  api: process.env.GEA_AGENT_URL?.trim(),
+  api: process.env.GEA_AGENTS_API_URL?.trim(),
+  agentId: process.env.GEA_AGENT_ID?.trim(),
   apiKey: process.env.GEA_PROJECT_API_KEY?.trim(),
   localApi:
-    process.env.GEA_LOCAL_AGENT_URL?.trim() ||
-    "http://127.0.0.1:8793/gea/agents/coordinator",
+    process.env.GEA_LOCAL_AGENTS_API_URL?.trim() ||
+    "http://127.0.0.1:8794/api/v1",
 };

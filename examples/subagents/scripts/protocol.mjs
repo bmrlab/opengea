@@ -7,19 +7,20 @@ const resultSchema = z.object({
   value: z.number().nullable(),
   marker: z.string().nullable(),
   agentId: z.string().min(1),
-  chatId: z.string().min(1),
+  sessionId: z.string().min(1),
   runId: z.string().min(1),
 });
 const summarySchema = z.object({
   kind: z.literal("summary"),
   batch: z.string(),
-  chatId: z.string(),
+  runId: z.string(),
+  sessionId: z.string(),
   results: z.array(
     z.object({
       label: z.string(),
       target: z.string(),
-      taskId: z.string(),
-      agentId: z.string(),
+      runId: z.string(),
+      sessionId: z.string(),
       status: z.string(),
       result: resultSchema
         .extend({ calculator: resultSchema.optional() })
@@ -30,9 +31,8 @@ const summarySchema = z.object({
 });
 const eventSchema = z.object({ type: z.string() }).passthrough();
 const receiptSchema = z.object({
-  status: z.literal("working"),
-  taskId: z.string().min(1),
-  agentId: z.string().min(1),
+  runId: z.string().min(1),
+  sessionId: z.string().min(1),
 });
 
 // AI SDK emits each JSON event on a single SSE data line.
@@ -48,8 +48,20 @@ export function parseRun(body) {
   const finish = events.findLast((event) => event.type === "finish");
   if (!finish || ["error", "length", "abort"].includes(finish.finishReason))
     throw new Error(`Invalid finish: ${JSON.stringify(finish)}`);
+  const agentCalls = new Set(
+    events
+      .filter(
+        (event) =>
+          event.type === "tool-input-available" && event.toolName === "agent",
+      )
+      .map((event) => event.toolCallId),
+  );
   const receipts = events.flatMap((event) => {
-    if (event.type !== "tool-output-available") return [];
+    if (
+      event.type !== "tool-output-available" ||
+      !agentCalls.has(event.toolCallId)
+    )
+      return [];
     const parsed = receiptSchema.safeParse(event.output);
     return parsed.success ? [parsed.data] : [];
   });
@@ -67,6 +79,10 @@ export function findSummary(messages, batch) {
     // Models sometimes explain a failure before emitting the requested JSON.
     const candidates = [
       text,
+      // A resumed assistant keeps its earlier WAITING text in a separate part.
+      ...message.parts
+        .filter((part) => part.type === "text")
+        .map((part) => part.text.trim()),
       ...text.matchAll(/```(?:json)?\s*([\s\S]*?)```/gu),
     ].map((candidate) =>
       typeof candidate === "string" ? candidate : candidate[1],
@@ -84,11 +100,11 @@ export function findSummary(messages, batch) {
   }
 }
 
-export function checkSummary(summary, jobs, receipts, parentChatId) {
+export function checkSummary(summary, jobs, receipts, parentSessionId) {
   assert.equal(
-    summary.chatId,
-    parentChatId,
-    "summary must belong to the parent chat",
+    summary.sessionId,
+    parentSessionId,
+    "summary must belong to the parent session",
   );
   assert.equal(
     summary.results.length,
@@ -98,38 +114,44 @@ export function checkSummary(summary, jobs, receipts, parentChatId) {
   assert.equal(
     receipts.length,
     jobs.length,
-    "every job must have a working receipt",
+    "every job must have a run receipt",
   );
   assert.equal(
-    new Set(receipts.map((receipt) => receipt.taskId)).size,
+    new Set(receipts.map((receipt) => receipt.runId)).size,
     jobs.length,
-    "task receipts must be unique",
+    "run receipts must be unique",
   );
-  const seenChats = new Set([parentChatId]);
+  const seenSessions = new Set([parentSessionId]);
   for (const job of jobs) {
     const row = summary.results.find((result) => result.label === job.label);
     assert.ok(row, `missing result for ${job.label}`);
     assert.equal(row.target, job.target ?? "self");
     assert.equal(
       row.status,
-      "completed",
+      "finished",
       `${job.label} must have completed: ${row.error ?? row.status}`,
     );
     assert.ok(row.result, `${job.label} is missing its result`);
     assert.ok(
       receipts.some(
         (receipt) =>
-          receipt.taskId === row.taskId && receipt.agentId === row.agentId,
+          receipt.runId === row.runId && receipt.sessionId === row.sessionId,
       ),
       "result must match a real receipt",
     );
+    assert.equal(
+      row.result.sessionId,
+      row.sessionId,
+      "child session must match receipt",
+    );
+    assert.equal(row.result.runId, row.runId, "child run must match receipt");
     assert.equal(row.result.value, job.value);
     assert.equal(row.result.marker, job.marker);
     assert.ok(
-      !seenChats.has(row.result.chatId),
-      "child must have an independent chat identity",
+      !seenSessions.has(row.result.sessionId),
+      "child must have an independent session identity",
     );
-    seenChats.add(row.result.chatId);
+    seenSessions.add(row.result.sessionId);
     if (job.nested) {
       const calculator = row.result.calculator;
       assert.ok(
@@ -139,10 +161,61 @@ export function checkSummary(summary, jobs, receipts, parentChatId) {
       assert.equal(calculator.value, job.value);
       assert.equal(calculator.marker, job.marker);
       assert.ok(
-        !seenChats.has(calculator.chatId),
-        "calculator must have another independent chat",
+        !seenSessions.has(calculator.sessionId),
+        "calculator must have another independent session",
       );
-      seenChats.add(calculator.chatId);
+      seenSessions.add(calculator.sessionId);
     }
   }
+}
+
+export function checkStreamMessage(events, messages) {
+  const starts = events.filter((event) => event.type === "start");
+  assert.equal(
+    starts.length,
+    1,
+    "automatic continuation must stream one assistant",
+  );
+  assert.equal(
+    events.filter((event) => event.type === "finish").length,
+    1,
+    "automatic continuation must finish once",
+  );
+  const message = messages.find(
+    (message) => message.id === starts[0].messageId,
+  );
+  assert.ok(message, "streamed assistant must exist in saved history");
+  const text = message.parts
+    .filter((part) => part.type === "text")
+    .map((part) => part.text)
+    .join("");
+  assert.equal(
+    text,
+    events
+      .filter((event) => event.type === "text-delta")
+      .map((event) => event.delta)
+      .join(""),
+    "saved and streamed text must match without duplication",
+  );
+  for (const call of events.filter(
+    (event) =>
+      event.type === "tool-input-available" && event.toolName === "runWait",
+  )) {
+    const output = events.findLast(
+      (event) =>
+        event.type === "tool-output-available" &&
+        event.toolCallId === call.toolCallId,
+    );
+    assert.ok(output, "runWait output must be completed on the same stream");
+    const part = message.parts.find(
+      (part) => part.toolCallId === call.toolCallId,
+    );
+    assert.equal(
+      part?.state,
+      "output-available",
+      "saved runWait output must be completed",
+    );
+    assert.deepEqual(part.output, output.output);
+  }
+  return message.id;
 }

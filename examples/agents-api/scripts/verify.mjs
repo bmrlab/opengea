@@ -23,14 +23,16 @@ assert.ok(
 const token = process.env.GEA_ACCESS_TOKEN?.trim();
 assert.ok(
   environment === "local" || token,
-  "Cloud calls require GEA_ACCESS_TOKEN (user OAuth)",
+  "Cloud calls require GEA_ACCESS_TOKEN (Project API Key or user OAuth)",
 );
 const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
 // Ordinary HTTP calls. Do not retry writes: a failed connection can hide a successful write.
-async function request(method, path, body) {
+async function request(method, path, body, attempt = 0) {
   const multipart = body instanceof FormData;
-  const response = await fetch(`${api}${path}`, {
+  const download =
+    method === "GET" && /^\/(files|artifacts)\/[^/]+\/content$/.test(path);
+  let response = await fetch(`${api}${path}`, {
     method,
     headers: {
       ...headers,
@@ -40,9 +42,34 @@ async function request(method, path, body) {
     },
     body:
       body === undefined ? undefined : multipart ? body : JSON.stringify(body),
-    redirect: "error",
+    redirect: download ? "manual" : "error",
     signal: AbortSignal.timeout(120_000),
   });
+  if (method === "GET" && response.status === 429 && attempt < 5) {
+    const failure = await response.json();
+    const seconds = Number(
+      response.headers.get("retry-after") ??
+        failure.error?.data?.retryAfterSeconds ??
+        5,
+    );
+    await setTimeout(
+      (Number.isFinite(seconds) ? Math.max(1, Math.min(60, seconds)) : 5) *
+        1000,
+    );
+    return request(method, path, body, attempt + 1);
+  }
+  if (download && response.status === 302) {
+    const location = response.headers.get("location");
+    assert.ok(location, "File download must provide a signed URL");
+    const target = new URL(location);
+    assert.equal(target.protocol, "https:");
+    assert.ok(!target.username && !target.password);
+    // The signed object-store URL is its own credential; never forward the API key.
+    response = await fetch(target, {
+      redirect: "error",
+      signal: AbortSignal.timeout(120_000),
+    });
+  }
   assert.ok(
     response.ok,
     `${method} ${path}: HTTP ${response.status} ${response.ok ? "" : await response.text()}`,
@@ -65,7 +92,7 @@ async function run(sessionId, input) {
       ["queued", "running"].includes(current.status),
       `Run ${started.id}: ${current.status}`,
     );
-    await setTimeout(500);
+    await setTimeout(environment === "local" ? 500 : 2000);
   }
   throw new Error(
     `Run ${started.id} timed out. Inspect or cancel it with POST /runs/${started.id}/cancel.`,
@@ -110,6 +137,7 @@ assert.equal(command.stdout, setup);
 
 const source = `Input uploaded separately from Computer: ${marker}`;
 const form = new FormData();
+if (environment !== "local") form.set("environment", environment);
 form.set("file", new File([source], "source.txt", { type: "text/plain" }));
 const file = await json("POST", "/files", form);
 assert.equal(

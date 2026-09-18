@@ -1,5 +1,30 @@
 # Verification
 
+## SDK 0.1.260920-alpha.3, 2026-09-20
+
+- Public SDK alpha.3: frozen install and types passed.
+- Validation and packaging passed with the alpha.1 macOS CI artifact; this does not exercise real Feishu delivery.
+- Final Preview v12 was pushed with the alpha.1 macOS artifact, deployment `01a0bebd-2ed3-77ff-aba1-1a4ca3d7a89b`. Its content hash matches v11 below; no Production promotion.
+- Preview v11 is ready: deployment `01a0beb0-05de-744f-af0b-bc1ec997ab97`, content `sha256:cdcabe728b81a0a26b1cf6d881cc2f2af72cb6e86dee4368b67db45efa13d808`. This push used published CLI alpha.0 while alpha.1 was building. No real Feishu message or Production promotion was performed.
+
+## SDK 0.1.260920-alpha.2, 2026-09-20
+
+- Public SDK `0.1.260920-alpha.2`, CLI `0.1.260920-alpha.0`: frozen installation, types and Agent validation/pack passed.
+- Existing test Worker Preview was rebuilt. No real Feishu messages were sent; channel delivery/reply remains unverified in this round.
+- Existing Preview Worker v10 is ready: deployment `01a0bd71-073b-772b-a43d-fe877bad0f40`, content `sha256:ed2b8b5fbccc2f17e38faf73c88bfb08db374e53d4013a14c314300959c72d2a`. No Production promotion.
+
+## SDK 0.1.260920-alpha.0, 2026-09-20
+
+- Published SDK installation and type checking passed. Validation and packaging used the tested macOS CLI npm tarballs from GEA release workflow 35457340650; The CLI subsequently published successfully after npm maintenance; registry version and `latest` are verified as `0.1.260920-alpha.0`.
+- Updated the existing test Worker's Preview to v9, deployment `01a0bab9-1931-745b-95fd-679a45c7abe0`; deployment status is ready.
+- No messages were sent to Feishu users or groups. Live inbound delivery, reply and sender-isolation behavior were not rerun, and Preview readiness is not a Channel acceptance pass. No Production promotion.
+
+## SDK 0.1.260918-alpha.0, 2026-09-18
+
+- Updated public SDK/Contract dependencies and lockfiles to `0.1.260918-alpha.0`; no workspace-linked SDK. Node 24.16.0. Frozen installation, type checking, Agent validation and packaging passed.
+- Packaging used the Session/Run-capable source CLI from GEA `73864e902`; CLI npm dependencies remain at their previous published version. No CLI release was triggered.
+- This records local checks, not a Production deployment.
+
 ## SDK alpha.2 packaging verification, 2026-09-17
 
 - Public SDK `0.1.260917-alpha.2` and published CLI `0.1.260917-alpha.0`; frozen installation, type-check, Agent validation and packaging passed.

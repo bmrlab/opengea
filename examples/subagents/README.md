@@ -1,32 +1,54 @@
 # Independent subagents
 
-All four Agent definitions explicitly select `engine: agentCore()` from the public SDK. The Rust loop runs the coordinator, private researcher/calculator and top-level reviewer; TypeScript tools and the automatic parent continuation contract stay the same. The SDK framework default is also Agent Core; select `aiSdk()` explicitly to use the AI SDK loop.
-
-A small arithmetic team that demonstrates how Agent definitions and task calls
-fit together. It uses real models and the published Agent SDK; the verification
-script can use the local native Runtime or the public hosted Agent HTTP API.
-
-The local and hosted Preview real-model checks pass. Hosted verification uses
-the same example bundle after the Web host fix in GEA PR #418; see
-[the verification record](VERIFICATION.md) for results and scope.
+An arithmetic team using public `@gea-ai/agent-sdk@0.1.260920-alpha.3` and
+`agentCore()`. Each child has its own Session. Every invocation returns a
+`{ sessionId, runId }` receipt; Agent IDs identify definitions, not conversations.
 
 ```text
-coordinator                     public entrypoint; may create a self copy
-├─ researcher                   automatically discovered private definition
-│  └─ calculator                researcher's own private subagent
-└─ reviewer                     explicit reference to a second public entrypoint
+coordinator                     public entrypoint; can create a self copy
+├─ researcher                   private definition
+│  └─ calculator                researcher's private child
+└─ reviewer                     another public entrypoint in this Worker
 ```
 
-`subagents/researcher/agent.ts` defines a private Agent. It owns its prompt,
-model, tools and child directory. `subagents/reviewer.ts` instead declares
-`defineAgentReference({ slug: "reviewer", ... })` for `agents/reviewer/agent.ts`.
-Both are called with `agent({ target, message })`. The coordinator's explicit
-`agentTool()` additionally allows `agent({ message })` to create a self copy.
-Each new child has an independent Session and receives only the task message.
+The coordinator calls `agent({ target, message, sessionId? })`. Omit `target`
+for a self copy, or supply the returned `sessionId` to continue a child with a
+new Run and retained history. `runWait({ runIds })` waits for particular Runs.
+Ending the model turn while children are active also waits and resumes the
+parent automatically. The logical parent Run ID stays the same through either
+kind of wait. Completion is automatic; there is no Task API or progress tool.
 
-The `execution_info` Tool returns the actual Agent, chat and run IDs. The example
-uses these and the actual working receipts to check execution isolation.
-Private Agents do not become extra public routes or Studio Agent entries.
+The reviewer also declares `chatSend()`. Its model-facing `sessionSend` tool
+accepts the peer's `sessionId`. A follow-up message to an idle Session starts
+a new independent Run.
+Session access remains authorized; knowing an ID alone does not grant access.
+
+### Passing files to a child
+
+The model-facing `agent` tool accepts either the string shorthand used by this
+arithmetic example or a structured user message with `role` and `parts`:
+
+```ts
+agent({
+  target: "researcher",
+  message: {
+    role: "user",
+    parts: [
+      { type: "text", text: "Read and analyze this file." },
+      { type: "file", file_id: artifactId },
+    ],
+  },
+});
+```
+
+Use the exact managed file/Artifact ID supplied by an upload or tool result,
+not a parent filesystem path or a top-level `artifacts` argument. File access
+remains subject to the caller's authorization. Non-image tool Artifacts retain
+their reference/metadata without inlining their contents; the child needs a
+file-reading capability to consume them. Images can also carry native image
+content. This arithmetic example disables Computer and does not verify file
+analysis; the [Agents API example](../agents-api/README.md) demonstrates the
+file/Computer workflow.
 
 ## Install and validate
 
@@ -40,107 +62,75 @@ pnpm test
 cp .env.example .env
 ```
 
-The SDK is pinned to public version `0.1.260917-alpha.2`. Install CLI
-`0.1.260917-alpha.0`, which includes Session inbox and subagent support:
-
-```sh
-npm install --global @gea-ai/cli@0.1.260917-alpha.0
-```
-
-For local CLI development, `GEA_CLI_BIN` can select an executable; optional
-Runtime overrides are shown in `.env.example`. SDK dependencies remain public
-npm packages. Hosted verification requires the Web `v0.51.1` Session dispatch
-fix in addition to the `v0.51.0` Runtime.
+Use CLI `0.1.260920-alpha.1` with its bundled Runtime for local execution, and
+GEA v0.55 or newer for hosted verification. Both support the Session/Run protocol
+used by this SDK. Install the CLI with `pnpm add -g @gea-ai/cli@0.1.260920-alpha.1`.
+`GEA_CLI_BIN` remains available for testing a compatible local executable.
 
 ```sh
 pnpm agent:validate
 pnpm agent:pack
-```
-
-Both validation and packaging check that the explicitly referenced top-level
-Agent exists. Starting local development also generates `.gea/bindings.d.ts`,
-which infers valid same-Worker Agent slugs. Run type checking again after that
-file is generated.
-
-## Local development
-
-```sh
 pnpm gea login
 pnpm gea workspace use --json '{"orgSlug":"your-org","workspaceSlug":"default"}'
 pnpm dev
 ```
 
-`agent-dev.json` selects hosted model access through that login; no local model
-key is needed. It starts the local native Runtime on port 8793. Change the port
-if occupied. The coordinator is `/gea/agents/coordinator/run`; the reviewer is
-`/gea/agents/reviewer/run`. The private definitions have no public endpoints.
+Development uses hosted models through your GEA login. The Worker uses port
+8793; `agent-dev.json` pins the separate Agents API to port 8794. Change both
+configuration and `GEA_LOCAL_AGENTS_API_URL` if that port is occupied.
+Private definitions have no public Worker entrypoints.
 
-In a second terminal, run the same acceptance scenarios locally:
+In another terminal, run:
 
 ```sh
 pnpm verify:local
 ```
 
-The runner posts to the local Agent and reads its Session history. Override
-`GEA_LOCAL_AGENT_URL` if you changed the port. Wait for startup/reload to finish
-and keep the sources unchanged during verification: calls are pinned to a
-deployment. Keep `.gea` to retain local Session state. Stop development with
-Ctrl+C. Hosted verification below additionally tests the deployed task host and
-automatic parent wakeup through authenticated public history reads.
+The verifier uses ordinary HTTP `/api/v1` Sessions/Runs for both local and hosted
+execution. Keep sources unchanged while it runs: existing Sessions retain their
+exact deployment. `.gea` holds local state and ignored verification reports.
 
 ## Hosted Preview verification
 
-Create a dedicated Studio Project, then push this example:
+Push to a dedicated Studio Project:
 
 ```sh
 pnpm gea agent push --json '{"cwd":".","project":"my-project","slug":"opengea-subagents"}'
 ```
 
-Copy the coordinator's Preview Agent base URL (without `/run`) into
-`GEA_AGENT_URL` in `.env`. Create a Preview Project key with `runs:write`,
-`chats:write` (for fresh chats) and `chats:read`, then set `GEA_PROJECT_API_KEY`.
-Credentials stay in the Node verification process, and `.env` is excluded from
-the Agent archive and Git.
+Set `GEA_AGENTS_API_URL` to the service's `/api/v1` root and `GEA_AGENT_ID` to the
+coordinator's stable public ID (optional when its name is unique). Create a
+Project API key granting both coordinator and reviewer `runs:write`,
+`chats:write`, and `chats:read`, and set `GEA_PROJECT_API_KEY`. Keys are not
+bound to an environment; the verifier explicitly selects Preview.
+Credentials stay in the Node process. Revoke temporary keys after verification.
 
 ```sh
 pnpm verify
 ```
 
-The runner uses fresh parent chats, random arithmetic operands and markers:
+The strict verifier uses fresh parent Sessions, random arithmetic and markers:
 
-1. Starts a private researcher, a referenced reviewer and a self copy in the
-   initial parent turn. The researcher delegates once more to its calculator.
-2. Waits for the parent's automatic continuation through authenticated history
-   reads. It checks actual receipts, all results, distinct child chat IDs and
-   the nested calculator's separate identity. A working receipt is not success.
-3. Continues the reviewer using the original agentId. It verifies retained
-   marker/value, unchanged child chat identity and a new taskId.
-4. Creates another reviewer without agentId. It must have a new handle/chat and
-   return null for the first reviewer's private history.
+1. Starts researcher, reviewer and a self copy before waiting. The researcher
+   calls its calculator. It verifies all results, independent Sessions and exact
+   Run receipts, including the nested calculator's complete identity.
+2. Reads Session state, history and each child Run through Agents API. The
+   parent keeps one Run ID through implicit joining and explicit `runWait`.
+   Each automatic continuation must keep one assistant ID and one SSE start/finish;
+   streamed text must match saved history and each `runWait` output must complete.
+   A later user batch in the same Session must have a new assistant ID.
+3. Continues the reviewer with the same Session and a new Run, retaining its
+   private marker/value. A fresh reviewer must know neither.
+4. Asks the reviewer to send a message to its sibling's Session. It checks the
+   actual `sessionSend` call, delivery to that Session and the new finished Run.
 
-Parent-only markers are checked against the actual outgoing Tool inputs. The
-runner never sends the arithmetic answer key to the model. It performs no
-automatic request retries and retains partial evidence on failure under
-`.gea/verification/<run-id>/report.json`. It makes paid model calls. CI only runs
-credential-free type checks and tests of the verifier's failure detection.
+Parent-only markers must never appear in child inputs or history. Accepted
+receipts are not completion. The verifier preserves partial evidence under
+`.gea/verification/<id>/report.json` and never retries writes. Read-only 429
+responses honor the server's retry delay. These are paid real-model calls.
+CI checks types and the verifier's strict failure detection without credentials.
 
-## Try it in Playground
-
-Select the coordinator and ask:
-
-> Start three jobs: researcher computes 17 × 19, reviewer computes 23 + 29,
-> and a self copy computes 7 × 8. Label them private, review and copy; use batch
-> demo. Pass LEAF at the beginning of each child message. End your first turn
-> after receiving their working receipts, then summarize their final results.
-
-The first response is `WAITING`; later runs in the same parent chat deliver the
-summary. A child can finish while the parent is active, but its result enters a
-new parent turn after the current turn ends. This is not in-flight steering.
-
-Each definition chooses its own `maxOutputTokens`. The coordinator and researcher
-use 8192; leaf definitions use 4096. A self copy uses the coordinator's settings.
-Change these budgets when experimenting with reasoning models.
-
-This example focuses on calls within one Worker. Cross-Worker remote references,
-cancellation, approvals, crash recovery and URL deployment upgrades are outside
-its acceptance checks. It does not promote Preview to Production.
+See [VERIFICATION.md](VERIFICATION.md) for exact versions, successes and remaining
+failures. Historical pass records do not imply the current release has passed.
+Remote references, cancellation, approval and crash recovery are outside this
+example's real-model matrix. Nothing here promotes Preview to Production.

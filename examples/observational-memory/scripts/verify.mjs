@@ -64,7 +64,7 @@ const save = () =>
   writeFile(`${output}/report.json`, JSON.stringify(report, null, 2));
 try {
   for (const mode of modes) {
-    const chatId = `${id}-${mode}`;
+    const chatId = randomUUID();
     const runs = [];
     report.modes[mode] = { chatId, runs };
     for (const [index, message] of turns.entries()) {
@@ -117,7 +117,7 @@ try {
     const fresh = await runTurn(
       agent.url,
       mode,
-      `${id}-${mode}-fresh`,
+      randomUUID(),
       "What project and owner did I tell you? Return only JSON with project and owner; use null for anything I have not supplied.",
     );
     result.chatIsolation = scoreRecord(fresh.text, {

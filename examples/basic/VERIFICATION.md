@@ -1,5 +1,45 @@
 # Verification record
 
+## Hosted recheck after Web restart, 2026-09-20
+
+- Unchanged SDK alpha.3 Preview v16 passed real approval, `searchStories` execution,
+  final discussion-link citations and saved history after the operator restarted
+  Web v0.55.5. Chat `01a0bf2d-3cd4-73ff-ab4e-e34c0992a18b`, Run
+  `01a0bf2d-3d36-76fa-bec7-42b1ec82d75f`.
+- Approval continuation returned HTTP 200 with no SSE errors; persisted history
+  contains the completed Tool output and cited answer. No Production promotion.
+- This replaces the failed approval/search acceptance below, not its historical
+  diagnosis. Restart recovery is not acceptance of the undeployed Redis fixes.
+
+## SDK 0.1.260920-alpha.3, 2026-09-20
+
+- Public SDK/Contract alpha.3: frozen install, type checking, 18 tests and Next production build passed.
+- The alpha.1 macOS CI artifact passed validation/pack and both real-model benchmarks (average score 1.0), Eval `ec991819-5067-410f-b232-07d3f2f2f2b7`. Registry publication/integrity verification is recorded separately in the root acceptance record.
+- Final Preview v16 was pushed with the alpha.1 macOS artifact, deployment `01a0bebd-21f9-744f-b9ca-fd8487c2b41b`. Its content hash matches v15 below; no Production promotion.
+- Preview v15 is ready: deployment `01a0beb0-05e5-77f8-b62f-ae8c1a8666d4`, content `sha256:b49b311fecd5e730f3b8baa554e7939705bc66858a98d17be1e87e466930bee5`. This push used published CLI alpha.0 while alpha.1 was building.
+- Real Studio approval/search did not complete. Chat `01a0beb0-8cc0-744f-9ea9-52168a016c89`, Run `01a0beb0-8d3c-71e8-8f23-0fe568c140fa`. Continuation Trace `013f8d1f35cf2abcc517ee1ead52ddbd` reports `Worker Durable Object resident capacity is exhausted`; the client saw a socket close. Search output is saved, but a final answer is absent. This is not hosted acceptance. No Production promotion.
+
+## SDK 0.1.260920-alpha.2, 2026-09-20
+
+- Public SDK/Contract/Chat UI `0.1.260920-alpha.2`, CLI `0.1.260920-alpha.0`; no patched SDK. Frozen installation, types, 18 tests, Next build, Agent validation/pack passed. The two real-model benchmarks both scored 1.0.
+- Real Studio Preview approval passed: `searchStories` required approval, executed after approval, returned cited Hacker News links and persisted history. Session `01a0bd71-92a4-70e6-8bb2-51c5684b05de`, Run `01a0bd71-9339-76fc-ab40-5a8c2ac2bd75`. This replaces the earlier locally patched approval check with a registry-only artifact.
+- Existing Preview Worker v14 is ready: deployment `01a0bd70-9b6e-7449-812d-bee8524bea80`, content `sha256:0e26546f3c56167ca6156bc5766faaca10018e5eff1f90cf6e5391edef9a4af4`. No Production promotion.
+
+## SDK 0.1.260920-alpha.0, 2026-09-20
+
+- Published SDK installation, types, build, 18 tests and validation/pack passed. Both real-model benchmark cases scored 1.0 (2/2), Run `9a7626ef-9469-49e5-9f17-17b09ec7b785`.
+- The tested CI CLI macOS artifacts were subsequently published unchanged as `0.1.260920-alpha.0`; launcher/platform SHA512 integrity matches npm. Both native platforms passed release CI; only macOS was exercised locally.
+- Preview v12 exposed Core approval continuation failure: `Unsupported persisted model part: tool-approval-request`, Run `01a0bab9-11a7-7782-bf42-af65d1c144a4`, Trace `ff14562c371eeb5111b2f18e92606ab4`.
+- [GEA #496](https://github.com/bmrlab/gea/pull/496) preserves Core's pending projection across inbox continuation. A locally packed patched SDK was deployed from an isolated example copy to existing Basic Preview v13, deployment `01a0bc4c-7538-72e5-81aa-a2263c04117c`. Real Studio approval, tool execution, returned citations and saved history passed; Session `01a0bc4c-ee02-739f-9e58-11323acbfaa6`, Run `01a0bc4c-ee53-7208-b928-7343d8d38d04`.
+- That patched Preview artifact is not the public SDK release. Repository dependencies remain the published package. No Production promotion or Next.js deployment.
+
+## SDK 0.1.260918-alpha.0, 2026-09-18
+
+- Updated public SDK/Contract dependencies and lockfiles to `0.1.260918-alpha.0`; no workspace-linked SDK. Node 24.16.0. Frozen installation, type checking, Agent validation and packaging passed.
+- Packaging used the Session/Run-capable source CLI from GEA `73864e902`; CLI npm dependencies remain at their previous published version. No CLI release was triggered.
+- All 18 tests passed.
+- This records local checks, not a Production deployment.
+
 ## SDK alpha.2 and published CLI acceptance, 2026-09-17
 
 - Public SDK/Contract `0.1.260917-alpha.2` and CLI `0.1.260917-alpha.0`. Frozen installation, Agent/web type checks, all 18 tests, production Next.js build, Agent validation and packaging passed.
