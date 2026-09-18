@@ -21,11 +21,11 @@ importers:
         specifier: 4.0.10
         version: 4.0.10(react@19.2.3)(zod@4.3.6)
       '@gea-ai/agent-sdk':
-        specifier: 0.1.260917-alpha.2
-        version: 0.1.260917-alpha.2(esbuild@0.28.2)
+        specifier: 0.1.260918-alpha.0
+        version: 0.1.260918-alpha.0(esbuild@0.28.2)
       '@gea-ai/contract':
-        specifier: 0.1.260917-alpha.2
-        version: 0.1.260917-alpha.2
+        specifier: 0.1.260918-alpha.0
+        version: 0.1.260918-alpha.0
       '@opengea/basic-agent':
         specifier: workspace:*
         version: link:../../packages/agent
@@ -127,8 +127,8 @@ importers:
   packages/agent:
     dependencies:
       '@gea-ai/agent-sdk':
-        specifier: 0.1.260917-alpha.2
-        version: 0.1.260917-alpha.2(esbuild@0.28.2)
+        specifier: 0.1.260918-alpha.0
+        version: 0.1.260918-alpha.0(esbuild@0.28.2)
       zod:
         specifier: 4.3.6
         version: 4.3.6
@@ -528,16 +528,16 @@ packages:
   '@floating-ui/utils@0.2.12':
     resolution: {integrity: sha512-HpCo8tmWzLVad5s2d19EhAz5zqrrQ6s69qd6moPMQvkOuSwDT1YgRfWSVuc4ennqrgv3OHppiOGMQ7oC13yIww==}
 
-  '@gea-ai/agent-sdk@0.1.260917-alpha.2':
-    resolution: {integrity: sha512-W/IpXfKwlcd+K54K1vwCl9M0HWymjWbaq8MoW43hGxG/vAOYneC+RtNVzKUkfh/AJsNjIXuzzNWL0UWAHAAl9g==}
+  '@gea-ai/agent-sdk@0.1.260918-alpha.0':
+    resolution: {integrity: sha512-+hpw8ZIvNQbmp9nIGTeUttJyy+CrkCogJLe0OCfsVAkI7hhkPn3EM3JTPn81sqOH4pwejfO8jb5tQH+RJ9hPqg==}
     peerDependencies:
       esbuild: ^0.28.0
     peerDependenciesMeta:
       esbuild:
         optional: true
 
-  '@gea-ai/contract@0.1.260917-alpha.2':
-    resolution: {integrity: sha512-tgJtmBLP93DjdhRhMwGYxbx8GXri+wHRHxEv9UtPs5ImnrzSQEygndeIiYaZLMSv+AZG8mq9PSDn0M6r+IJlow==}
+  '@gea-ai/contract@0.1.260918-alpha.0':
+    resolution: {integrity: sha512-UC9ytsodHNc7OYO4Ffn1zuMA6NETVSbSPN3abOETEaN0qSRCm0Ioye7rhKdO2VBWOf+kf3dREu6LryQBjGLYBg==}
 
   '@hono/node-server@2.1.1':
     resolution: {integrity: sha512-ELuehkj5VCBdgEw9zs+ivkKwyzzUCSQuE96YmiPvn1ECBoZCczbFXJLeEGMTYjphP6gydh4pHMqEYPVMYUVgQg==}
@@ -5127,7 +5127,7 @@ snapshots:
 
   '@floating-ui/utils@0.2.12': {}
 
-  '@gea-ai/agent-sdk@0.1.260917-alpha.2(esbuild@0.28.2)':
+  '@gea-ai/agent-sdk@0.1.260918-alpha.0(esbuild@0.28.2)':
     dependencies:
       '@ai-sdk/anthropic': 4.0.37(zod@4.3.6)
       '@ai-sdk/openai': 4.0.4(zod@4.3.6)
@@ -5135,7 +5135,7 @@ snapshots:
       '@ai-sdk/otel': 1.0.9(zod@4.3.6)
       '@ai-sdk/provider': 4.0.1
       '@ai-sdk/provider-utils': 5.0.2(zod@4.3.6)
-      '@gea-ai/contract': 0.1.260917-alpha.2
+      '@gea-ai/contract': 0.1.260918-alpha.0
       '@opentelemetry/api': 1.9.1
       '@opentelemetry/context-async-hooks': 2.10.0(@opentelemetry/api@1.9.1)
       '@opentelemetry/core': 2.10.0(@opentelemetry/api@1.9.1)
@@ -5156,7 +5156,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@gea-ai/contract@0.1.260917-alpha.2':
+  '@gea-ai/contract@0.1.260918-alpha.0':
     dependencies:
       '@bufbuild/protobuf': 2.13.0
       '@opentelemetry/api': 1.9.1

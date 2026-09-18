@@ -16,7 +16,7 @@ Preparing a Session does not call the model.
 ## Install and run locally
 
 Use Node **24.16.0**, pnpm **12.1.0** and public Agent SDK
-**0.1.260917-alpha.2** (pinned in the lockfile):
+**0.1.260918-alpha.0** (pinned in the lockfile):
 
 ```bash
 pnpm install --frozen-lockfile

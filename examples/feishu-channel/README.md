@@ -20,7 +20,7 @@ cp .env.example .env
 ```
 
 The example pins the public `@gea-ai/agent-sdk` package to
-`0.1.260917-alpha.2`. Install a CLI with Channels support and its matching native
+`0.1.260918-alpha.0`. Install a CLI with Channels support and its matching native
 Worker Runtime:
 
 ```bash

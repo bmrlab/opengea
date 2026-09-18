@@ -1,5 +1,12 @@
 # Verification · single-Worker OAuth application
 
+## SDK 0.1.260918-alpha.0, 2026-09-18
+
+- Updated public SDK/Contract dependencies and lockfiles to `0.1.260918-alpha.0`; no workspace-linked SDK. Node 24.16.0. Frozen installation, type checking, Agent validation and packaging passed.
+- Packaging used the Session/Run-capable source CLI from GEA `73864e902`; CLI npm dependencies remain at their previous published version. No CLI release was triggered.
+- Build and 40 tests passed, with 1 existing native-runtime-only test skipped by the default test mode.
+- This records local checks, not a Production deployment.
+
 ## SDK alpha.2 and public development Runtime, 2026-09-17
 
 - Public SDK `0.1.260917-alpha.2`, CLI `0.1.260917-alpha.0`; frozen installation, TanStack Start build, type-check, Worker validation and combined packaging passed without source-built binaries.
