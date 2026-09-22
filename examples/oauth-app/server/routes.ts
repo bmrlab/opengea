@@ -680,7 +680,7 @@ export async function stream(request: Request) {
       },
     );
     if (upstream.status !== 503) await assertUpstream(upstream);
-    return relay(upstream);
+    return await relay(upstream);
   } catch (error) {
     return failure(error);
   }
