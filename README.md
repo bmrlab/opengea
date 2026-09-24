@@ -11,6 +11,7 @@ Each example owns its dependencies and lockfile. There is no root workspace or s
 | [observational-memory](examples/observational-memory/) | Configurable context management: raw history, default summaries and a chat DO observations strategy, with recall and prompt-cache comparisons. |
 | [feishu-channel](examples/feishu-channel/)             | A Feishu bot backed by an Agent, with WebSocket message delivery, typed runtime credentials and sender isolation.                              |
 | [subagents](examples/subagents/)                       | Private nested Agents, explicit same-Worker references and self copies, with automatic parent continuation and isolated child history.         |
+| [subagent-limits](examples/subagent-limits/)           | Regression verifier for concurrency admission, 140 sequential child Runs and retained history; full hosted acceptance remains pending.         |
 
 Start with [oauth-app](examples/oauth-app/) for the complete deployable application; the other examples focus on specific APIs and Agent patterns. Read each example README. You need Node.js and pnpm. Agent examples need a Creative Reasoning API key for local model calls; The complete OAuth Worker app uses a GEA application registration and built-in SQLite; no external database is needed. Agent development additionally requires a supported GEA CLI platform. Building the Next.js application works independently of the CLI, including on Linux.
 

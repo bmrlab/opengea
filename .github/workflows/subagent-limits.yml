@@ -1,0 +1,29 @@
+name: Subagent limits example
+on:
+  push:
+    branches: [main]
+    paths:
+      ["examples/subagent-limits/**", ".github/workflows/subagent-limits.yml"]
+  pull_request:
+    paths:
+      ["examples/subagent-limits/**", ".github/workflows/subagent-limits.yml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: examples/subagent-limits
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: examples/subagent-limits/.node-version
+      - name: Install pnpm
+        run: npm install --global pnpm@12.1.0
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm type-check
+      - run: pnpm test

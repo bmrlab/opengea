@@ -1,5 +1,15 @@
 # Verification record
 
+## Production-platform recheck, 2026-09-22
+
+Unchanged Preview v15 passed parallel/nested execution, waits, child recall and
+history isolation. A September 20 Session also successfully continued. The full
+strict matrix failed at the last parent summary with `Duplicate model block: 0`;
+sibling delivery and child completion succeeded. See the detailed
+[subagent limits acceptance record](../subagent-limits/VERIFICATION.md) for IDs,
+Trace evidence, and the historical public SDK export blocker. No Production
+promotion or Agent rebuild occurred.
+
 ## Hosted recheck after Web restart, 2026-09-20
 
 - Unchanged Preview v15 / public SDK alpha.3 passed the full strict verifier
