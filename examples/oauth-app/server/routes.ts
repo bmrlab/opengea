@@ -1,3 +1,4 @@
+import { relay } from "./relay";
 import { z } from "zod";
 import { validateUIMessages } from "ai";
 import { getEnv, getAppEnv } from "./env";
@@ -246,21 +247,6 @@ const emptyAssistant = z.object({
 export type AgentView = z.infer<typeof agentOutput>;
 export type ConversationSummary = z.infer<typeof conversationOutput>;
 
-function relay(upstream: Response) {
-  const headers = new Headers({ "cache-control": "no-store" });
-  for (const name of [
-    "content-type",
-    "x-vercel-ai-ui-message-stream",
-    "x-gea-agent-session-id",
-    "x-gea-agent-run-id",
-    "x-gea-request-id",
-    "retry-after",
-  ]) {
-    const value = upstream.headers.get(name);
-    if (value !== null) headers.set(name, value);
-  }
-  return new Response(upstream.body, { status: upstream.status, headers });
-}
 async function assertUpstream(response: Response) {
   if (!response.ok) {
     await response.body?.cancel();
@@ -604,7 +590,7 @@ export async function run(request: Request) {
       );
     }
     createdId = sessionId;
-    if (sessionId && runId)
+    if (sessionId && runId && !upstream.ok)
       await conversationRuns(current).remember(sessionId, runId);
     await assertUpstream(upstream);
     if (!sessionId || !runId) {
@@ -615,7 +601,10 @@ export async function run(request: Request) {
         "Missing conversation identity. Refresh history before trying again.",
       );
     }
-    return relay(upstream);
+    return relay(
+      upstream,
+      conversationRuns(current).remember(sessionId, runId),
+    );
   } catch (error) {
     const response = failure(error);
     // Create-and-invoke can create a session even if execution admission fails.
@@ -691,7 +680,7 @@ export async function stream(request: Request) {
       },
     );
     if (upstream.status !== 503) await assertUpstream(upstream);
-    return relay(upstream);
+    return await relay(upstream);
   } catch (error) {
     return failure(error);
   }
