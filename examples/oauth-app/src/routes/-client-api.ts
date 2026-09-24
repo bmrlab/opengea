@@ -159,6 +159,8 @@ export async function consume(
   if (response.status === 204) return;
   if (!response.body)
     throw new Error("No response stream. Restore this conversation.");
+  let outcome: "finished" | "error" | "aborted" | undefined;
+  let terminalReceived = false;
   let previous: UIMessage | undefined;
   if (replayIdentity) {
     // Worker replay starts at the Run boundary; legacy streams supply a baseline.
@@ -241,11 +243,39 @@ export async function consume(
     }
   }
   for await (const message of readUIMessageStream<UIMessage>({
-    stream: decoder.decode(response.body!),
+    stream: decoder.decode(response.body!).pipeThrough(
+      new TransformStream({
+        transform(chunk, controller) {
+          if (chunk.type === "finish") {
+            terminalReceived = true;
+            // A tool boundary may be completed or waiting for input. Those
+            // ambiguous finishes still reload the authoritative Run status.
+            outcome =
+              chunk.finishReason === "stop"
+                ? "finished"
+                : chunk.finishReason === "error" ||
+                    chunk.finishReason === "length" ||
+                    chunk.finishReason === "content-filter"
+                  ? "error"
+                  : undefined;
+          }
+          if (chunk.type === "abort") {
+            terminalReceived = true;
+            outcome = "aborted";
+          }
+          controller.enqueue(chunk);
+        },
+      }),
+    ),
     terminateOnError: true,
     ...(previous?.role === "assistant" ? { message: previous } : {}),
   }))
     onMessage(message);
+  if (!terminalReceived)
+    throw new Error(
+      "The stream ended before confirming completion. Restore this conversation.",
+    );
+  return outcome;
 }
 export async function openStream(chatId: string, signal?: AbortSignal) {
   for (let attempt = 0; attempt < 3; attempt++) {

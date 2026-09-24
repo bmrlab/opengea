@@ -14,7 +14,7 @@
     "worker:pack": "gea agent pack --json-file agent-project.json"
   },
   "dependencies": {
-    "@gea-ai/agent-sdk": "0.1.260920-alpha.3",
+    "@gea-ai/agent-sdk": "0.1.260924-alpha.1",
     "@radix-ui/react-use-controllable-state": "^1.2.6",
     "@streamdown/cjk": "^1.0.3",
     "@t3-oss/env-core": "0.13.10",
@@ -42,10 +42,12 @@
     "@cloudflare/workers-types": "5.20260915.1",
     "@gea-ai/cli": "0.1.260920-alpha.1",
     "@tailwindcss/vite": "4.3.3",
+    "@testing-library/react": "^16.3.3",
     "@types/node": "24.10.1",
     "@types/react": "19.2.7",
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react": "6.0.1",
+    "jsdom": "^30.1.1",
     "typescript": "5.9.3",
     "vite": "8.2.1",
     "vitest": "4.0.18"

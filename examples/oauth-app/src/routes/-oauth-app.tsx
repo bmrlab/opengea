@@ -130,6 +130,7 @@ export function OAuthApp() {
   const [uploading, setUploading] = useState(false);
   const fileInput = useRef<HTMLInputElement | null>(null);
   const controller = useRef<AbortController | null>(null);
+  const refreshController = useRef<AbortController | null>(null);
   const inFlight = useRef(false);
   function upsert(message: UIMessage) {
     setMessages((current) =>
@@ -140,6 +141,7 @@ export function OAuthApp() {
   }
   function selectId(id: string | null) {
     if (id !== chatId) {
+      refreshController.current?.abort();
       setFiles([]);
       setArtifacts([]);
       setArtifactCursor(null);
@@ -196,6 +198,7 @@ export function OAuthApp() {
     return () => {
       abort.abort();
       controller.current?.abort();
+      refreshController.current?.abort();
     };
   }, []);
   async function refreshList(signal?: AbortSignal) {
@@ -203,8 +206,30 @@ export function OAuthApp() {
     setConversations(page.items);
     setConversationCursor(page.next_cursor);
   }
+  async function refreshAfterRun(id: string) {
+    refreshController.current?.abort();
+    const abort = new AbortController();
+    refreshController.current = abort;
+    try {
+      const [list, outputs] = await Promise.all([
+        readConversations(null, abort.signal),
+        readArtifacts(id, null, abort.signal),
+      ]);
+      if (abort.signal.aborted) return;
+      setConversations(list.items);
+      setConversationCursor(list.next_cursor);
+      setArtifacts(outputs.items);
+      setArtifactCursor(outputs.next_cursor);
+    } catch {
+      if (!abort.signal.aborted)
+        setNotice(
+          "The response is saved, but the conversation list or files could not refresh. Use Restore conversation to retry.",
+        );
+    }
+  }
   async function restore(id = chatId) {
     if (inFlight.current) return;
+    refreshController.current?.abort();
     inFlight.current = true;
     setBusy(true);
     setError(null);
@@ -218,11 +243,17 @@ export function OAuthApp() {
         display(state);
         if (activeRun(state.run?.status)) {
           // Reconnect rebuilds the Run's message instead of appending to partial output.
-          await consume(await openStream(id, abort.signal), upsert, {
-            chatId: id,
-            runId: state.run!.id,
-          });
-          display(await readConversation(id, abort.signal));
+          const outcome = await consume(
+            await openStream(id, abort.signal),
+            upsert,
+            {
+              chatId: id,
+              runId: state.run!.id,
+            },
+          );
+          if (outcome) setRunStatus(outcome);
+          else display(await readConversation(id, abort.signal));
+          void refreshAfterRun(id);
         }
       }
     } catch (e) {
@@ -239,6 +270,7 @@ export function OAuthApp() {
   }
   async function loadMore(kind: "conversations" | "messages" | "artifacts") {
     if (inFlight.current) return;
+    refreshController.current?.abort();
     inFlight.current = true;
     setBusy(true);
     setError(null);
@@ -339,6 +371,7 @@ export function OAuthApp() {
       (!chatId && !agentId)
     )
       return;
+    refreshController.current?.abort();
     inFlight.current = true;
     setBusy(true);
     setError(null);
@@ -384,9 +417,12 @@ export function OAuthApp() {
       id = response.headers.get("x-gea-agent-session-id") ?? id;
       if (id) selectId(id);
       if (response.ok) setRunStatus("running");
-      await consume(response, upsert);
-      if (id) display(await readConversation(id, abort.signal));
-      await refreshList(abort.signal);
+      const outcome = await consume(response, upsert);
+      if (outcome) setRunStatus(outcome);
+      else if (id) display(await readConversation(id, abort.signal));
+      // The stream already supplies the canonical answer. Refresh navigation
+      // and files independently; never replace it with a late history snapshot.
+      if (id) void refreshAfterRun(id);
     } catch (e) {
       setRunStatus(undefined);
       if (!abort.signal.aborted)

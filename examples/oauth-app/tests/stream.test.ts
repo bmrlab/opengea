@@ -2,6 +2,49 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { consume, openStream } from "../src/routes/-client-api";
 afterEach(() => vi.unstubAllGlobals());
 describe("HTTP conversation recovery", () => {
+  it.each([
+    [{ type: "finish", finishReason: "error" }, "error"],
+    [{ type: "finish", finishReason: "length" }, "error"],
+    [{ type: "finish", finishReason: "tool-calls" }, undefined],
+    [{ type: "finish" }, undefined],
+    [{ type: "abort" }, "aborted"],
+  ])("preserves terminal status for %j", async (terminal, outcome) => {
+    await expect(
+      consume(
+        new Response(
+          `data: {"type":"start","messageId":"answer"}\n\ndata: ${JSON.stringify(terminal)}\n\ndata: [DONE]\n\n`,
+        ),
+        () => {},
+      ),
+    ).resolves.toBe(outcome);
+  });
+  it("returns the confirmed outcome only after consuming the whole stream", async () => {
+    const body = [
+      { type: "start", messageId: "answer" },
+      { type: "finish", finishReason: "stop" },
+    ]
+      .map((event) => `data: ${JSON.stringify(event)}\n\n`)
+      .join("");
+    await expect(
+      consume(new Response(body + "data: [DONE]\n\n"), () => {}),
+    ).resolves.toBe("finished");
+    await expect(
+      consume(
+        new Response(
+          body + 'data: {"type":"error","errorText":"commit failed"}\n\n',
+        ),
+        () => {},
+      ),
+    ).rejects.toThrow("commit failed");
+  });
+  it("does not accept a truncated stream as a completed Run", async () => {
+    await expect(
+      consume(
+        new Response('data: {"type":"start","messageId":"answer"}\n\n'),
+        () => {},
+      ),
+    ).rejects.toThrow(/ended before/);
+  });
   it("decodes real AI SDK stream frames into a visible assistant message", async () => {
     const events = [
       { type: "start", messageId: "answer" },

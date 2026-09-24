@@ -5,6 +5,12 @@ Agent. It includes GEA user OAuth, per-user MuseDAM connection setup, a full-scr
 AI Elements chat, Markdown, attachments, saved conversations, stream recovery,
 cancellation and generated Artifact downloads.
 
+After a confirmed stream completion, chat input is available immediately. Conversation
+navigation and generated files refresh in the background without rereading or replacing
+the streamed answer. Starting another turn or switching conversations cancels stale
+refreshes. An interrupted stream remains an error and can be recovered with Restore
+conversation; a terminal replay returning 204 still reloads its saved state.
+
 SQLite Durable Objects store encrypted app sessions. **No `DATABASE_URL`, external
 database or second Agent deployment is needed.**
 
@@ -26,7 +32,7 @@ and Connector credentials never reach browser JavaScript.
 
 ## Prerequisites
 
-- Node **24.16.0**, pnpm **10.30.3**, published `@gea-ai/agent-sdk@0.1.260920-alpha.3`.
+- Node **24.16.0**, pnpm **10.30.3**, published `@gea-ai/agent-sdk@0.1.260924-alpha.1`.
 - A GEA deployment supporting Worker cookies, managed environment variables,
   SQLite Durable Objects, stable Worker namespaces and the public Agents API.
 - Published `@gea-ai/cli@0.1.260920-alpha.1`, pinned in this example. It includes

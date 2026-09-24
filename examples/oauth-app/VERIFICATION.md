@@ -1,5 +1,87 @@
 # Verification · single-Worker OAuth application
 
+## SDK 0.1.260924-alpha.1 compatibility, 2026-09-24
+
+- Upgraded the pinned Agent SDK and its Contract dependency to the published
+  `0.1.260924-alpha.1`; retained CLI `0.1.260920-alpha.1`. This adopts Session
+  startup/completion improvements, batched Trace export, stream-failure handling
+  and compact MCP model input. It does not require an example-specific adapter.
+- Reviewed the removed legacy Studio clients and current Agent/Connector exports.
+  The app already uses AI SDK `DefaultChatTransport` / `readUIMessageStream`,
+  preserves stream failures and terminal replay recovery, and does not read
+  `metadata.agentCore` or import deleted SDK adapters. The existing Agent,
+  MuseDAM Connector, files and Artifact APIs remain compatible.
+- Included main's nonblocking Run-reference relay (#15) together with the
+  background chat-completion refresh (#14). Vite build, type-check, 51 tests
+  (one optional combined-artifact case skipped), and Worker validation/pack pass
+  against the upgraded dependency. All 27 integration tests also pass against
+  the extracted combined Worker artifact, including its packaged app/Agent case.
+  Native Runtime tests use real SQLite and fixture HTTP services, not live
+  OAuth/model providers.
+- No new Preview/Production deployment was performed for this dependency update.
+  The earlier v0.55.25 hosted acceptance used this same SDK with these client and
+  relay implementations: normal replies, MuseDAM search, cancellation and restore
+  succeeded. That evidence is separate from this PR's local package validation;
+  the >120-second stream regression was tested using alpha.0 to isolate the
+  Runtime fix.
+
+
+## SDK 0.1.260922-alpha.2 and chat completion, 2026-09-22
+
+- Installed the published SDK alpha.2, preserving CLI `0.1.260920-alpha.1`.
+  Type checking, Vite build, 48 tests (one optional artifact case skipped), Worker
+  validation/packing and all 27 extracted-artifact native Runtime tests passed.
+- Preview v12 deployment `01a0c855-3ab5-761f-aa4d-4fd39978f68c` is selected for
+  the existing Worker. Publication Preview release
+  `01a0c855-c446-705d-a42f-663843fff742` references that source deployment; real
+  Runs use installed deployment `6a2d2e47-3d02-55ef-bcee-fbab7cfc5e83`.
+  Hosted login, MuseDAM connection and previous conversation history survived.
+  Production remains disabled. Managed configuration and namespaces were retained.
+- Four no-tool requests streamed OK and reached backend `finished`, without a 502:
+
+  | Sample | Run | Browser first protocol bytes | Browser terminal bytes | Model span end to terminal bytes |
+  | --- | --- | --- | --- | --- |
+  | A | `01a0c857-066b-70d7-adce-2a2b7b56a922` | 10.56s | 14.39s | 0.84s |
+  | B | `01a0c857-becb-75cb-b969-99c59101f1da` | 4.58s | 9.33s | 0.95s |
+  | C | `01a0c858-b785-760b-8b8f-d4add73c12a5` | 4.93s | 11.95s | 1.56s |
+  | D | `01a0c85b-0266-7459-9cc0-42ba8f2ae1b0` | 5.12s | 9.21s | 1.10s |
+
+  Browser durations start at POST dispatch. Model-to-browser timings correlate
+  Trace and browser clocks and are approximate; first protocol bytes are not
+  model TTFT. These small shared-production samples are not a controlled benchmark
+  or confirmed full cold-start test, and do not establish lower peak memory.
+- On D, input was observed enabled about 53ms after terminal bytes, while artifact
+  and navigation refreshes finished approximately 0.94s and 1.63s later. There was
+  no post-run history GET. This removes the old 1.21–3.50s blocking refresh observed
+  on alpha.1. Chrome records `net::ERR_ABORTED` after those terminal bytes, while the app
+  and backend both complete successfully; the network cancellation source was not
+  isolated. These samples are distinct from the earlier HTTP 502s.
+- Trace attributes report five reused unchanged Context saves per invocation.
+  Total persistence writes were 14 / 16 / 14 / 14, versus 19 in the two prior
+  alpha.1 samples; counts also depend on emitted events. Final artifact lookup took
+  143–195ms. No external MuseDAM tools or attachments were exercised by these
+  hosted performance samples; the previous memory-pressure failure is not proven
+  resolved by four successful requests.
+- Confirmed terminal streams now release input without waiting for navigation or
+  artifact refresh. Refreshes run concurrently and are cancelled on a new turn or
+  conversation switch. Tests hold refresh responses pending, submit another turn,
+  and verify stale responses cannot overwrite newer state. Stream tests reject
+  premature EOF/errors after finish, preserve abort outcomes and retain state
+  reload for ambiguous finishes and 204 replay recovery.
+- The production Web image remains v0.55.13. The new Host-side one-request Session
+  preparation path in GEA PR #537 is not active until a Web image containing that
+  change is deployed. SDK and frontend changes alone do not remove all startup
+  latency; sample A still spent 3.54s in legacy Session preparation.
+
+## SDK 0.1.260922-alpha.1, 2026-09-22
+
+- Updated the published SDK and lockfile; CLI remains `0.1.260920-alpha.1`. Type checking, Vite build, 40 ordinary tests, Worker validation/pack and all 27 extracted combined-artifact native Runtime/SQLite tests passed.
+- Preview v11 deployment `01a0c80c-6e9b-74db-92d3-642adeb2dcbd` is selected for the existing Worker. Publication Preview release `01a0c80c-7e1b-708b-ac0c-b1b59be605f4` references that exact source deployment. Real Runs resolve to installed deployment `5d0f4333-046c-5579-a73f-b26a4f8452f8`; new SDK persistence/finish trace attributes are present. Production remains disabled; managed variables and stable namespaces were preserved.
+- Hosted login, MuseDAM connection state and existing conversation history survived the update. The first no-tool request returned browser HTTP 502 during a logged Runtime memory-pressure admission failure; its Run `01a0c80d-c1ce-70c8-9d1d-f7b1582e5695` finished, and Restore conversation recovered its OK answer. This is not a successful streaming sample.
+- Subsequent no-tool Runs `01a0c810-0172-75c1-b665-b336b6fe4cf1` and `01a0c811-2025-715a-bf38-06e2ec8c1ec7` both streamed OK and finished. Browser first protocol bytes were 3.65s / 4.99s; stream completion was 8.21s / 10.50s. These individual shared-production samples do not establish a significant overall speedup over the prior SDK at the same 2-core limit. They are not model first-token timings or full deployment-cold comparisons.
+- A final request after confirmed application/Agent deployment eviction on both nodes also returned HTTP 502. Run `01a0c817-3c4b-749b-bd77-bed73ba3dd4a` finished in the backend; Runtime logs again showed memory-pressure DO admission refusal (working set about 1.72–1.77 GiB against a 1.5 GiB threshold). Full cold-start streaming acceptance remains blocked. These observations do not establish whether the new SDK changes peak memory.
+- No external MuseDAM tool or attachment operation was exercised in this SDK-only performance check. The existing memory-pressure failure remains unresolved; no new memory limit/eviction policy change was made.
+
 ## SDK 0.1.260920-alpha.3, 2026-09-20
 
 - Public SDK alpha.3 plus the alpha.1 macOS CI native artifact: type checking, Vite build, 40 ordinary tests, validation/pack and all 27 extracted combined-artifact native Runtime/SQLite tests passed. Registry installation/integrity is recorded separately in the root acceptance record.
