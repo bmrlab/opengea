@@ -14,7 +14,7 @@
     "worker:pack": "gea agent pack --json-file agent-project.json"
   },
   "dependencies": {
-    "@gea-ai/agent-sdk": "0.1.260922-alpha.2",
+    "@gea-ai/agent-sdk": "0.1.260924-alpha.1",
     "@radix-ui/react-use-controllable-state": "^1.2.6",
     "@streamdown/cjk": "^1.0.3",
     "@t3-oss/env-core": "0.13.10",

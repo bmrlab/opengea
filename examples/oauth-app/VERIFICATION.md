@@ -1,5 +1,31 @@
 # Verification · single-Worker OAuth application
 
+## SDK 0.1.260924-alpha.1 compatibility, 2026-09-24
+
+- Upgraded the pinned Agent SDK and its Contract dependency to the published
+  `0.1.260924-alpha.1`; retained CLI `0.1.260920-alpha.1`. This adopts Session
+  startup/completion improvements, batched Trace export, stream-failure handling
+  and compact MCP model input. It does not require an example-specific adapter.
+- Reviewed the removed legacy Studio clients and current Agent/Connector exports.
+  The app already uses AI SDK `DefaultChatTransport` / `readUIMessageStream`,
+  preserves stream failures and terminal replay recovery, and does not read
+  `metadata.agentCore` or import deleted SDK adapters. The existing Agent,
+  MuseDAM Connector, files and Artifact APIs remain compatible.
+- Included main's nonblocking Run-reference relay (#15) together with the
+  background chat-completion refresh (#14). Vite build, type-check, 51 tests
+  (one optional combined-artifact case skipped), and Worker validation/pack pass
+  against the upgraded dependency. All 27 integration tests also pass against
+  the extracted combined Worker artifact, including its packaged app/Agent case.
+  Native Runtime tests use real SQLite and fixture HTTP services, not live
+  OAuth/model providers.
+- No new Preview/Production deployment was performed for this dependency update.
+  The earlier v0.55.25 hosted acceptance used this same SDK with these client and
+  relay implementations: normal replies, MuseDAM search, cancellation and restore
+  succeeded. That evidence is separate from this PR's local package validation;
+  the >120-second stream regression was tested using alpha.0 to isolate the
+  Runtime fix.
+
+
 ## SDK 0.1.260922-alpha.2 and chat completion, 2026-09-22
 
 - Installed the published SDK alpha.2, preserving CLI `0.1.260920-alpha.1`.

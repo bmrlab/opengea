@@ -32,7 +32,7 @@ and Connector credentials never reach browser JavaScript.
 
 ## Prerequisites
 
-- Node **24.16.0**, pnpm **10.30.3**, published `@gea-ai/agent-sdk@0.1.260922-alpha.2`.
+- Node **24.16.0**, pnpm **10.30.3**, published `@gea-ai/agent-sdk@0.1.260924-alpha.1`.
 - A GEA deployment supporting Worker cookies, managed environment variables,
   SQLite Durable Objects, stable Worker namespaces and the public Agents API.
 - Published `@gea-ai/cli@0.1.260920-alpha.1`, pinned in this example. It includes
