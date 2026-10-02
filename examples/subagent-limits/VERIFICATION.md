@@ -1,5 +1,11 @@
 # Verification record
 
+## SDK update, 2026-10-02
+
+See the [cross-example verification record](../VERIFICATION-261002.md) for the
+published SDK/CLI versions, current checks and explicit UAT limits. Historical
+results below apply only to their recorded versions.
+
 ## Current local validation, 2026-09-24
 
 - This is a regression verifier, not a claim that the complete hosted matrix has

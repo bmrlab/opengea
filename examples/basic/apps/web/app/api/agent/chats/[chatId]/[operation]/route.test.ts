@@ -12,7 +12,7 @@ import {
 const chatId = randomUUID();
 const runId = randomUUID();
 const origin = "http://localhost:3000";
-const api = "https://worker.example.com/gea/agents/tech-news";
+const api = "https://worker.example.com/api/v1";
 const secret = "local-conversation-test-secret-20260910";
 const message = {
   id: randomUUID(),
@@ -31,7 +31,8 @@ beforeEach(() => {
   vi.stubEnv("APP_ORIGIN", origin);
   vi.stubEnv("SESSION_SECRET", secret);
   vi.stubEnv("GEA_MODE", "hosted");
-  vi.stubEnv("GEA_AGENT_URL", api);
+  vi.stubEnv("GEA_AGENT_ID", "11111111-1111-4111-8111-111111111111");
+  vi.stubEnv("GEA_AGENTS_API_URL", api);
   vi.stubEnv("GEA_PROJECT_API_KEY", "server-key");
   const session = newSession();
   const headers = new Headers();
@@ -39,7 +40,12 @@ beforeEach(() => {
   setClaims(
     headers,
     chatCookie(chatId),
-    { ...session, chatId, runId, audience: api },
+    {
+      ...session,
+      chatId,
+      runId,
+      audience: `${api}#11111111-1111-4111-8111-111111111111#preview`,
+    },
     secret,
     false,
   );
@@ -59,10 +65,10 @@ beforeEach(() => {
     if (url.includes("/runs/"))
       return Response.json({
         id: runId,
-        chatId: foreignRun ? randomUUID() : chatId,
+        session_id: foreignRun ? randomUUID() : chatId,
         status: "running",
       });
-    return Response.json({ items: [message], nextCursor: null });
+    return Response.json({ items: [message], next_cursor: null });
   });
 });
 afterEach(() => {
@@ -144,7 +150,7 @@ test("full stream replay is unavailable until its history merge contract is supp
 });
 test("local mode does not pretend to provide hosted lifecycle endpoints", async () => {
   vi.stubEnv("GEA_MODE", "local");
-  vi.stubEnv("GEA_AGENT_URL", "http://127.0.0.1:8787/gea/agents/tech-news");
+  vi.stubEnv("GEA_AGENTS_API_URL", "http://127.0.0.1:8787/api/v1");
   // Existing grants for another configured Agent must fail before capability checks.
   expect((await GET(request("state"), context("state"))).status).toBe(404);
   const session = newSession();
@@ -156,7 +162,8 @@ test("local mode does not pretend to provide hosted lifecycle endpoints", async 
     {
       ...session,
       chatId,
-      audience: "http://127.0.0.1:8787/gea/agents/tech-news",
+      audience:
+        "http://127.0.0.1:8787/api/v1#11111111-1111-4111-8111-111111111111#local",
     },
     secret,
     false,

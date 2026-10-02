@@ -1,4 +1,4 @@
-import { geaInstallation } from "../scripts/runtime";
+import { geaInstallation } from "@gea-ai/cli/runtime";
 import {
   cp,
   mkdtemp,
@@ -14,35 +14,20 @@ import { once } from "node:events";
 import { createServer } from "node:net";
 import { DatabaseSync } from "node:sqlite";
 
-const names = {
-  LOGIN_FLOWS: "LoginFlow",
-  OAUTH_SESSIONS: "OAuthSession",
-  CONVERSATION_RUNS: "ConversationRuns",
-};
-
 export async function createTestRuntime(bindings: Record<string, string>) {
   const installation = geaInstallation();
-  const bundle = process.env.GEA_TEST_WORKER_DIR;
-  const manifest = bundle
-    ? JSON.parse(await readFile(join(bundle, "gea.agent-package.json"), "utf8"))
-        .workerManifest
-    : null;
-  const main = manifest?.main ?? "dist/server/index.js";
+  const bundle = process.env.GEA_TEST_WORKER_DIR ?? resolve("dist/worker");
+  const manifest = JSON.parse(
+    await readFile(join(bundle, "gea.agent-package.json"), "utf8"),
+  ).workerManifest;
+  const main = manifest.main;
   const objectBindings: Array<{
     name: string;
     className: string;
     namespace?: string;
-  }> =
-    manifest?.durableObjectBindings ??
-    Object.entries(names).map(([name, className]) => ({
-      name,
-      className,
-      namespace: "worker",
-    }));
+  }> = manifest.durableObjectBindings;
   const root = await mkdtemp(join(tmpdir(), "opengea-oauth-sqlite-"));
-  await cp(bundle ?? resolve("dist"), bundle ? root : join(root, "dist"), {
-    recursive: true,
-  });
+  await cp(bundle, root, { recursive: true });
   let child: ChildProcess | undefined;
   let runtimeOrigin = "";
   let logs = "";

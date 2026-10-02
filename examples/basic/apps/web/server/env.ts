@@ -14,7 +14,9 @@ export function getEnv() {
         ),
       SESSION_SECRET: z.string().min(32),
       GEA_MODE: z.enum(["local", "hosted"]),
-      GEA_AGENT_URL: z.url(),
+      GEA_AGENTS_API_URL: z.url(),
+      GEA_AGENT_ID: z.uuid().optional(),
+      GEA_ENVIRONMENT: z.enum(["preview", "production"]).default("preview"),
       GEA_PROJECT_API_KEY: z.string().optional(),
     },
     runtimeEnv: process.env,
@@ -25,16 +27,16 @@ export function getEnv() {
       );
     },
   });
-  const url = new URL(env.GEA_AGENT_URL);
+  const url = new URL(env.GEA_AGENTS_API_URL);
   if (
     url.username ||
     url.password ||
     url.search ||
     url.hash ||
-    url.pathname.endsWith("/run")
+    !/^\/api\/v1\/?$/.test(url.pathname)
   ) {
     throw new Error(
-      "GEA_AGENT_URL must be an Agent base URL without /run or credentials.",
+      "GEA_AGENTS_API_URL must be the /api/v1 root without credentials.",
     );
   }
   if (env.GEA_MODE === "local") {
@@ -52,10 +54,14 @@ export function getEnv() {
     ) {
       throw new Error("Local mode is for loopback development only.");
     }
-  } else if (url.protocol !== "https:" || !env.GEA_PROJECT_API_KEY) {
+  } else if (
+    url.protocol !== "https:" ||
+    !env.GEA_PROJECT_API_KEY ||
+    !env.GEA_AGENT_ID
+  ) {
     throw new Error(
-      "Hosted mode requires an HTTPS Agent URL and Project API key.",
+      "Hosted mode requires an HTTPS Agents API URL, Agent ID and Project API key.",
     );
   }
-  return { ...env, GEA_AGENT_URL: url.href.replace(/\/$/, "") };
+  return { ...env, GEA_AGENTS_API_URL: url.href.replace(/\/$/, "") };
 }

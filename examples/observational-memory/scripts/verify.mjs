@@ -2,7 +2,7 @@ import { mkdir, writeFile, readFile } from "node:fs/promises";
 import { createHash, randomUUID } from "node:crypto";
 import { parseArgs } from "node:util";
 import { startAgent } from "./dev.mjs";
-import { runTurn, readContext } from "./client.mjs";
+import { runTurn, readHistory } from "./client.mjs";
 import { turns, question, expected, scoreRecord } from "./scenario.mjs";
 import { cacheUsage } from "./metrics.mjs";
 
@@ -58,8 +58,8 @@ const report = {
   limits:
     "Synthetic conversation and local native Runtime; no hosted deployment or pricing claim.",
 };
-const hash = (context) =>
-  createHash("sha256").update(JSON.stringify(context)).digest("hex");
+const hash = (history) =>
+  createHash("sha256").update(JSON.stringify(history)).digest("hex");
 const save = () =>
   writeFile(`${output}/report.json`, JSON.stringify(report, null, 2));
 try {
@@ -69,10 +69,10 @@ try {
     report.modes[mode] = { chatId, runs };
     for (const [index, message] of turns.entries()) {
       const run = await runTurn(agent.url, mode, chatId, message);
-      const context = await readContext(agent.url, mode, chatId);
+      const history = await readHistory(agent.url, chatId);
       runs.push({
         ...run,
-        contextCharacters: JSON.stringify(context).length,
+        historyCharacters: JSON.stringify(history).length,
         cache: {
           main: cacheUsage(
             run.modelCalls.filter((call) => call.source === "agent"),
@@ -94,9 +94,8 @@ try {
         `${mode} ${index + 1}/${turns.length}: ${run.modelCalls.map((call) => `${call.label ?? call.source}=${call.usage?.inputTokens ?? "?"}`).join(" ")} input tokens`,
       );
     }
-    report.modes[mode].contextBeforeRestart = await readContext(
+    report.modes[mode].historyBeforeRestart = await readHistory(
       agent.url,
-      mode,
       chatId,
     );
     // Restart before this mode's first recall query; avoid cache-TTL bias from
@@ -104,19 +103,17 @@ try {
     await agent.stop();
     agent = await startAgent({ quiet: true, port: 0 });
     const result = report.modes[mode];
-    const restored = await readContext(agent.url, mode, result.chatId);
+    const restored = await readHistory(agent.url, result.chatId);
     result.restoredExactly =
-      hash(restored) === hash(result.contextBeforeRestart);
+      hash(restored) === hash(result.historyBeforeRestart);
     result.recall = await runTurn(agent.url, mode, result.chatId, question);
     result.score = scoreRecord(result.recall.text);
-    result.contextAfterRecall = await readContext(
+    result.historyAfterRecall = await readHistory(
       agent.url,
-      mode,
       result.chatId,
     );
     const fresh = await runTurn(
       agent.url,
-      mode,
       randomUUID(),
       "What project and owner did I tell you? Return only JSON with project and owner; use null for anything I have not supplied.",
     );

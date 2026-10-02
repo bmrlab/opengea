@@ -1,7 +1,6 @@
 import { existsSync } from "node:fs";
-import { createRequire } from "node:module";
-import { dirname, join } from "node:path";
-import geaLauncher from "@gea-ai/cli/gea-launcher.cjs";
+import { dirname } from "node:path";
+import { geaInstallation } from "@gea-ai/cli/runtime";
 import { MAIN_MODEL, MEMORY_MODEL } from "../models.ts";
 
 export function runtimeEnvironment() {
@@ -38,19 +37,11 @@ export function runtimeEnvironment() {
       },
     },
   };
-  const { packageName, executable } = geaLauncher.resolveGeaTarget(
-    process.platform,
-    process.arch,
-  );
-  const cliRequire = createRequire(
-    import.meta.resolve("@gea-ai/cli/package.json"),
-  );
-  const distributionRoot = dirname(
-    cliRequire.resolve(`${packageName}/package.json`),
-  );
+  const installation = geaInstallation();
+  const distributionRoot = dirname(installation.cli);
   return {
     // Own the native process so stop/restart also shuts down its Runtime.
-    cli: process.env.GEA_CLI_BIN?.trim() || join(distributionRoot, executable),
+    cli: process.env.GEA_CLI_BIN?.trim() || installation.cli,
     models: { main, memory },
     env: {
       ...process.env,

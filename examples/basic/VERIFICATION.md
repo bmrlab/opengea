@@ -1,5 +1,11 @@
 # Verification record
 
+## SDK update, 2026-10-02
+
+See the [cross-example verification record](../VERIFICATION-261002.md) for the
+published SDK/CLI versions, current checks and explicit UAT limits. Historical
+results below apply only to their recorded versions.
+
 ## Hosted recheck after Web restart, 2026-09-20
 
 - Unchanged SDK alpha.3 Preview v16 passed real approval, `searchStories` execution,

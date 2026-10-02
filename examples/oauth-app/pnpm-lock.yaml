@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@gea-ai/agent-sdk':
-        specifier: 0.1.260924-alpha.1
-        version: 0.1.260924-alpha.1(esbuild@0.28.1)
+        specifier: 0.1.261002-alpha.0
+        version: 0.1.261002-alpha.0(esbuild@0.28.1)
       '@radix-ui/react-use-controllable-state':
         specifier: ^1.2.6
         version: 1.2.6(@types/react@19.2.7)(react@19.2.8)
@@ -82,8 +82,8 @@ importers:
         specifier: 5.20260915.1
         version: 5.20260915.1
       '@gea-ai/cli':
-        specifier: 0.1.260920-alpha.1
-        version: 0.1.260920-alpha.1
+        specifier: 0.1.260926-alpha.0
+        version: 0.1.260926-alpha.0
       '@tailwindcss/vite':
         specifier: 4.3.3
         version: 4.3.3(vite@8.2.1(@types/node@24.10.1)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.1))
@@ -705,16 +705,16 @@ packages:
   '@floating-ui/utils@0.2.12':
     resolution: {integrity: sha512-HpCo8tmWzLVad5s2d19EhAz5zqrrQ6s69qd6moPMQvkOuSwDT1YgRfWSVuc4ennqrgv3OHppiOGMQ7oC13yIww==}
 
-  '@gea-ai/agent-sdk@0.1.260924-alpha.1':
-    resolution: {integrity: sha512-ErxBRARkdQ0C7009aOTv3T86C7waCMrFdN9K4vDp+JIB4cCmipaHjfol5M1PBPMg+PT4agOJdG7lEhd2nB/iLg==}
+  '@gea-ai/agent-sdk@0.1.261002-alpha.0':
+    resolution: {integrity: sha512-yrwQ55BunyLYCkFuqtSamdIMtGd3EEXA9Z0IPs9ASvYlfmatDJiJvkqU+Cfj2FGY3a7HNiwu1ulUhHVMbMfkRg==}
     peerDependencies:
       esbuild: ^0.28.0
     peerDependenciesMeta:
       esbuild:
         optional: true
 
-  '@gea-ai/cli-darwin-arm64@0.1.260920-alpha.1':
-    resolution: {integrity: sha512-L1WplInAZ+lwzu1Gzub2ICZ83F3zXbOqMd6z0R8QLl90i84onQZeY9IIF5ihgR8L6rRrbTuWBzge8rvLAXeirg==}
+  '@gea-ai/cli-darwin-arm64@0.1.260926-alpha.0':
+    resolution: {integrity: sha512-CPD06zSDQg+1FsL8rMbv86z/Mi6jWFCh2V2gobY3hYv2GRNK02uOnKAnm+EQQG4EG7tvOlllkc5D8IBVUktlng==}
     cpu: [arm64]
     os: [darwin]
     hasBin: true
@@ -725,13 +725,13 @@ packages:
     os: [win32]
     hasBin: true
 
-  '@gea-ai/cli@0.1.260920-alpha.1':
-    resolution: {integrity: sha512-HBoR6WOWqSWE/CnaB4jDQYSvHMsVvxGq2YkLZQPEn1k+wR+zf5XOEcNwHEAwXn61qryMOvyvtWy8Bo8ynEKoFg==}
+  '@gea-ai/cli@0.1.260926-alpha.0':
+    resolution: {integrity: sha512-QUAtQWTYgpJs4PmutnVj+OhKN1UxOOTf9YSeEKA3DavhDAqyd+dPoSnRnBTfDY84aUdR6P8kzdgVmWsgWgWtfA==}
     os: [darwin, win32]
     hasBin: true
 
-  '@gea-ai/contract@0.1.260924-alpha.1':
-    resolution: {integrity: sha512-gb+PDnjzTm0vBG27QgBZXHO6YaLW/oQRZ0rjroLkea6xed/1CRaUr03UG41hhsbzqQY3XN2bYKJ17sUbmQcUbA==}
+  '@gea-ai/contract@0.1.261002-alpha.0':
+    resolution: {integrity: sha512-nThShzcas7cs535jFARJc5dd9iJj2bn06hpL+inhIQm4Knf9MdZZiK32bVIGsLidWy8GMK3Vqi4Le29inbSniQ==}
 
   '@hono/node-server@2.1.1':
     resolution: {integrity: sha512-ELuehkj5VCBdgEw9zs+ivkKwyzzUCSQuE96YmiPvn1ECBoZCczbFXJLeEGMTYjphP6gydh4pHMqEYPVMYUVgQg==}
@@ -5417,7 +5417,7 @@ snapshots:
 
   '@floating-ui/utils@0.2.12': {}
 
-  '@gea-ai/agent-sdk@0.1.260924-alpha.1(esbuild@0.28.1)':
+  '@gea-ai/agent-sdk@0.1.261002-alpha.0(esbuild@0.28.1)':
     dependencies:
       '@ai-sdk/anthropic': 4.0.37(zod@4.3.6)
       '@ai-sdk/openai': 4.0.4(zod@4.3.6)
@@ -5425,7 +5425,7 @@ snapshots:
       '@ai-sdk/otel': 1.0.9(zod@4.3.6)
       '@ai-sdk/provider': 4.0.1
       '@ai-sdk/provider-utils': 5.0.2(zod@4.3.6)
-      '@gea-ai/contract': 0.1.260924-alpha.1
+      '@gea-ai/contract': 0.1.261002-alpha.0
       '@opentelemetry/api': 1.9.1
       '@opentelemetry/context-async-hooks': 2.10.0(@opentelemetry/api@1.9.1)
       '@opentelemetry/core': 2.10.0(@opentelemetry/api@1.9.1)
@@ -5447,7 +5447,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@gea-ai/cli-darwin-arm64@0.1.260920-alpha.1':
+  '@gea-ai/cli-darwin-arm64@0.1.260926-alpha.0':
     dependencies:
       esbuild: 0.28.0
       sharp: 0.34.5
@@ -5459,12 +5459,12 @@ snapshots:
       sharp: 0.34.5
     optional: true
 
-  '@gea-ai/cli@0.1.260920-alpha.1':
+  '@gea-ai/cli@0.1.260926-alpha.0':
     optionalDependencies:
-      '@gea-ai/cli-darwin-arm64': 0.1.260920-alpha.1
+      '@gea-ai/cli-darwin-arm64': 0.1.260926-alpha.0
       '@gea-ai/cli-win32-x64': 0.1.260920-alpha.1
 
-  '@gea-ai/contract@0.1.260924-alpha.1':
+  '@gea-ai/contract@0.1.261002-alpha.0':
     dependencies:
       '@bufbuild/protobuf': 2.13.0
       '@opentelemetry/api': 1.9.1

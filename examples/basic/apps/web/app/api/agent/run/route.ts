@@ -1,5 +1,5 @@
-import { StudioAgentClient } from "@gea-ai/agent-sdk/studio-server";
-import { studioAgentClientRunInputSchema } from "@gea-ai/contract/studio-agent-api";
+import { agentHttpMessageSchema } from "@gea-ai/contract/agent-http-api";
+import { z } from "zod";
 import { getEnv } from "../../../../server/env";
 import {
   chatCookie,
@@ -10,6 +10,11 @@ import {
   sessionCookie,
   setClaims,
 } from "../../../../server/session";
+
+const inputSchema = z.strictObject({
+  chatId: z.uuid().optional(),
+  message: agentHttpMessageSchema,
+});
 
 export const runtime = "nodejs";
 // Hosting providers apply their own upper bound; this is a request, not a guarantee.
@@ -36,7 +41,7 @@ export async function POST(request: Request) {
     } catch {
       return error(400, "Invalid JSON.");
     }
-    const parsed = studioAgentClientRunInputSchema.safeParse(body);
+    const parsed = inputSchema.safeParse(body);
     if (!parsed.success) return error(400, "Invalid chat request.");
     const input = parsed.data;
     const session =
@@ -44,55 +49,81 @@ export async function POST(request: Request) {
       newSession();
     if (input.chatId && !ownedChat(request, input.chatId, env))
       return error(404, "Conversation is unavailable. Start a new chat.");
-    const upstream =
-      env.GEA_MODE === "hosted"
-        ? await new StudioAgentClient({
-            api: env.GEA_AGENT_URL,
-            token: env.GEA_PROJECT_API_KEY ?? "",
-          }).run(
-            input.chatId
-              ? input
-              : {
-                  ...input,
-                  metadata: {
-                    application: "opengea-basic",
-                    anonymousSessionId: session.sessionId,
-                  },
+    const requestHeaders = {
+      "content-type": "application/json",
+      ...(env.GEA_MODE === "hosted"
+        ? { authorization: `Bearer ${env.GEA_PROJECT_API_KEY}` }
+        : {}),
+    };
+    let agentId = env.GEA_AGENT_ID;
+    if (!input.chatId && !agentId) {
+      const response = await fetch(
+        `${env.GEA_AGENTS_API_URL}/agents?environment=local`,
+        {
+          headers: requestHeaders,
+          signal: request.signal,
+          redirect: "error",
+          cache: "no-store",
+        },
+      );
+      if (!response.ok)
+        return error(502, "Could not discover the local Agent.");
+      const agents = z
+        .object({
+          items: z.array(z.object({ id: z.uuid(), name: z.string() })),
+        })
+        .parse(await response.json());
+      agentId = agents.items.find((agent) => agent.name === "tech-news")?.id;
+      if (!agentId) return error(502, "Start the local tech-news Agent first.");
+    }
+    const upstream = await fetch(
+      `${env.GEA_AGENTS_API_URL}${input.chatId ? `/sessions/${input.chatId}/runs` : "/sessions"}`,
+      {
+        method: "POST",
+        headers: requestHeaders,
+        body: JSON.stringify(
+          input.chatId
+            ? { input: input.message, stream: true }
+            : {
+                agent_id: agentId,
+                environment:
+                  env.GEA_MODE === "local" ? "local" : env.GEA_ENVIRONMENT,
+                input: input.message,
+                stream: true,
+                metadata: {
+                  application: "opengea-basic",
+                  anonymousSessionId: session.sessionId,
                 },
-            { signal: request.signal },
-          )
-        : await fetch(`${env.GEA_AGENT_URL}/run`, {
-            method: "POST",
-            headers: { "content-type": "application/json" },
-            body: JSON.stringify(input),
-            signal: request.signal,
-            credentials: "omit",
-            redirect: "error",
-            cache: "no-store",
-          });
+              },
+        ),
+        signal: request.signal,
+        credentials: "omit",
+        redirect: "error",
+        cache: "no-store",
+      },
+    );
     const headers = new Headers({ "cache-control": "no-store" });
     for (const name of [
       "content-type",
       "x-vercel-ai-ui-message-stream",
-      "x-gea-agent-chat-id",
+      "x-gea-agent-session-id",
       "x-gea-agent-run-id",
       "x-gea-request-id",
     ]) {
       const value = upstream.headers.get(name);
       if (value !== null) headers.set(name, value);
     }
-    const returnedId = studioAgentClientRunInputSchema.shape.chatId.safeParse(
-      headers.get("x-gea-agent-chat-id"),
+    const returnedId = inputSchema.shape.chatId.safeParse(
+      headers.get("x-gea-agent-session-id"),
     );
-    if (headers.has("x-gea-agent-chat-id") && !returnedId.success) {
+    if (headers.has("x-gea-agent-session-id") && !returnedId.success) {
       await upstream.body?.cancel();
       return error(502, "Invalid Agent response.");
     }
     const secure = new URL(env.APP_ORIGIN).protocol === "https:";
-    const returnedRunId =
-      studioAgentClientRunInputSchema.shape.chatId.safeParse(
-        headers.get("x-gea-agent-run-id"),
-      );
+    const returnedRunId = inputSchema.shape.chatId.safeParse(
+      headers.get("x-gea-agent-run-id"),
+    );
     setClaims(headers, sessionCookie, session, env.SESSION_SECRET, secure);
     if (returnedId.success && returnedId.data) {
       if (input.chatId && returnedId.data !== input.chatId) {
@@ -109,7 +140,7 @@ export async function POST(request: Request) {
           ...(returnedRunId.success && returnedRunId.data
             ? { runId: returnedRunId.data }
             : {}),
-          audience: env.GEA_AGENT_URL,
+          audience: `${env.GEA_AGENTS_API_URL}#${env.GEA_AGENT_ID ?? "tech-news"}#${env.GEA_MODE === "local" ? "local" : env.GEA_ENVIRONMENT}`,
         },
         env.SESSION_SECRET,
         secure,

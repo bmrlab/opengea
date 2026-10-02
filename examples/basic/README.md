@@ -58,14 +58,14 @@ pnpm test
 pnpm build
 ```
 
-These checks need no private GEA checkout, running Agent, credentials or `.gea` directory. SDK and Contract are pinned to npm **0.1.260920-alpha.3**, with AI SDK **7.0.9** and `@ai-sdk/react` **4.0.10**. CLI is not an install/build dependency: Linux Next.js hosting never needs a macOS/Windows executable.
+These checks need no private GEA checkout, running Agent, credentials or `.gea` directory. SDK and Contract are pinned to npm **0.1.261002-alpha.0**, with AI SDK **7.0.9** and `@ai-sdk/react` **4.0.10**. CLI is not an install/build dependency: Linux Next.js hosting never needs a macOS/Windows executable.
 
 ## 2. Run locally
 
-Use GEA CLI **0.1.260920-alpha.1** for **macOS ARM64 or Windows x64**. It includes the WASM bundler required by this example; the SDK provides the compiled Agent Core.
+Use GEA CLI **0.1.260926-alpha.0** for **macOS ARM64**. It includes the WASM bundler required by this example; the SDK provides the compiled Agent Core.
 
 ```bash
-npm install --global @gea-ai/cli@0.1.260920-alpha.1
+npm install --global @gea-ai/cli@0.1.260926-alpha.0
 gea agent --help
 pnpm run setup:env
 ```
@@ -76,11 +76,11 @@ Setup preserves existing files, copies `.env.example` to `.env`, and creates `ap
 pnpm dev
 ```
 
-This starts Agent dev at **127.0.0.1:8787**, using `packages/agent` as source root, and Next.js at **localhost:3000**. Open [localhost:3000](http://localhost:3000/). Ctrl+C or either process exiting stops both. Default local mode needs no GEA login or Project API key. Next.js sends HTTP directly to `http://127.0.0.1:8787/gea/agents/tech-news/run` without a fake key.
+This starts Agent dev at **127.0.0.1:8787**, using `packages/agent` as source root, and Next.js at **localhost:3000**. Open [localhost:3000](http://localhost:3000/). Ctrl+C or either process exiting stops both. Default local mode needs no GEA login or Project API key. Next.js calls the separate public local Agents API at `http://127.0.0.1:8788/api/v1`. The Worker execution routes are private. No fake key is needed.
 
 For separate terminals, run `pnpm dev:agent` and `pnpm dev:web`, both from `examples/basic`. The launcher expects `gea` on PATH. For local-binary validation, use a temporary PATH containing a symlink/wrapper named `gea`; never commit machine-specific paths.
 
-If port 3000 is occupied, keep that process running, set `APP_ORIGIN=http://localhost:3001` in `apps/web/.env.local`, and run `pnpm --dir apps/web dev --port 3001`. Increment again if necessary. To change Agent port, update both `agent-dev.json` and `GEA_AGENT_URL`.
+If port 3000 is occupied, keep that process running, set `APP_ORIGIN=http://localhost:3001` in `apps/web/.env.local`, and run `pnpm --dir apps/web dev --port 3001`. Increment again if necessary. To change ports, update `port` and `apiPort` in `agent-dev.json`; `GEA_AGENTS_API_URL` must point to `apiPort`.
 
 Try “Find three stories about TypeScript”, then “Explain the first result”, then **New chat**. The UI renders streamed text, reasoning when available, Tool progress, structured results, errors and copyable answers. Attachments and regeneration are unavailable in the current API and are not exposed.
 
@@ -139,7 +139,7 @@ Hosted execution requires model access in the selected Workspace. Validate the A
 
 ## 3. Types and Benchmark
 
-The CLI discovers the actual `defineToolSet` in `tools/index.ts`, ignoring underscore-prefixed implementation files. `messages.ts` uses SDK `InferAgentUITools` and `AgentMessageForTools` on that same Tool Set. `useChat<NewsMessage>`, `StudioAgentChatTransport<NewsMessage>` and the Tool renderer share this type.
+The CLI discovers the actual `defineToolSet` in `tools/index.ts`, ignoring underscore-prefixed implementation files. `messages.ts` uses SDK `InferAgentUITools` and `AgentMessageForTools` on that same Tool Set. `useChat<NewsMessage>`, `DefaultChatTransport<NewsMessage>` and the Tool renderer share this type.
 
 Next.js imports only `import type { NewsMessage } from "@opengea/basic-agent/messages"`. The export has only a `types` condition, so there is no browser runtime entrypoint. No input/output interface is copied. Rename Tool output `stories` and `pnpm type-check` fails at the renderer and Judge. Restore or update the consumers before building.
 
@@ -190,25 +190,27 @@ In **Project → Benchmarks**, open **Basic search quality** to inspect its two 
 
 ### Connect Next.js to Preview
 
-In **Project → API Key**, create a key for Preview. Copy the Agent overview's stable Preview invocation URL and remove its final `/run`. Change `apps/web/.env.local`:
+In **Project → API Key**, create a key for Preview. Copy the stable Agent ID from the Agent overview. Change `apps/web/.env.local`:
 
 ```dotenv
 GEA_MODE=hosted
-GEA_AGENT_URL=https://preview--worker--<worker-id>.<gea-apex>/gea/agents/tech-news
+GEA_AGENTS_API_URL=https://musegea.com/api/v1
+GEA_AGENT_ID=<stable-agent-id>
+GEA_ENVIRONMENT=preview
 GEA_PROJECT_API_KEY=<your-preview-project-key>
 ```
 
-The key needs **`runs:write`** for execution/cancellation and **`chats:read`** for history and Run status. Keep `APP_ORIGIN` and `SESSION_SECRET`, restart Next.js and start a **new Chat**. The same browser transport still calls `/api/agent/run`. Server `StudioAgentClient` fixes the URL/key; the browser cannot choose either. No `agentId` is required in the request: URL and key select the environment.
+The key needs **`runs:write`** for execution/cancellation, **`chats:write`** for Session creation and **`chats:read`** for history and Run status. Keep `APP_ORIGIN` and `SESSION_SECRET`, restart Next.js and start a **new Chat**. The same browser transport still calls `/api/agent/run`. The server fixes the API root, Agent ID, environment and key; the browser cannot override them.
 
 ### Hosted history and cancellation
 
 The application records the Chat in `?chat=...` and keeps its latest Run identity in the signed ownership cookie. Reloading the page or choosing **Refresh conversation** reads the latest 100 server messages and the last known Run's status. Older messages remain on the server; this example does not page through them. Starting a new Chat cancels any pending history load so old results cannot replace the new conversation.
 
-**Disconnect stream** stops reception while the hosted execution may continue. Refresh retrieves the current server snapshot; it does not replay buffered SSE or resubmit a message. This example keeps explicit history refresh. SDK 0.1.260910-alpha.0 includes the optional `StudioAgentChatTransport.onReplay` callback, but this UI does not enable it; automatic replay additionally requires the matching hosted server baseline. Replaying a whole Run over partial history without that callback can duplicate text and lose approval context.
+**Disconnect stream** stops reception while the hosted execution may continue. Refresh retrieves the current server snapshot; it does not replay buffered SSE or resubmit a message. This example keeps explicit history refresh rather than replaying a whole Run over partial messages.
 
 **Cancel Agent execution** calls GEA's explicit cancellation endpoint, including after disconnecting. `abort_requested` means the request was accepted, not that every Tool has already stopped. The UI keeps that distinction and allows refreshing to retrieve the final status. The composer is disabled while the last retrieved execution is active. Both history and cancellation check the signed visitor/Chat/Agent binding; cancellation also verifies that the supplied Run belongs to that Chat before issuing the effect. Lost or expired cookies cannot recover an anonymous Chat merely from its URL.
 
-After preview validation, use **Promote to Production** in Agent details for the exact active preview version. There is no `gea agent deploy` command here. Copy the Production URL and create a production key. Promotion does not copy environment values, rotate keys or deploy Next.js. See [API keys and environments](https://musegea.com/developers/agent-studio-configuration).
+After preview validation, use **Promote to Production** in Agent details for the exact active preview version. There is no `gea agent deploy` command here. Set `GEA_ENVIRONMENT=production` and use a key authorized for Production. Promotion does not copy environment values, rotate keys or deploy Next.js. See [API keys and environments](https://musegea.com/developers/agent-studio-configuration).
 
 ## 5. Deploy Next.js independently
 
@@ -228,15 +230,23 @@ Configure these **server-only runtime** values:
 | `APP_ORIGIN`          | Exact public origin such as `https://news.example.com`, no trailing slash  |
 | `SESSION_SECRET`      | Stable random secret of at least 32 characters, shared by all app replicas |
 | `GEA_MODE`            | `hosted`                                                                   |
-| `GEA_AGENT_URL`       | Matching Agent base URL, without `/run`                                    |
+| `GEA_AGENT_ID`        | Stable Agent ID (required for hosted execution)                            |
+| `GEA_ENVIRONMENT`     | `preview` or `production`                                                  |
+| `GEA_AGENTS_API_URL`  | Public Agents API root, ending in `/api/v1`                                |
 | `GEA_PROJECT_API_KEY` | Matching Project/environment key                                           |
 
 No CR key, CLI or `NEXT_PUBLIC_*` credential is needed by hosted Next.js. This uses Node Route Handlers, not static export. Choose hosting with streamed Responses and appropriate request timeouts. The route requests `maxDuration = 120`; provider plan/hard limits still apply. Disable proxy buffering and align load-balancer timeouts. See [Next.js self-hosting](https://nextjs.org/docs/app/guides/self-hosting) and [duration configuration](https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config/maxDuration). Unlimited request duration is not promised.
 
-SSE passes through immediately with `x-gea-agent-chat-id`, `x-gea-agent-run-id` and `x-gea-request-id`. Browser credentials and upstream cookies are not forwarded. HttpOnly/SameSite cookies become Secure for HTTPS origins. Anonymous session and per-Chat signed grants expire after 24 hours and bind to the configured Agent URL, with no shared database. Lost cookies lose access; rotating the session secret invalidates grants. This is an anonymous demo, not an account or abuse-control system: use your host's admission/rate controls before exposing billed anonymous calls widely.
+SSE passes through immediately with `x-gea-agent-session-id`, `x-gea-agent-run-id` and `x-gea-request-id`. Browser credentials and upstream cookies are not forwarded. HttpOnly/SameSite cookies become Secure for HTTPS origins. Anonymous session and per-Chat signed grants expire after 24 hours and bind to the configured Agent URL, with no shared database. Lost cookies lose access; rotating the session secret invalidates grants. This is an anonymous demo, not an account or abuse-control system: use your host's admission/rate controls before exposing billed anonymous calls widely.
 
 **Contract changes:** build UI and Agent from the same commit. For breaking Tool changes, first make the UI accept both output versions or use a separate Worker identity; validate preview, promote its Agent, then retire compatibility after active Chats end. Do not silently point an old UI at an incompatible Agent. Use new Chats across breaking changes because retained AgentSession messages can contain the old structure.
 
 ## Verification
 
 [VERIFICATION.md](VERIFICATION.md) records executed checks, binary/source versions, remote calls and gaps. Local build success is not evidence of a hosted Agent run or a deployed Next.js production application.
+
+The browser uses AI SDK `DefaultChatTransport`; the Next.js proxy creates a
+Session or starts/resumes its Run through the public Agents API. Hosted requests
+use a server-side Agent ID, environment and Project key. Existing cookies from
+the former Worker URL are intentionally not reused across the new destination;
+start a new chat after updating the environment configuration.

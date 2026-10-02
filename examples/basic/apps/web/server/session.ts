@@ -55,7 +55,13 @@ export function cookieValue(request: Request, name: string) {
 export function ownedChat(
   request: Request,
   chatId: string,
-  env: { SESSION_SECRET: string; GEA_AGENT_URL: string },
+  env: {
+    SESSION_SECRET: string;
+    GEA_AGENTS_API_URL: string;
+    GEA_AGENT_ID?: string;
+    GEA_MODE: "local" | "hosted";
+    GEA_ENVIRONMENT: "preview" | "production";
+  },
 ) {
   const session = readClaims(
     cookieValue(request, sessionCookie),
@@ -69,7 +75,8 @@ export function ownedChat(
     grant &&
     grant.sessionId === session.sessionId &&
     grant.chatId === chatId &&
-    grant.audience === env.GEA_AGENT_URL
+    grant.audience ===
+      `${env.GEA_AGENTS_API_URL}#${env.GEA_AGENT_ID ?? "tech-news"}#${env.GEA_MODE === "local" ? "local" : env.GEA_ENVIRONMENT}`
     ? grant
     : null;
 }

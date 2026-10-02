@@ -5,16 +5,16 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev --host 127.0.0.1 --port 4000",
-    "build": "vite build",
+    "build": "gea agent build",
     "type-check": "tsc --noEmit",
     "test": "pnpm build && vitest run",
-    "worker:validate": "gea agent validate --json-file agent-project.json",
+    "worker:validate": "gea agent validate",
     "worker:deploy": "gea agent push",
     "test:gea": "pnpm build && vitest run tests/oauth.integration.test.ts",
-    "worker:pack": "gea agent pack --json-file agent-project.json"
+    "worker:pack": "gea agent pack"
   },
   "dependencies": {
-    "@gea-ai/agent-sdk": "0.1.260924-alpha.1",
+    "@gea-ai/agent-sdk": "0.1.261002-alpha.0",
     "@radix-ui/react-use-controllable-state": "^1.2.6",
     "@streamdown/cjk": "^1.0.3",
     "@t3-oss/env-core": "0.13.10",
@@ -40,7 +40,7 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "5.20260915.1",
-    "@gea-ai/cli": "0.1.260920-alpha.1",
+    "@gea-ai/cli": "0.1.260926-alpha.0",
     "@tailwindcss/vite": "4.3.3",
     "@testing-library/react": "^16.3.3",
     "@types/node": "24.10.1",

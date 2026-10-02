@@ -1,6 +1,6 @@
 # Independent subagents
 
-An arithmetic team using public `@gea-ai/agent-sdk@0.1.260920-alpha.3` and
+An arithmetic team using public `@gea-ai/agent-sdk@0.1.261002-alpha.0` and
 `agentCore()`. Each child has its own Session. Every invocation returns a
 `{ sessionId, runId }` receipt; Agent IDs identify definitions, not conversations.
 
@@ -62,9 +62,9 @@ pnpm test
 cp .env.example .env
 ```
 
-Use CLI `0.1.260920-alpha.1` with its bundled Runtime for local execution, and
+Use CLI `0.1.260926-alpha.0` with its bundled Runtime for local execution, and
 GEA v0.55 or newer for hosted verification. Both support the Session/Run protocol
-used by this SDK. Install the CLI with `pnpm add -g @gea-ai/cli@0.1.260920-alpha.1`.
+used by this SDK. Install the CLI with `pnpm add -g @gea-ai/cli@0.1.260926-alpha.0`.
 `GEA_CLI_BIN` remains available for testing a compatible local executable.
 
 ```sh

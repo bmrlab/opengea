@@ -1,19 +1,48 @@
-export async function readContext(url, slug, chatId) {
-  const response = await fetch(
-    `${url}/gea/agents/${slug}/sessions/${encodeURIComponent(chatId)}/v1/model-context`,
-  );
-  if (!response.ok)
-    throw new Error(
-      `Context read failed (${response.status}): ${await response.text()}`,
+export async function readHistory(url, chatId) {
+  const messages = [];
+  let cursor;
+  do {
+    const response = await fetch(
+      `${url}/sessions/${encodeURIComponent(chatId)}/messages?limit=100${cursor ? `&cursor=${encodeURIComponent(cursor)}` : ""}`,
     );
-  return (await response.json()).context;
+    if (!response.ok)
+      throw new Error(
+        `History read failed (${response.status}): ${await response.text()}`,
+      );
+    const page = await response.json();
+    messages.push(...page.items);
+    cursor = page.next_cursor;
+  } while (cursor);
+  return messages;
 }
 export async function runTurn(url, slug, chatId, message) {
   const started = performance.now();
-  const response = await fetch(`${url}/gea/agents/${slug}/run`, {
+  const session = await fetch(`${url}/sessions/${chatId}`);
+  if (session.status === 404) {
+    const discovery = await fetch(`${url}/agents?environment=local`);
+    if (!discovery.ok)
+      throw new Error(`Agent discovery failed: ${discovery.status}`);
+    const agent = (await discovery.json()).items.find(
+      (agent) => agent.name === slug,
+    );
+    if (!agent) throw new Error(`Missing Agent: ${slug}`);
+    const created = await fetch(`${url}/sessions`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id: chatId,
+        agent_id: agent.id,
+        environment: "local",
+      }),
+    });
+    if (!created.ok)
+      throw new Error(`Session creation failed: ${await created.text()}`);
+  } else if (!session.ok)
+    throw new Error(`Session read failed: ${session.status}`);
+  const response = await fetch(`${url}/sessions/${chatId}/runs`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ chatId, message }),
+    body: JSON.stringify({ input: message, stream: true }),
     signal: AbortSignal.timeout(180000),
   });
   if (!response.ok)
