@@ -2,5 +2,6 @@
   "cwd": "packages/agent",
   "host": "127.0.0.1",
   "port": 8787,
-  "modelSource": "local"
+  "modelSource": "local",
+  "apiPort": 8788
 }

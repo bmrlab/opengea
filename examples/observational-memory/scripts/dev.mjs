@@ -19,6 +19,13 @@ export async function startAgent({ quiet = false, port } = {}) {
     );
   }
   if (port) config.port = port;
+  const apiListener = createServer();
+  apiListener.listen(0, "127.0.0.1");
+  await once(apiListener, "listening");
+  config.apiPort = apiListener.address().port;
+  await new Promise((resolve, reject) =>
+    apiListener.close((error) => (error ? reject(error) : resolve())),
+  );
   await mkdir(".gea", { recursive: true });
   const log = quiet ? await open(".gea/verification-runtime.log", "a") : null;
   const child = spawn(
@@ -33,7 +40,7 @@ export async function startAgent({ quiet = false, port } = {}) {
   child.on("error", (error) => {
     startupError = error;
   });
-  const url = `http://127.0.0.1:${config.port}`;
+  const url = `http://127.0.0.1:${config.apiPort}/api/v1`;
   const stop = async () => {
     if (child.exitCode === null && child.signalCode === null) {
       const exited = once(child, "exit");
@@ -55,11 +62,10 @@ export async function startAgent({ quiet = false, port } = {}) {
           `Agent exited (${child.exitCode}); inspect .gea/verification-runtime.log.`,
         );
       try {
-        // A private session query proves that the Agent bundle and native DO route are ready.
-        const response = await fetch(
-          `${url}/gea/agents/sessions/readiness/v1/model-context`,
-          { signal: AbortSignal.timeout(1000) },
-        );
+        // Public local discovery proves that the Agent API is ready.
+        const response = await fetch(`${url}/agents?environment=local`, {
+          signal: AbortSignal.timeout(1000),
+        });
         if (response.ok)
           return { url, stop, models: runtime.models, cli: runtime.cli };
       } catch {
@@ -81,7 +87,7 @@ if (
   resolve(process.argv[1]) === fileURLToPath(import.meta.url)
 ) {
   const agent = await startAgent();
-  console.log(`Observations Agent: ${agent.url}/gea/agents/run`);
+  console.log(`Local Agents API: ${agent.url}`);
   for (const signal of ["SIGINT", "SIGTERM"])
     process.once(signal, () => void agent.stop());
 }

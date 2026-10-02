@@ -1,5 +1,11 @@
 # SDK / CLI acceptance, 2026-09-20
 
+## SDK update, 2026-10-02
+
+See the [cross-example verification record](../VERIFICATION-261002.md) for the
+published SDK/CLI versions, current checks and explicit UAT limits. Historical
+results below apply only to their recorded versions.
+
 ## SDK 0.1.260920-alpha.3, 2026-09-20
 
 - Public SDK alpha.3: types and six tests passed. Validation/pack passed using the alpha.1 macOS CI native artifact. Registry installation/integrity is recorded separately in the root acceptance record.

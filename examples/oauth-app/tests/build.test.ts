@@ -3,7 +3,7 @@ import { expect, it } from "vitest";
 
 it("excludes local credentials and deployment configuration from the upload directories", async () => {
   // GEA packages every output file, including otherwise hidden local configuration.
-  for (const directory of ["dist/server", "dist/client"]) {
+  for (const directory of ["dist/worker"]) {
     const files = await readdir(directory, { recursive: true });
     expect(
       files.filter((name) =>

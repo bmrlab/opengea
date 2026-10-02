@@ -10,7 +10,7 @@ See [the recorded local verification](VALIDATION.md) for the original 15-field r
 
 ## Setup
 
-Use Node 24.16.0 and pnpm 12.1.0. The example pins published packages: Agent SDK `0.1.260920-alpha.3` and CLI `0.1.260920-alpha.1`. The SDK brings the matching Contract version. No local GEA checkout or SDK tarballs are required.
+Use Node 24.16.0 and pnpm 12.1.0. The example pins published packages: Agent SDK `0.1.261002-alpha.0` and CLI `0.1.260926-alpha.0`. The SDK brings the matching Contract version. No local GEA checkout or SDK tarballs are required.
 
 ```sh
 pnpm install --frozen-lockfile
@@ -29,9 +29,19 @@ pnpm agent:pack
 pnpm dev
 ```
 
-The default URL is `http://127.0.0.1:8791/gea/agents/run`. Send `{ "chatId": "dc75f914-2f73-4d69-92b4-0947e8ec1256", "message": "..." }` as a JSON POST and consume the AI SDK SSE stream. Generate a UUID for each new `chatId`; reuse it to continue. Native DO data lives in `.gea/agent-dev-state` and survives process restarts. The local proxy supplies a trusted development identity. Hosted HTTP authentication remains protected by default.
+`pnpm dev` prints the separate local Agents API root. Discover the three Agents
+with `GET /api/v1/agents?environment=local`, create a Session with its Agent ID,
+then use `POST /api/v1/sessions/{id}/runs` with `{ "input": "...", "stream": true }`.
+Reuse the Session for later turns. Native DO data lives in `.gea/agent-dev-state`
+and survives process restarts. Worker `/gea/agents/*` execution is private.
+All three strategies use identical assistant instructions and the same main model,
+with separate AgentSession namespaces.
 
-The two controls are `/gea/agents/raw/run` and `/gea/agents/summary/run`. All three use identical assistant instructions and the same main model. They have separate AgentSession namespaces.
+The verifier uses the public Session messages endpoint for exact persisted history
+comparison across restart, and real recall results to check memory behavior.
+Private model-context endpoints are no longer used; history byte counts are not
+model-context size or a token estimate. Provider-reported usage and strict recall
+scores remain the acceptance criteria.
 
 ## Verify with real models
 
@@ -67,3 +77,5 @@ Replace `my-project` with your Studio Project slug. Push registers all three Age
 `prepareStep` activates committed memory or performs the first update. `onStepEnd` may precompute memory in registered invocation-scoped work; `onEnd` applies the completed candidate. The SDK drains that work and its usage before the Run finishes. Each observe/reflection call uses its own model, cancellation signal and usage record. This is not a durable background LLM scheduler.
 
 Dependencies and the lockfile are local to this example. Model credentials, native state and generated verification reports are ignored by Git. CI installs only public dependencies and runs type checking and Node tests without model credentials; `pnpm verify` makes paid API calls and is run explicitly.
+
+Current verification uses macOS arm64, SDK `0.1.261002-alpha.0`, and CLI `0.1.260926-alpha.0`. The launcher retains Windows native `0.1.260920-alpha.1`; the new composition and lifecycle behavior have not been verified on that older binary.

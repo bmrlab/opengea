@@ -5,9 +5,7 @@
     "binding": "ASSETS"
   },
   "compatibilityDate": "2026-09-15",
-  "compatibilityFlags": [
-    "nodejs_compat"
-  ],
+  "compatibilityFlags": ["nodejs_compat"],
   "durableObjectBindings": [
     {
       "name": "LOGIN_FLOWS",
@@ -54,5 +52,9 @@
       "name": "LOCAL_AGENTS_API_URL",
       "secret": false
     }
-  ]
+  ],
+  "build": {
+    "command": ["node", "node_modules/vite/bin/vite.js", "build"],
+    "output": "dist/server/index.js"
+  }
 }

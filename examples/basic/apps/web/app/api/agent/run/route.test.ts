@@ -15,22 +15,32 @@ import { POST } from "./route";
 let server: Server;
 let upstreamUrl: string;
 let lastBody: unknown;
+let lastPath: string | undefined;
 let lastHeaders: import("node:http").IncomingHttpHeaders;
 let calls = 0;
+const agentId = randomUUID();
 let fail = false;
 const origin = "http://localhost:3000";
 const chatId = randomUUID();
 const runId = randomUUID();
 beforeAll(async () => {
   server = createServer(async (request, response) => {
+    if (request.url === "/api/v1/agents?environment=local") {
+      response.writeHead(200, { "content-type": "application/json" });
+      response.end(
+        JSON.stringify({ items: [{ id: agentId, name: "tech-news" }] }),
+      );
+      return;
+    }
     calls++;
+    lastPath = request.url;
     lastHeaders = request.headers;
     let body = "";
     for await (const chunk of request) body += chunk;
     lastBody = JSON.parse(body);
     response.writeHead(fail ? 503 : 200, {
       "content-type": fail ? "application/json" : "text/event-stream",
-      "x-gea-agent-chat-id": chatId,
+      "x-gea-agent-session-id": chatId,
       "x-gea-agent-run-id": runId,
       "x-gea-request-id": randomUUID(),
       "x-vercel-ai-ui-message-stream": "v1",
@@ -48,7 +58,7 @@ beforeAll(async () => {
   const address = server.address();
   if (!address || typeof address === "string")
     throw new Error("Missing test listener");
-  upstreamUrl = `http://127.0.0.1:${address.port}/gea/agents/tech-news`;
+  upstreamUrl = `http://127.0.0.1:${address.port}/api/v1`;
 });
 afterAll(() => new Promise<void>((resolve) => server.close(() => resolve())));
 afterEach(() => {
@@ -64,7 +74,7 @@ beforeEach(() => {
     "test-only-session-secret-with-more-than-32-characters",
   );
   vi.stubEnv("GEA_MODE", "local");
-  vi.stubEnv("GEA_AGENT_URL", upstreamUrl);
+  vi.stubEnv("GEA_AGENTS_API_URL", upstreamUrl);
   vi.stubEnv("GEA_PROJECT_API_KEY", "");
 });
 function request(body: unknown, cookie?: string, requestOrigin = origin) {
@@ -87,14 +97,20 @@ function cookies(response: Response) {
 test("first and subsequent turns stream with owned Chat IDs and no browser credentials upstream", async () => {
   const first = await POST(request({ message: "Find TypeScript stories" }));
   expect(first.status).toBe(200);
-  expect(first.headers.get("x-gea-agent-chat-id")).toBe(chatId);
+  expect(lastPath).toBe("/api/v1/sessions");
+  expect(first.headers.get("x-gea-agent-session-id")).toBe(chatId);
   expect(first.headers.get("x-gea-agent-run-id")).toBe(runId);
   expect(first.headers.get("x-gea-request-id")).toBeTruthy();
   expect(first.headers.get("cache-control")).toBe("no-store");
   expect(cookies(first)).not.toContain("private-upstream");
   expect(lastHeaders.authorization).toBeUndefined();
   expect(lastHeaders.cookie).toBeUndefined();
-  expect(lastBody).toEqual({ message: "Find TypeScript stories" });
+  expect(lastBody).toMatchObject({
+    agent_id: agentId,
+    environment: "local",
+    input: "Find TypeScript stories",
+    stream: true,
+  });
   const reader = first.body!.getReader();
   expect(new TextDecoder().decode((await reader.read()).value)).toContain(
     '"type":"start"',
@@ -103,7 +119,8 @@ test("first and subsequent turns stream with owned Chat IDs and no browser crede
     request({ chatId, message: "Explain the first result" }, cookies(first)),
   );
   expect(second.status).toBe(200);
-  expect(lastBody).toEqual({ chatId, message: "Explain the first result" });
+  expect(lastPath).toBe(`/api/v1/sessions/${chatId}/runs`);
+  expect(lastBody).toEqual({ input: "Explain the first result", stream: true });
   await second.text();
   await reader.cancel();
 });
@@ -140,7 +157,7 @@ test("approval decisions require Chat ownership and preserve the assistant conti
   expect(calls).toBe(1);
   const continued = await POST(request({ chatId, message }, cookies(first)));
   expect(continued.status).toBe(200);
-  expect(lastBody).toEqual({ chatId, message });
+  expect(lastBody).toEqual({ input: message, stream: true });
   await continued.text();
 });
 test("rejects cross-origin writes and browser-supplied identity, metadata and upstream selection", async () => {
@@ -167,7 +184,7 @@ test("retains ownership when startup fails after a Chat is created, with no retr
   fail = true;
   const response = await POST(request({ message: "Hello" }));
   expect(response.status).toBe(503);
-  expect(response.headers.get("x-gea-agent-chat-id")).toBe(chatId);
+  expect(response.headers.get("x-gea-agent-session-id")).toBe(chatId);
   await response.text();
   expect(calls).toBe(1);
   fail = false;
@@ -181,8 +198,8 @@ test("Chat grants are scoped to the configured Agent destination", async () => {
   const first = await POST(request({ message: "Hello" }));
   await first.text();
   vi.stubEnv(
-    "GEA_AGENT_URL",
-    upstreamUrl.replace("tech-news", "another-agent"),
+    "GEA_AGENTS_API_URL",
+    upstreamUrl.replace("127.0.0.1", "localhost"),
   );
   expect(
     (await POST(request({ chatId, message: "Hello" }, cookies(first)))).status,
@@ -192,21 +209,25 @@ test("Chat grants are scoped to the configured Agent destination", async () => {
 
 test("hosted calls use the configured key and server-owned metadata, never browser credentials", async () => {
   vi.stubEnv("GEA_MODE", "hosted");
-  vi.stubEnv("GEA_AGENT_URL", "https://agent.example/gea/agents/tech-news");
+  vi.stubEnv("GEA_AGENT_ID", agentId);
+  vi.stubEnv("GEA_AGENTS_API_URL", "https://agent.example/api/v1");
   vi.stubEnv("GEA_PROJECT_API_KEY", "test-server-project-key");
   vi.stubEnv("APP_ORIGIN", "https://news.example");
   const upstream = vi.fn<typeof fetch>(async (url, init) => {
-    expect(url).toBe("https://agent.example/gea/agents/tech-news/run");
+    expect(url).toBe("https://agent.example/api/v1/sessions");
     const headers = new Headers(init?.headers);
     expect(headers.get("authorization")).toBe("Bearer test-server-project-key");
     expect(headers.has("cookie")).toBe(false);
     expect(init?.redirect).toBe("error");
     const body = JSON.parse(String(init?.body));
+    expect(body.agent_id).toBe(agentId);
+    expect(body.environment).toBe("preview");
+    expect(body.input).toBe("Search TypeScript");
     expect(body.metadata.application).toBe("opengea-basic");
     expect(body.metadata.anonymousSessionId).toMatch(/^[a-f0-9-]{36}$/);
     return new Response("data: [DONE]\n\n", {
       headers: {
-        "x-gea-agent-chat-id": chatId,
+        "x-gea-agent-session-id": chatId,
         "set-cookie": "upstream=private",
         authorization: "upstream-secret",
       },
@@ -244,5 +265,31 @@ test("network errors return a generic response without retrying or exposing secr
   const response = await POST(request({ message: "Hello" }));
   expect(response.status).toBe(502);
   expect(await response.text()).not.toContain("secret-transport-detail");
+  expect(upstream).toHaveBeenCalledTimes(1);
+});
+
+test("a session grant cannot cross hosted environments on the same API root", async () => {
+  vi.stubEnv("GEA_MODE", "hosted");
+  vi.stubEnv("GEA_AGENTS_API_URL", "https://agent.example/api/v1");
+  vi.stubEnv("GEA_AGENT_ID", agentId);
+  vi.stubEnv("GEA_PROJECT_API_KEY", "test-key");
+  vi.stubEnv("GEA_ENVIRONMENT", "preview");
+  const upstream = vi.fn(
+    async () =>
+      new Response("data: [DONE]\n\n", {
+        headers: {
+          "x-gea-agent-session-id": chatId,
+          "x-gea-agent-run-id": runId,
+        },
+      }),
+  );
+  vi.stubGlobal("fetch", upstream);
+  const first = await POST(request({ message: "Hello" }));
+  await first.text();
+  vi.stubEnv("GEA_ENVIRONMENT", "production");
+  const next = await POST(
+    request({ chatId, message: "Continue" }, cookies(first)),
+  );
+  expect(next.status).toBe(404);
   expect(upstream).toHaveBeenCalledTimes(1);
 });

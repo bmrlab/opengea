@@ -20,11 +20,11 @@ cp .env.example .env
 ```
 
 The example pins the public `@gea-ai/agent-sdk` package to
-`0.1.260920-alpha.3`. Install a CLI with Channels support and its matching native
+`0.1.261002-alpha.0`. Install a CLI with Channels support and its matching native
 Worker Runtime:
 
 ```bash
-npm install -g @gea-ai/cli@0.1.260920-alpha.1
+npm install -g @gea-ai/cli@0.1.260926-alpha.0
 ```
 
 To use a locally built CLI, put the executable paths in your private `.env`:
@@ -37,7 +37,8 @@ WORKER_RUNTIME_SYSTEM_WORKER_ROOT=/absolute/path/to/system-workers
 
 `GEA_CLI_BIN` points to the executable, without arguments. If a compatible `gea`
 is already on `PATH`, omit it. The CLI and native Runtime are currently supported
-on macOS arm64 and Windows x64; dependency installation and type-checking also
+on macOS arm64; the launcher retains an older Windows x64 binary, which is
+not verified for this SDK update. Dependency installation and type-checking also
 work on Linux. No private repository is needed to install the example's packages.
 
 ## Configure a test bot

@@ -1,9 +1,9 @@
 "use client";
 
 import { useChat } from "@ai-sdk/react";
-import { StudioAgentChatTransport } from "@gea-ai/agent-sdk/studio-client";
 import type { NewsMessage } from "@opengea/basic-agent/messages";
 import {
+  DefaultChatTransport,
   isToolUIPart,
   lastAssistantMessageIsCompleteWithApprovalResponses,
 } from "ai";
@@ -289,20 +289,42 @@ function ChatConversation({
       restored?.run && ["queued", "running"].includes(restored.run.status),
     ),
   );
+  const chatId = useRef(restored?.chatId);
   const [transport] = useState(
     () =>
-      new StudioAgentChatTransport<NewsMessage>({
-        api: "/api/agent",
-        chatId: restored?.chatId,
-        onRun(run) {
-          setRunId(run.runId);
-          setExecutionActive(true);
-          if (mode === "hosted")
-            window.history.replaceState(
-              null,
-              "",
-              `/?chat=${encodeURIComponent(run.chatId)}`,
-            );
+      new DefaultChatTransport<NewsMessage>({
+        api: "/api/agent/run",
+        prepareSendMessagesRequest({ messages }) {
+          const message = messages.at(-1);
+          if (!message) throw new Error("A message is required.");
+          return {
+            body: {
+              chatId: chatId.current,
+              message:
+                message.role === "assistant"
+                  ? message
+                  : { role: "user", parts: message.parts },
+            },
+          };
+        },
+        async fetch(input, init) {
+          const response = await fetch(input, init);
+          const sessionId = response.headers.get("x-gea-agent-session-id");
+          const runId = response.headers.get("x-gea-agent-run-id");
+          if (sessionId) {
+            chatId.current = sessionId;
+            if (mode === "hosted")
+              window.history.replaceState(
+                null,
+                "",
+                `/?chat=${encodeURIComponent(sessionId)}`,
+              );
+          }
+          if (runId) {
+            setRunId(runId);
+            setExecutionActive(true);
+          }
+          return response;
         },
       }),
   );
@@ -372,12 +394,12 @@ function ChatConversation({
     );
   };
   const cancel = async () => {
-    if (!transport.chatId || !runId || cancelling || cancelRequested === runId)
+    if (!chatId.current || !runId || cancelling || cancelRequested === runId)
       return;
     setCancelling(true);
     try {
       const response = await fetch(
-        `/api/agent/chats/${encodeURIComponent(transport.chatId)}/cancel`,
+        `/api/agent/chats/${encodeURIComponent(chatId.current)}/cancel`,
         {
           method: "POST",
           headers: { "content-type": "application/json" },
@@ -397,7 +419,7 @@ function ChatConversation({
         );
       } else {
         await stop();
-        await onRecover(transport.chatId);
+        await onRecover(chatId.current);
       }
     } catch {
       setNotice(
@@ -504,7 +526,7 @@ function ChatConversation({
           <ConversationScrollButton aria-label="Scroll to latest message" />
         </Conversation>
         <footer className="flex flex-col gap-3 border-t py-4">
-          {mode === "hosted" && transport.chatId ? (
+          {mode === "hosted" && chatId.current ? (
             <div className="flex gap-2">
               {busy ? (
                 <Button variant="outline" size="sm" onClick={stopReceiving}>
@@ -514,7 +536,7 @@ function ChatConversation({
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => void onRecover(transport.chatId!)}
+                  onClick={() => void onRecover(chatId.current!)}
                 >
                   Refresh conversation
                 </Button>

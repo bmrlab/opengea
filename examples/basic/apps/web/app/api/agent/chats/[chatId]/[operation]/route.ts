@@ -14,12 +14,12 @@ const routeSchema = z.object({
 const cancelSchema = z.strictObject({ runId: z.uuid() });
 const runSchema = z.object({
   id: z.uuid(),
-  chatId: z.uuid(),
+  session_id: z.uuid(),
   status: z.string(),
 });
 const pageSchema = z.object({
   items: z.array(z.unknown()),
-  nextCursor: z.unknown().nullable(),
+  next_cursor: z.unknown().nullable(),
 });
 const json = (value: unknown, status = 200) =>
   Response.json(value, {
@@ -56,10 +56,9 @@ async function handle(request: Request, context: Context) {
         },
         501,
       );
-    // The published SDK currently wraps run/resume; these are the documented
-    // history and cancellation HTTP endpoints, with a fixed server-owned target.
+    // Public Agents API with a fixed server-owned destination.
     const fetchAgent = (path: string, method = "GET") =>
-      fetch(`${env.GEA_AGENT_URL}${path}`, {
+      fetch(`${env.GEA_AGENTS_API_URL}${path}`, {
         method,
         signal: request.signal,
         headers: { Authorization: `Bearer ${env.GEA_PROJECT_API_KEY}` },
@@ -84,7 +83,7 @@ async function handle(request: Request, context: Context) {
       if (!response.ok)
         return json({ message: "Run is unavailable." }, response.status);
       const run = runSchema.parse(await response.json());
-      if (run.chatId !== chatId || run.id !== body.data.runId)
+      if (run.session_id !== chatId || run.id !== body.data.runId)
         return json({ message: "Run is unavailable." }, 404);
       const cancelled = await fetchAgent(`/runs/${run.id}/cancel`, "POST");
       if (!cancelled.ok)
@@ -99,7 +98,7 @@ async function handle(request: Request, context: Context) {
       );
     }
     const [messagesResponse, runResponse] = await Promise.all([
-      fetchAgent(`/chats/${chatId}/messages?limit=100`),
+      fetchAgent(`/sessions/${chatId}/messages?limit=100`),
       grant.runId ? fetchAgent(`/runs/${grant.runId}`) : Promise.resolve(null),
     ]);
     if (!messagesResponse.ok)
@@ -117,9 +116,15 @@ async function handle(request: Request, context: Context) {
       messages: page.items,
     });
     const run = runResponse ? runSchema.parse(await runResponse.json()) : null;
-    if (run && (run.chatId !== chatId || run.id !== grant.runId))
+    if (run && (run.session_id !== chatId || run.id !== grant.runId))
       return json({ message: "Unexpected conversation identity." }, 502);
-    return json({ messages, run, hasOlderMessages: page.nextCursor !== null });
+    return json({
+      messages,
+      run: run
+        ? { id: run.id, chatId: run.session_id, status: run.status }
+        : null,
+      hasOlderMessages: page.next_cursor !== null,
+    });
   } catch {
     return json(
       { message: "Could not complete the conversation request." },

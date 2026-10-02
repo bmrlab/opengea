@@ -1,5 +1,11 @@
 # Verification
 
+## SDK update, 2026-10-02
+
+See the [cross-example verification record](../VERIFICATION-261002.md) for the
+published SDK/CLI versions, current checks and explicit UAT limits. Historical
+results below apply only to their recorded versions.
+
 ## Hosted recheck after Web restart, 2026-09-20
 
 - The unchanged full verifier passed against Preview v4 / Web v0.55.5 at 14:11:57

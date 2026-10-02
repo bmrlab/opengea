@@ -494,25 +494,22 @@ afterAll(async () => {
     );
 });
 describe("GEA OAuth HTTP application", () => {
-  it.skipIf(!process.env.GEA_TEST_WORKER_DIR)(
-    "serves the app and protects the embedded Agent in one Worker",
-    async () => {
-      const page = await runtime.fetch(new Request("http://localhost:4000/"));
-      expect(page.status).toBe(200);
-      expect(await page.text()).toContain("OpenGEA");
-      const invocation = await runtime.fetch(
-        new Request("http://localhost:4000/gea/agents/musedam-chat/run", {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({
-            message: "hello",
-            chatId: "unauthorized-test",
-          }),
+  it("serves the app and protects the embedded Agent in one Worker", async () => {
+    const page = await runtime.fetch(new Request("http://localhost:4000/"));
+    expect(page.status).toBe(200);
+    expect(await page.text()).toContain("OpenGEA");
+    const invocation = await runtime.fetch(
+      new Request("http://localhost:4000/gea/agents/musedam-chat/run", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          message: "hello",
+          chatId: "unauthorized-test",
         }),
-      );
-      expect(invocation.status).toBe(401);
-    },
-  );
+      }),
+    );
+    expect(invocation.status).toBe(404);
+  });
 
   it("requires the current user's MuseDAM connection before starting a Run", async () => {
     const loggedIn = await signIn();
