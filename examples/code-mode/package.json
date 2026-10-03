@@ -1,0 +1,33 @@
+{
+  "name": "@opengea/code-mode",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "gea": "gea",
+    "agent:validate": "gea agent validate --json-file agent-project.json",
+    "agent:pack": "gea agent pack --json-file agent-project.json",
+    "dev": "gea agent dev --json-file agent-dev.json",
+    "type-check": "tsc --noEmit",
+    "verify": "node scripts/verify.mjs",
+    "test": "node --test mcp/server.test.mjs",
+    "mcp:build": "node scripts/build-mcp.mjs",
+    "compare": "node scripts/compare.mjs",
+    "mcp:probe": "node scripts/probe-mcp.mjs"
+  },
+  "dependencies": {
+    "@gea-ai/agent-sdk": "0.1.261003-alpha.1",
+    "@modelcontextprotocol/sdk": "1.32.0",
+    "zod": "4.3.6"
+  },
+  "devDependencies": {
+    "@gea-ai/cli": "0.1.261003-alpha.0",
+    "@types/node": "24.10.1",
+    "esbuild": "0.28.0",
+    "typescript": "5.9.3"
+  },
+  "engines": {
+    "node": ">=24.16.0"
+  },
+  "packageManager": "pnpm@12.1.0"
+}

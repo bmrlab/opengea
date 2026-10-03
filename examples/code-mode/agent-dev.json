@@ -1,0 +1,7 @@
+{
+  "cwd": ".",
+  "host": "127.0.0.1",
+  "port": 8796,
+  "apiPort": 8797,
+  "modelSource": "hosted"
+}
