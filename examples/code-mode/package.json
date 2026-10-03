@@ -16,7 +16,7 @@
     "mcp:probe": "node scripts/probe-mcp.mjs"
   },
   "dependencies": {
-    "@gea-ai/agent-sdk": "0.1.261003-alpha.0",
+    "@gea-ai/agent-sdk": "0.1.261003-alpha.1",
     "@modelcontextprotocol/sdk": "1.32.0",
     "zod": "4.3.6"
   },

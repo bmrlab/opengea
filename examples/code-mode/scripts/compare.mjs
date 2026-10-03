@@ -10,26 +10,42 @@ import { promisify } from "node:util";
 if (existsSync(".env")) process.loadEnvFile(".env");
 const project = process.env.GEA_PROJECT;
 const environment = process.env.GEA_ENVIRONMENT || "production";
-const ids = { code: process.env.GEA_CODE_AGENT_ID, direct: process.env.GEA_DIRECT_AGENT_ID };
+const ids = {
+  code: process.env.GEA_CODE_AGENT_ID,
+  direct: process.env.GEA_DIRECT_AGENT_ID,
+  ...(process.env.GEA_SKILL_AGENT_ID
+    ? { skill: process.env.GEA_SKILL_AGENT_ID }
+    : {}),
+};
 assert.ok(
   project && ids.code && ids.direct,
   "Set GEA_PROJECT, GEA_CODE_AGENT_ID and GEA_DIRECT_AGENT_ID",
 );
 assert.ok(["preview", "production"].includes(environment));
-const directory = resolve(process.env.GEA_COMPARE_DIR || `.gea/comparison/${Date.now()}`);
+const directory = resolve(
+  process.env.GEA_COMPARE_DIR || `.gea/comparison/${Date.now()}`,
+);
 await mkdir(directory, { recursive: true, mode: 0o700 });
 const execute = promisify(execFile);
 async function cli(command, input) {
-  const { stdout } = await execute("gea", [...command, "--json", JSON.stringify(input)], {
-    maxBuffer: 64 * 1024 * 1024,
-    timeout: 60_000,
-  });
+  const { stdout } = await execute(
+    "gea",
+    [...command, "--json", JSON.stringify(input)],
+    {
+      maxBuffer: 64 * 1024 * 1024,
+      timeout: 60_000,
+    },
+  );
   return JSON.parse(stdout);
 }
 async function save(name, value) {
-  await writeFile(`${directory}/${name}.json`, JSON.stringify(value, null, 2) + "\n", {
-    mode: 0o600,
-  });
+  await writeFile(
+    `${directory}/${name}.json`,
+    JSON.stringify(value, null, 2) + "\n",
+    {
+      mode: 0o600,
+    },
+  );
 }
 const prompt =
   "Create a report from all synthetic order pages and the custom discount policy. Include only paid orders. Apply each region's discount per order, flooring the net cents before summing. Return JSON only: {regions:{north:{paidOrders,units,grossCents,netCents},south:{paidOrders,units,grossCents,netCents}},totals:{paidOrders,units,grossCents,netCents}}. Read each page once, use real tool results, and omit raw orders from the final answer.";
@@ -38,19 +54,38 @@ const boundaryPrompt =
 const cases = [
   { name: "code", agentId: ids.code, prompt },
   { name: "direct", agentId: ids.direct, prompt },
+  ...(ids.skill ? [{ name: "skill", agentId: ids.skill, prompt }] : []),
   { name: "mcp-boundaries", agentId: ids.code, prompt: boundaryPrompt },
 ];
 const report = {
   inspectedAt: new Date().toISOString(),
   node: process.version,
   platform: `${process.platform}-${process.arch}`,
-  sdk: JSON.parse(await readFile("node_modules/@gea-ai/agent-sdk/package.json", "utf8")).version,
-  cli: JSON.parse(await readFile("node_modules/@gea-ai/cli/package.json", "utf8")).version,
-  mcpSdk: JSON.parse(await readFile("node_modules/@modelcontextprotocol/sdk/package.json", "utf8"))
-    .version,
+  sdk: JSON.parse(
+    await readFile("node_modules/@gea-ai/agent-sdk/package.json", "utf8"),
+  ).version,
+  cli: JSON.parse(
+    await readFile("node_modules/@gea-ai/cli/package.json", "utf8"),
+  ).version,
+  mcpSdk: JSON.parse(
+    await readFile(
+      "node_modules/@modelcontextprotocol/sdk/package.json",
+      "utf8",
+    ),
+  ).version,
   project,
   environment,
   ids,
+  skillScriptSha256: createHash("sha256")
+    .update(
+      await readFile(
+        new URL(
+          "../agents/orders-skill/skills/orders-report/scripts/summarize.js",
+          import.meta.url,
+        ),
+      ),
+    )
+    .digest("hex"),
   status: "running",
   cases: [],
   lockfileSha256: createHash("sha256")
@@ -58,14 +93,17 @@ const report = {
     .digest("hex"),
 };
 if (existsSync(`${directory}/report.json`)) {
-  const previous = JSON.parse(await readFile(`${directory}/report.json`, "utf8"));
+  const previous = JSON.parse(
+    await readFile(`${directory}/report.json`, "utf8"),
+  );
   assert.deepEqual(previous.ids, ids);
   assert.equal(previous.environment, environment);
   assert.equal(previous.project, project);
 }
 await save("report", report);
 console.log(`Evidence: ${directory}`);
-const stringAttr = (span, key) => span.attributes?.find((a) => a.key === key)?.value?.stringValue;
+const stringAttr = (span, key) =>
+  span.attributes?.find((a) => a.key === key)?.value?.stringValue;
 const intAttr = (span, key) => {
   const value = span.attributes?.find((a) => a.key === key)?.value?.intValue;
   assert.notEqual(value, undefined, `Missing trace usage field: ${key}`);
@@ -82,7 +120,9 @@ try {
   for (const test of cases) {
     let started;
     if (existsSync(`${directory}/${test.name}-start.json`)) {
-      started = JSON.parse(await readFile(`${directory}/${test.name}-start.json`, "utf8"));
+      started = JSON.parse(
+        await readFile(`${directory}/${test.name}-start.json`, "utf8"),
+      );
       assert.equal(started.agentId, test.agentId);
     } else {
       assert.ok(
@@ -122,12 +162,19 @@ try {
     const messages = await cli(["chat", "export"], { chatId: started.chatId });
     await save(`${test.name}-messages`, messages);
     const assistant = messages.filter(
-      (m) => m.agentRunId === started.agentRunId && m.content.role === "assistant",
+      (m) =>
+        m.agentRunId === started.agentRunId && m.content.role === "assistant",
     );
     const parts = assistant.flatMap((m) => m.content.parts);
-    const calls = parts.filter((p) => p.type.startsWith("tool-") || p.type === "dynamic-tool");
+    const calls = parts.filter(
+      (p) => p.type.startsWith("tool-") || p.type === "dynamic-tool",
+    );
     const scripts = calls.filter((p) => p.type === "tool-executeJavaScript");
-    const traceIds = [...new Set(assistant.map((m) => m.metadata?.trace?.traceId).filter(Boolean))];
+    const traceIds = [
+      ...new Set(
+        assistant.map((m) => m.metadata?.trace?.traceId).filter(Boolean),
+      ),
+    ];
     assert.ok(traceIds.length, "Missing trace reference");
     const spans = [];
     for (const traceId of traceIds) {
@@ -169,16 +216,38 @@ try {
       name: test.name,
       ...started,
       traceIds,
-      modelAliases: [...new Set(models.map((s) => stringAttr(s, "gen_ai.request.model")))],
+      modelAliases: [
+        ...new Set(models.map((s) => stringAttr(s, "gen_ai.request.model"))),
+      ],
       modelRequests: models.length,
-      modelInputTokens: models.reduce((n, s) => n + intAttr(s, "gen_ai.usage.input_tokens"), 0),
-      modelOutputTokens: models.reduce((n, s) => n + intAttr(s, "gen_ai.usage.output_tokens"), 0),
+      modelInputTokens: models.reduce(
+        (n, s) => n + intAttr(s, "gen_ai.usage.input_tokens"),
+        0,
+      ),
+      modelOutputTokens: models.reduce(
+        (n, s) => n + intAttr(s, "gen_ai.usage.output_tokens"),
+        0,
+      ),
       modelSpanSeconds: models.reduce(
-        (n, s) => n + Number(BigInt(s.endTimeUnixNano) - BigInt(s.startTimeUnixNano)) / 1e9,
+        (n, s) =>
+          n +
+          Number(BigInt(s.endTimeUnixNano) - BigInt(s.startTimeUnixNano)) / 1e9,
         0,
       ),
       topLevelToolCalls: calls.length,
-      uniqueModelToolResultBytes: [...uniqueResults.values()].reduce((a, b) => a + b, 0),
+      generatedScriptSourceBytes: scripts.reduce(
+        (n, s) => n + Buffer.byteLength(s.input?.code ?? ""),
+        0,
+      ),
+      scriptArgumentBytes: scripts.reduce(
+        (n, s) => n + Buffer.byteLength(JSON.stringify(s.input)),
+        0,
+      ),
+      skillSourceCalls: scripts.filter((s) => s.input?.skill).length,
+      uniqueModelToolResultBytes: [...uniqueResults.values()].reduce(
+        (a, b) => a + b,
+        0,
+      ),
       toolResultBytesAcrossModelRequests: toolResultBytesAcrossRequests,
       passed: false,
     };
@@ -197,24 +266,40 @@ try {
         const result = parseJson(finalText);
         // Independent expected totals are fixed in the verification record.
         const expected = JSON.parse(
-          await readFile(new URL("./orders-expected.json", import.meta.url), "utf8"),
+          await readFile(
+            new URL("./orders-expected.json", import.meta.url),
+            "utf8",
+          ),
         );
         assert.deepEqual(result, expected, "Incorrect report");
         const pageCalls = spans.filter(
-          (s) => s.name.startsWith("execute_tool ") && s.name.endsWith("read_order_page"),
+          (s) =>
+            s.name.startsWith("execute_tool ") &&
+            s.name.endsWith("read_order_page"),
         );
-        assert.equal(pageCalls.length, 4, "Every remote page must be fetched exactly once");
+        assert.equal(
+          pageCalls.length,
+          4,
+          "Every remote page must be fetched exactly once",
+        );
         assert.deepEqual(
-          pageCalls.map((s) => JSON.parse(stringAttr(s, "gen_ai.tool.call.arguments")).page).sort(),
+          pageCalls
+            .map(
+              (s) =>
+                JSON.parse(stringAttr(s, "gen_ai.tool.call.arguments")).page,
+            )
+            .sort(),
           [1, 2, 3, 4],
         );
         assert.ok(
           spans.some((s) => s.name === "execute_tool getDiscountPolicy"),
           "Missing custom policy call",
         );
-        if (test.name === "code") {
+        if (test.name === "code" || test.name === "skill") {
           const scriptIds = new Set(
-            spans.filter((s) => s.name === "execute_tool executeJavaScript").map((s) => s.spanId),
+            spans
+              .filter((s) => s.name === "execute_tool executeJavaScript")
+              .map((s) => s.spanId),
           );
           assert.ok(
             pageCalls.every((s) => scriptIds.has(s.parentSpanId)),
@@ -238,16 +323,71 @@ try {
               return true;
             return Object.values(value).some(containsRows);
           };
-          assert.ok(!outputs.some(containsRows), "Raw pages leaked back to the model");
           assert.ok(
-            scripts.some((s) => JSON.stringify(s.output.value).includes("netCents")),
+            !outputs.some(containsRows),
+            "Raw pages leaked back to the model",
+          );
+          assert.ok(
+            scripts.some((s) =>
+              JSON.stringify(s.output.value).includes("netCents"),
+            ),
             "No computed script summary",
+          );
+        }
+        if (test.name === "skill") {
+          assert.equal(
+            scripts.length,
+            1,
+            "The Skill report must execute once by file reference",
+          );
+          assert.deepEqual(scripts[0].input.skill, {
+            name: "orders-report",
+            path: "scripts/summarize.js",
+          });
+          assert.equal(
+            scripts[0].input.code,
+            undefined,
+            "Do not regenerate Skill source inline",
+          );
+          assert.equal(scripts[0].input.artifactId, undefined);
+          const reads = calls.filter((p) => p.type === "tool-loadSkill");
+          assert.ok(
+            reads.some((p) => p.input.skill === "orders-report"),
+            "Read the Skill instructions before executing",
+          );
+          assert.ok(
+            reads.every(
+              (p) =>
+                p.input.skill === "orders-report" &&
+                (!p.input.path || p.input.path === "SKILL.md"),
+            ),
+            "Do not read script source into model context",
+          );
+          const source = (
+            await readFile(
+              new URL(
+                "../agents/orders-skill/skills/orders-report/scripts/summarize.js",
+                import.meta.url,
+              ),
+              "utf8",
+            )
+          ).trim();
+          assert.ok(
+            models.every(
+              (m) =>
+                !stringAttr(m, "gen_ai.input.messages").includes(
+                  JSON.stringify(source).slice(1, -1),
+                ),
+            ),
+            "Skill source leaked into model input",
           );
         }
         entry.result = result;
       } else {
         const values = scripts.map((s) =>
-          typeof s.output.value === "string" ? parseJson(s.output.value) : s.output.value,
+          typeof s.output.value === "string"
+            ? parseJson(s.output.value)
+            : s.output.value,
         );
         const result = values.find((v) => v?.envelopeMatches === true);
         assert.ok(result, "No actual envelope evidence");
@@ -256,24 +396,35 @@ try {
         assert.equal(result.remoteError.isError, true);
         assert.match(result.remoteError.text, /ORDER_NOT_FOUND/);
         assert.equal(result.recoveredPage, 2);
-        const toolSpans = spans.filter((s) => s.name.startsWith("execute_tool "));
+        const toolSpans = spans.filter((s) =>
+          s.name.startsWith("execute_tool "),
+        );
         const missingCall = toolSpans.find(
           (s) =>
             s.name.endsWith("lookup_order") &&
-            JSON.parse(stringAttr(s, "gen_ai.tool.call.result") ?? "null")?.isError === true,
+            JSON.parse(stringAttr(s, "gen_ai.tool.call.result") ?? "null")
+              ?.isError === true,
         );
         const recoveryCall = toolSpans.find(
           (s) =>
             s.name.endsWith("read_order_page") &&
-            JSON.parse(stringAttr(s, "gen_ai.tool.call.arguments") ?? "null")?.page === 2,
+            JSON.parse(stringAttr(s, "gen_ai.tool.call.arguments") ?? "null")
+              ?.page === 2,
         );
-        assert.ok(missingCall && recoveryCall, "Missing actual error/recovery tool spans");
         assert.ok(
-          BigInt(recoveryCall.startTimeUnixNano) >= BigInt(missingCall.endTimeUnixNano),
+          missingCall && recoveryCall,
+          "Missing actual error/recovery tool spans",
+        );
+        assert.ok(
+          BigInt(recoveryCall.startTimeUnixNano) >=
+            BigInt(missingCall.endTimeUnixNano),
           "Recovery read started before the error call settled",
         );
         assert.match(result.descriptions.page, /structuredContent/);
-        assert.doesNotMatch(result.descriptions.lookup, /MCP structuredContent JSON Schema:/);
+        assert.doesNotMatch(
+          result.descriptions.lookup,
+          /MCP structuredContent JSON Schema:/,
+        );
         entry.result = result;
       }
       entry.passed = true;
@@ -298,5 +449,5 @@ try {
   throw error;
 }
 console.log(
-  "Passed: real remote MCP + custom tools, ordinary/code-mode comparison, MCP envelope and error checks.",
+  "Passed: real remote MCP + custom tools, ordinary/code-mode/optional Skill comparison, MCP envelope and error checks.",
 );

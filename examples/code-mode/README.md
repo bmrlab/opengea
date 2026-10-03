@@ -1,17 +1,19 @@
 # Code mode: discover tools, then compose them in JavaScript
 
-Three Agents using public SDK and macOS CLI **0.1.261003-alpha.0**:
+Four Agents using public SDK **0.1.261003-alpha.1** and macOS CLI **0.1.261003-alpha.0**:
 
 | Agent                 | Purpose                                                                                                                          |
 | --------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
 | `orders-code`         | Read four remote MCP order pages and apply a custom discount policy inside JavaScript; only a compact summary reaches the model. |
+| `orders-skill`        | Run the same aggregation from a bundled Skill file; the model sends a short file reference instead of generating JavaScript.     |
 | `orders-direct`       | Perform the same task with ordinary model-visible MCP tools and a pure-computation JavaScript tool.                              |
 | `code-mode-warehouse` | Small introductory example for discovery, hidden tools and input validation.                                                     |
 
 Code mode uses the existing `executeJavaScript`; there is no separate `codeMode`
 or `executeCode` top-level tool. The advantage demonstrated here is **keeping raw
 records inside the script while composing several tool calls**. It does not mean
-that every task takes fewer model turns.
+that every task takes fewer model turns. The Skill variant also avoids repeatedly
+generating the aggregation code.
 
 All records are synthetic. The order Agents make real HTTPS requests to the
 read-only MCP Worker in [mcp/worker.ts](mcp/worker.ts), implemented with the official
@@ -40,12 +42,13 @@ subsequent commands.
 
 ## Remote MCP plus custom tools
 
-The two order Agents share [shared/orders.ts](shared/orders.ts): the same model,
+The three order Agents share [shared/orders.ts](shared/orders.ts): the same model,
 MCP Connector, custom `getDiscountPolicy` tool and arithmetic requirements. The
 code Agent enables discovery and keeps records inside scripts. The direct Agent
 gets ordinary MCP tool declarations and the old pure-computation script tool.
-Their mode-specific instructions explain those different interfaces; both receive
-the same user task. Neither Agent can import the server's order data.
+The Skill Agent enables code mode and executes the developer-authored script by
+reference. Their mode-specific instructions explain those different interfaces; all three receive
+the same user task. None of these Agents can import the server's order data.
 
 The MCP server has three read-only tools:
 
@@ -78,16 +81,19 @@ serves only bundled synthetic records; it is not a template for exposing custome
 data. It has no state or outbound connections and accepts only bounded MCP POSTs.
 
 After deploying the Agent Worker using the instructions below, set
-`GEA_CODE_AGENT_ID` and `GEA_DIRECT_AGENT_ID` from `worker inspect`, plus
+`GEA_CODE_AGENT_ID`, `GEA_DIRECT_AGENT_ID` and `GEA_SKILL_AGENT_ID` from `worker inspect`, plus
 `GEA_PROJECT` and `GEA_ENVIRONMENT`, then run:
 
 ```sh
 pnpm compare
 ```
 
-This starts one report Run per mode and one separate MCP boundary Run. It checks
+This starts one report Run per mode and one separate MCP boundary Run. Omit
+`GEA_SKILL_AGENT_ID` only when inspecting the earlier two-mode comparison. It checks
 exact results, four actual remote page calls, the custom policy call, nested spans
-in code mode and absence of raw rows in script results. It also checks the actual
+in both code modes and absence of raw rows in script results. For the Skill
+variant it also requires one file-reference execution, a Skill instructions read,
+and no JS source read or inline-code fallback. It also checks the actual
 script's evidence for MCP envelope preservation, output schemas, text-only data,
 a remote error and a subsequent successful read. Real model responses are never
 replaced with fixtures. Resume saved Runs without reposting them:
@@ -97,11 +103,46 @@ GEA_COMPARE_DIR=.gea/comparison/<existing-directory> pnpm compare
 ```
 
 The saved report records model request counts, trace-reported token usage, model
-span duration, top-level tool calls, and actual tool-result JSON bytes entering
+span duration, top-level tool calls, generated script source bytes, script argument
+bytes, and actual tool-result JSON bytes entering
 model input. Byte counts include schemas/discovery and the platform's normal
 output-offload behavior; they are not tokenizer estimates or billed cost. Repeated
-context bytes are recorded separately. A one-pair trial demonstrates behavior,
-not a statistically stable benchmark. See [COMPARISON.md](COMPARISON.md).
+context bytes are recorded separately. Two trials per mode demonstrate behavior,
+not a statistically stable benchmark. See [SKILL-COMPARISON.md](SKILL-COMPARISON.md)
+for the current three-mode results and [COMPARISON.md](COMPARISON.md) for the earlier pair.
+
+## Reusable code in a Skill
+
+The [orders-report Skill](agents/orders-skill/skills/orders-report/SKILL.md)
+contains a short input/output contract and an executable
+[summarize.js](agents/orders-skill/skills/orders-report/scripts/summarize.js).
+The CLI discovers the adjacent Skill directory and packages it only for
+`orders-skill`. The model reads `SKILL.md`, then calls:
+
+```js
+executeJavaScript({
+  skill: { name: "orders-report", path: "scripts/summarize.js" },
+  input: { regions: ["north", "south"] },
+});
+```
+
+The SDK resolves the file directly from that Agent's immutable bundle. The model
+does not need to read the JS file or reproduce its code. This file is an async
+function body with `tools` and `input`, not a Node.js module; it cannot import
+arbitrary dependencies or access Computer. It calls the real remote tools,
+fetches pages in batches of at most four, reads the custom policy and returns
+only aggregate JSON. It contains no fixture rows or expected totals. Select
+`regions: ["north"]` to reuse the same script for a narrower report.
+
+Compared with dynamic code mode, this trades model-written flexibility for a
+reviewable, reusable report implementation. Updating the script requires rebuilding
+and deploying the Agent. Skill storage grants no extra permissions: hidden tools,
+input validation, approval restrictions, cancellation and budgets still apply.
+Errors do not roll back calls and the script does not retry or replay them.
+
+`executePython` also supports the Skill reference input in SDK alpha.1, but has no
+code mode tool access. This example uses JavaScript because its script calls MCP
+and custom tools. Runtime `v0.55.35` and the existing CLI work without an upgrade.
 
 ## Introductory warehouse Agent
 
@@ -141,7 +182,9 @@ Example user request:
 A script the model could write after inspecting schemas:
 
 ```js
-const matches = await searchTools("warehouse inventory", { namespace: "tools" });
+const matches = await searchTools("warehouse inventory", {
+  namespace: "tools",
+});
 const description = await describeTool("readInventory");
 const namespace = await describeNamespace("tools");
 console.log({ matches, description, namespace });
@@ -153,7 +196,10 @@ const items = inventory.flatMap((result) => result.items);
 return {
   warehouses,
   totalUnits: items.reduce((sum, item) => sum + item.units, 0),
-  totalValueCents: items.reduce((sum, item) => sum + item.units * item.priceCents, 0),
+  totalValueCents: items.reduce(
+    (sum, item) => sum + item.units * item.priceCents,
+    0,
+  ),
 };
 ```
 
@@ -220,4 +266,5 @@ before continuing. The verifier does not cancel Runs on timeout or delete eviden
 Sessions, traces and the demonstration deployment remain for inspection.
 
 See [VERIFICATION.md](VERIFICATION.md) for the initial warehouse results and
-[COMPARISON.md](COMPARISON.md) for the remote MCP comparison and remaining gaps.
+[COMPARISON.md](COMPARISON.md) for the earlier MCP comparison, and
+[SKILL-COMPARISON.md](SKILL-COMPARISON.md) for the current Skill variant and remaining gaps.
