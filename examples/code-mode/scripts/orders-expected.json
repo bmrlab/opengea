@@ -1,0 +1,7 @@
+{
+  "regions": {
+    "north": { "paidOrders": 25, "units": 51, "grossCents": 69000, "netCents": 62097 },
+    "south": { "paidOrders": 50, "units": 99, "grossCents": 136375, "netCents": 129541 }
+  },
+  "totals": { "paidOrders": 75, "units": 150, "grossCents": 205375, "netCents": 191638 }
+}

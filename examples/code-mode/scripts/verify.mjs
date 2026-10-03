@@ -85,12 +85,13 @@ try {
     const deadline = Date.now() + 180_000;
     let chat;
     do {
+      // The public Chat projection can briefly be absent after Run acceptance.
       chat = await cli(["chat", "get"], { id: started.chatId });
       await save(`${test.name}-chat`, chat);
-      if (chat.latestRunStatus === "finished") break;
+      if (chat?.latestRunStatus === "finished") break;
       assert.ok(
-        ["queued", "running"].includes(chat.latestRunStatus),
-        `Run stopped: ${chat.latestRunStatus}`,
+        chat === null || ["queued", "running"].includes(chat.latestRunStatus),
+        `Run stopped: ${chat?.latestRunStatus}`,
       );
       assert.ok(
         Date.now() < deadline,

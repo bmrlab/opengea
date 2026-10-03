@@ -1,12 +1,21 @@
 # Code mode: discover tools, then compose them in JavaScript
 
-A small synthetic warehouse Agent using public SDK and macOS CLI
-**0.1.261003-alpha.0**. The model calls `executeJavaScript`; inside the script it
-finds custom tools, reads their schemas, calls them and computes a summary.
-There is no separate `codeMode` or `executeCode` top-level tool.
+Three Agents using public SDK and macOS CLI **0.1.261003-alpha.0**:
 
-All inventory is bundled synthetic data. The tools perform no network calls or
-business writes. Model calls still use the configured hosted model provider.
+| Agent                 | Purpose                                                                                                                          |
+| --------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `orders-code`         | Read four remote MCP order pages and apply a custom discount policy inside JavaScript; only a compact summary reaches the model. |
+| `orders-direct`       | Perform the same task with ordinary model-visible MCP tools and a pure-computation JavaScript tool.                              |
+| `code-mode-warehouse` | Small introductory example for discovery, hidden tools and input validation.                                                     |
+
+Code mode uses the existing `executeJavaScript`; there is no separate `codeMode`
+or `executeCode` top-level tool. The advantage demonstrated here is **keeping raw
+records inside the script while composing several tool calls**. It does not mean
+that every task takes fewer model turns.
+
+All records are synthetic. The order Agents make real HTTPS requests to the
+read-only MCP Worker in [mcp/worker.ts](mcp/worker.ts), implemented with the official
+MCP SDK. There are no business writes. Model requests use your hosted GEA model.
 
 ## Install
 
@@ -15,6 +24,8 @@ Use Node **24.16.0**, pnpm **12.1.0** and macOS ARM64 for this CLI release:
 ```sh
 pnpm install --frozen-lockfile
 pnpm type-check
+pnpm test
+pnpm mcp:build
 pnpm agent:validate
 pnpm agent:pack
 pnpm gea login --json '{"baseUrl":"https://musegea.com"}'
@@ -27,7 +38,72 @@ verified on Windows. If another GEA installation uses an incompatible credential
 format, select a separate `GEA_CONFIG_DIR` before login and keep it selected for
 subsequent commands.
 
-## What the Agent declares
+## Remote MCP plus custom tools
+
+The two order Agents share [shared/orders.ts](shared/orders.ts): the same model,
+MCP Connector, custom `getDiscountPolicy` tool and arithmetic requirements. The
+code Agent enables discovery and keeps records inside scripts. The direct Agent
+gets ordinary MCP tool declarations and the old pure-computation script tool.
+Their mode-specific instructions explain those different interfaces; both receive
+the same user task. Neither Agent can import the server's order data.
+
+The MCP server has three read-only tools:
+
+- `list_order_pages`: four page numbers and 100 total records, with an output schema.
+- `read_order_page`: 25 records per page; returns `content`, `structuredContent`,
+  `isError: false` and `_meta.dataset`. Its output schema describes structured
+  data, **not** the whole MCP envelope.
+- `lookup_order`: text-only JSON, without an output schema. A missing ID returns
+  the original `isError: true` envelope with `ORDER_NOT_FOUND`.
+
+The report excludes cancelled orders, applies the custom region policy, floors
+net cents **per order**, then aggregates by region. Expected totals are 75 paid
+orders, 150 units, 205375 gross cents and 191638 net cents.
+
+[shared/mcp-url.ts](shared/mcp-url.ts) points to the deployed public synthetic
+service for convenience. To own the whole example, deploy a separate MCP Worker
+to your dedicated Studio Project, promote it, and replace that URL before
+packaging the Agents:
+
+```sh
+pnpm gea worker deploy --json '{"cwd":"mcp","project":"my-code-mode","name":"opengea-code-mode-mcp"}'
+pnpm gea worker release --json '{"workerId":"<MCP workerId>","deploymentId":"<MCP deploymentId>","environment":"production"}'
+pnpm mcp:probe
+```
+
+Use the returned public Worker URL plus `/mcp`. `mcp:probe` uses an official MCP
+client against that URL and verifies schemas, envelopes, missing-order errors and
+text-only responses. The service intentionally has no authentication because it
+serves only bundled synthetic records; it is not a template for exposing customer
+data. It has no state or outbound connections and accepts only bounded MCP POSTs.
+
+After deploying the Agent Worker using the instructions below, set
+`GEA_CODE_AGENT_ID` and `GEA_DIRECT_AGENT_ID` from `worker inspect`, plus
+`GEA_PROJECT` and `GEA_ENVIRONMENT`, then run:
+
+```sh
+pnpm compare
+```
+
+This starts one report Run per mode and one separate MCP boundary Run. It checks
+exact results, four actual remote page calls, the custom policy call, nested spans
+in code mode and absence of raw rows in script results. It also checks the actual
+script's evidence for MCP envelope preservation, output schemas, text-only data,
+a remote error and a subsequent successful read. Real model responses are never
+replaced with fixtures. Resume saved Runs without reposting them:
+
+```sh
+GEA_COMPARE_DIR=.gea/comparison/<existing-directory> pnpm compare
+```
+
+The saved report records model request counts, trace-reported token usage, model
+span duration, top-level tool calls, and actual tool-result JSON bytes entering
+model input. Byte counts include schemas/discovery and the platform's normal
+output-offload behavior; they are not tokenizer estimates or billed cost. Repeated
+context bytes are recorded separately. A one-pair trial demonstrates behavior,
+not a statistically stable benchmark. See [COMPARISON.md](COMPARISON.md).
+
+## Introductory warehouse Agent
 
 Read [agent.ts](agent.ts) and its bundled [instructions](AGENTS.md):
 
@@ -88,8 +164,8 @@ model and checks the resulting script outputs and hosted traces.
 `ALL_TOOLS` lists callable names/signatures. `searchTools` uses BM25 (default 8,
 maximum 20), with optional namespace filtering. Always `await` calls, and keep at
 most four outstanding callbacks. A failed script does not roll back effects;
-there is no automatic approval, retry or replay. This example uses read-only
-custom tools and does not exercise MCP, approvals or external writes.
+there is no automatic approval, retry or replay. The warehouse Agent uses only custom tools; the order Agents add remote MCP.
+Neither scenario exercises approvals or external writes.
 
 ## Deploy and verify in Production
 
@@ -118,7 +194,8 @@ Copy `.env.example` to `.env`, set `GEA_PROJECT` and the Agent UUID reported by
 pnpm verify
 ```
 
-The verifier uses your CLI login and workspace. It starts two real hosted model
+`pnpm verify` checks the introductory warehouse Agent, selected by `GEA_AGENT_ID`.
+It uses your CLI login and workspace. It starts two real hosted model
 Runs in `production` (or explicitly `GEA_ENVIRONMENT=preview`):
 
 1. Discovery, schema inspection, `Promise.all` inventory reads and exact totals.
@@ -142,4 +219,5 @@ the outcome is uncertain: inspect Studio and recover the existing Run identifier
 before continuing. The verifier does not cancel Runs on timeout or delete evidence.
 Sessions, traces and the demonstration deployment remain for inspection.
 
-See [VERIFICATION.md](VERIFICATION.md) for the actual production results and gaps.
+See [VERIFICATION.md](VERIFICATION.md) for the initial warehouse results and
+[COMPARISON.md](COMPARISON.md) for the remote MCP comparison and remaining gaps.

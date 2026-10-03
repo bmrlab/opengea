@@ -8,5 +8,5 @@
     "noEmit": true,
     "verbatimModuleSyntax": true
   },
-  "include": ["agent.ts", "tools/**/*.ts"]
+  "include": ["agent.ts", "agents/**/*.ts", "shared/**/*.ts", "mcp/**/*.ts"]
 }

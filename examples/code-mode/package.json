@@ -9,14 +9,21 @@
     "agent:pack": "gea agent pack --json-file agent-project.json",
     "dev": "gea agent dev --json-file agent-dev.json",
     "type-check": "tsc --noEmit",
-    "verify": "node scripts/verify.mjs"
+    "verify": "node scripts/verify.mjs",
+    "test": "node --test mcp/server.test.mjs",
+    "mcp:build": "node scripts/build-mcp.mjs",
+    "compare": "node scripts/compare.mjs",
+    "mcp:probe": "node scripts/probe-mcp.mjs"
   },
   "dependencies": {
     "@gea-ai/agent-sdk": "0.1.261003-alpha.0",
+    "@modelcontextprotocol/sdk": "1.32.0",
     "zod": "4.3.6"
   },
   "devDependencies": {
     "@gea-ai/cli": "0.1.261003-alpha.0",
+    "@types/node": "24.10.1",
+    "esbuild": "0.28.0",
     "typescript": "5.9.3"
   },
   "engines": {

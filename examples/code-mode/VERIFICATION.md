@@ -1,4 +1,7 @@
-# Verification — 2026-10-03
+# Initial warehouse verification — 2026-10-03
+
+This records the original version-1 warehouse-only run. The subsequent remote
+MCP example and version-2 deployment are documented in [COMPARISON.md](COMPARISON.md).
 
 Verified using the npm-published SDK and macOS ARM64 CLI
 `0.1.261003-alpha.0`, Node `24.16.0`, pnpm `12.1.0`.
