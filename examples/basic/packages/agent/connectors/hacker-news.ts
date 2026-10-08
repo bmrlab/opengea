@@ -36,4 +36,4 @@ const hackerNews = defineConnector({
     },
   },
 });
-export default hackerNews.require({ exposeToModel: false });
+export default hackerNews.require({ allowedCallers: [] });

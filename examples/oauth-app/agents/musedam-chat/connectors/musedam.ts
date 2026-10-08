@@ -18,4 +18,4 @@ const musedam = defineMcpConnector({
   }),
 });
 
-export default musedam.require({ scopes: ["musedam"], exposeToModel: true });
+export default musedam.require({ scopes: ["musedam"] });

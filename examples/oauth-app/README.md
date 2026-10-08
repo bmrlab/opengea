@@ -1,5 +1,7 @@
 # OAuth app · a complete MuseDAM Worker
 
+See [SDK upgrade verification](../VERIFICATION-261008.md) for current local checks and hosted acceptance limits.
+
 A **single GEA Worker** containing a TanStack Start application and its MuseDAM
 Agent. It includes GEA user OAuth, per-user MuseDAM connection setup, a full-screen
 AI Elements chat, Markdown, attachments, saved conversations, stream recovery,
@@ -41,7 +43,7 @@ and Connector credentials never reach browser JavaScript.
 - A Studio Project with OAuth enabled.
 - A MuseDAM OAuth client registered for GEA's Connector callback.
 
-The example pins published SDK and CLI `0.1.260926-alpha.0`. `defineAgent`
+The example pins published SDK and CLI `0.1.261008-alpha.0`. `defineAgent`
 owns the Agent's instructions and Connector, and `defineWorker` registers that
 ordinary definition together with the web Fetch handler. No package wrapper is
 needed. The current CLI release includes macOS arm64; Windows remains on the

@@ -1,5 +1,7 @@
 # Context management with observational memory
 
+See [SDK upgrade verification](../VERIFICATION-261008.md) for current local checks and hosted acceptance limits.
+
 An Agent that maintains observations in a chat-scoped Durable Object, plus a real-model comparison against uncompressed history and the SDK's default summarizer. It demonstrates the public `prepareStep`, `onStepEnd`, `onEnd`, `model`, `recordUsage`, `updateMessages` and `waitUntil` APIs.
 
 All three Agent definitions explicitly select `engine: agentCore()`. The Rust loop runs their main model calls. Built-in summaries use the native AI binding; the custom observation strategy retains the compatible `runtime.model()` adapter and explicit usage accounting. The SDK framework default is also Agent Core; select `aiSdk()` explicitly to use the AI SDK loop.
@@ -10,7 +12,7 @@ See [the recorded local verification](VALIDATION.md) for the original 15-field r
 
 ## Setup
 
-Use Node 24.16.0 and pnpm 12.1.0. The example pins published packages: Agent SDK `0.1.261002-alpha.0` and CLI `0.1.260926-alpha.0`. The SDK brings the matching Contract version. No local GEA checkout or SDK tarballs are required.
+Use Node 24.16.0 and pnpm 12.1.0. The example pins published packages: Agent SDK `0.1.261008-alpha.0` and CLI `0.1.261008-alpha.0`. The SDK brings the matching Contract version. No local GEA checkout or SDK tarballs are required.
 
 ```sh
 pnpm install --frozen-lockfile
@@ -78,4 +80,4 @@ Replace `my-project` with your Studio Project slug. Push registers all three Age
 
 Dependencies and the lockfile are local to this example. Model credentials, native state and generated verification reports are ignored by Git. CI installs only public dependencies and runs type checking and Node tests without model credentials; `pnpm verify` makes paid API calls and is run explicitly.
 
-Current verification uses macOS arm64, SDK `0.1.261002-alpha.0`, and CLI `0.1.260926-alpha.0`. The launcher retains Windows native `0.1.260920-alpha.1`; the new composition and lifecycle behavior have not been verified on that older binary.
+Current dependency and package verification uses macOS arm64, SDK `0.1.261008-alpha.0`, and CLI `0.1.261008-alpha.0`. The launcher retains Windows native `0.1.260920-alpha.1`; the new composition and lifecycle behavior have not been verified on that older binary.

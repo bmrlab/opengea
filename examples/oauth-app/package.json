@@ -14,14 +14,14 @@
     "worker:pack": "gea agent pack"
   },
   "dependencies": {
-    "@gea-ai/agent-sdk": "0.1.261002-alpha.0",
+    "@gea-ai/agent-sdk": "0.1.261008-alpha.0",
     "@radix-ui/react-use-controllable-state": "^1.2.6",
     "@streamdown/cjk": "^1.0.3",
     "@t3-oss/env-core": "0.13.10",
     "@tanstack/react-query": "5.90.21",
     "@tanstack/react-router": "1.170.25",
     "@tanstack/react-start": "1.168.42",
-    "ai": "7.0.9",
+    "ai": "7.0.119",
     "class-variance-authority": "^0.7.1",
     "cmdk": "^1.1.1",
     "cn": "^0.2.6",
@@ -40,7 +40,7 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "5.20260915.1",
-    "@gea-ai/cli": "0.1.260926-alpha.0",
+    "@gea-ai/cli": "0.1.261008-alpha.0",
     "@tailwindcss/vite": "4.3.3",
     "@testing-library/react": "^16.3.3",
     "@types/node": "24.10.1",

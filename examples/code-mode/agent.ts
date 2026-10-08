@@ -16,35 +16,43 @@ const inventory = {
 export default defineAgent({
   name: "code-mode-warehouse",
   slug: "code-mode-warehouse",
-  description: "Discover read-only tools and summarize synthetic warehouse data in JavaScript.",
+  description:
+    "Discover read-only tools and summarize synthetic warehouse data in JavaScript.",
   model: "creative-reasoning-1.5",
   engine: agentCore(),
   maxOutputTokens: 8192,
   computer: { enabled: false },
-  codeMode: {
-    defaultExposure: "discoverable",
+  programmaticToolCalling: {
     toolsNamespace: {
       description: "Synthetic warehouse inventory and valuation utilities",
-      instructions: "List warehouses, then read their inventory. Prices are integer USD cents.",
+      instructions:
+        "List warehouses, then read their inventory. Prices are integer USD cents.",
     },
   },
   tools: [
     defineTool({
       name: "listWarehouses",
+      allowedCallers: ["programmatic"],
       description: "List available synthetic warehouses and their identifiers.",
       input: z.object({}).strict(),
       execute: async () => ({ warehouses: ["north", "south"] }),
     }),
     defineTool({
       name: "readInventory",
-      description: "Read synthetic inventory units and unit prices in USD cents for one warehouse.",
+      allowedCallers: ["programmatic"],
+      description:
+        "Read synthetic inventory units and unit prices in USD cents for one warehouse.",
       input: z.object({ warehouse: z.enum(["north", "south"]) }).strict(),
-      execute: async ({ warehouse }) => ({ warehouse, items: inventory[warehouse] }),
+      execute: async ({ warehouse }) => ({
+        warehouse,
+        items: inventory[warehouse],
+      }),
     }),
     defineTool({
       name: "privateCanary",
-      description: "A harmless hidden tool used to verify the exposure boundary.",
-      exposure: "hidden",
+      description:
+        "A harmless hidden tool used to verify the exposure boundary.",
+      allowedCallers: [],
       input: z.object({}).strict(),
       execute: async () => ({ marker: "HIDDEN_TOOL_EXECUTED" }),
     }),
