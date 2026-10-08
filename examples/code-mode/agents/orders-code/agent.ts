@@ -7,8 +7,7 @@ export default defineAgent({
   slug: "orders-code",
   description:
     "Aggregate remote MCP order pages inside code mode without returning raw rows to the model.",
-  codeMode: {
-    defaultExposure: "discoverable",
+  programmaticToolCalling: {
     toolsNamespace: { description: "Custom order discount policy" },
   },
   tools: [discountPolicy],

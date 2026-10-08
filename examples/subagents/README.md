@@ -1,6 +1,8 @@
 # Independent subagents
 
-An arithmetic team using public `@gea-ai/agent-sdk@0.1.261002-alpha.0` and
+See [SDK upgrade verification](../VERIFICATION-261008.md) for current local checks and hosted acceptance limits.
+
+An arithmetic team using public `@gea-ai/agent-sdk@0.1.261008-alpha.0` and
 `agentCore()`. Each child has its own Session. Every invocation returns a
 `{ sessionId, runId }` receipt; Agent IDs identify definitions, not conversations.
 
@@ -10,6 +12,12 @@ coordinator                     public entrypoint; can create a self copy
 │  └─ calculator                researcher's private child
 └─ reviewer                     another public entrypoint in this Worker
 ```
+
+The reviewer reference uses `defineRemoteAgent({ slug: "reviewer", description: ... })`.
+The slug selects a declared Agent in this Worker; no Agent ID or separate auth
+configuration is needed. Hosted calls retain the admitted root identity and fixed
+release. This does not grant independent access to other Agents or personal
+Connector credentials. `defineAgentReference` remains compatible but is deprecated.
 
 The coordinator calls `agent({ target, message, sessionId? })`. Omit `target`
 for a self copy, or supply the returned `sessionId` to continue a child with a
@@ -62,9 +70,9 @@ pnpm test
 cp .env.example .env
 ```
 
-Use CLI `0.1.260926-alpha.0` with its bundled Runtime for local execution, and
-GEA v0.55 or newer for hosted verification. Both support the Session/Run protocol
-used by this SDK. Install the CLI with `pnpm add -g @gea-ai/cli@0.1.260926-alpha.0`.
+Use CLI `0.1.261008-alpha.0` with its bundled Runtime for local execution, and
+GEA v0.56 or newer for hosted verification. Both support the Session/Run protocol
+used by this SDK. Install the CLI with `pnpm add -g @gea-ai/cli@0.1.261008-alpha.0`.
 `GEA_CLI_BIN` remains available for testing a compatible local executable.
 
 ```sh

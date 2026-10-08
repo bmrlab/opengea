@@ -1,5 +1,7 @@
 # Feishu Channel
 
+See [SDK upgrade verification](../VERIFICATION-261008.md) for current local checks and hosted acceptance limits.
+
 A small Agent that receives private text messages through a Feishu bot's long
 connection and replies in the same chat. No public webhook or web application is
 needed for local development. The bot adds a processing reaction, streams its
@@ -20,11 +22,11 @@ cp .env.example .env
 ```
 
 The example pins the public `@gea-ai/agent-sdk` package to
-`0.1.261002-alpha.0`. Install a CLI with Channels support and its matching native
+`0.1.261008-alpha.0`. Install a CLI with Channels support and its matching native
 Worker Runtime:
 
 ```bash
-npm install -g @gea-ai/cli@0.1.260926-alpha.0
+npm install -g @gea-ai/cli@0.1.261008-alpha.0
 ```
 
 To use a locally built CLI, put the executable paths in your private `.env`:

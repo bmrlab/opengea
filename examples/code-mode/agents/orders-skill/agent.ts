@@ -7,8 +7,7 @@ export default defineAgent({
   slug: "orders-skill",
   description:
     "Run a reusable Skill script to aggregate remote MCP orders without generating code or exposing raw rows.",
-  codeMode: {
-    defaultExposure: "discoverable",
+  programmaticToolCalling: {
     toolsNamespace: { description: "Custom order discount policy" },
   },
   tools: [discountPolicy],

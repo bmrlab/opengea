@@ -1,6 +1,8 @@
 # Code mode: discover tools, then compose them in JavaScript
 
-Four Agents using public SDK **0.1.261003-alpha.1** and macOS CLI **0.1.261003-alpha.0**:
+See [SDK upgrade verification](../VERIFICATION-261008.md) for current local checks and hosted acceptance limits.
+
+Four Agents using public SDK **0.1.261008-alpha.0** and macOS CLI **0.1.261008-alpha.0**:
 
 | Agent                 | Purpose                                                                                                                          |
 | --------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
@@ -9,8 +11,11 @@ Four Agents using public SDK **0.1.261003-alpha.1** and macOS CLI **0.1.261003-a
 | `orders-direct`       | Perform the same task with ordinary model-visible MCP tools and a pure-computation JavaScript tool.                              |
 | `code-mode-warehouse` | Small introductory example for discovery, hidden tools and input validation.                                                     |
 
-Code mode uses the existing `executeJavaScript`; there is no separate `codeMode`
-or `executeCode` top-level tool. The advantage demonstrated here is **keeping raw
+Code mode uses `programmaticToolCalling` and the existing `executeJavaScript`;
+there is no separate `codeMode` or `executeCode` top-level tool.
+The code and Skill Agents set their tool and Connector `allowedCallers` to
+`["programmatic"]`. The direct Agent uses `["direct"]` with programmatic calling
+disabled; the hidden warehouse canary uses `[]`. The advantage demonstrated here is **keeping raw
 records inside the script while composing several tool calls**. It does not mean
 that every task takes fewer model turns. The Skill variant also avoids repeatedly
 generating the aggregation code.
@@ -27,6 +32,7 @@ Use Node **24.16.0**, pnpm **12.1.0** and macOS ARM64 for this CLI release:
 pnpm install --frozen-lockfile
 pnpm type-check
 pnpm test
+pnpm test:package
 pnpm mcp:build
 pnpm agent:validate
 pnpm agent:pack

@@ -12,6 +12,7 @@ export const ordersConnector = defineMcpConnector({
   auth: noAuth(),
   connection: { principalType: "agent" },
 }).require({
+  allowedCallers: ["programmatic"],
   namespace: {
     description: "Synthetic order pages, order lookup and order reporting data",
     instructions:
@@ -21,6 +22,7 @@ export const ordersConnector = defineMcpConnector({
 
 export const discountPolicy = defineTool({
   name: "getDiscountPolicy",
+  allowedCallers: ["programmatic"],
   description:
     "Get region discount rates in basis points (10000 = 100%). For each paid order compute netCents = Math.floor(units * unitPriceCents * (10000 - regionBasisPoints) / 10000). Cancelled orders are excluded.",
   input: z.object({}).strict(),

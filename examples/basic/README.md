@@ -1,5 +1,7 @@
 # Basic: GEA Agent + Next.js
 
+See [SDK upgrade verification](../VERIFICATION-261008.md) for current local checks and hosted acceptance limits.
+
 A small **Tech News assistant** that really calls a model and searches Hacker News through its public [Algolia API](https://hn.algolia.com/api). Results are live search metadata, not fabricated fixtures or full article reads. A Benchmark checks real Tool execution and citation of returned discussion links.
 
 This example explicitly selects the SDK's Rust Agent Core with `engine: agentCore()`. The SDK supplies prebuilt WASM; tools stay in TypeScript and the frontend continues to consume AI SDK UI messages.
@@ -58,14 +60,14 @@ pnpm test
 pnpm build
 ```
 
-These checks need no private GEA checkout, running Agent, credentials or `.gea` directory. SDK and Contract are pinned to npm **0.1.261002-alpha.0**, with AI SDK **7.0.9** and `@ai-sdk/react` **4.0.10**. CLI is not an install/build dependency: Linux Next.js hosting never needs a macOS/Windows executable.
+These checks need no private GEA checkout, running Agent, credentials or `.gea` directory. SDK and Contract are pinned to npm **0.1.261008-alpha.0**, with AI SDK **7.0.119** and `@ai-sdk/react` **4.0.122**. CLI is not an install/build dependency: Linux Next.js hosting never needs a macOS/Windows executable.
 
 ## 2. Run locally
 
-Use GEA CLI **0.1.260926-alpha.0** for **macOS ARM64**. It includes the WASM bundler required by this example; the SDK provides the compiled Agent Core.
+Use GEA CLI **0.1.261008-alpha.0** for **macOS ARM64**. It includes the WASM bundler required by this example; the SDK provides the compiled Agent Core.
 
 ```bash
-npm install --global @gea-ai/cli@0.1.260926-alpha.0
+npm install --global @gea-ai/cli@0.1.261008-alpha.0
 gea agent --help
 pnpm run setup:env
 ```
