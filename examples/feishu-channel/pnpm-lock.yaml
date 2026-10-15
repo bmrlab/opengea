@@ -109,9 +109,12 @@ importers:
 
   .:
     dependencies:
+      '@gea-ai/agent-extension-feishu':
+        specifier: 0.1.261014-alpha.0
+        version: 0.1.261014-alpha.0(@gea-ai/agent-sdk@0.1.261014-alpha.0)
       '@gea-ai/agent-sdk':
-        specifier: 0.1.261008-alpha.0
-        version: 0.1.261008-alpha.0
+        specifier: 0.1.261014-alpha.0
+        version: 0.1.261014-alpha.0
       zod:
         specifier: 4.3.6
         version: 4.3.6
@@ -166,16 +169,21 @@ packages:
   '@bufbuild/protobuf@2.13.0':
     resolution: {integrity: sha512-acq7c49vxfm1ggJ95P70TX7ABDM0vxr1SYD3BB0o0jnBLB4OAqeHyKuN+cD3w80gXEDQ2zxHpR6CUeA+O/aU9g==}
 
-  '@gea-ai/agent-sdk@0.1.261008-alpha.0':
-    resolution: {integrity: sha512-+EWRRRVUkThMGru+8mXJmTZoaB+kSZRIj2cJOZMXJCmR9obECD8t1aWQdbl/t02D82VrYM2vFpoXEhmh+jQQfg==}
+  '@gea-ai/agent-extension-feishu@0.1.261014-alpha.0':
+    resolution: {integrity: sha512-HHq0FrhSPTlZYvrnigV0IurkUk8UoRr3CW8Eha8W4CzaC1Dkv1pQ2u3nzunOWdNzNhNl46qTF6lJKThWBLLA+g==}
+    peerDependencies:
+      '@gea-ai/agent-sdk': 0.1.261014-alpha.0
+
+  '@gea-ai/agent-sdk@0.1.261014-alpha.0':
+    resolution: {integrity: sha512-3Y3k/S+2U+A9E1a2lqDvNBH2pK6Vyx+/3kmpKBjKTJ1HwGUOQ6pT4ThJy3A+yWE/+L4bkNWj7fG5dqrKErNcBA==}
     peerDependencies:
       esbuild: ^0.28.0
     peerDependenciesMeta:
       esbuild:
         optional: true
 
-  '@gea-ai/contract@0.1.261008-alpha.0':
-    resolution: {integrity: sha512-SF7mmfSnLDDjLjA0eNzqfw8Sx1iPijX64ycsKfcma6XaAtE+HviAMpN+B7/59tiGbk5YXXE7kZSRP+xez/UfEg==}
+  '@gea-ai/contract@0.1.261014-alpha.0':
+    resolution: {integrity: sha512-O0gheOmrlEVSzSb4+/jxuGYuMJbobImcTuhuMDx/GFmVbKSPkXlbWE8Ya/NUI7oh7kTaHU1m6u5K+ApCZDonpg==}
 
   '@jitl/quickjs-ffi-types@0.32.0':
     resolution: {integrity: sha512-v9T+GQpmk43VDJ7d72sf0Nexhk+ArvtUihW27dy7lqAl0zBObFKtSBBIm5RBjwIhE8VwsPPm9PNuvPvNqLWUEg==}
@@ -341,8 +349,8 @@ packages:
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
 
-  '@types/node@22.20.1':
-    resolution: {integrity: sha512-EANqOCF9QFyra+4pfxUcX9STKJpCLjMbObVzljIJomAWSnuSIEAvyzEU53GaajbXJEgdh0iEcPL+DGvpUd4k1Q==}
+  '@types/node@26.6.5':
+    resolution: {integrity: sha512-uMzsv9stDdofIZBx4UGh4Z9ZgXnGC9seRDscilBcTHAeOFk67MZg/k9bWVfO+bk4qZmG+l52hRnLwUiH2LnJTg==}
 
   '@vercel/oidc@3.2.0':
     resolution: {integrity: sha512-UycprH3T6n3jH0k44NHMa7pnFHGu/N05MjojYr+Mc6I7obkoLIJujSWwin1pCvdy/eOxrI/l3uDLQsmcrOb4ug==}
@@ -685,8 +693,8 @@ packages:
     resolution: {integrity: sha512-rvKSBiC5zqCCiDZ9kAOszZcDvdAHwwIKJG33Ykj43OKcWsnmcBRL09YTU4nOeHZ8Y2a7l1MgTd08SBe9A8Qj6A==}
     engines: {node: '>=18'}
 
-  undici-types@6.21.0:
-    resolution: {integrity: sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==}
+  undici-types@8.9.0:
+    resolution: {integrity: sha512-KTDyRTYX8sWmKXAikPHHSyc63CRPETMctyjKFupcC6OBLXT3xsN0e9aF7m+mIXutFWpUXuedtowG7iLOzp0kQg==}
 
   undici@7.29.1:
     resolution: {integrity: sha512-RYONW2MeafgYlkVOKYKkA/Ag7BmXqgIWCa8t1m0JcxrQg9pI9lEqRhAOruOBCbAohOa/gkCF+iPi9hrgvTzu6Q==}
@@ -762,7 +770,16 @@ snapshots:
 
   '@bufbuild/protobuf@2.13.0': {}
 
-  '@gea-ai/agent-sdk@0.1.261008-alpha.0':
+  '@gea-ai/agent-extension-feishu@0.1.261014-alpha.0(@gea-ai/agent-sdk@0.1.261014-alpha.0)':
+    dependencies:
+      '@gea-ai/agent-sdk': 0.1.261014-alpha.0
+      '@gea-ai/contract': 0.1.261014-alpha.0
+      better-result: 2.8.1
+      long: 5.3.2
+      protobufjs: 7.6.1
+      zod: 4.3.6
+
+  '@gea-ai/agent-sdk@0.1.261014-alpha.0':
     dependencies:
       '@ai-sdk/anthropic': 4.0.67(zod@4.3.6)
       '@ai-sdk/openai': 4.0.79(zod@4.3.6)
@@ -770,7 +787,7 @@ snapshots:
       '@ai-sdk/otel': 1.0.119(zod@4.3.6)
       '@ai-sdk/provider': 4.0.19
       '@ai-sdk/provider-utils': 5.0.50(zod@4.3.6)
-      '@gea-ai/contract': 0.1.261008-alpha.0
+      '@gea-ai/contract': 0.1.261014-alpha.0
       '@opentelemetry/api': 1.9.1
       '@opentelemetry/context-async-hooks': 2.10.0(@opentelemetry/api@1.9.1)
       '@opentelemetry/core': 2.10.0(@opentelemetry/api@1.9.1)
@@ -783,14 +800,12 @@ snapshots:
       better-result: 2.8.1
       eventsource-parser: 3.0.8
       just-bash: 3.0.1
-      long: 5.3.2
-      protobufjs: 7.6.1
       sucrase: 3.35.1
       zod: 4.3.6
     transitivePeerDependencies:
       - supports-color
 
-  '@gea-ai/contract@0.1.261008-alpha.0':
+  '@gea-ai/contract@0.1.261014-alpha.0':
     dependencies:
       '@bufbuild/protobuf': 2.13.0
       '@opentelemetry/api': 1.9.1
@@ -984,9 +999,9 @@ snapshots:
 
   '@types/json-schema@7.0.15': {}
 
-  '@types/node@22.20.1':
+  '@types/node@26.6.5':
     dependencies:
-      undici-types: 6.21.0
+      undici-types: 8.9.0
 
   '@vercel/oidc@3.2.0': {}
 
@@ -1223,7 +1238,7 @@ snapshots:
       '@protobufjs/path': 1.1.2
       '@protobufjs/pool': 1.1.0
       '@protobufjs/utf8': 1.1.2
-      '@types/node': 22.20.1
+      '@types/node': 26.6.5
       long: 5.3.2
 
   pump@3.0.4:
@@ -1372,7 +1387,7 @@ snapshots:
 
   uint8array-extras@1.5.0: {}
 
-  undici-types@6.21.0: {}
+  undici-types@8.9.0: {}
 
   undici@7.29.1: {}
 
