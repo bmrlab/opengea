@@ -1,10 +1,10 @@
 # Published package upgrade verification — 2026-10-19
 
-This is a **partial upgrade with known upstream blockers**, suitable for a draft
-PR, not an all-examples acceptance or deployment record. Seven examples use SDK
-`0.1.261019-alpha.0` and CLI `0.2.261019-alpha.1`. Feishu retains its compatible
-SDK/CLI `0.1.261008-alpha.0` because the replacement extension changes its scope.
-OAuth's default Vite local discovery remains **FAIL** on the new published plugin.
+All eight examples now use published SDK `0.1.261019-alpha.0` and CLI
+`0.2.261019-alpha.1`. Feishu additionally uses the matching published extension;
+its group/shared-topic and rich-text behavior was explicitly authorized in the
+follow-up migration. This remains a draft validation record: OAuth's default
+Vite local discovery is **FAIL**, and live acceptance is not implied.
 
 ## Published versions and reproducibility
 
@@ -16,11 +16,10 @@ package upgrades, releases or deployments were used.
 | Package | Selected version | Compatibility evidence |
 | --- | --- | --- |
 | `@gea-ai/agent-sdk` | `0.1.261019-alpha.0` | Exact Contract dependency below; optional `esbuild` peer `^0.28.0` |
-| `@gea-ai/contract` | `0.1.261019-alpha.0` | Actual resolved dependency in all seven upgraded examples |
+| `@gea-ai/contract` | `0.1.261019-alpha.0` | Actual resolved dependency in all eight upgraded examples |
 | `@gea-ai/cli` | `0.2.261019-alpha.1` | Installed launcher and `gea --version`; macOS-only package |
 | `@gea-ai/cli-darwin-arm64` | `0.2.261019-alpha.1` | Exact optional launcher dependency; bundled native Runtime used |
-| Feishu SDK/Contract/CLI | `0.1.261008-alpha.0` | Retained lock and separately installed published legacy CLI |
-| `@gea-ai/agent-extension-feishu` | `0.1.261019-alpha.0`, evaluated only | Exact SDK peer `0.1.261019-alpha.0`; not adopted due to behavior change |
+| `@gea-ai/agent-extension-feishu` | `0.1.261019-alpha.0` | Exact SDK peer `0.1.261019-alpha.0`; adopted with shared group topics and rich text |
 
 Host: macOS arm64, Node **24.16.0**. Basic/OAuth use their pinned pnpm **10.30.3**;
 the other six examples use pinned pnpm **12.1.0**. The bundled CLI's Eval result
@@ -30,7 +29,7 @@ execution is **NOT RUN** and not claimed supported by this release.
 
 All eight examples own a lockfile and installation. Basic has two package
 consumers under its own workspace (Agent and Next.js). The repository has no root
-package installation. The three existing project CLI dependencies were updated;
+package installation. The three existing project CLI dependencies were updated and Feishu now pins its CLI locally;
 other examples retain their documented separately installed CLI arrangement.
 Unrelated direct dependency versions were preserved. Lockfile removals include
 SDK-extracted Feishu dependencies and the obsolete Windows CLI fallback.
@@ -45,16 +44,18 @@ real model quality, live provider authorization or hosted acceptance.
 | agents-api | PASS | PASS | PASS validate/pack | PASS 2 | PASS real CLI/Runtime with synthetic model: Computer, uploads, tool execution, exact outputs/reuse and history |
 | basic | PASS | PASS | PASS Next production build + validate/pack | PASS 20 | PASS real CLI/Runtime two turns; synthetic Eval completes both Cases/Judges with expected score 0 |
 | code-mode | PASS | PASS | PASS MCP build + validate/pack | PASS 1 MCP + 1 package | PASS real CLI/Runtime two turns for all four public Agents; no tool-execution claim |
-| feishu-channel | PASS, retained pins | PASS | PASS legacy CLI validate/pack | NOT RUN: no test script | NOT RUN live bot; new-SDK migration FAIL scope-preservation gate |
+| feishu-channel | PASS | PASS | PASS published CLI validate/pack | PASS 9 | PASS synthetic handler admission/security and real CLI/Runtime two turns + current_sender; live Feishu NOT RUN |
 | oauth-app | PASS | PASS | PASS combined Worker build + validate/pack | PASS 52 | PASS real native Runtime/SQLite with HTTP fixtures; **FAIL default Vite local discovery (502)** |
 | observational-memory | PASS | PASS | PASS validate/pack | PASS 11 | PASS real CLI/Runtime two turns for all three Agents; actual launcher discovery/stop/restart PASS |
 | subagent-limits | PASS | PASS | PASS validate/pack | PASS 4 | PASS synthetic native two accepted children, one concurrency rejection, exact parent/child identities and completed wait |
 | subagents | PASS | PASS | PASS validate/pack | PASS 9 | PASS synthetic native researcher/calculator, reviewer and self-copy boundaries, completed waits, distinct Session IDs |
 
-Total **100 tests passed**, no skips in the recorded suites. OAuth tests build
+Total **109 tests passed**, no skips in the recorded suites: 100 from the initial
+reviewed snapshot plus 9 focused Feishu tests in the follow-up. The other examples
+were unchanged and their full suites were not repeated for the Feishu-only update. OAuth tests build
 before testing/type-checking to generate its TanStack route tree. Standalone Agent
 examples have no separate application build command; validate/pack compiles their
-actual published SDK consumers. Feishu has no separate test/build script.
+actual published SDK consumers. Feishu has no separate application build script.
 
 The unmodified Agents API verifier also passed against the real CLI/App Server,
 native Runtime and SQLite using a synthetic model HTTP service. It prepared and
@@ -92,7 +93,8 @@ exercise positive propagation rather than adding internal fields to public calls
   returned 200 with the key, 401 without it, and retained the three Agent IDs.
 - READMEs identify CLI 0.2's printed listener/key instead of assuming the retired
   `apiPort` controls the owned App Server. Tokens and generated artifacts stay out
-  of Git. Business Agent instructions and tools are unchanged.
+  of Git. Feishu instructions now distinguish shared group topics from private
+  history; other business Agent instructions and tools are unchanged.
 
 ## Upstream blockers and limits
 
@@ -106,15 +108,24 @@ exercise positive propagation rather than adding internal fields to public calls
    actual Vite entry point. The new backend token support and passing native
    HTTP-fixture suite do **not** repair or pass this integration. No plugin fork
    or local-source substitution was made.
-2. **Feishu migration: FAIL scope gate; previous version retained.** The new SDK
-   removes `@gea-ai/agent-sdk/channels/feishu`. The published extension accepts
-   group messages into shared Sessions and private rich-text posts, while the
-   original example intentionally accepts private text only. Its public options
-   provide transport but no such restriction. A synthetic public HTTP-handler
-   reproduction observed both inputs reaching `send`; no Feishu/model call or
-   native Runtime was involved in that reproduction. Minimum upstream option:
-   explicit accepted chat/message kinds before admission. Do not silently adopt
-   the broader behavior. Legacy installs/types/pack pass; live delivery is unrun.
+2. **Feishu follow-up migration adopted.** The previous private-text-only scope
+   gate was explicitly removed. Nine behavior tests first failed against the old
+   preset (group/rich-text/feedback absent), then passed against the public new
+   extension with synthetic HTTP and Channel capability spies. They cover shared
+   topic addresses, distinct sender principals/actors, private/group rich text,
+   unsupported-media durable-feedback requests, ignored unmentioned input, token,
+   app, tenant and allowlist rejection. These are not native Channel persistence
+   or live WebSocket/delivery tests. A separate real published CLI/App Server/
+   Runtime/SQLite smoke completes two turns, invokes current_sender and reads
+   history; its Project API key authenticates a local service principal, not a
+   Feishu user. No bot credentials were supplied.
+   The packed Channel key is now `feishu-bot`, sharedSessions is true, and the
+   required Runtime capability includes `channel-shared-session-v1`; the Connector
+   and CLI Skill remain disabled. Hosted replacement/history continuity is
+   **NOT RUN**, so do not assume the old `feishu` installation/history migrates.
+   The published npm extension version is `0.1.261019-alpha.0`, but its embedded
+   extension metadata still reports `0.1.261014-alpha.0`; this upstream metadata
+   discrepancy is recorded, not locally patched or treated as package identity.
 3. Some native CLI smoke logs contain trace-export 404/flush failures. Public Run
    and persisted history assertions passed independently; **complete trace export
    is not accepted** by these checks. No platform trace repair was attempted.
@@ -135,7 +146,7 @@ exercise positive propagation rather than adding internal fields to public calls
 
 Working directory for each ordinary command is `examples/<example>`. Use the
 package manager version above. Every example ran `pnpm install --frozen-lockfile`
-and `pnpm type-check`. Every non-Feishu example ran `pnpm test`. All except OAuth
+and `pnpm type-check`. Every example ran `pnpm test`. All except OAuth
 ran `pnpm agent:validate` and `pnpm agent:pack`; OAuth ran `pnpm worker:validate`
 and `pnpm worker:pack`. Additional commands:
 
@@ -162,9 +173,11 @@ node eval-smoke.mjs
 node memory-launcher-probe.mjs
 node oauth-vite-probe.mjs
 node agents-workflow.mjs
-# Run from repository root; pure handler fixture, not native Runtime:
-node --import ./examples/observational-memory/scripts/test-runtime.mjs \
-  /Users/zhuo/orca/reports/opengea-examples-20261019/feishu-scope-probe.mjs
+# Follow-up Feishu migration, using its pinned local CLI:
+node feishu-migration-native.mjs
+# From examples/feishu-channel:
+pnpm test
+pnpm gea --version
 ```
 
 Results: `*-cli-protocol.json`, `*-cli-boundaries.json`, `target-contract.json`,
@@ -174,3 +187,23 @@ Results: `*-cli-protocol.json`, `*-cli-boundaries.json`, `target-contract.json`,
 Raw `synthetic-provider-*.json` records are artificial model traffic, not customer
 inputs. Earlier failed harness attempts remain separate evidence; successful
 checks do not retroactively pass those attempts.
+
+## Feishu follow-up evidence
+
+The earlier `matrix.md`, `review-final.md`, registry resolution and 100-test logs
+remain the initial snapshot at `a23fbb4c2021a61279ce54e77089f88b21e15988`.
+The follow-up does not relabel those logs as reruns of its new head.
+`feishu-migration-registry.json` records freshly read official manifests, exports,
+peer dependencies and dist integrity. `feishu-migration-resolution.json` records
+actual installed manifests, lock SHA-256, CLI version and native binary hashes.
+`feishu-migration-checks.json` records exact cwd/argv/exit and the six focused
+install/types/test/version/validate/pack logs. `feishu-migration-red.log` and
+`feishu-migration-red.test.mjs` preserve the old-package behavioral failure.
+`feishu-channel-migration-cli-protocol.json` and its log record the passing native
+smoke; `feishu-migration-native.mjs` is its harness. An initial harness assumed the
+obsolete `local-user` identity; retained `*-initial.*` artifacts show the real
+Project-key service identity, which the corrected harness asserts explicitly.
+`feishu-migration-package.json` records package capability/secret/mount checks.
+Live WebSocket ingress, card output, durable shared-topic persistence across
+actual Feishu senders, hosted environment isolation and migration continuity are
+NOT RUN: no live credentials/configuration/messages were authorized.

@@ -1,5 +1,13 @@
 # Verification
 
+## Published extension migration, 2026-10-19
+
+See the [current cross-example record](../VERIFICATION-261019.md) for SDK/Contract/extension
+`0.1.261019-alpha.0`, CLI/native `0.2.261019-alpha.1`, nine synthetic behavior tests,
+real native CLI smoke, exact commands and untested live/hosted boundaries. Group
+topics intentionally share history while sender authorization remains per call.
+All results below are historical and do not establish migration continuity.
+
 ## SDK update, 2026-10-02
 
 See the [cross-example verification record](../VERIFICATION-261002.md) for the
