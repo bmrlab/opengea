@@ -1,6 +1,6 @@
 # Context management with observational memory
 
-See [SDK upgrade verification](../VERIFICATION-261008.md) for current local checks and hosted acceptance limits.
+See [SDK upgrade verification](../VERIFICATION-261019.md) for current local checks and hosted acceptance limits.
 
 An Agent that maintains observations in a chat-scoped Durable Object, plus a real-model comparison against uncompressed history and the SDK's default summarizer. It demonstrates the public `prepareStep`, `onStepEnd`, `onEnd`, `model`, `recordUsage`, `updateMessages` and `waitUntil` APIs.
 
@@ -12,14 +12,14 @@ See [the recorded local verification](VALIDATION.md) for the original 15-field r
 
 ## Setup
 
-Use Node 24.16.0 and pnpm 12.1.0. The example pins published packages: Agent SDK `0.1.261008-alpha.0` and CLI `0.1.261008-alpha.0`. The SDK brings the matching Contract version. No local GEA checkout or SDK tarballs are required.
+Use Node 24.16.0 and pnpm 12.1.0. The example pins published packages: Agent SDK `0.1.261019-alpha.0` and CLI `0.2.261019-alpha.1`. The SDK brings the matching Contract version. No local GEA checkout or SDK tarballs are required.
 
 ```sh
 pnpm install --frozen-lockfile
 cp .env.example .env
 ```
 
-Set `CREATIVE_REASONING_API_KEY` in `.env`. `GEA_ENV_FILE` optionally points to an existing credentials file. The installed CLI supplies its native Runtime and system workers. Developers testing a local CLI build can set `GEA_CLI_BIN` and `GEA_CLI_DISTRIBUTION_ROOT`; the generated report records the executable used. Running the Agent requires macOS Apple Silicon or Windows x64, the platforms supported by this CLI release; type checking and the Node tests also work on Linux.
+Set `CREATIVE_REASONING_API_KEY` in `.env`. `GEA_ENV_FILE` optionally points to an existing credentials file. The installed CLI supplies its native Runtime and system workers. Developers testing a local CLI build can set `GEA_CLI_BIN` and `GEA_CLI_DISTRIBUTION_ROOT`; the generated report records the executable used. Running the Agent requires macOS Apple Silicon, the platform shipped by this CLI release; type checking and the Node tests also work on Linux.
 
 `models.ts` selects independent public model IDs for the main Agent and memory calls: `creative-reasoning-1.5` and `crr-q-flash-20260826`. Edit that file to change the immutable model selection for both local and hosted execution. The same model must be available to the local API key and the hosted model catalog. `.env` values `MAIN_MODEL` and `MEMORY_MODEL` optionally override the local gateway targets for experiments; they do not change a Studio deployment. `auto` is an SDK routing policy, not a gateway target. Model-call records retain model identity and actual provider usage.
 
@@ -31,7 +31,9 @@ pnpm agent:pack
 pnpm dev
 ```
 
-`pnpm dev` prints the separate local Agents API root. Discover the three Agents
+`pnpm dev` reads the CLI-owned Agents API URL and Project API key file. The
+verifier sends the key only in backend Authorization headers. Manual callers
+must read the same printed key file; unauthenticated discovery returns 401. Discover the three Agents
 with `GET /api/v1/agents?environment=local`, create a Session with its Agent ID,
 then use `POST /api/v1/sessions/{id}/runs` with `{ "input": "...", "stream": true }`.
 Reuse the Session for later turns. Native DO data lives in `.gea/agent-dev-state`
@@ -80,4 +82,4 @@ Replace `my-project` with your Studio Project slug. Push registers all three Age
 
 Dependencies and the lockfile are local to this example. Model credentials, native state and generated verification reports are ignored by Git. CI installs only public dependencies and runs type checking and Node tests without model credentials; `pnpm verify` makes paid API calls and is run explicitly.
 
-Current dependency and package verification uses macOS arm64, SDK `0.1.261008-alpha.0`, and CLI `0.1.261008-alpha.0`. The launcher retains Windows native `0.1.260920-alpha.1`; the new composition and lifecycle behavior have not been verified on that older binary.
+Current dependency and package verification uses macOS arm64, SDK `0.1.261019-alpha.0`, and CLI `0.2.261019-alpha.1`. This CLI release ships only macOS arm64; Windows and Linux native execution are not verified.

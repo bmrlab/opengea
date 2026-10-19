@@ -17,6 +17,7 @@ let upstreamUrl: string;
 let lastBody: unknown;
 let lastPath: string | undefined;
 let lastHeaders: import("node:http").IncomingHttpHeaders;
+let discoveryHeaders: import("node:http").IncomingHttpHeaders;
 let calls = 0;
 const agentId = randomUUID();
 let fail = false;
@@ -26,6 +27,7 @@ const runId = randomUUID();
 beforeAll(async () => {
   server = createServer(async (request, response) => {
     if (request.url === "/api/v1/agents?environment=local") {
+      discoveryHeaders = request.headers;
       response.writeHead(200, { "content-type": "application/json" });
       response.end(
         JSON.stringify({ items: [{ id: agentId, name: "tech-news" }] }),
@@ -292,4 +294,17 @@ test("a session grant cannot cross hosted environments on the same API root", as
   );
   expect(next.status).toBe(404);
   expect(upstream).toHaveBeenCalledTimes(1);
+});
+
+test("local Project Key stays on the backend and authenticates discovery and Runs", async () => {
+  vi.stubEnv("GEA_PROJECT_API_KEY", "synthetic-local-project-key");
+  const first = await POST(request({ message: "Hello" }));
+  expect(first.status).toBe(200);
+  expect(discoveryHeaders.authorization).toBe("Bearer synthetic-local-project-key");
+  expect(lastHeaders.authorization).toBe("Bearer synthetic-local-project-key");
+  expect(await first.text()).not.toContain("synthetic-local-project-key");
+  const second = await POST(request({ chatId, message: "Again" }, cookies(first)));
+  expect(second.status).toBe(200);
+  expect(lastHeaders.authorization).toBe("Bearer synthetic-local-project-key");
+  await second.text();
 });

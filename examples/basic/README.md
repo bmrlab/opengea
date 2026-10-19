@@ -1,6 +1,6 @@
 # Basic: GEA Agent + Next.js
 
-See [SDK upgrade verification](../VERIFICATION-261008.md) for current local checks and hosted acceptance limits.
+See [SDK upgrade verification](../VERIFICATION-261019.md) for current local checks and hosted acceptance limits.
 
 A small **Tech News assistant** that really calls a model and searches Hacker News through its public [Algolia API](https://hn.algolia.com/api). Results are live search metadata, not fabricated fixtures or full article reads. A Benchmark checks real Tool execution and citation of returned discussion links.
 
@@ -60,14 +60,14 @@ pnpm test
 pnpm build
 ```
 
-These checks need no private GEA checkout, running Agent, credentials or `.gea` directory. SDK and Contract are pinned to npm **0.1.261008-alpha.0**, with AI SDK **7.0.119** and `@ai-sdk/react` **4.0.122**. CLI is not an install/build dependency: Linux Next.js hosting never needs a macOS/Windows executable.
+These checks need no private GEA checkout, running Agent, credentials or `.gea` directory. SDK and Contract are pinned to npm **0.1.261019-alpha.0**, with AI SDK **7.0.119** and `@ai-sdk/react` **4.0.122**. CLI is not an install/build dependency: Linux Next.js hosting never needs a macOS/Windows executable.
 
 ## 2. Run locally
 
-Use GEA CLI **0.1.261008-alpha.0** for **macOS ARM64**. It includes the WASM bundler required by this example; the SDK provides the compiled Agent Core.
+Use GEA CLI **0.2.261019-alpha.1** for **macOS ARM64**. It includes the WASM bundler required by this example; the SDK provides the compiled Agent Core.
 
 ```bash
-npm install --global @gea-ai/cli@0.1.261008-alpha.0
+npm install --global @gea-ai/cli@0.2.261019-alpha.1
 gea agent --help
 pnpm run setup:env
 ```
@@ -78,11 +78,11 @@ Setup preserves existing files, copies `.env.example` to `.env`, and creates `ap
 pnpm dev
 ```
 
-This starts Agent dev at **127.0.0.1:8787**, using `packages/agent` as source root, and Next.js at **localhost:3000**. Open [localhost:3000](http://localhost:3000/). Ctrl+C or either process exiting stops both. Default local mode needs no GEA login or Project API key. Next.js calls the separate public local Agents API at `http://127.0.0.1:8788/api/v1`. The Worker execution routes are private. No fake key is needed.
+This starts Agent dev at **127.0.0.1:8787**, using `packages/agent` as source root, and Next.js at **localhost:3000**. Open [localhost:3000](http://localhost:3000/). Ctrl+C or either process exiting stops both. Local model mode needs no GEA login, but CLI 0.2 issues a local Project API key. Read the **Agents API** URL and **Project API key file** printed by the Agent process; set `GEA_AGENTS_API_URL` and `GEA_PROJECT_API_KEY` in `apps/web/.env.local` to that URL and the key file contents, then restart Next.js. Keep the key on the backend. The Worker execution routes are private.
 
 For separate terminals, run `pnpm dev:agent` and `pnpm dev:web`, both from `examples/basic`. The launcher expects `gea` on PATH. For local-binary validation, use a temporary PATH containing a symlink/wrapper named `gea`; never commit machine-specific paths.
 
-If port 3000 is occupied, keep that process running, set `APP_ORIGIN=http://localhost:3001` in `apps/web/.env.local`, and run `pnpm --dir apps/web dev --port 3001`. Increment again if necessary. To change ports, update `port` and `apiPort` in `agent-dev.json`; `GEA_AGENTS_API_URL` must point to `apiPort`.
+If port 3000 is occupied, keep that process running, set `APP_ORIGIN=http://localhost:3001` in `apps/web/.env.local`, and run `pnpm --dir apps/web dev --port 3001`. Increment again if necessary. To change the Worker port, update `port` in `agent-dev.json`. CLI 0.2 ignores `apiPort` for its owned App Server; always use the API URL printed by the CLI.
 
 Try “Find three stories about TypeScript”, then “Explain the first result”, then **New chat**. The UI renders streamed text, reasoning when available, Tool progress, structured results, errors and copyable answers. Attachments and regeneration are unavailable in the current API and are not exposed.
 

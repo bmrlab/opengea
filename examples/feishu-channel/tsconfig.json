@@ -8,5 +8,5 @@
     "noEmit": true,
     "verbatimModuleSyntax": true
   },
-  "include": ["agent.ts", "channels/**/*.ts", "tools/**/*.ts"]
+  "include": ["agent.ts", "extensions/**/*.ts", "tools/**/*.ts"]
 }

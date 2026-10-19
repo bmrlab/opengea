@@ -51,7 +51,7 @@ export async function POST(request: Request) {
       return error(404, "Conversation is unavailable. Start a new chat.");
     const requestHeaders = {
       "content-type": "application/json",
-      ...(env.GEA_MODE === "hosted"
+      ...(env.GEA_PROJECT_API_KEY
         ? { authorization: `Bearer ${env.GEA_PROJECT_API_KEY}` }
         : {}),
     };
