@@ -1,5 +1,45 @@
 # Verification · single-Worker OAuth application
 
+## Local verified-user OAuth repair, 2026-10-19
+
+This change starts from reviewed Opengea `d8a81cc8`, preserving the SDK/CLI
+upgrade and separate Feishu work. The old local branch returned `local-user` and
+selected a process-wide service token; it now uses the same cookie-backed user
+OAuth login and bearer forwarding as hosted mode. Local sign-out revokes that
+session too. No grant expansion or new OAuth verifier is included.
+
+Behavioral RED showed anonymous local access succeeding and local OAuth login
+failing configuration validation. The native Worker/SQLite fixture now covers
+login, two distinct user bearers, resource proxying, restart and rejection without
+service fallback. Existing hosted PKCE/refresh/revoke tests remain applicable.
+
+Real Vite acceptance additionally found two upstream GEA defects: the plugin's
+reserved API port differed from the owned App Server listener (GEA PR #771), and
+the application proxy overwrote repeated `Set-Cookie`, losing the OAuth session
+when the same callback cleared the login-flow cookie. Both repairs are required
+for local browser login; published CLI `0.2.261019-alpha.1` contains neither.
+
+`tests/vite-oauth.e2e.test.ts` is opt-in (`GEA_VITE_OAUTH_E2E=1`) and runs a copied
+real application through its actual Vite entry, native Worker/SQLite and App
+Server. Only issuer/model HTTP and the Agent definition are synthetic; no MuseDAM
+or paid model operation occurs. It exercises two browser cookie flows, admitted
+Sessions, canonical Agent user/current principal, cross-user Session/Run/File
+rejection, verifier failures, and client-output/log credential marker checks.
+Agent Runs use the native API on the app-admitted Sessions because the MuseDAM
+connection gate intentionally remains closed. HTTP protocol tests do not claim a
+visual browser UAT or a production OAuth deployment.
+
+**Remaining contract limit:** the example requests `openid profile offline_access
+agents:invoke`; local Connections additionally require `connections:read` or
+`connections:write`. Existing grants therefore fail closed, and full local
+MuseDAM chat is not accepted by this repair. A future explicit authorization
+scope/contract decision is required; adding a service key is not a workaround.
+The local runtime retains issuer/client/user resource ownership but uses local
+organization/workspace identity and omits downstream application/installation
+provenance. Hosted tenant parity is not claimed. Historical local-user and
+real-service acceptance sections below describe their recorded older versions.
+
+
 ## SDK update, 2026-10-02
 
 See the [cross-example verification record](../VERIFICATION-261002.md) for the

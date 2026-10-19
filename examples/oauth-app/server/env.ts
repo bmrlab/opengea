@@ -21,7 +21,7 @@ const secureUrl = z.url().refine((value) => {
           url.hostname.endsWith(".localhost"))))
   );
 }, "Use HTTPS, or HTTP on a local development host, without credentials or query parameters.");
-// Local API mode is single-user and may only be exposed on a loopback app origin.
+// Local Agent execution remains restricted to loopback application/API origins.
 export function getAppEnv() {
   const config = createEnv({
     server: {
@@ -30,13 +30,11 @@ export function getAppEnv() {
         .enum(["local", "preview", "production"])
         .default("production"),
       LOCAL_AGENTS_API_URL: z.url().optional(),
-      LOCAL_AGENTS_API_TOKEN: z.string().optional(),
     },
     runtimeEnv: {
       APP_ORIGIN: workerEnv.APP_ORIGIN,
       AGENT_ENVIRONMENT: workerEnv.AGENT_ENVIRONMENT,
       LOCAL_AGENTS_API_URL: workerEnv.LOCAL_AGENTS_API_URL,
-      LOCAL_AGENTS_API_TOKEN: workerEnv.LOCAL_AGENTS_API_TOKEN,
     },
     emptyStringAsUndefined: true,
   });
@@ -68,7 +66,7 @@ export function getEnv() {
       OAUTH_CLIENT_ID: z.string().trim().min(1),
       OAUTH_CLIENT_SECRET: z.string().min(1),
       AGENT_ENVIRONMENT: z
-        .enum(["preview", "production"])
+        .enum(["local", "preview", "production"])
         .default("production"),
     },
     runtimeEnv: {
@@ -95,7 +93,6 @@ export type AuthConfig = ReturnType<typeof getEnv>;
 export interface WorkerBindings {
   APP_ORIGIN?: string;
   LOCAL_AGENTS_API_URL?: string;
-  LOCAL_AGENTS_API_TOKEN?: string;
   TOKEN_ENCRYPTION_KEY?: string;
   OAUTH_ISSUER_URL?: string;
   OAUTH_CLIENT_ID?: string;
