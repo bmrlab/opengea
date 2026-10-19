@@ -109,9 +109,11 @@ exercise positive propagation rather than adding internal fields to public calls
    HTTP-fixture suite do **not** repair or pass this integration. No plugin fork
    or local-source substitution was made.
 2. **Feishu follow-up migration adopted.** The previous private-text-only scope
-   gate was explicitly removed. Nine behavior tests first failed against the old
-   preset (group/rich-text/feedback absent), then passed against the public new
-   extension with synthetic HTTP and Channel capability spies. They cover shared
+   gate was explicitly removed. Eight admission tests ran against the old preset
+   (3 PASS / 5 FAIL, including missing group/rich-text/feedback behavior). After
+   migration, all nine tests passed, including the new registration check and an
+   added group-post case, using synthetic HTTP and Channel capability spies.
+   They cover shared
    topic addresses, distinct sender principals/actors, private/group rich text,
    unsupported-media durable-feedback requests, ignored unmentioned input, token,
    app, tenant and allowlist rejection. These are not native Channel persistence
