@@ -1,6 +1,13 @@
 # Feishu Channel
 
-See [SDK upgrade verification](../VERIFICATION-261008.md) for current local checks and hosted acceptance limits.
+See [SDK upgrade verification](../VERIFICATION-261019.md) for current local checks and hosted acceptance limits.
+
+**Upgrade boundary:** this example intentionally retains SDK/CLI
+`0.1.261008-alpha.0`. SDK `0.1.261019-alpha.0` removed the built-in
+`channels/feishu` export. Its separately published Feishu extension also admits
+group and rich-text messages and exposes no private-text-only option, so a direct
+migration would change this example's scope. See the current verification record;
+the old pin is validated locally, not accepted against live Feishu.
 
 A small Agent that receives private text messages through a Feishu bot's long
 connection and replies in the same chat. No public webhook or web application is

@@ -1,8 +1,8 @@
 # Independent subagents
 
-See [SDK upgrade verification](../VERIFICATION-261008.md) for current local checks and hosted acceptance limits.
+See [SDK upgrade verification](../VERIFICATION-261019.md) for current local checks and hosted acceptance limits.
 
-An arithmetic team using public `@gea-ai/agent-sdk@0.1.261008-alpha.0` and
+An arithmetic team using public `@gea-ai/agent-sdk@0.1.261019-alpha.0` and
 `agentCore()`. Each child has its own Session. Every invocation returns a
 `{ sessionId, runId }` receipt; Agent IDs identify definitions, not conversations.
 
@@ -70,9 +70,9 @@ pnpm test
 cp .env.example .env
 ```
 
-Use CLI `0.1.261008-alpha.0` with its bundled Runtime for local execution, and
+Use CLI `0.2.261019-alpha.1` with its bundled Runtime for local execution, and
 GEA v0.56 or newer for hosted verification. Both support the Session/Run protocol
-used by this SDK. Install the CLI with `pnpm add -g @gea-ai/cli@0.1.261008-alpha.0`.
+used by this SDK. Install the CLI with `pnpm add -g @gea-ai/cli@0.2.261019-alpha.1`.
 `GEA_CLI_BIN` remains available for testing a compatible local executable.
 
 ```sh
@@ -84,8 +84,11 @@ pnpm dev
 ```
 
 Development uses hosted models through your GEA login. The Worker uses port
-8793; `agent-dev.json` pins the separate Agents API to port 8794. Change both
-configuration and `GEA_LOCAL_AGENTS_API_URL` if that port is occupied.
+8793. CLI 0.2 owns the separate App Server listener and ignores legacy `apiPort`.
+Set `GEA_LOCAL_AGENTS_API_URL` to the **Agents API** URL printed at startup
+and `GEA_PROJECT_API_KEY` to the contents of the printed **Project API key file**
+in your private `.env` before local verification. These credentials stay in Node.
+
 Private definitions have no public Worker entrypoints.
 
 In another terminal, run:

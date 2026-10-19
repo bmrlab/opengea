@@ -68,8 +68,8 @@ try {
     const runs = [];
     report.modes[mode] = { chatId, runs };
     for (const [index, message] of turns.entries()) {
-      const run = await runTurn(agent.url, mode, chatId, message);
-      const history = await readHistory(agent.url, chatId);
+      const run = await runTurn(agent.url, mode, chatId, message, agent.apiKey);
+      const history = await readHistory(agent.url, chatId, agent.apiKey);
       runs.push({
         ...run,
         historyCharacters: JSON.stringify(history).length,
@@ -97,25 +97,29 @@ try {
     report.modes[mode].historyBeforeRestart = await readHistory(
       agent.url,
       chatId,
+      agent.apiKey,
     );
     // Restart before this mode's first recall query; avoid cache-TTL bias from
     // waiting for all other strategies to complete before probing the first one.
     await agent.stop();
     agent = await startAgent({ quiet: true, port: 0 });
     const result = report.modes[mode];
-    const restored = await readHistory(agent.url, result.chatId);
+    const restored = await readHistory(agent.url, result.chatId, agent.apiKey);
     result.restoredExactly =
       hash(restored) === hash(result.historyBeforeRestart);
-    result.recall = await runTurn(agent.url, mode, result.chatId, question);
+    result.recall = await runTurn(agent.url, mode, result.chatId, question, agent.apiKey);
     result.score = scoreRecord(result.recall.text);
     result.historyAfterRecall = await readHistory(
       agent.url,
       result.chatId,
+      agent.apiKey,
     );
     const fresh = await runTurn(
       agent.url,
+      mode,
       randomUUID(),
       "What project and owner did I tell you? Return only JSON with project and owner; use null for anything I have not supplied.",
+      agent.apiKey,
     );
     result.chatIsolation = scoreRecord(fresh.text, {
       project: null,

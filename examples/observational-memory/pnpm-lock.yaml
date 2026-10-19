@@ -110,8 +110,8 @@ importers:
   .:
     dependencies:
       '@gea-ai/agent-sdk':
-        specifier: 0.1.261008-alpha.0
-        version: 0.1.261008-alpha.0(esbuild@0.28.0)
+        specifier: 0.1.261019-alpha.0
+        version: 0.1.261019-alpha.0(esbuild@0.28.0)
       ai:
         specifier: 7.0.119
         version: 7.0.119(zod@4.3.6)
@@ -123,8 +123,8 @@ importers:
         specifier: 4.0.1
         version: 4.0.1
       '@gea-ai/cli':
-        specifier: 0.1.261008-alpha.0
-        version: 0.1.261008-alpha.0
+        specifier: 0.2.261019-alpha.1
+        version: 0.2.261019-alpha.1
       '@types/node':
         specifier: 24.10.1
         version: 24.10.1
@@ -500,33 +500,27 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@gea-ai/agent-sdk@0.1.261008-alpha.0':
-    resolution: {integrity: sha512-+EWRRRVUkThMGru+8mXJmTZoaB+kSZRIj2cJOZMXJCmR9obECD8t1aWQdbl/t02D82VrYM2vFpoXEhmh+jQQfg==}
+  '@gea-ai/agent-sdk@0.1.261019-alpha.0':
+    resolution: {integrity: sha512-nvMVeo3IqylsRskSKt/965sG++UIzEvZ80jdFi65elYF2UlbJvkeySFMQafYpIApFxQh2YSGBFlJDGCZBojjQg==}
     peerDependencies:
       esbuild: ^0.28.0
     peerDependenciesMeta:
       esbuild:
         optional: true
 
-  '@gea-ai/cli-darwin-arm64@0.1.261008-alpha.0':
-    resolution: {integrity: sha512-d8pbEvE7CVdyAA9jJKMu0bkIV4taqTSah+TSAF/6NsmMwoHoZ8pHjyBJxa7+9qys1RNnm6gySvSm6HvbrvLYyQ==}
+  '@gea-ai/cli-darwin-arm64@0.2.261019-alpha.1':
+    resolution: {integrity: sha512-6euRfFK6oTodijSCTMo3dzHZyewqyMhG0nD5l1maST6UgEiAv46HuK3DeisJjHKH4kF2yeaBqfsxV1GPljBtVA==}
     cpu: [arm64]
     os: [darwin]
     hasBin: true
 
-  '@gea-ai/cli-win32-x64@0.1.260920-alpha.1':
-    resolution: {integrity: sha512-5zq5sv7HjeMhBWhv6xQXLGTpf3n4p/0q3mZl1xqZhwTsqyLW3VexQbjUJCt1lkmWoccpgvg5foMnkNk3mkqmXQ==}
-    cpu: [x64]
-    os: [win32]
+  '@gea-ai/cli@0.2.261019-alpha.1':
+    resolution: {integrity: sha512-qgoyxcFgqo1k6YQwnv5hirUABSP0MdjRGFSavJ/DgUZpdw2GjxZqt95yOleIMvd2xamjt5M3liMCZcq1xmrexQ==}
+    os: [darwin]
     hasBin: true
 
-  '@gea-ai/cli@0.1.261008-alpha.0':
-    resolution: {integrity: sha512-YrUcD0tUt6s3yY1uaW1AYvFSF58Bq0xCVyxPkS6EBryBc2+1cbCuKnzxcram4oF7iuHYDWUEXFLzOSdPA4DrTw==}
-    os: [darwin, win32]
-    hasBin: true
-
-  '@gea-ai/contract@0.1.261008-alpha.0':
-    resolution: {integrity: sha512-SF7mmfSnLDDjLjA0eNzqfw8Sx1iPijX64ycsKfcma6XaAtE+HviAMpN+B7/59tiGbk5YXXE7kZSRP+xez/UfEg==}
+  '@gea-ai/contract@0.1.261019-alpha.0':
+    resolution: {integrity: sha512-tx300dPYb0MFjchzqfqEwnXq7duw/l624JJkDGGV3BJkXEyoFvhq9kQp9A5dxr5Tt2I7iltFMayWWW07t0lybg==}
 
   '@img/colour@1.1.0':
     resolution: {integrity: sha512-Td76q7j57o/tLVdgS746cYARfSyxk8iEfRxewL9h4OMzYhbW4TAcppl0mT4eyqXddh6L/jwoM75mo7ixa/pCeQ==}
@@ -802,36 +796,6 @@ packages:
   '@orpc/standard-server@1.15.0':
     resolution: {integrity: sha512-bje/xn6thDqJY/JQ7xoOjmD1KWE4FsyZOPgnPxwqTZLx/r00stRhLuFvk1hDEGj9UlG7NLZEijDVx0wqvcyDzA==}
 
-  '@protobufjs/aspromise@1.1.2':
-    resolution: {integrity: sha512-j+gKExEuLmKwvz3OgROXtrJ2UG2x8Ch2YZUxahh+s1F2HZ+wAceUNLkvy6zKCPVRkU++ZWQrdxsUeQXmcg4uoQ==}
-
-  '@protobufjs/base64@1.1.2':
-    resolution: {integrity: sha512-AZkcAA5vnN/v4PDqKyMR5lx7hZttPDgClv83E//FMNhR2TMcLUhfRUBHCmSl0oi9zMgDDqRUJkSxO3wm85+XLg==}
-
-  '@protobufjs/codegen@2.0.5':
-    resolution: {integrity: sha512-zgXFLzW3Ap33e6d0Wlj4MGIm6Ce8O89n/apUaGNB/jx+hw+ruWEp7EwGUshdLKVRCxZW12fp9r40E1mQrf/34g==}
-
-  '@protobufjs/eventemitter@1.1.1':
-    resolution: {integrity: sha512-vW1GmwMZNnL+gMRaovlh9yZX74kc+TTU3FObkkurpMaRtBfLP3ldjS9KQWlwZgraRE0+dheEEoAxdzcJQ8eXZg==}
-
-  '@protobufjs/fetch@1.1.1':
-    resolution: {integrity: sha512-GpptLrs57adMSuHi3VNj0mAF8dwh36LMaYF6XyJ6JMWlVsc+t42tm1HSEDmOs3A8fC9yyeisgLhsTVQokOZ0zw==}
-
-  '@protobufjs/float@1.0.2':
-    resolution: {integrity: sha512-Ddb+kVXlXst9d+R9PfTIxh1EdNkgoRe5tOX6t01f1lYWOvJnSPDBlG241QLzcyPdoNTsblLUdujGSE4RzrTZGQ==}
-
-  '@protobufjs/inquire@1.1.2':
-    resolution: {integrity: sha512-pa0vFRuws4wkvaXKK1uXZMAwAX4/t8ANaJo45iw/oQHNQ9q5xUzwgFmVJGXiga2BeN+zpX7Vf9vmsiIa2J+MUw==}
-
-  '@protobufjs/path@1.1.2':
-    resolution: {integrity: sha512-6JOcJ5Tm08dOHAbdR3GrvP+yUUfkjG5ePsHYczMFLq3ZmMkAD98cDgcT2iA1lJ9NVwFd4tH/iSSoe44YWkltEA==}
-
-  '@protobufjs/pool@1.1.0':
-    resolution: {integrity: sha512-0kELaGSIDBKvcgS4zkjz1PeddatrjYcmMWOlAuAPwAeccUrPHdUqo/J6LiymHHEiJT5NrF1UVwxY14f+fy4WQw==}
-
-  '@protobufjs/utf8@1.1.2':
-    resolution: {integrity: sha512-b1UQwcEZ4yCnMCD8DAL1VlbvBJE9/IX4FTIp7BG1xYpf29SLazLSrqUkj4w7Y5y7cCVP6E5tcqqcI0xemPkHug==}
-
   '@standard-schema/spec@1.1.0':
     resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
 
@@ -1004,9 +968,6 @@ packages:
   lines-and-columns@1.2.4:
     resolution: {integrity: sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg==}
 
-  long@5.3.2:
-    resolution: {integrity: sha512-mNAgZ1GmyNhD7AuqnTG3/VQ26o760+ZYBPKjPvugO8+nLbYfX6TVpJPseBvopbdY+qpZ/lKUnmEc1LeZYS3QAA==}
-
   mimic-response@3.1.0:
     resolution: {integrity: sha512-z0yWI+4FDrrweS8Zmt4Ej5HdJmky15+L2e6Wgn3+iK5fWzb6T3fhNFq2+MeTRb064c6Wr4N/wv0DzQTjNzHNGQ==}
     engines: {node: '>=10'}
@@ -1081,10 +1042,6 @@ packages:
     engines: {node: '>=10'}
     deprecated: No longer maintained. Please contact the author of the relevant native addon; alternatives are available.
     hasBin: true
-
-  protobufjs@7.6.1:
-    resolution: {integrity: sha512-4K0myLaWL5EteuSAro91EGFgcfVgxb64Jx+7oDAY6GOkXD4M69yuSEljNcInGVCA5sOPxmZ/EqDLj2x0Q0+Ygg==}
-    engines: {node: '>=12.0.0'}
 
   pump@3.0.4:
     resolution: {integrity: sha512-VS7sjc6KR7e1ukRFhQSY5LM2uBWAUPiOPa/A3mkKmiMwSmRFUITt0xuj+/lesgnCv+dPIEYlkzrcyXgquIHMcA==}
@@ -1464,7 +1421,7 @@ snapshots:
   '@esbuild/win32-x64@0.28.0':
     optional: true
 
-  '@gea-ai/agent-sdk@0.1.261008-alpha.0(esbuild@0.28.0)':
+  '@gea-ai/agent-sdk@0.1.261019-alpha.0(esbuild@0.28.0)':
     dependencies:
       '@ai-sdk/anthropic': 4.0.67(zod@4.3.6)
       '@ai-sdk/openai': 4.0.79(zod@4.3.6)
@@ -1472,7 +1429,7 @@ snapshots:
       '@ai-sdk/otel': 1.0.119(zod@4.3.6)
       '@ai-sdk/provider': 4.0.19
       '@ai-sdk/provider-utils': 5.0.50(zod@4.3.6)
-      '@gea-ai/contract': 0.1.261008-alpha.0
+      '@gea-ai/contract': 0.1.261019-alpha.0
       '@opentelemetry/api': 1.9.1
       '@opentelemetry/context-async-hooks': 2.10.0(@opentelemetry/api@1.9.1)
       '@opentelemetry/core': 2.10.0(@opentelemetry/api@1.9.1)
@@ -1485,8 +1442,6 @@ snapshots:
       better-result: 2.8.1
       eventsource-parser: 3.0.8
       just-bash: 3.0.1
-      long: 5.3.2
-      protobufjs: 7.6.1
       sucrase: 3.35.1
       zod: 4.3.6
     optionalDependencies:
@@ -1494,24 +1449,17 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@gea-ai/cli-darwin-arm64@0.1.261008-alpha.0':
+  '@gea-ai/cli-darwin-arm64@0.2.261019-alpha.1':
     dependencies:
       esbuild: 0.28.0
       sharp: 0.34.5
     optional: true
 
-  '@gea-ai/cli-win32-x64@0.1.260920-alpha.1':
-    dependencies:
-      esbuild: 0.28.0
-      sharp: 0.34.5
-    optional: true
-
-  '@gea-ai/cli@0.1.261008-alpha.0':
+  '@gea-ai/cli@0.2.261019-alpha.1':
     optionalDependencies:
-      '@gea-ai/cli-darwin-arm64': 0.1.261008-alpha.0
-      '@gea-ai/cli-win32-x64': 0.1.260920-alpha.1
+      '@gea-ai/cli-darwin-arm64': 0.2.261019-alpha.1
 
-  '@gea-ai/contract@0.1.261008-alpha.0':
+  '@gea-ai/contract@0.1.261019-alpha.0':
     dependencies:
       '@bufbuild/protobuf': 2.13.0
       '@opentelemetry/api': 1.9.1
@@ -1767,28 +1715,6 @@ snapshots:
     transitivePeerDependencies:
       - '@opentelemetry/api'
 
-  '@protobufjs/aspromise@1.1.2': {}
-
-  '@protobufjs/base64@1.1.2': {}
-
-  '@protobufjs/codegen@2.0.5': {}
-
-  '@protobufjs/eventemitter@1.1.1': {}
-
-  '@protobufjs/fetch@1.1.1':
-    dependencies:
-      '@protobufjs/aspromise': 1.1.2
-
-  '@protobufjs/float@1.0.2': {}
-
-  '@protobufjs/inquire@1.1.2': {}
-
-  '@protobufjs/path@1.1.2': {}
-
-  '@protobufjs/pool@1.1.0': {}
-
-  '@protobufjs/utf8@1.1.2': {}
-
   '@standard-schema/spec@1.1.0': {}
 
   '@tokenizer/inflate@0.4.1':
@@ -2017,8 +1943,6 @@ snapshots:
 
   lines-and-columns@1.2.4: {}
 
-  long@5.3.2: {}
-
   mimic-response@3.1.0:
     optional: true
 
@@ -2094,21 +2018,6 @@ snapshots:
       tar-fs: 2.1.5
       tunnel-agent: 0.6.0
     optional: true
-
-  protobufjs@7.6.1:
-    dependencies:
-      '@protobufjs/aspromise': 1.1.2
-      '@protobufjs/base64': 1.1.2
-      '@protobufjs/codegen': 2.0.5
-      '@protobufjs/eventemitter': 1.1.1
-      '@protobufjs/fetch': 1.1.1
-      '@protobufjs/float': 1.0.2
-      '@protobufjs/inquire': 1.1.2
-      '@protobufjs/path': 1.1.2
-      '@protobufjs/pool': 1.1.0
-      '@protobufjs/utf8': 1.1.2
-      '@types/node': 24.10.1
-      long: 5.3.2
 
   pump@3.0.4:
     dependencies:

@@ -30,11 +30,13 @@ export function getAppEnv() {
         .enum(["local", "preview", "production"])
         .default("production"),
       LOCAL_AGENTS_API_URL: z.url().optional(),
+      LOCAL_AGENTS_API_TOKEN: z.string().optional(),
     },
     runtimeEnv: {
       APP_ORIGIN: workerEnv.APP_ORIGIN,
       AGENT_ENVIRONMENT: workerEnv.AGENT_ENVIRONMENT,
       LOCAL_AGENTS_API_URL: workerEnv.LOCAL_AGENTS_API_URL,
+      LOCAL_AGENTS_API_TOKEN: workerEnv.LOCAL_AGENTS_API_TOKEN,
     },
     emptyStringAsUndefined: true,
   });
@@ -93,6 +95,7 @@ export type AuthConfig = ReturnType<typeof getEnv>;
 export interface WorkerBindings {
   APP_ORIGIN?: string;
   LOCAL_AGENTS_API_URL?: string;
+  LOCAL_AGENTS_API_TOKEN?: string;
   TOKEN_ENCRYPTION_KEY?: string;
   OAUTH_ISSUER_URL?: string;
   OAUTH_CLIENT_ID?: string;

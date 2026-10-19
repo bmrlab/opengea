@@ -133,6 +133,7 @@ beforeAll(async () => {
     APP_ORIGIN: "http://localhost:4000",
     AGENT_ENVIRONMENT: "local",
     LOCAL_AGENTS_API_URL: apiOrigin,
+    LOCAL_AGENTS_API_TOKEN: "synthetic-local-project-key",
   });
 }, 30000);
 afterAll(async () => {
@@ -140,7 +141,7 @@ afterAll(async () => {
   api.closeAllConnections();
   await new Promise<void>((resolve) => api.close(() => resolve()));
 });
-it("uses the local API without OAuth for discovery, connections, files and a recoverable chat", async () => {
+it("uses the local API with a backend local Project Key for discovery, connections, files and a recoverable chat", async () => {
   const session = await call("/api/session");
   expect(session.status).toBe(200);
   expect(await session.json()).toMatchObject({
@@ -178,9 +179,11 @@ it("uses the local API without OAuth for discovery, connections, files and a rec
   expect(authorize.headers.get("location")).toContain(
     "/_gea/agent-api/authorization/start",
   );
-  expect(requests.every((request) => request.authorization === undefined)).toBe(
-    true,
-  );
+  expect(
+    requests.every(
+      (request) => request.authorization === "Bearer synthetic-local-project-key",
+    ),
+  ).toBe(true);
   expect(
     JSON.parse(
       requests.find((request) => request.path === "/api/v1/sessions")!.body,

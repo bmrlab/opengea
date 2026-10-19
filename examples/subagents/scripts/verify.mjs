@@ -41,7 +41,7 @@ async function request(method, path, body, attempt = 0) {
   const response = await fetch(`${api}${path}`, {
     method,
     headers: {
-      ...(local ? {} : { Authorization: `Bearer ${env.apiKey}` }),
+      ...(env.apiKey ? { Authorization: `Bearer ${env.apiKey}` } : {}),
       ...(body === undefined ? {} : { "Content-Type": "application/json" }),
     },
     body: body === undefined ? undefined : JSON.stringify(body),

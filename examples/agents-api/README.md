@@ -1,6 +1,6 @@
 # Agents API: prepare, then run
 
-See [SDK upgrade verification](../VERIFICATION-261008.md) for current local checks and hosted acceptance limits.
+See [SDK upgrade verification](../VERIFICATION-261019.md) for current local checks and hosted acceptance limits.
 
 An Agent and a plain Node.js HTTP caller using the same `/api/v1` flow locally and
 in cloud Preview. The SDK defines the Agent; the caller uses `fetch` directly.
@@ -18,7 +18,7 @@ Preparing a Session does not call the model.
 ## Install and run locally
 
 Use Node **24.16.0**, pnpm **12.1.0** and public Agent SDK
-**0.1.261008-alpha.0** (pinned in the lockfile):
+**0.1.261019-alpha.0** (pinned in the lockfile):
 
 ```bash
 pnpm install --frozen-lockfile
@@ -30,11 +30,11 @@ pnpm test
 Set `CREATIVE_REASONING_API_KEY` in `.env`. Local execution calls an external
 model provider; it does not imply offline inference.
 
-Install public CLI **0.1.261008-alpha.0**, which includes the local Agents API
+Install public CLI **0.2.261019-alpha.1**, which includes the local Agents API
 and its matching Worker Runtime for macOS ARM64:
 
 ```bash
-pnpm add -g @gea-ai/cli@0.1.261008-alpha.0
+pnpm add -g @gea-ai/cli@0.2.261019-alpha.1
 pnpm agent:validate
 pnpm agent:pack
 pnpm dev
@@ -45,9 +45,11 @@ An unpackaged build can additionally set `GEA_WORKER_RUNTIME_BINARY` and
 `WORKER_RUNTIME_SYSTEM_WORKER_ROOT` to its matching Runtime and system workers.
 The published CLI needs none of these overrides. SDK dependencies always come from npm.
 
-`agent-dev.json` selects Worker port **8794** and Agents API port **8795**. Choose
-free ports if either is occupied, and update `GEA_AGENTS_API_URL` to match
-`apiPort`. In a second terminal, from this directory:
+`agent-dev.json` selects Worker port **8794**. CLI 0.2 owns the separate
+App Server listener: use the **Agents API** URL and **Project API key file**
+printed at startup, not the legacy `apiPort` setting. Set `GEA_AGENTS_API_URL`
+to that `/api/v1` URL and `GEA_ACCESS_TOKEN` to the key file contents in your
+private `.env`. Keep this key on the calling server. In a second terminal, from this directory:
 
 ```bash
 pnpm verify
@@ -81,7 +83,7 @@ GEA_AGENT_ID=the-agent-uuid-returned-by-the-cloud-agents-api
 
 Run `pnpm verify` without starting a local Agent. Cloud mode adds the Bearer token
 and selects `preview` when listing Agents and creating Sessions. Local mode uses
-`environment: "local"` and needs no token. Production uses the same cloud URL
+`environment: "local"` and the CLI-generated local Project API key. Production uses the same cloud URL
 with `environment: "production"`. IDs and stored files belong to each service;
 a local Session ID cannot address a cloud Session.
 
