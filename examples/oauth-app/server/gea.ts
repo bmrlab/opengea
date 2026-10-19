@@ -122,11 +122,10 @@ export async function agentFetch(
   const app = getAppEnv();
   const local = app.AGENT_ENVIRONMENT === "local";
   const origin = local ? app.LOCAL_AGENTS_API_URL! : getEnv().OAUTH_ISSUER_URL;
-  const token = local ? app.LOCAL_AGENTS_API_TOKEN : accessToken;
   return fetch(`${origin}/api/v1${path}`, {
     ...init,
     headers: {
-      ...(token ? { authorization: `Bearer ${token}` } : {}),
+      ...(accessToken ? { authorization: `Bearer ${accessToken}` } : {}),
       "cache-control": "no-store",
       ...(init.body instanceof FormData
         ? {}

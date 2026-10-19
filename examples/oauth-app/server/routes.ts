@@ -143,17 +143,6 @@ export async function callback(request: Request) {
 export async function session(request: Request) {
   try {
     const app = getAppEnv();
-    if (app.AGENT_ENVIRONMENT === "local") {
-      await loadAgentSession(request);
-      return json({
-        user: { sub: "local-user", name: "Local developer" },
-        organization: { id: "local", name: "Local project", slug: "local" },
-        scopes: [],
-        expiresAt: null,
-        agents: await discoverAgents(undefined),
-        environment: "local",
-      });
-    }
     const current = await loadSession(request);
     const user = await userInfo(current.token.access_token);
     if (user.sub !== current.user.sub)
@@ -162,14 +151,13 @@ export async function session(request: Request) {
         "sign_in_required",
         "The GEA identity changed. Sign in again.",
       );
-    const env = getEnv();
     return json({
       user,
       organization: current.token.organization,
       scopes: current.token.scope.split(/\s+/),
       expiresAt: new Date(current.expiresAt).toISOString(),
       agents: await discoverAgents(current.token.access_token),
-      environment: env.AGENT_ENVIRONMENT,
+      environment: app.AGENT_ENVIRONMENT,
     });
   } catch (error) {
     return failure(error);
