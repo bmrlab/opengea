@@ -1150,18 +1150,12 @@ export function OAuthApp() {
                       )}
 
                       <Separator />
-                      {session.environment === "local" ? (
-                        <p className="text-sm text-muted-foreground">
-                          Local Agents API · single-user development
-                        </p>
-                      ) : (
-                        <form action="/auth/logout" method="post">
-                          <Button variant="outline" type="submit">
-                            <LogOutIcon data-icon="inline-start" />
-                            Sign out &amp; revoke
-                          </Button>
-                        </form>
-                      )}
+                      <form action="/auth/logout" method="post">
+                        <Button variant="outline" type="submit">
+                          <LogOutIcon data-icon="inline-start" />
+                          Sign out &amp; revoke
+                        </Button>
+                      </form>
                     </>
                   )}
                 </div>

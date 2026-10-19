@@ -1,13 +1,20 @@
-# Default pnpm dev mode: app backend -> local Agents API -> local Worker Agent.
+# App backend -> verified user OAuth -> local Agents API -> local Agent.
 APP_ORIGIN=http://127.0.0.1:4000
 AGENT_ENVIRONMENT=local
 MUSEDAM_MCP_CLIENT_ID=replace-with-your-musedam-oauth-client-id
-# LOCAL_AGENTS_API_URL is supplied automatically by the Vite plugin.
+# LOCAL_AGENTS_API_URL is supplied by a CLI containing the listener repair.
+# Published 0.2.261019-alpha.1 predates this repair; see README/VERIFICATION.
 
-# Optional hosted OAuth mode: set AGENT_ENVIRONMENT=preview (or production).
-# Register a separate localhost OAuth client with APP_ORIGIN/auth/callback.
-# TOKEN_ENCRYPTION_KEY: generate with node -e 'console.log(require("node:crypto").randomBytes(32).toString("base64"))'
-# TOKEN_ENCRYPTION_KEY=replace-with-a-base64-encoded-32-byte-key
-# OAUTH_ISSUER_URL=https://musegea.com
-# OAUTH_CLIENT_ID=app_replace_me
-# OAUTH_CLIENT_SECRET=gea_secret_replace_me
+# Register APP_ORIGIN/auth/callback on your existing OAuth client.
+# All values below are server-only; never prefix secrets with VITE_.
+OAUTH_ISSUER_URL=https://musegea.com
+OAUTH_CLIENT_ID=app_replace_me
+OAUTH_CLIENT_SECRET=replace-with-your-oauth-client-secret
+# Generate a random 32-byte base64 key locally for encrypted app sessions.
+TOKEN_ENCRYPTION_KEY=replace-with-a-base64-encoded-32-byte-key
+
+# Existing App Server OAuth verifier: match the application's issuer/client.
+GEA_LOCAL_OAUTH_BASE_URL=https://musegea.com
+GEA_LOCAL_OAUTH_CLIENT_ID=app_replace_me
+# Hosted Agents instead: AGENT_ENVIRONMENT=preview (or production).
+# Do not configure a Project Key as a replacement for the user's bearer.

@@ -20,6 +20,9 @@ const requests: Array<{ path: string; authorization: unknown; body: string }> =
   [];
 let runtime: Awaited<ReturnType<typeof createTestRuntime>>;
 let apiOrigin: string;
+let sessionCookie = "";
+let user = "alice";
+let denied = false;
 const api = createServer(async (request, response) => {
   const chunks: Buffer[] = [];
   for await (const chunk of request) chunks.push(Buffer.from(chunk));
@@ -31,6 +34,24 @@ const api = createServer(async (request, response) => {
     response
       .writeHead(status, { "content-type": "application/json" })
       .end(JSON.stringify(value));
+  if (path.endsWith("/token"))
+    return json({
+      access_token: `gea_user_${user}`,
+      refresh_token: `refresh-${user}`,
+      token_type: "Bearer",
+      expires_in: 3600,
+      scope: "openid profile offline_access agents:invoke",
+      application: { id: agentId },
+      authorization: { id: chatId },
+      organization: { id: agentId, name: "Fixture org", slug: "fixture" },
+    });
+  if (path.endsWith("/userinfo"))
+    return json({
+      sub: request.headers.authorization?.endsWith("bob") ? "bob" : "alice",
+      name: "Fixture user",
+    });
+  if (path.startsWith("/api/v1/") && denied)
+    return json({ error: { code: "UNAUTHORIZED" } }, 401);
   if (path === "/api/v1/agents")
     return json({
       items: [
@@ -111,6 +132,7 @@ const call = (path: string, body?: unknown, origin = "http://localhost:4000") =>
       method: body === undefined ? "GET" : "POST",
       headers: {
         origin,
+        cookie: sessionCookie,
         ...(body instanceof FormData
           ? {}
           : { "content-type": "application/json" }),
@@ -133,7 +155,12 @@ beforeAll(async () => {
     APP_ORIGIN: "http://localhost:4000",
     AGENT_ENVIRONMENT: "local",
     LOCAL_AGENTS_API_URL: apiOrigin,
+    // A stale service token must never replace the logged-in user.
     LOCAL_AGENTS_API_TOKEN: "synthetic-local-project-key",
+    OAUTH_ISSUER_URL: apiOrigin,
+    OAUTH_CLIENT_ID: "fixture-client",
+    OAUTH_CLIENT_SECRET: "fixture-secret",
+    TOKEN_ENCRYPTION_KEY: Buffer.alloc(32, 7).toString("base64"),
   });
 }, 30000);
 afterAll(async () => {
@@ -141,12 +168,39 @@ afterAll(async () => {
   api.closeAllConnections();
   await new Promise<void>((resolve) => api.close(() => resolve()));
 });
-it("uses the local API with a backend local Project Key for discovery, connections, files and a recoverable chat", async () => {
+async function signIn(name: string) {
+  user = name;
+  const flow = await call("/auth/login", {});
+  expect(flow.status).toBe(303);
+  sessionCookie = flow.headers
+    .getSetCookie()
+    .map((value) => value.split(";")[0])
+    .join("; ");
+  const location = new URL(flow.headers.get("location")!);
+  const response = await call(
+    `/auth/callback?code=fixture&state=${location.searchParams.get("state")}`,
+  );
+  expect(response.status).toBe(303);
+  expect(response.headers.get("location")).toBe("http://localhost:4000/");
+  sessionCookie = response.headers
+    .getSetCookie()
+    .map((value) => value.split(";")[0])
+    .filter((value) => !value.endsWith("="))
+    .join("; ");
+}
+it("requires an OAuth login in local mode, without a local-user or service fallback", async () => {
+  expect((await call("/api/session")).status).toBe(401);
+  expect(
+    (await call("/api/conversations", { agentId, title: "Anonymous" })).status,
+  ).toBe(401);
+});
+it("preserves the OAuth user for local discovery, connections, files and a recoverable chat", async () => {
+  await signIn("alice");
   const session = await call("/api/session");
   expect(session.status).toBe(200);
   expect(await session.json()).toMatchObject({
     environment: "local",
-    user: { sub: "local-user" },
+    user: { sub: "alice" },
     agents: [{ id: agentId }],
   });
   const created = await call("/api/conversations", {
@@ -180,20 +234,27 @@ it("uses the local API with a backend local Project Key for discovery, connectio
     "/_gea/agent-api/authorization/start",
   );
   expect(
-    requests.every(
-      (request) => request.authorization === "Bearer synthetic-local-project-key",
-    ),
+    requests
+      .filter((request) => request.path.startsWith("/api/v1/"))
+      .every((request) => request.authorization === "Bearer gea_user_alice"),
   ).toBe(true);
   expect(
     JSON.parse(
       requests.find((request) => request.path === "/api/v1/sessions")!.body,
     ).environment,
   ).toBe("local");
-  expect(
-    (await call("/api/session", undefined, "https://untrusted.example")).status,
-  ).toBe(403);
+  const aliceCookie = sessionCookie;
+  await signIn("bob");
+  const bob = await call("/api/session");
+  expect(await bob.json()).toMatchObject({ user: { sub: "bob" } });
+  expect(requests.at(-1)?.authorization).toBe("Bearer gea_user_bob");
+  sessionCookie = aliceCookie;
+  denied = true;
+  expect((await call("/api/session")).status).toBe(401);
+  expect(requests.at(-1)?.authorization).toBe("Bearer gea_user_alice");
+  denied = false;
 });
-it("refuses local single-user mode on a public application origin", async () => {
+it("refuses local API mode on a public application origin", async () => {
   await runtime.restart({ APP_ORIGIN: "https://example.com" });
   expect((await call("/api/session")).status).toBe(502);
 });

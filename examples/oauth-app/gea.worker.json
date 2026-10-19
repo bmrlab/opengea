@@ -51,10 +51,6 @@
     {
       "name": "LOCAL_AGENTS_API_URL",
       "secret": false
-    },
-    {
-      "name": "LOCAL_AGENTS_API_TOKEN",
-      "secret": true
     }
   ],
   "build": {
