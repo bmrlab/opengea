@@ -8,7 +8,7 @@ Each example owns its dependencies and lockfile. There is no root workspace or s
 | [basic](examples/basic/)                               | A real Hacker News research Agent, a Benchmark, and a self-hosted Next.js chat application using AI SDK and AI Elements.                       |
 | [oauth-app](examples/oauth-app/)                       | Complete single-Worker app: TanStack Start, GEA OAuth, embedded MuseDAM Agent, user connections, attachments and SQLite sessions.              |
 | [agents-api](examples/agents-api/)                     | One HTTP flow for Local and Preview: prepare a Session, upload files, edit Computer, run an Agent and reuse its outputs.                       |
-| [memory-agent](examples/memory-agent/)                 | Draft: SDK fact-store tools for cross-Session save, read, lexical search, correction and removal.                                              |
+| [memory-agent](examples/memory-agent/)                 | SDK fact-store tools for cross-Session save, read, lexical search, correction and removal.                                                     |
 | [observational-memory](examples/observational-memory/) | Configurable context management: raw history, default summaries and a chat DO observations strategy, with recall and prompt-cache comparisons. |
 | [feishu-channel](examples/feishu-channel/)             | A Feishu bot backed by an Agent, with WebSocket delivery, per-sender authorization and shared group topics.                              |
 | [subagents](examples/subagents/)                       | Private nested Agents, explicit same-Worker references and self copies, with automatic parent continuation and isolated child history.         |
