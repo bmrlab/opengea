@@ -1,4 +1,4 @@
-# Memory notebook Agent (draft)
+# Memory notebook Agent
 
 A small Agent using the published `@gea-ai/agent-sdk/memory` API to save, read,
 search, correct and remove durable facts across Sessions. Unlike
@@ -10,7 +10,7 @@ make auxiliary model calls.
 
 Use Node 24.16.0 and pnpm 12.8.1 on macOS Apple Silicon (the pinned CLI
 publishes a Darwin arm64 executable).
-Dependencies are public npm packages: SDK `0.1.261024-alpha.1` and CLI
+Dependencies are public npm packages: SDK `0.1.261024-alpha.2` and CLI
 `0.2.261024-alpha.0`. Each example owns its lockfile; no private repository or
 workspace dependency is required.
 
@@ -76,15 +76,17 @@ The example uses one slot and only published base memory. Entries are limited to
 capacity rejection leaves prior facts intact. There is no automatic capture,
 background job or eviction.
 
-## Draft status and verification
+## Release status and verification
 
-Base memory is already on npm. The held GEA enhancement PRs
-[#837](https://github.com/bmrlab/gea/pull/837) (attempt diagnostics),
+GEA enhancements [#837](https://github.com/bmrlab/gea/pull/837) (attempt diagnostics),
 [#838](https://github.com/bmrlab/gea/pull/838) (native CI) and
-[#839](https://github.com/bmrlab/gea/pull/839) (multi-slot recall budget) are
-unmerged. This single-slot, tool-only example does **not** depend on them.
-Keep this PR as draft until the user requests further review/merge after v0.58.2.
+[#839](https://github.com/bmrlab/gea/pull/839) (multi-slot recall budget) are merged.
+SDK `0.1.261024-alpha.2` includes them and is published on npm. This example pins
+that release to validate the current published SDK. Its single-slot, tool-only
+behavior does not exercise the multi-slot recall allowance. CLI remains at the
+published macOS `0.2.261024-alpha.0`; these SDK changes require no new CLI binary.
 
 Local validation results and untested boundaries are recorded in
-[VERIFICATION.md](VERIFICATION.md). No deployment or publication is part of this
-example draft.
+[VERIFICATION.md](VERIFICATION.md). The example is ready for review; no deployment
+or cloud push is part of this change. Interactive model-dependent cross-Session
+and restart verification remains a manual walkthrough.
