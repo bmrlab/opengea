@@ -1,18 +1,23 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { feishuAgentExtension } from "@gea-ai/agent-extension-feishu";
-import registration from "../extensions/feishu.ts";
+import agent from "../agent.ts";
 
 // Synthetic Channel capabilities and HTTP transport; no live WebSocket or Runtime.
 const channel = feishuAgentExtension({ transport: "http" }).channels[0];
 
-test("example registers the WebSocket Channel with shared topics and no business API", () => {
+test("example matches Preview v18 with the Feishu Channel and business Connector", () => {
+  assert.equal(agent.model, "deepseek-v4.1-flash");
+  const registration = agent.extensions[0];
+  assert.equal(registration.namespace, "feishu");
   assert.equal(registration.extension.channels.length, 1);
   const bot = registration.extension.channels[0];
   assert.ok(bot.receiver);
   assert.deepEqual(bot.routes, []);
   assert.equal(bot.sharedSessions, true);
-  assert.deepEqual(registration.overrides, { connectors: { api: false }, skills: { "lark-cli": false } });
+  assert.ok(registration.extension.connectors.api);
+  assert.ok(registration.extension.skills.some((entry) => entry.slug === "lark-cli"));
+  assert.equal(registration.overrides, undefined);
   assert.deepEqual(bot.env.FEISHU_APP_SECRET, channel.env.FEISHU_APP_SECRET);
 });
 

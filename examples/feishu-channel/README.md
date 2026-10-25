@@ -1,10 +1,11 @@
 # Feishu Channel
 
-See [SDK upgrade verification](../VERIFICATION-261025.md) for current local checks and hosted acceptance limits.
+The runtime configuration follows the Preview v18 source supplied on 2026-10-25.
+[Earlier SDK verification](../VERIFICATION-261025.md) records historical checks,
+not acceptance of this revision.
 
 This example uses published SDK/Contract and Feishu extension
-`0.1.261025-alpha.2`, plus the locally pinned CLI/native Runtime
-`0.2.261025-alpha.2`. It accepts private text and rich-text (`post`) messages,
+`0.1.261025-alpha.2` and the `deepseek-v4.1-flash` model. It accepts private text and rich-text (`post`) messages,
 and group messages that explicitly mention this application's bot. Group replies
 create or continue the triggering message's topic: members share that topic's
 history while each call retains the actual sender's identity and authorization.
@@ -16,15 +17,59 @@ long answers into follow-up cards. Rich text preserves titles, paragraphs, links
 mentions and code. Unsupported attachments or embedded media produce feedback
 asking for text; no partial content is submitted to the Agent.
 
-`extensions/feishu.ts` registers the published `feishuAgentExtension` with
-WebSocket transport. The extension declares the runtime credential variables;
-its business API Connector and `lark-cli` Skill are disabled because this example
-only provides chat replies. `agent.ts` remains an ordinary Agent, and
-`current_sender` reports the current execution principal and environment.
+`agent.ts` mounts the published `feishuAgentExtension` under the `feishu`
+namespace with the default WebSocket transport. Its business API Connector and
+`lark-cli` Skill are enabled, as in Preview v18. `current_sender` reports the
+current execution principal, environment, trusted Feishu open ID, conversation
+scope, and a fixed per-run authorization-card key.
+
+## Personal authorization card (A2′)
+
+The bundled `skills/feishu-authorization` Skill is the owner's narrow exception
+for displaying a fresh Host personal Feishu authorization result in the current
+private chat. It uses the existing mounted Feishu Connector as the bot, the
+`current_sender` recipient, a fixed schema 2.0 URL-button template and a 45-character
+key derived from the current run ID. Groups only receive a request to continue
+privately; they must not trigger cards, unsolicited DMs or personal-link fallback.
+UNKNOWN outcomes must not trigger retries or a different key.
+
+Before using another GEA installation, the owner must review and update the
+bundled `url-policy.json`: the default accepts only `https://musegea.com` and the
+exact `/api/agent-connectors/oauth/start` path. Never obtain allowed origins from
+user messages. The original Host URL is copied without reconstruction. This is
+an instruction-based workflow: URL copying and send gating are not enforced by a
+new constrained tool. The SDK still appends the original authorization link to
+the final Channel reply, so a successful send can produce a card plus a text link.
+There is no OAuth polling, automatic continuation or approval callback.
+
+`pnpm test` covers the trusted sender projection, private/shared boundary, per-run
+key, fixed card shape, JSON URL round trip, and the installed SDK's duplicate-link
+boundary using synthetic offline data. It does not prove bot scope
+(`im:message:send_as_bot`), target reachability, server acceptance or Feishu UI.
+Preview acceptance must separately exercise a fresh private authorization request,
+group refusal, a pasted/history URL that must not trigger a card, send receipt,
+and a new user message after authorization before checking business success.
+Deployment is a separate action; these changes have not been pushed to Preview.
 
 ## Install
 
-Use Node.js 24.16.0 and pnpm 12.1.0:
+Use Node.js 24.16.0 and pnpm 12.1.0.
+
+As in the Preview v18 source, the example uses an independently installed
+compatible GEA CLI. Install the matching published CLI using the
+[GEA CLI installation guidance](https://github.com/bmrlab/gea/blob/f1f529a887e3289c8b16cbcec2eb7e89cdbad285/packages/gea-cli/APP_SERVER_PREVIEW.md):
+
+```bash
+npm install -g @gea-ai/cli@0.2.261025-alpha.2
+```
+
+This revision uses CLI `0.2.261025-alpha.2` on macOS arm64;
+check the installed version below. No CLI package is
+bundled with the example. `scripts/gea.mjs` uses the trimmed `GEA_CLI_BIN` value
+as the executable, or resolves `gea` from `PATH` if it is unset or blank. To
+select a separate installation, set `export GEA_CLI_BIN="/absolute/path/to/gea"`
+before running the commands below, replacing the path with the installed
+executable's actual path. Supply one executable path, without command arguments.
 
 ```bash
 cd examples/feishu-channel
@@ -33,12 +78,8 @@ cp .env.example .env
 pnpm gea --version
 ```
 
-The local dependency pins `@gea-ai/cli@0.2.261025-alpha.2` and resolves its matching
-native Runtime; no global CLI installation is needed. `GEA_CLI_BIN` can optionally
-select a different compatible executable, but validation here used the pinned
-published binary. This CLI release supports native execution on macOS arm64 only.
-Installation, type checks and synthetic handler tests also run independently of
-native execution; Windows/Linux native execution is not accepted by this record.
+Type checks and synthetic handler tests run independently of native
+execution; Windows/Linux native execution is not accepted by this record.
 
 ## Configure a test bot
 

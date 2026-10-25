@@ -1,0 +1,27 @@
+{
+  "schema": "2.0",
+  "config": { "update_multi": true },
+  "header": {
+    "title": { "tag": "plain_text", "content": "连接飞书账号" },
+    "template": "blue"
+  },
+  "body": {
+    "elements": [
+      { "tag": "markdown", "content": "请使用当前发送消息的飞书账号完成授权。授权后回到此私聊发送一条消息，我会继续处理。" },
+      {
+        "tag": "button",
+        "text": { "tag": "plain_text", "content": "前往授权" },
+        "type": "primary_filled",
+        "width": "fill",
+        "behaviors": [{
+          "type": "open_url",
+          "default_url": "https://example.invalid/api/agent-connectors/oauth/start?ticket=REDACTED",
+          "pc_url": "",
+          "ios_url": "",
+          "android_url": ""
+        }]
+      },
+      { "tag": "markdown", "content": "链接有效期有限；过期后请重新发起授权。" }
+    ]
+  }
+}

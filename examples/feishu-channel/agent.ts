@@ -1,9 +1,11 @@
+import { feishuAgentExtension } from "@gea-ai/agent-extension-feishu";
 import { defineAgent } from "@gea-ai/agent-sdk";
 
 export default defineAgent({
   name: "feishu-assistant",
   slug: "feishu-assistant",
-  description: "A Feishu assistant for private chats and shared group topics.",
-  model: "creative-reasoning-1.5",
+  description: "A private-chat assistant connected to Feishu.",
+  model: "deepseek-v4.1-flash",
+  extensions: [{ extension: feishuAgentExtension(), namespace: "feishu" }],
   computer: { enabled: false },
 });

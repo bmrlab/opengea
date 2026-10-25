@@ -1,3 +1,9 @@
+> 2026-10-25 CST: the example now follows Preview v18 SDK/Extension
+> `0.1.261025-alpha.0`, model `deepseek-v4.1-flash`, with the business Connector
+> and bundled A2′ authorization-display Skill enabled. The records below predate
+> this revision; they do not establish its Preview/Feishu acceptance. See the
+> README's A2′ section for offline coverage and remaining Preview checks.
+
 # Verification
 
 ## Published extension migration, 2026-10-19
@@ -182,3 +188,23 @@ Remaining real-message checks beyond the persisted sender-Tool result:
 Real private-message ingress, Agent completion, Feishu reply delivery and recovery
 of the original blocked operation are verified. The other checks listed above
 remain separate acceptance checks.
+
+## Published alpha.2 upgrade, 2026-10-25 CST
+
+Rebased the three authorization-card commits onto main after #19. SDK/Contract
+and Feishu Extension are `0.1.261025-alpha.2`; the separately installed published
+CLI used for validation is `0.2.261025-alpha.2` on Node 24.16.0 / pnpm 12.1.0.
+`pnpm install --frozen-lockfile`, `pnpm type-check`, and `pnpm test` pass (18/18,
+no skipped tests). Published CLI `agent validate --json-file agent-project.json`
+returns valid=true, 1 Connector, 2 skills and 1 custom tool.
+
+The runtime Agent, current_sender, bundled authorization Skill, fixed template,
+URL policy and AGENTS instructions are byte-identical to reviewed `27636e2`.
+Only dependencies/docs and the inherited Host credential-exchange test fixture
+changed. Temporary old-version release-age exceptions were used solely to let
+pnpm inspect the existing lock before regeneration and removed from the final
+workspace policy. Incremental self-review: APPROVE, blocking=0.
+
+No real Feishu message/card, live OAuth or business request was sent by these
+checks. Preview deployment and receiver readiness are recorded separately by the
+operator; neither replaces the manual authorization-card walkthrough.
