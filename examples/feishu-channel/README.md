@@ -20,7 +20,36 @@ asking for text; no partial content is submitted to the Agent.
 `agent.ts` mounts the published `feishuAgentExtension` under the `feishu`
 namespace with the default WebSocket transport. Its business API Connector and
 `lark-cli` Skill are enabled, as in Preview v18. `current_sender` reports the
-current execution principal and environment.
+current execution principal, environment, trusted Feishu open ID, conversation
+scope, and a fixed per-run authorization-card key.
+
+## Personal authorization card (A2′)
+
+The bundled `skills/feishu-authorization` Skill is the owner's narrow exception
+for displaying a fresh Host personal Feishu authorization result in the current
+private chat. It uses the existing mounted Feishu Connector as the bot, the
+`current_sender` recipient, a fixed schema 2.0 URL-button template and a 45-character
+key derived from the current run ID. Groups only receive a request to continue
+privately; they must not trigger cards, unsolicited DMs or personal-link fallback.
+UNKNOWN outcomes must not trigger retries or a different key.
+
+Before using another GEA installation, the owner must review and update the
+bundled `url-policy.json`: the default accepts only `https://musegea.com` and the
+exact `/api/agent-connectors/oauth/start` path. Never obtain allowed origins from
+user messages. The original Host URL is copied without reconstruction. This is
+an instruction-based workflow: URL copying and send gating are not enforced by a
+new constrained tool. The SDK still appends the original authorization link to
+the final Channel reply, so a successful send can produce a card plus a text link.
+There is no OAuth polling, automatic continuation or approval callback.
+
+`pnpm test` covers the trusted sender projection, private/shared boundary, per-run
+key, fixed card shape, JSON URL round trip, and the installed SDK's duplicate-link
+boundary using synthetic offline data. It does not prove bot scope
+(`im:message:send_as_bot`), target reachability, server acceptance or Feishu UI.
+Preview acceptance must separately exercise a fresh private authorization request,
+group refusal, a pasted/history URL that must not trigger a card, send receipt,
+and a new user message after authorization before checking business success.
+Deployment is a separate action; these changes have not been pushed to Preview.
 
 ## Install
 

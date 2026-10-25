@@ -1,3 +1,9 @@
+> 2026-10-25 CST: the example now follows Preview v18 SDK/Extension
+> `0.1.261025-alpha.0`, model `deepseek-v4.1-flash`, with the business Connector
+> and bundled A2′ authorization-display Skill enabled. The records below predate
+> this revision; they do not establish its Preview/Feishu acceptance. See the
+> README's A2′ section for offline coverage and remaining Preview checks.
+
 # Verification
 
 ## Published extension migration, 2026-10-19
