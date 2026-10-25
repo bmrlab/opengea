@@ -1,5 +1,27 @@
 # Verification
 
+## Published alpha.2 upgrade, 2026-10-25 CST
+
+Node 24.16.0 / pnpm 12.8.1. SDK/Contract `0.1.261025-alpha.2` and CLI
+`0.2.261025-alpha.2` are public registry dependencies. Frozen install and
+`pnpm type-check` pass. Target published CLI validate returns valid=true,
+5 tools and 0 connectors; pack succeeds with 7 payload files. The archive
+SHA-256 was independently verified. Local build/config state uses disposable
+directories and an ephemeral random key; no existing credential was copied.
+
+There is no test script in this small declarative example. The actual Agent
+definition, exported AgentMemory object and five generated tools were compiled
+and packaged; no model-dependent cross-Session/restart interaction is claimed.
+The README and dev config now use CLI-owned listener discovery rather than
+promising the ignored legacy apiPort.
+
+The initial refresh checked the old lock against the new release-age list and
+rejected old alpha.2 entries. Temporary exact old-version exceptions allowed
+pnpm to regenerate the lock, then were removed. A final online frozen install
+passes the normal policy; no broad policy relaxation remains.
+
+## Historical checks
+
 Verified on 2026-10-24 at 23:38 CST (Beijing, UTC+8), on
 `MacBook-Pro-10.local`, Apple M5 / macOS arm64.
 

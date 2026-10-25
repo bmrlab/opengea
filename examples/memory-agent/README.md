@@ -10,8 +10,8 @@ make auxiliary model calls.
 
 Use Node 24.16.0 and pnpm 12.8.1 on macOS Apple Silicon (the pinned CLI
 publishes a Darwin arm64 executable).
-Dependencies are public npm packages: SDK `0.1.261024-alpha.2` and CLI
-`0.2.261024-alpha.0`. Each example owns its lockfile; no private repository or
+Dependencies are public npm packages: SDK `0.1.261025-alpha.2` and CLI
+`0.2.261025-alpha.2`. Each example owns its lockfile; no private repository or
 workspace dependency is required.
 
 ```sh
@@ -23,9 +23,9 @@ pnpm agent:pack
 
 For interactive local use, authenticate the CLI with `pnpm exec gea login`, then
 run `pnpm dev`. This uses the authenticated hosted model source and may incur
-model usage. Keep credentials in the CLI credential store. The default local
-ports are 8799 and 8800; if occupied, change both in `agent-dev.json` before
-starting. Use the Agents API address printed by the CLI to select
+model usage. Keep credentials in the CLI credential store. The default Worker port is 8799; if occupied, change `port` in
+`agent-dev.json` before starting. CLI 0.2 owns its separate App Server listener.
+Use the Agents API address printed by the CLI to select
 `memory-notebook` and create Sessions. No cloud push is needed for local use.
 
 ## Try the memory tools
@@ -81,10 +81,9 @@ background job or eviction.
 GEA enhancements [#837](https://github.com/bmrlab/gea/pull/837) (attempt diagnostics),
 [#838](https://github.com/bmrlab/gea/pull/838) (native CI) and
 [#839](https://github.com/bmrlab/gea/pull/839) (multi-slot recall budget) are merged.
-SDK `0.1.261024-alpha.2` includes them and is published on npm. This example pins
+The current published SDK `0.1.261025-alpha.2` includes them. This example pins
 that release to validate the current published SDK. Its single-slot, tool-only
-behavior does not exercise the multi-slot recall allowance. CLI remains at the
-published macOS `0.2.261024-alpha.0`; these SDK changes require no new CLI binary.
+behavior does not exercise the multi-slot recall allowance. CLI is also upgraded to the published macOS `0.2.261025-alpha.2`.
 
 Local validation results and untested boundaries are recorded in
 [VERIFICATION.md](VERIFICATION.md). The example is ready for review; no deployment

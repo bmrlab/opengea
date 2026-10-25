@@ -1,1 +1,5 @@
-{ "cwd": ".", "port": 8799, "apiPort": 8800, "modelSource": "hosted" }
+{
+  "cwd": ".",
+  "port": 8799,
+  "modelSource": "hosted"
+}
