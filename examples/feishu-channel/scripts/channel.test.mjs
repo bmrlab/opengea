@@ -32,14 +32,26 @@ function event({ group = false, sender = "ou_alice", id = "message-1", root, typ
 }
 
 function fixture(allowed = "*") {
-  const sends = [], feedback = [], requests = [];
+  const sends = [], feedback = [], requests = [], exchanges = [];
   const ctx = {
     env: { FEISHU_APP_ID: "app-test", FEISHU_APP_SECRET: "secret-test", FEISHU_VERIFICATION_TOKEN: "token-test", FEISHU_ALLOWED_SENDERS: allowed },
     environment: "local", signal: new AbortController().signal,
+    credentials: {
+      async exchange(request, options) {
+        exchanges.push(request);
+        assert.equal(options.signal, ctx.signal);
+        assert.equal(request.key, "feishu-tenant-token");
+        assert.equal(request.subject, ctx.env.FEISHU_APP_ID);
+        assert.equal(request.audience, "https://open.feishu.cn");
+        assert.equal(request.request.url, "https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal");
+        assert.equal(request.request.method, "POST");
+        assert.deepEqual(JSON.parse(request.request.body), { app_id: ctx.env.FEISHU_APP_ID, app_secret: ctx.env.FEISHU_APP_SECRET });
+        assert.deepEqual(request.response.valuePath, ["tenant_access_token"]);
+        return { value: "access-test" };
+      },
+    },
     async fetch(url, options) {
       requests.push({ url, options });
-      if (url === "https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal")
-        return Response.json({ code: 0, tenant_access_token: "access-test" });
       assert.equal(url, "https://open.feishu.cn/open-apis/bot/v3/info");
       assert.equal(options.headers.authorization, "Bearer access-test");
       return Response.json({ code: 0, bot: { open_id: "bot-test" } });
@@ -51,7 +63,7 @@ function fixture(allowed = "*") {
       };
     },
   };
-  return { ctx, sends, feedback, requests, async accept(body) {
+  return { ctx, sends, feedback, requests, exchanges, async accept(body) {
     return channel.routes[0].handler(new Request("https://fixture.invalid/", { method: "POST", body: JSON.stringify(body) }), ctx);
   } };
 }
@@ -70,6 +82,7 @@ test("private messages keep sender-scoped identity and operation IDs", async () 
   assert.equal(f.sends[0].identity.principal.principalId, f.sends[2].identity.principal.principalId);
   assert.equal(f.sends[0].input.operationId, "event-message-1");
   assert.equal(f.requests.length, 0);
+  assert.equal(f.exchanges.length, 0);
 });
 
 test("bot-mentioned group topic is shared while each caller retains its identity", async () => {
@@ -131,7 +144,7 @@ test("invalid verification token, app or tenant never reaches admission", async 
     const body = event({ group: true });
     body.header[field] = value;
     assert.equal((await f.accept(body)).status, status);
-    assert.equal(f.sends.length + f.feedback.length + f.requests.length, 0);
+    assert.equal(f.sends.length + f.feedback.length + f.requests.length + f.exchanges.length, 0);
   }
 });
 
@@ -141,7 +154,7 @@ test("allowlist fails closed and binds tenant plus sender for private and group 
       const f = fixture();
       f.ctx.env.FEISHU_ALLOWED_SENDERS = allowed;
       assert.equal((await f.accept(event({ group }))).status, 403);
-      assert.equal(f.sends.length + f.feedback.length + f.requests.length, 0);
+      assert.equal(f.sends.length + f.feedback.length + f.requests.length + f.exchanges.length, 0);
     }
     const f = fixture(JSON.stringify([{ tenantKey: "tenant-test", openId: "ou_alice" }]));
     assert.equal((await f.accept(event({ group }))).status, 200);

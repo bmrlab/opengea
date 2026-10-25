@@ -1,8 +1,8 @@
 # Code mode: discover tools, then compose them in JavaScript
 
-See [SDK upgrade verification](../VERIFICATION-261019.md) for current local checks and hosted acceptance limits.
+See [SDK upgrade verification](../VERIFICATION-261025.md) for current local checks and hosted acceptance limits.
 
-Four Agents using public SDK **0.1.261019-alpha.0** and macOS CLI **0.2.261019-alpha.1**:
+Four Agents using public SDK **0.1.261025-alpha.2** and macOS CLI **0.2.261025-alpha.2**:
 
 | Agent                 | Purpose                                                                                                                          |
 | --------------------- | -------------------------------------------------------------------------------------------------------------------------------- |

@@ -1,10 +1,10 @@
 # Feishu Channel
 
-See [SDK upgrade verification](../VERIFICATION-261019.md) for current local checks and hosted acceptance limits.
+See [SDK upgrade verification](../VERIFICATION-261025.md) for current local checks and hosted acceptance limits.
 
 This example uses published SDK/Contract and Feishu extension
-`0.1.261019-alpha.0`, plus the locally pinned CLI/native Runtime
-`0.2.261019-alpha.1`. It accepts private text and rich-text (`post`) messages,
+`0.1.261025-alpha.2`, plus the locally pinned CLI/native Runtime
+`0.2.261025-alpha.2`. It accepts private text and rich-text (`post`) messages,
 and group messages that explicitly mention this application's bot. Group replies
 create or continue the triggering message's topic: members share that topic's
 history while each call retains the actual sender's identity and authorization.
@@ -33,7 +33,7 @@ cp .env.example .env
 pnpm gea --version
 ```
 
-The local dependency pins `@gea-ai/cli@0.2.261019-alpha.1` and resolves its matching
+The local dependency pins `@gea-ai/cli@0.2.261025-alpha.2` and resolves its matching
 native Runtime; no global CLI installation is needed. `GEA_CLI_BIN` can optionally
 select a different compatible executable, but validation here used the pinned
 published binary. This CLI release supports native execution on macOS arm64 only.

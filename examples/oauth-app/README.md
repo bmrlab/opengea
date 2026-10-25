@@ -1,6 +1,6 @@
 # OAuth app · a complete MuseDAM Worker
 
-See [SDK upgrade verification](../VERIFICATION-261019.md) for current local checks and hosted acceptance limits.
+See [SDK upgrade verification](../VERIFICATION-261025.md) for current local checks and hosted acceptance limits.
 
 A **single GEA Worker** containing a TanStack Start application and its MuseDAM
 Agent. It includes GEA user OAuth, per-user MuseDAM connection setup, a full-screen
@@ -43,7 +43,7 @@ and Connector credentials never reach browser JavaScript.
 - A Studio Project with OAuth enabled.
 - A MuseDAM OAuth client registered for GEA's Connector callback.
 
-The example pins published SDK `0.1.261019-alpha.0` and CLI `0.2.261019-alpha.1`. `defineAgent`
+The example pins published SDK `0.1.261025-alpha.2` and CLI `0.2.261025-alpha.2`. `defineAgent`
 owns the Agent's instructions and Connector, and `defineWorker` registers that
 ordinary definition together with the web Fetch handler. No package wrapper is
 needed. This CLI release ships only macOS arm64; Windows and Linux native Runtime
@@ -186,13 +186,11 @@ tool approvals and inline document viewers are outside this example.
 
 ## Local development and tests
 
-**Current upstream blocker:** published CLI `0.2.261019-alpha.1`'s Vite plugin
-still injects a reserved `apiPort` URL and does not inject the CLI-owned Project
-API key. Therefore default `pnpm dev` local discovery is **FAIL**, even though
-build and native Runtime/SQLite fixture tests pass. See the current verification
-record for reproduction. Do not treat those tests as working Vite integration.
-The backend accepts `LOCAL_AGENTS_API_TOKEN` as a secret when a correct local
-API origin/key is supplied; this does not repair the published plugin.
+The example now uses the published CLI `0.2.261025-alpha.2`. Earlier CLI
+`0.2.261019-alpha.1` failed Vite local discovery because its plugin supplied a
+reserved listener URL without the Project API key. Current build/native tests
+and Vite acceptance are recorded separately in the upgrade verification record.
+The backend keeps the local API credential on the server.
 
 `pnpm dev` starts Vite on `http://127.0.0.1:4000` and a native GEA Worker Runtime.
 The default is **local Agents API** mode: the browser calls app backend routes,
