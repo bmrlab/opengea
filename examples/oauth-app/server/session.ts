@@ -58,7 +58,6 @@ export async function loadAgentSession(request: Request) {
     const origin = request.headers.get("origin");
     if (origin && origin !== app.APP_ORIGIN)
       throw new HttpError(403, "invalid_origin", "Invalid request origin.");
-    return { accessToken: undefined, identity: "local-user" };
   }
   const current = await loadSession(request);
   return {
@@ -73,11 +72,7 @@ export async function loadAgentSession(request: Request) {
 export function conversationRuns(
   current: Awaited<ReturnType<typeof loadAgentSession>>,
 ) {
-  const app = getAppEnv();
-  const scope =
-    app.AGENT_ENVIRONMENT === "local"
-      ? JSON.stringify([app.APP_ORIGIN, "local"])
-      : storageScope(getEnv());
+  const scope = storageScope(getEnv());
   return workerEnv.CONVERSATION_RUNS.getByName(
     `${scope}:runs:${current.identity}`,
   );
