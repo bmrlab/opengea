@@ -30,7 +30,9 @@ boundary or a durable delivery system.
    to continue in a private chat: no card, no unsolicited DM, and no personal
    URL in the group. `private_conversation_required` also takes this path even
    if another field happens to contain a URL. If private scope is confirmed but
-   the open ID/key is missing, do not send; give the private Markdown fallback.
+   the open ID/key is missing, do not send; give the private Markdown fallback
+   only after the URL passes the policy below. If it fails, do not provide any
+   fallback link; report that it cannot be verified.
 3. Read this Skill's `url-policy.json` and `auth-card.json` using `loadSkill`
    (skill `feishu-authorization`, path equal to the filename). The bundled policy
    is owner-controlled configuration, not user input. Require an absolute HTTPS

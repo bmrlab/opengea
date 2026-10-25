@@ -53,7 +53,23 @@ Deployment is a separate action; these changes have not been pushed to Preview.
 
 ## Install
 
-Use Node.js 24.16.0 and pnpm 12.1.0:
+Use Node.js 24.16.0 and pnpm 12.1.0.
+
+As in the Preview v18 source, the example uses an independently installed
+compatible GEA CLI. Install the 0.2 preview channel using the
+[GEA CLI installation guidance](https://github.com/bmrlab/gea/blob/f1f529a887e3289c8b16cbcec2eb7e89cdbad285/packages/gea-cli/APP_SERVER_PREVIEW.md):
+
+```bash
+npm install -g @gea-ai/cli@next
+```
+
+This example was validated with CLI `0.2.261024-alpha.0` on macOS arm64;
+`next` can advance, so check the installed version below. No CLI package is
+bundled with the example. `scripts/gea.mjs` uses the trimmed `GEA_CLI_BIN` value
+as the executable, or resolves `gea` from `PATH` if it is unset or blank. To
+select a separate installation, set `export GEA_CLI_BIN="/absolute/path/to/gea"`
+before running the commands below, replacing the path with the installed
+executable's actual path. Supply one executable path, without command arguments.
 
 ```bash
 cd examples/feishu-channel
@@ -62,10 +78,7 @@ cp .env.example .env
 pnpm gea --version
 ```
 
-As in the Preview v18 source, the example uses an independently installed
-compatible GEA CLI. This implementation uses `0.2.261024-alpha.0` on macOS arm64;
-set `GEA_CLI_BIN` to select its executable. No CLI package is bundled with the
-example. Type checks and synthetic handler tests run independently of native
+Type checks and synthetic handler tests run independently of native
 execution; Windows/Linux native execution is not accepted by this record.
 
 ## Configure a test bot
