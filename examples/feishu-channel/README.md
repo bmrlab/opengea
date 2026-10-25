@@ -1,10 +1,11 @@
 # Feishu Channel
 
-See [SDK upgrade verification](../VERIFICATION-261025.md) for current local checks and hosted acceptance limits.
+The runtime configuration follows the Preview v18 source supplied on 2026-10-25.
+[Earlier SDK verification](../VERIFICATION-261025.md) records historical checks,
+not acceptance of this revision.
 
 This example uses published SDK/Contract and Feishu extension
-`0.1.261025-alpha.2`, plus the locally pinned CLI/native Runtime
-`0.2.261025-alpha.2`. It accepts private text and rich-text (`post`) messages,
+`0.1.261025-alpha.2` and the `deepseek-v4.1-flash` model. It accepts private text and rich-text (`post`) messages,
 and group messages that explicitly mention this application's bot. Group replies
 create or continue the triggering message's topic: members share that topic's
 history while each call retains the actual sender's identity and authorization.
@@ -16,11 +17,10 @@ long answers into follow-up cards. Rich text preserves titles, paragraphs, links
 mentions and code. Unsupported attachments or embedded media produce feedback
 asking for text; no partial content is submitted to the Agent.
 
-`extensions/feishu.ts` registers the published `feishuAgentExtension` with
-WebSocket transport. The extension declares the runtime credential variables;
-its business API Connector and `lark-cli` Skill are disabled because this example
-only provides chat replies. `agent.ts` remains an ordinary Agent, and
-`current_sender` reports the current execution principal and environment.
+`agent.ts` mounts the published `feishuAgentExtension` under the `feishu`
+namespace with the default WebSocket transport. Its business API Connector and
+`lark-cli` Skill are enabled, as in Preview v18. `current_sender` reports the
+current execution principal and environment.
 
 ## Install
 
@@ -33,12 +33,11 @@ cp .env.example .env
 pnpm gea --version
 ```
 
-The local dependency pins `@gea-ai/cli@0.2.261025-alpha.2` and resolves its matching
-native Runtime; no global CLI installation is needed. `GEA_CLI_BIN` can optionally
-select a different compatible executable, but validation here used the pinned
-published binary. This CLI release supports native execution on macOS arm64 only.
-Installation, type checks and synthetic handler tests also run independently of
-native execution; Windows/Linux native execution is not accepted by this record.
+As in the Preview v18 source, the example uses an independently installed
+compatible GEA CLI. This implementation uses `0.2.261024-alpha.0` on macOS arm64;
+set `GEA_CLI_BIN` to select its executable. No CLI package is bundled with the
+example. Type checks and synthetic handler tests run independently of native
+execution; Windows/Linux native execution is not accepted by this record.
 
 ## Configure a test bot
 
