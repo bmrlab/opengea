@@ -9,7 +9,7 @@ Each example owns its dependencies and lockfile. There is no root workspace or s
 | [oauth-app](examples/oauth-app/)                       | Complete single-Worker app: TanStack Start, GEA OAuth, embedded MuseDAM Agent, user connections, attachments and SQLite sessions.              |
 | [agents-api](examples/agents-api/)                     | One HTTP flow for Local and Preview: prepare a Session, upload files, edit Computer, run an Agent and reuse its outputs.                       |
 | [observational-memory](examples/observational-memory/) | Configurable context management: raw history, default summaries and a chat DO observations strategy, with recall and prompt-cache comparisons. |
-| [feishu-channel](examples/feishu-channel/)             | A Feishu bot backed by an Agent, with WebSocket message delivery, typed runtime credentials and sender isolation.                              |
+| [feishu-channel](examples/feishu-channel/)             | A Feishu bot backed by an Agent, with WebSocket delivery, per-sender authorization and shared group topics.                              |
 | [subagents](examples/subagents/)                       | Private nested Agents, explicit same-Worker references and self copies, with automatic parent continuation and isolated child history.         |
 | [code-mode](examples/code-mode/)                       | Compare ordinary tools and code mode over remote read-only MCP, with real production traces and data-volume measurements.                       |
 | [subagent-limits](examples/subagent-limits/)           | Regression verifier for concurrency admission, 140 sequential child Runs and retained history; full hosted acceptance remains pending.         |

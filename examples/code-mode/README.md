@@ -1,8 +1,8 @@
 # Code mode: discover tools, then compose them in JavaScript
 
-See [SDK upgrade verification](../VERIFICATION-261008.md) for current local checks and hosted acceptance limits.
+See [SDK upgrade verification](../VERIFICATION-261025.md) for current local checks and hosted acceptance limits.
 
-Four Agents using public SDK **0.1.261008-alpha.0** and macOS CLI **0.1.261008-alpha.0**:
+Four Agents using public SDK **0.1.261025-alpha.2** and macOS CLI **0.2.261025-alpha.2**:
 
 | Agent                 | Purpose                                                                                                                          |
 | --------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
@@ -41,8 +41,8 @@ pnpm gea workspace use --json '{"orgSlug":"your-org","workspaceSlug":"default"}'
 ```
 
 The CLI is a pinned project dependency; no global or private source build is
-required. The launcher retains an older Windows binary; this example is not
-verified on Windows. If another GEA installation uses an incompatible credential
+required. This CLI release ships only macOS arm64; this example is not
+verified on Windows or Linux native Runtime. If another GEA installation uses an incompatible credential
 format, select a separate `GEA_CONFIG_DIR` before login and keep it selected for
 subsequent commands.
 
@@ -154,17 +154,17 @@ and custom tools. Runtime `v0.55.35` and the existing CLI work without an upgrad
 
 Read [agent.ts](agent.ts) and its bundled [instructions](AGENTS.md):
 
-- `codeMode.defaultExposure: "discoverable"` keeps `listWarehouses` and
+- `allowedCallers: ["programmatic"]` keeps `listWarehouses` and
   `readInventory` inside the script tool catalog.
 - `toolsNamespace` supplies the description and usage instructions for namespace
   `tools`; each tool retains its real Zod input schema.
-- `privateCanary` is explicitly `hidden`. It is a harmless probe, excluded from
+- `privateCanary` has `allowedCallers: []`. It is a harmless probe, excluded from
   discovery and unavailable even when the model guesses its name.
 - No output schema is declared: discovery correctly describes the result as
   `unknown`, rather than inventing a return type.
 
 The existing V8 Worker Loader runs scripts with request-scoped tool capabilities.
-Computer is disabled. Removing `codeMode` restores ordinary tool exposure; if you
+Computer is disabled. Disabling `programmaticToolCalling` and selecting `["direct"]` restores ordinary tool exposure; if you
 want the old pure-computation JavaScript tool, declare the SDK's
 `executeJavaScript()` explicitly. `executePython` is unaffected by code mode.
 
@@ -174,11 +174,11 @@ want the old pure-computation JavaScript tool, declare the SDK's
 pnpm dev
 ```
 
-This runs the native Worker Runtime on port **8796** and the local Agents API on
-**8797**, with real model requests through your GEA login. Both ports must be free.
-Use the [Agents API](../agents-api/) caller pattern with
-`http://127.0.0.1:8797/api/v1` and `environment: "local"`, or use the hosted flow
-below. Stop the local server with Ctrl-C.
+This runs the native Worker Runtime on port **8796**, with real model requests
+through your GEA login. CLI 0.2 owns the separate App Server listener. Use its
+printed **Agents API** URL and **Project API key file** with the
+[Agents API](../agents-api/) caller pattern and `environment: "local"`.
+The legacy `apiPort` setting does not select that listener. Stop the local server with Ctrl-C.
 
 Example user request:
 

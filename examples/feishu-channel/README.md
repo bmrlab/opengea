@@ -1,15 +1,26 @@
 # Feishu Channel
 
-See [SDK upgrade verification](../VERIFICATION-261008.md) for current local checks and hosted acceptance limits.
+See [SDK upgrade verification](../VERIFICATION-261025.md) for current local checks and hosted acceptance limits.
 
-A small Agent that receives private text messages through a Feishu bot's long
-connection and replies in the same chat. No public webhook or web application is
-needed for local development. The bot adds a processing reaction, streams its
-answer into a Markdown card, and splits long answers into follow-up cards.
+This example uses published SDK/Contract and Feishu extension
+`0.1.261025-alpha.2`, plus the locally pinned CLI/native Runtime
+`0.2.261025-alpha.2`. It accepts private text and rich-text (`post`) messages,
+and group messages that explicitly mention this application's bot. Group replies
+create or continue the triggering message's topic: members share that topic's
+history while each call retains the actual sender's identity and authorization.
+Ordinary group messages and empty bot mentions do not start a Run.
 
-`channels/feishu.ts` configures the SDK's built-in `feishuChannel` using declared
-`ctx.env` values. `agent.ts` is an ordinary Agent. The `current_sender` Tool shows
-the authenticated execution principal so you can check sender isolation.
+No public webhook or web application is needed for local development. The bot
+adds a processing reaction, streams its answer into a Markdown card, and splits
+long answers into follow-up cards. Rich text preserves titles, paragraphs, links,
+mentions and code. Unsupported attachments or embedded media produce feedback
+asking for text; no partial content is submitted to the Agent.
+
+`extensions/feishu.ts` registers the published `feishuAgentExtension` with
+WebSocket transport. The extension declares the runtime credential variables;
+its business API Connector and `lark-cli` Skill are disabled because this example
+only provides chat replies. `agent.ts` remains an ordinary Agent, and
+`current_sender` reports the current execution principal and environment.
 
 ## Install
 
@@ -19,35 +30,21 @@ Use Node.js 24.16.0 and pnpm 12.1.0:
 cd examples/feishu-channel
 pnpm install --frozen-lockfile
 cp .env.example .env
+pnpm gea --version
 ```
 
-The example pins the public `@gea-ai/agent-sdk` package to
-`0.1.261008-alpha.0`. Install a CLI with Channels support and its matching native
-Worker Runtime:
-
-```bash
-npm install -g @gea-ai/cli@0.1.261008-alpha.0
-```
-
-To use a locally built CLI, put the executable paths in your private `.env`:
-
-```dotenv
-GEA_CLI_BIN=/absolute/path/to/gea-darwin-arm64
-GEA_WORKER_RUNTIME_BINARY=/absolute/path/to/gea-worker-runtime
-WORKER_RUNTIME_SYSTEM_WORKER_ROOT=/absolute/path/to/system-workers
-```
-
-`GEA_CLI_BIN` points to the executable, without arguments. If a compatible `gea`
-is already on `PATH`, omit it. The CLI and native Runtime are currently supported
-on macOS arm64; the launcher retains an older Windows x64 binary, which is
-not verified for this SDK update. Dependency installation and type-checking also
-work on Linux. No private repository is needed to install the example's packages.
+The local dependency pins `@gea-ai/cli@0.2.261025-alpha.2` and resolves its matching
+native Runtime; no global CLI installation is needed. `GEA_CLI_BIN` can optionally
+select a different compatible executable, but validation here used the pinned
+published binary. This CLI release supports native execution on macOS arm64 only.
+Installation, type checks and synthetic handler tests also run independently of
+native execution; Windows/Linux native execution is not accepted by this record.
 
 ## Configure a test bot
 
 Create a Feishu enterprise custom app and enable its bot capability. Configure
 long-connection event delivery and subscribe to `im.message.receive_v1`. Grant
-the app the permissions needed to receive private messages and reply as the bot.
+the app the permissions needed to receive private messages, group bot mentions and reply as the bot.
 For streaming cards and reactions, also grant `cardkit:card:write`,
 `im:message.reactions:write_only`, and `im:message:update` (or an applicable
 broader message-update permission). Publish the updated Feishu app version so
@@ -85,13 +82,14 @@ their secret classification. Keep `.env`, `.gea`, and credential files out of Gi
 
 ```bash
 pnpm type-check
+pnpm test
 pnpm agent:validate
 pnpm agent:pack
 pnpm dev
 ```
 
 Validation and packing do not require credentials. Development loads `.env` and,
-optionally, the file named by `GEA_ENV_FILE`. Only declared Channel variables are
+optionally, the file named by `GEA_ENV_FILE`. Only declared extension Channel variables are
 exposed through `ctx.env`; the local model key is consumed by the CLI's model
 provider. Change the model in `agent.ts` if needed.
 
@@ -120,12 +118,37 @@ Definitive card failures fall back to text. Reaction failures do not block the
 answer. An uncertain delivery outcome stays in Channel diagnostics for explicit
 recovery; it does not automatically send a duplicate fallback reply.
 
-The principal is an opaque identity derived from the app, tenant and sender. It
-is not the installer's GEA identity and does not contain a display name or email.
-The preset currently handles private text messages; it ignores group messages
-and attachments. A connected socket alone does not verify model execution or
+The principal ID is an opaque identity derived from the app, tenant and sender.
+It is not the installer's GEA identity. Principal attributes carry the verified
+sender open ID and tenant key; they are not display names or email addresses.
+Private conversations remain sender-scoped. A group topic deliberately shares
+history with its participants; it does not grant one participant another
+sender's authorization or access to private conversations. A connected socket alone does not verify model execution or
 outbound delivery. Two separately sent messages with the same text have different
 event IDs and are not a duplicate-event test.
+
+## Group and rich-text checks
+
+With a dedicated test bot, explicitly mention it in a group with some text. Its
+reply should start a topic; mention it again inside that topic from a second
+allowed user. Both turns should share topic context, and `current_sender` should
+show the actual caller for each turn. A new top-level mention starts a separate
+topic. Ordinary messages, mentions of a different bot, and bot mentions without
+content should not run the Agent.
+
+Send a private rich-text post with a title, paragraphs, a link and code, then a
+post containing an image. The first should retain its supported text structure;
+the second should request text without executing a partial message. The sender
+allowlist applies to private and group messages alike.
+
+`pnpm test` uses synthetic HTTP-handler requests and in-memory Channel capability
+spies against the published package. It covers group topic routing and caller
+identity, rich-text conversion, unsupported-media feedback, app/tenant/token
+rejection, fail-closed allowlists and the actual WebSocket registration. It does
+**not** run a WebSocket, native Session persistence, real Feishu delivery or card
+rendering. Those live checks above remain **NOT RUN** in this upgrade; no bot
+credentials, messages or hosted configuration were changed. The separately
+recorded native CLI smoke uses synthetic model HTTP and is not Feishu ingress.
 
 ## Run in Studio
 
@@ -153,7 +176,7 @@ pnpm gea agent channel list --json '{"agentId":"your-studio-agent-id"}'
 ```
 
 The Agent's **Channels** page shows the receiver status and supports enabling,
-disabling, and restarting the installation. Run the private-message checks above
+disabling, and restarting the installation. Run the private/group/rich-text checks above
 against this Preview bot to verify real delivery and sender identity.
 
 Hosted execution needs the Channels database migration and matching Web, Worker,
@@ -163,11 +186,13 @@ by the platform.
 
 ## Upgrade an existing installation
 
-Upgrade the SDK, reinstall dependencies, and run `agent push` for the same Studio
+Upgrade the SDK, extension and CLI together, reinstall dependencies, and run `agent push` for the same Studio
 Project and Worker slug. The hosted switch checks readiness and drains the old
-receiver before replacing its target. Existing installation settings, credentials
-and history stay attached to that installation. Confirm the receiver is `ready`
-on the new deployment before repeating the private-message checks.
+receiver before replacing its target. The migration replaces a file-defined Channel with an extension Channel; do not
+assume the prior Channel key, installation or Session history is retained. Inspect
+the newly built manifest and hosted migration behavior before switching a bot.
+Existing-installation continuity is NOT RUN in this upgrade. Confirm the receiver is `ready`
+on the new deployment before repeating the private/group/rich-text checks.
 
 Publishing an SDK version alone does not update an existing Agent bundle.
 After the streaming adapter has written its new output state, returning to the

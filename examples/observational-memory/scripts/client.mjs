@@ -1,9 +1,13 @@
-export async function readHistory(url, chatId) {
+const headers = (apiKey) =>
+  apiKey ? { authorization: `Bearer ${apiKey}` } : {};
+
+export async function readHistory(url, chatId, apiKey) {
   const messages = [];
   let cursor;
   do {
     const response = await fetch(
       `${url}/sessions/${encodeURIComponent(chatId)}/messages?limit=100${cursor ? `&cursor=${encodeURIComponent(cursor)}` : ""}`,
+      { headers: headers(apiKey), redirect: "error" },
     );
     if (!response.ok)
       throw new Error(
@@ -15,11 +19,17 @@ export async function readHistory(url, chatId) {
   } while (cursor);
   return messages;
 }
-export async function runTurn(url, slug, chatId, message) {
+export async function runTurn(url, slug, chatId, message, apiKey) {
   const started = performance.now();
-  const session = await fetch(`${url}/sessions/${chatId}`);
+  const session = await fetch(`${url}/sessions/${chatId}`, {
+    headers: headers(apiKey),
+    redirect: "error",
+  });
   if (session.status === 404) {
-    const discovery = await fetch(`${url}/agents?environment=local`);
+    const discovery = await fetch(`${url}/agents?environment=local`, {
+      headers: headers(apiKey),
+      redirect: "error",
+    });
     if (!discovery.ok)
       throw new Error(`Agent discovery failed: ${discovery.status}`);
     const agent = (await discovery.json()).items.find(
@@ -28,7 +38,8 @@ export async function runTurn(url, slug, chatId, message) {
     if (!agent) throw new Error(`Missing Agent: ${slug}`);
     const created = await fetch(`${url}/sessions`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { ...headers(apiKey), "Content-Type": "application/json" },
+      redirect: "error",
       body: JSON.stringify({
         id: chatId,
         agent_id: agent.id,
@@ -41,7 +52,8 @@ export async function runTurn(url, slug, chatId, message) {
     throw new Error(`Session read failed: ${session.status}`);
   const response = await fetch(`${url}/sessions/${chatId}/runs`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { ...headers(apiKey), "Content-Type": "application/json" },
+    redirect: "error",
     body: JSON.stringify({ input: message, stream: true }),
     signal: AbortSignal.timeout(180000),
   });

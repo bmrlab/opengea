@@ -1,6 +1,6 @@
 # Subagent concurrency and retained history
 
-See [SDK upgrade verification](../VERIFICATION-261008.md) for current local checks and hosted acceptance limits.
+See [SDK upgrade verification](../VERIFICATION-261025.md) for current local checks and hosted acceptance limits.
 
 A coordinator with `maxConcurrentSubagents: 2` calls a private worker through
 ordinary `agent` and `runWait` tools. Real models execute both Agents. The child
@@ -8,8 +8,8 @@ has a bounded `pause` tool, so two unfinished children occupy both slots while
 the parent attempts a third. The verifier checks actual tool receipts, terminal
 Run states and persisted messages; it never trusts the model's final summary.
 
-The example pins public SDK `0.1.261008-alpha.0`. Use published CLI
-`0.1.261008-alpha.0` on macOS arm64, the platform used for the current local
+The example pins public SDK `0.1.261025-alpha.2`. Use published CLI
+`0.2.261025-alpha.2` on macOS arm64, the platform used for the current local
 validation. SDK installation alone does not update the CLI. See
 [VERIFICATION.md](VERIFICATION.md) for local checks and historical hosted results;
 the full 140-child matrix has not yet passed end to end.
@@ -19,7 +19,7 @@ the full 140-child matrix has not yet passed end to end.
 Use Node.js 24.16.0 and pnpm 12.1.0. Install the compatible CLI first:
 
 ```sh
-npm install --global @gea-ai/cli@0.1.261008-alpha.0
+npm install --global @gea-ai/cli@0.2.261025-alpha.2
 ```
 
 ```sh
@@ -39,8 +39,12 @@ The older CLI `0.1.260920-alpha.1` does not support `maxConcurrentSubagents`.
 ## Run the matrix
 
 For local testing, start `pnpm dev` and run `pnpm verify:local` in another terminal.
-The separate Worker/API ports are 8795/8796. This requires a CLI Runtime that
+The Worker port is 8795. CLI 0.2 owns the separate App Server listener. This requires a CLI Runtime that
 supports the new Session concurrency protocol and a GEA login for hosted models.
+
+Set `GEA_LOCAL_AGENTS_API_URL` to the **Agents API** URL printed at startup
+and `GEA_PROJECT_API_KEY` to the contents of the printed **Project API key file**
+in your private `.env` before local verification. These credentials stay in Node.
 
 For hosted testing, create a dedicated Studio Project and push this example:
 

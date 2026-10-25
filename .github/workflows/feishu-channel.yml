@@ -27,3 +27,4 @@ jobs:
       - name: Install public dependencies
         run: pnpm install --frozen-lockfile
       - run: pnpm type-check
+      - run: pnpm test

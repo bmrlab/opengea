@@ -8,7 +8,7 @@ async function fixture(t, handler) {
   const server = createServer(async (request, response) => {
     let body = "";
     for await (const chunk of request) body += chunk;
-    const result = handler(request.method, request.url, body && JSON.parse(body));
+    const result = handler(request.method, request.url, body && JSON.parse(body), request.headers);
     response.writeHead(result.status ?? 200, {
       "content-type": "application/json",
     });
@@ -117,4 +117,20 @@ test("rejected Run is not retried", async (t) => {
     /Run failed \(429\)/,
   );
   assert.equal(writes, 1);
+});
+
+test("local Project Key authenticates discovery, Session, Run and history without changing public Run input", async (t) => {
+  const calls = [];
+  const url = await fixture(t, (method, path, body, headers) => {
+    calls.push({ method, path, body });
+    assert.equal(headers.authorization, "Bearer synthetic-project-key");
+    if (path.endsWith("/agents?environment=local")) return { body: { items: [{ name: "raw", id: "agent" }] } };
+    if (method === "GET" && path.endsWith("/sessions/new")) return { status: 404, body: {} };
+    if (path.endsWith("/messages?limit=100")) return { body: { items: [], next_cursor: null } };
+    return { body: path.endsWith("/runs") ? stream : { id: "new" } };
+  });
+  await client.runTurn(url, "raw", "new", "hello", "synthetic-project-key");
+  await client.readHistory(url, "new", "synthetic-project-key");
+  assert.deepEqual(calls.find((call) => call.path.endsWith("/runs")).body, { input: "hello", stream: true });
+  assert.equal(calls.length, 5);
 });
