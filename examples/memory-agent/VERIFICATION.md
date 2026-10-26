@@ -2,8 +2,8 @@
 
 ## Published alpha.2 upgrade, 2026-10-25 CST
 
-Node 24.16.0 / pnpm 12.8.1. SDK/Contract `0.1.261025-alpha.2` and CLI
-`0.2.261025-alpha.2` are public registry dependencies. Frozen install and
+Node 24.16.0 / pnpm 12.8.1. SDK/Contract `0.1.261025-alpha.2` and the
+October 25 alpha.2 CLI were public registry dependencies. Frozen install and
 `pnpm type-check` pass. Target published CLI validate returns valid=true,
 5 tools and 0 connectors; pack succeeds with 7 payload files. The archive
 SHA-256 was independently verified. Local build/config state uses disposable
@@ -57,3 +57,5 @@ has not had model-dependent cross-Session/restart interactive acceptance. The
 manual walkthrough in README.md remains the procedure for that verification.
 No deployment or cloud push was performed. The PR is ready for review and is
 intentionally left unmerged.
+
+CLI target updated on 2026-10-26 to `0.2.261026-alpha.2`. Earlier dated test results above are historical; see [the current CLI verification](../VERIFICATION-261026.md) for fresh results.

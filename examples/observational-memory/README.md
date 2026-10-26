@@ -12,7 +12,7 @@ See [the recorded local verification](VALIDATION.md) for the original 15-field r
 
 ## Setup
 
-Use Node 24.16.0 and pnpm 12.1.0. The example pins published packages: Agent SDK `0.1.261025-alpha.2` and CLI `0.2.261025-alpha.2`. The SDK brings the matching Contract version. No local GEA checkout or SDK tarballs are required.
+Use Node 24.16.0 and pnpm 12.1.0. The example pins published packages: Agent SDK `0.1.261025-alpha.2` and CLI `0.2.261026-alpha.2`. The SDK brings the matching Contract version. No local GEA checkout or SDK tarballs are required.
 
 ```sh
 pnpm install --frozen-lockfile
@@ -82,4 +82,4 @@ Replace `my-project` with your Studio Project slug. Push registers all three Age
 
 Dependencies and the lockfile are local to this example. Model credentials, native state and generated verification reports are ignored by Git. CI installs only public dependencies and runs type checking and Node tests without model credentials; `pnpm verify` makes paid API calls and is run explicitly.
 
-Current dependency and package verification uses macOS arm64, SDK `0.1.261025-alpha.2`, and CLI `0.2.261025-alpha.2`. This CLI release ships only macOS arm64; Windows and Linux native execution are not verified.
+Current dependency and package verification uses macOS arm64, SDK `0.1.261025-alpha.2`, and CLI `0.2.261026-alpha.2`. This CLI release ships only macOS arm64; Windows and Linux native execution are not verified.

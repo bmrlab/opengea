@@ -11,7 +11,7 @@ make auxiliary model calls.
 Use Node 24.16.0 and pnpm 12.8.1 on macOS Apple Silicon (the pinned CLI
 publishes a Darwin arm64 executable).
 Dependencies are public npm packages: SDK `0.1.261025-alpha.2` and CLI
-`0.2.261025-alpha.2`. Each example owns its lockfile; no private repository or
+`0.2.261026-alpha.2`. Each example owns its lockfile; no private repository or
 workspace dependency is required.
 
 ```sh
@@ -83,7 +83,7 @@ GEA enhancements [#837](https://github.com/bmrlab/gea/pull/837) (attempt diagnos
 [#839](https://github.com/bmrlab/gea/pull/839) (multi-slot recall budget) are merged.
 The current published SDK `0.1.261025-alpha.2` includes them. This example pins
 that release to validate the current published SDK. Its single-slot, tool-only
-behavior does not exercise the multi-slot recall allowance. CLI is also upgraded to the published macOS `0.2.261025-alpha.2`.
+behavior does not exercise the multi-slot recall allowance. CLI is also upgraded to the published macOS `0.2.261026-alpha.2`.
 
 Local validation results and untested boundaries are recorded in
 [VERIFICATION.md](VERIFICATION.md). The example is ready for review; no deployment
