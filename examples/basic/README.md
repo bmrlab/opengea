@@ -64,10 +64,10 @@ These checks need no private GEA checkout, running Agent, credentials or `.gea` 
 
 ## 2. Run locally
 
-Use GEA CLI **0.2.261025-alpha.2** for **macOS ARM64**. It includes the WASM bundler required by this example; the SDK provides the compiled Agent Core.
+Use GEA CLI **0.2.261026-alpha.2** for **macOS ARM64**. It includes the WASM bundler required by this example; the SDK provides the compiled Agent Core.
 
 ```bash
-npm install --global @gea-ai/cli@0.2.261025-alpha.2
+npm install --global @gea-ai/cli@0.2.261026-alpha.2
 gea agent --help
 pnpm run setup:env
 ```

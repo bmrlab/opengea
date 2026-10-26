@@ -70,9 +70,9 @@ pnpm test
 cp .env.example .env
 ```
 
-Use CLI `0.2.261025-alpha.2` with its bundled Runtime for local execution, and
+Use CLI `0.2.261026-alpha.2` with its bundled Runtime for local execution, and
 GEA v0.56 or newer for hosted verification. Both support the Session/Run protocol
-used by this SDK. Install the CLI with `pnpm add -g @gea-ai/cli@0.2.261025-alpha.2`.
+used by this SDK. Install the CLI with `pnpm add -g @gea-ai/cli@0.2.261026-alpha.2`.
 `GEA_CLI_BIN` remains available for testing a compatible local executable.
 
 ```sh

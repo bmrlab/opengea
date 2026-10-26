@@ -60,10 +60,10 @@ compatible GEA CLI. Install the matching published CLI using the
 [GEA CLI installation guidance](https://github.com/bmrlab/gea/blob/f1f529a887e3289c8b16cbcec2eb7e89cdbad285/packages/gea-cli/APP_SERVER_PREVIEW.md):
 
 ```bash
-npm install -g @gea-ai/cli@0.2.261025-alpha.2
+npm install -g @gea-ai/cli@0.2.261026-alpha.2
 ```
 
-This revision uses CLI `0.2.261025-alpha.2` on macOS arm64;
+This revision uses CLI `0.2.261026-alpha.2` on macOS arm64;
 check the installed version below. No CLI package is
 bundled with the example. `scripts/gea.mjs` uses the trimmed `GEA_CLI_BIN` value
 as the executable, or resolves `gea` from `PATH` if it is unset or blank. To

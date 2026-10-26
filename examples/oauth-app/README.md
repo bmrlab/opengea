@@ -43,7 +43,7 @@ and Connector credentials never reach browser JavaScript.
 - A Studio Project with OAuth enabled.
 - A MuseDAM OAuth client registered for GEA's Connector callback.
 
-The example pins published SDK `0.1.261025-alpha.2` and CLI `0.2.261025-alpha.2`. `defineAgent`
+The example pins published SDK `0.1.261025-alpha.2` and CLI `0.2.261026-alpha.2`. `defineAgent`
 owns the Agent's instructions and Connector, and `defineWorker` registers that
 ordinary definition together with the web Fetch handler. No package wrapper is
 needed. This CLI release ships only macOS arm64; Windows and Linux native Runtime
@@ -187,7 +187,7 @@ tool approvals and inline document viewers are outside this example.
 ## Local development and tests
 
 Local Agent execution uses the same browser OAuth login and per-user backend
-bearer as hosted execution. It uses the published CLI `0.2.261025-alpha.2`;
+bearer as hosted execution. It uses the published CLI `0.2.261026-alpha.2`;
 the older `0.2.261019-alpha.1` targeted a reserved legacy API port and failed
 discovery. Current Vite/native consumer checks are recorded in VERIFICATION.md.
 Do not repair OAuth with a Project Key: that selects service authority rather

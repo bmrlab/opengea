@@ -2,7 +2,7 @@
 
 See [SDK upgrade verification](../VERIFICATION-261025.md) for current local checks and hosted acceptance limits.
 
-Four Agents using public SDK **0.1.261025-alpha.2** and macOS CLI **0.2.261025-alpha.2**:
+Four Agents using public SDK **0.1.261025-alpha.2** and macOS CLI **0.2.261026-alpha.2**:
 
 | Agent                 | Purpose                                                                                                                          |
 | --------------------- | -------------------------------------------------------------------------------------------------------------------------------- |

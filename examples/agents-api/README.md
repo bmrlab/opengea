@@ -30,11 +30,11 @@ pnpm test
 Set `CREATIVE_REASONING_API_KEY` in `.env`. Local execution calls an external
 model provider; it does not imply offline inference.
 
-Install public CLI **0.2.261025-alpha.2**, which includes the local Agents API
+Install public CLI **0.2.261026-alpha.2**, which includes the local Agents API
 and its matching Worker Runtime for macOS ARM64:
 
 ```bash
-pnpm add -g @gea-ai/cli@0.2.261025-alpha.2
+pnpm add -g @gea-ai/cli@0.2.261026-alpha.2
 pnpm agent:validate
 pnpm agent:pack
 pnpm dev

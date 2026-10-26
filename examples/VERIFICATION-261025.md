@@ -1,7 +1,7 @@
 # Published SDK and CLI upgrade, 2026-10-25 CST
 
 All eight existing examples pin public SDK/Contract/Feishu extension consumers to
-`0.1.261025-alpha.2`, and CLI consumers to `0.2.261025-alpha.2`. Node 24.16.0;
+`0.1.261025-alpha.2`, and CLI consumers to the October 25 alpha.2 release. Node 24.16.0;
 pnpm 10.30.3 for Basic/OAuth and 12.1.0 for the other examples. Independent lockfiles
 were regenerated with `pnpm install --no-frozen-lockfile` and checked with
 `pnpm install --frozen-lockfile --offline` after the registry downloads completed.
@@ -45,3 +45,5 @@ execution, or Production deployment. Local tests do not wait for GitHub CI.
 
 Sanitized command receipts are retained by the operator under
 `/Users/zhuo/gea-tasks/opengea-update-merge/evidence/19-*`.
+
+CLI target updated on 2026-10-26 to `0.2.261026-alpha.2`. Earlier dated test results above are historical; see [the current CLI verification](./VERIFICATION-261026.md) for fresh results.

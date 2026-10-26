@@ -193,7 +193,7 @@ remain separate acceptance checks.
 
 Rebased the three authorization-card commits onto main after #19. SDK/Contract
 and Feishu Extension are `0.1.261025-alpha.2`; the separately installed published
-CLI used for validation is `0.2.261025-alpha.2` on Node 24.16.0 / pnpm 12.1.0.
+CLI used for that validation was the October 25 alpha.2 release on Node 24.16.0 / pnpm 12.1.0.
 `pnpm install --frozen-lockfile`, `pnpm type-check`, and `pnpm test` pass (18/18,
 no skipped tests). Published CLI `agent validate --json-file agent-project.json`
 returns valid=true, 1 Connector, 2 skills and 1 custom tool.
@@ -208,3 +208,5 @@ workspace policy. Incremental self-review: APPROVE, blocking=0.
 No real Feishu message/card, live OAuth or business request was sent by these
 checks. Preview deployment and receiver readiness are recorded separately by the
 operator; neither replaces the manual authorization-card walkthrough.
+
+CLI target updated on 2026-10-26 to `0.2.261026-alpha.2`. Earlier dated test results above are historical; see [the current CLI verification](../VERIFICATION-261026.md) for fresh results.

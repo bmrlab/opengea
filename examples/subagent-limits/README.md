@@ -9,7 +9,7 @@ the parent attempts a third. The verifier checks actual tool receipts, terminal
 Run states and persisted messages; it never trusts the model's final summary.
 
 The example pins public SDK `0.1.261025-alpha.2`. Use published CLI
-`0.2.261025-alpha.2` on macOS arm64, the platform used for the current local
+`0.2.261026-alpha.2` on macOS arm64, the platform used for the current local
 validation. SDK installation alone does not update the CLI. See
 [VERIFICATION.md](VERIFICATION.md) for local checks and historical hosted results;
 the full 140-child matrix has not yet passed end to end.
@@ -19,7 +19,7 @@ the full 140-child matrix has not yet passed end to end.
 Use Node.js 24.16.0 and pnpm 12.1.0. Install the compatible CLI first:
 
 ```sh
-npm install --global @gea-ai/cli@0.2.261025-alpha.2
+npm install --global @gea-ai/cli@0.2.261026-alpha.2
 ```
 
 ```sh

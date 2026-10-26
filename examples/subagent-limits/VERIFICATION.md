@@ -179,11 +179,12 @@ workspace `default`. The unchanged old example is deployed only to **Preview**.
   `agent-worker.js` import `@gea-ai/contract/agent-session-overrides`, which the
   published contract does not export. The JS/d.ts files exist in its tarball;
   the missing entry is in the publication's export map.
-- Reproduction from this directory:
+- The historical reproduction used the September 20 alpha.1 CLI and its old
+  JSON configuration interface. For current installation, use the pinned CLI in
+  [README.md](README.md), then validate from this directory with:
 
   ```sh
-  npm exec --yes --package=@gea-ai/cli@0.1.260920-alpha.1 -- \
-    gea agent validate --json '{"cwd":"."}'
+  gea agent validate --json-file agent-project.json
   ```
 
 - Source `packages/contract/package.json` has the source export but omits it

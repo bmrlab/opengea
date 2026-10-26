@@ -82,8 +82,8 @@ importers:
         specifier: 5.20260915.1
         version: 5.20260915.1
       '@gea-ai/cli':
-        specifier: 0.2.261025-alpha.2
-        version: 0.2.261025-alpha.2
+        specifier: 0.2.261026-alpha.2
+        version: 0.2.261026-alpha.2
       '@tailwindcss/vite':
         specifier: 4.3.3
         version: 4.3.3(vite@8.2.1(@types/node@24.10.1)(esbuild@0.28.1)(jiti@2.7.0)(yaml@2.9.1))
@@ -544,8 +544,8 @@ packages:
       esbuild:
         optional: true
 
-  '@gea-ai/cli-darwin-arm64@0.2.261025-alpha.2':
-    resolution: {integrity: sha512-6UO3q6DL4djf3i+F1HAhnr1IQmvhhiQ5q4Dv4SZnW7z/iBdsmG/iAYOwPUbrFnJ1oIEmbARxQ2B1xBVfCmeBHg==}
+  '@gea-ai/cli-darwin-arm64@0.2.261026-alpha.2':
+    resolution: {integrity: sha512-i4l42QTj0gvP0KZPipNH5AXVRbBkPIF8OhTdMIu1b6n7gQ1xN0sLVTysl3Hf6xfAYNYGRq5yyR8PHELuIkYHkA==}
     cpu: [arm64]
     os: [darwin]
     hasBin: true
@@ -553,8 +553,8 @@ packages:
       - esbuild
       - sharp
 
-  '@gea-ai/cli@0.2.261025-alpha.2':
-    resolution: {integrity: sha512-e12rQaxWeuu/JaShwmEhwDj5p60CFoRjbK4dTbsm44P7g9c5uM4CaCw6W7MH3fOk30yPHnibO7moXuG1+wB3XA==}
+  '@gea-ai/cli@0.2.261026-alpha.2':
+    resolution: {integrity: sha512-jyRSiy37tJ4CA38u333cqHcctD96dgHjLjw01XioWozRS6Yzp8CYrHO4oXqBJ+CCIwqMxHoc4MWalNnqumkkkQ==}
     os: [darwin]
     hasBin: true
 
@@ -4982,12 +4982,12 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@gea-ai/cli-darwin-arm64@0.2.261025-alpha.2':
+  '@gea-ai/cli-darwin-arm64@0.2.261026-alpha.2':
     optional: true
 
-  '@gea-ai/cli@0.2.261025-alpha.2':
+  '@gea-ai/cli@0.2.261026-alpha.2':
     optionalDependencies:
-      '@gea-ai/cli-darwin-arm64': 0.2.261025-alpha.2
+      '@gea-ai/cli-darwin-arm64': 0.2.261026-alpha.2
 
   '@gea-ai/contract@0.1.261025-alpha.2':
     dependencies:
