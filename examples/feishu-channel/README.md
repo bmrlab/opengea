@@ -31,7 +31,13 @@ private chat. It uses the existing mounted Feishu Connector as the bot, the
 `current_sender` recipient, a fixed schema 2.0 URL-button template and a 45-character
 key derived from the current run ID. Groups only receive a request to continue
 privately; they must not trigger cards, unsolicited DMs or personal-link fallback.
-UNKNOWN outcomes must not trigger retries or a different key.
+Each new user-message Run has its own one-card allowance, including in an old
+session. Reload the current Skill before sending or correcting local parameters;
+historical Skill output and failures do not define the current procedure. Obtain
+a fresh Host URL each time (10-minute validity). Only a proven pre-execution
+local parameter rejection permits one same-Run correction with the same key;
+a second rejection stops. UNKNOWN outcomes must not trigger retries or a
+different key. User replies contain only send status and authorization next steps.
 
 Before using another GEA installation, the owner must review and update the
 bundled `url-policy.json`: the default accepts only `https://musegea.com` and the
@@ -43,13 +49,16 @@ the final Channel reply, so a successful send can produce a card plus a text lin
 There is no OAuth polling, automatic continuation or approval callback.
 
 `pnpm test` covers the trusted sender projection, private/shared boundary, per-run
-key, fixed card shape, JSON URL round trip, and the installed SDK's duplicate-link
-boundary using synthetic offline data. It does not prove bot scope
+key across Runs in one session, fixed card shape, JSON URL round trip, bundled
+user-reply copy and the installed SDK's duplicate-link boundary using synthetic
+offline data. It does not prove bot scope
 (`im:message:send_as_bot`), target reachability, server acceptance or Feishu UI.
 Preview acceptance must separately exercise a fresh private authorization request,
 group refusal, a pasted/history URL that must not trigger a card, send receipt,
 and a new user message after authorization before checking business success.
 Deployment is a separate action; these changes have not been pushed to Preview.
+The Skill's [offline retry scenarios](skills/feishu-authorization/retry-scenarios.md)
+cover stale session instructions, bounded correction and UNKNOWN separately.
 
 ## Install
 

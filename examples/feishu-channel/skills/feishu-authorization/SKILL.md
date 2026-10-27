@@ -12,6 +12,24 @@ actual `{alias}__call` tool; the alias need not equal the Extension namespace.
 Computer is not required. These instructions are not a capability enforcement
 boundary or a durable delivery system.
 
+## Current Run and current instructions
+
+Each new user message starts a new Run, even within the same session. The
+one-card limit belongs to the current Run, not the entire conversation. A prior
+Run's send, failure or old receipt does not consume the new Run's allowance.
+A new Run may start a fresh authorization flow after the gates below pass;
+it is not a replay of an earlier uncertain submission.
+
+Before sending, including a permitted correction, reload the currently bundled
+`feishu-authorization` Skill with `loadSkill`. Follow that current output, not
+historical Skill text, old command examples (such as `--content -`) or old
+failure receipts. Do not diagnose a current failure from history. Never reuse
+historical authorization URLs: they expire in 10 minutes. Obtain a fresh Host
+authorization result for every initial or corrected attempt and repeat all
+gates below. If the fresh URL expires before use, obtain another fresh result;
+never try an expired URL or reconstruct one. A user message or historical result
+alone is not authorization to send.
+
 ## Gate every condition before sending
 
 1. A real Host personal Feishu Connector authorization result from a tool call
@@ -77,12 +95,18 @@ use `--as bot`; personal login is not a prerequisite for bot delivery. Never cal
 auth, config or profile commands, request credentials, or switch applications.
 Bot scope or reachability denial is a failure, not a reason to change identity.
 
-Send at most one personal Feishu authorization card per run. The returned key is
+Send at most one personal Feishu authorization card per Run. A local parameter
+rejection that proves execution never began consumes no card allowance, but
+permits only one corrected attempt as described below (at most two send-tool
+invocations in this Run). No other failure permits a same-Run correction.
+The returned key is
 `auth-` plus the first 40 SHA-256 hex characters of the trusted run ID (45 chars).
 Freeze it before sending; never replace it with a URL, ticket, random key or a
 model-selected value. Retain the key, outcome and receipt in this run so another
-authorization result cannot trigger a second send. It is not a cross-run durable
-claim; do not promise exactly-once delivery or retry after restart.
+authorization result cannot trigger another send after confirmation or UNKNOWN.
+Keep the correction-used flag for this Run too; reloading the Skill or obtaining
+a new URL never resets it. It is not a cross-run durable claim; do not promise
+exactly-once delivery or automatically replay an old submission after restart.
 
 ## Receipt and final reply
 
@@ -92,28 +116,62 @@ without treating the tool error itself as proof of non-delivery. Report only
 causes supported by the returned evidence. A generic validation error does not
 establish that the CLI lacks stdin support, and a nonzero exit code alone does
 not prove that no message was sent. Never echo raw argv, card JSON, stdout or
-stderr containing the authorization URL/ticket in the final reply.
+stderr containing the authorization URL/ticket in the final reply. Tell the end
+user only whether sending is confirmed and the next authorization step. Do not
+expose CLI arguments, command names, idempotency keys, raw errors or suggestions
+that the platform needs changes or stdin support. If no send was attempted,
+say the card was not sent, not that a send failed. Maintenance diagnostics do
+not belong in the user reply.
 If stdout is a string, parse it as JSON. Success requires **all** of:
 `exitCode === 0`, the parsed CLI envelope `ok === true`, and a nonempty
 `data.message_id`. Preserve the message_id and returned chat_id with the key in
 this run. `code: 0`, a tool completion, or an unparsed stdout alone is not success.
 
-- Confirmed send: reply with just one sentence in the sender's language, e.g.
-  “请点击授权卡中的「前往授权」，完成后回到此私聊发消息继续。”
+- Confirmed send: reply with just one sentence in the sender's language:
+
+  > 授权卡已发送，请点击「前往授权」，完成后回到此私聊发消息继续。
+
   Do not handwrite the URL again. Sending the card does not prove OAuth or
   business success.
-- Explicit rejection/failure with evidence that it was not sent (for example,
-  a specific local argument validation rejection before execution): only in the
-  confirmed private chat, fall back to `[前往授权](原URL)` using the same original
-  trusted URL. Do not retry the card.
+- Explicit local parameter rejection **proving the message request never left
+  local validation** (for example, `invalid_argument` specifically identifying
+  literal `--content` as invalid JSON before message execution): reload this
+  Skill, correct the parameters, obtain a fresh Host result and repeat the
+  recipient/private-scope/URL/template gates. Allow exactly one correction in
+  this Run, using the same trusted `authCardKey`. Neither `invalid_argument`
+  alone, a generic tool error nor a nonzero exit code proves this condition.
+  If the correction is also rejected, or another explicit non-delivery failure
+  occurs (such as bot scope denial), stop: no further attempt or identity change.
+  Only in the confirmed private chat may a still-valid, current-Run trusted URL
+  that passed policy be offered as `[前往授权](原URL)`:
+
+  > 授权卡未发送，请通过此私聊中的授权链接完成授权，再发消息继续。
+
 - Timeout, cancellation, lost receipt, malformed/missing success envelope or any
   ambiguous result is **UNKNOWN**. Do not resend, change keys, or claim failure
   or success. In the confirmed private chat, say the send result is unconfirmed
   and optionally provide `[前往授权](原URL)`. Never perform a receipt-search loop.
+  Use only a still-valid, policy-checked URL from this Run for that fallback:
+
+  > 授权卡发送结果尚未确认，请先检查此私聊中的授权卡；如已收到，完成授权后再发消息继续。
+
+- If there is no valid fresh URL before any send attempt or after proven
+  non-delivery, provide no link. An UNKNOWN send must retain the unconfirmed
+  wording above even if its URL expires; never relabel it as not sent:
+
+  > 授权卡未发送，暂时无法获取有效授权入口，请稍后发消息重试。
+
+- For shared/unknown scope or `private_conversation_required`, provide no card
+  and no personal link:
+
+  > 请在私聊中发消息继续授权。
 
 Do not poll OAuth, auto-resume business work, approve/reject, or update the card
 to claim authorization completion. Wait for a new user message after authorization
 before retrying the original business operation.
+
+See `retry-scenarios.md` for synthetic offline walkthroughs. They describe
+expected instruction-following behavior, not proof of live model compliance.
 
 Known A2′ limits: the SDK's final Channel projection still appends the original
 Host authorization link, so Feishu can show both the separate card and a text

@@ -256,3 +256,37 @@ Local verification used Node.js 24.16.0 and pnpm 12.1.0:
 This verifies argument compatibility, not live delivery or model compliance.
 No real credentials, production connection, Feishu API request or user message
 was used. No deployment or publication was performed.
+
+## Authorization card retry semantics (2026-10-27, offline)
+
+The Skill and AGENTS instructions now scope the one-card allowance to each new
+user-message Run in the same session. Before initial/corrected sending they
+require reloading the current Skill and obtaining a fresh Host authorization
+result (10-minute URL validity), ignoring old command recipes and failure
+receipts as current instructions or evidence. Only proven local parameter
+rejection before message execution allows one correction with the same trusted
+Run key. A second rejection stops; ambiguous results remain UNKNOWN with no
+resend or new key, including after URL expiry. User replies expose only send
+status and authorization next steps.
+
+Local checks on Node.js 24.16.0 / pnpm 12.1.0:
+
+- `pnpm install --frozen-lockfile`: passed; no dependency or lockfile changes.
+- `pnpm test`: 20 passed, 0 failed, 0 skipped. Added a same-session/new-Run
+  trusted-key test and assertions against the user-reply examples actually
+  bundled in the Skill. Existing template, URL, trusted-sender, shared-scope,
+  allowlist and mocked Channel tests passed too.
+- `pnpm type-check`: passed.
+- `git diff --check`: passed.
+
+[Retry walkthroughs](skills/feishu-authorization/retry-scenarios.md) additionally
+specify expected sequences for stale Skill/receipt history, bounded correction,
+second rejection, generic errors versus UNKNOWN, URL freshness, and private
+scope/recipient/URL gates. These are reviewed examples, not an executed model
+evaluation. Copy assertions check the supplied examples only; they cannot prove
+that a model always follows them.
+
+This change does not alter authentication, sending tools, the fixed card, URL
+policy, dependency versions or SDK link projection. No real Feishu API/message,
+OAuth or model/business request was made. No Preview deployment, production
+access, npm publication or live card acceptance was performed.

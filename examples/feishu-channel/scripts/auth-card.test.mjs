@@ -68,3 +68,22 @@ test("installed SDK still appends the original Host URL after a one-sentence car
   ] }, "reply");
   assert.equal(result.text, `${text}\n\n${url}`);
 });
+
+test("bundled user reply examples contain only send status and authorization next steps", async () => {
+  // Checks the copy actually supplied to the model, not generated model behavior.
+  const skill = await readFile(new URL("SKILL.md", skillRoot), "utf8");
+  const receiptSection = skill.split("## Receipt and final reply\n")[1];
+  const replies = [...receiptSection.matchAll(/^\s*> (.+)$/gm)].map((match) => match[1]);
+  assert.equal(replies.length, 5);
+  assert.match(replies[0], /授权卡已发送/);
+  assert.match(replies[1], /授权卡未发送/);
+  assert.match(replies[2], /发送结果尚未确认/);
+  assert.doesNotMatch(replies[2], /已发送|发送失败/);
+  assert.match(replies[3], /未发送.*无法获取有效授权入口/);
+  assert.match(replies[4], /私聊/);
+  for (const reply of replies) {
+    assert.match(reply, /授权/);
+    assert.match(reply, /点击|请/);
+    assert.doesNotMatch(reply, /CLI|stdin|--\w|idempotency|authCardKey|幂等|参数|平台|改造|stdout|stderr|exitCode|invalid_argument|https?:\/\//i);
+  }
+});
