@@ -210,3 +210,49 @@ checks. Preview deployment and receiver readiness are recorded separately by the
 operator; neither replaces the manual authorization-card walkthrough.
 
 CLI target updated on 2026-10-26 to `0.2.261026-alpha.2`. Earlier dated test results above are historical; see [the current CLI verification](../VERIFICATION-261026.md) for fresh results.
+
+## Authorization card content argument (2026-10-27, offline)
+
+The bundled authorization Skill previously prescribed `--content -` plus a
+separate stdin payload. GEA forwards stdin, but the pinned official
+`@larksuite/cli@1.0.90` message-send shortcut declares `content` without an input
+source resolver and validates its literal value as JSON. The old instruction
+therefore fails before message execution. This is specific to that command and
+flag; it does not establish that the CLI generally lacks stdin support.
+
+References at official CLI tag `v1.0.90` (commit
+`c8f06cd167fe352bf75a02f04a304875b9a68a2d`):
+
+- `shortcuts/im/im_messages_send.go:32`: literal content flag;
+  `:142`: JSON validation; `:151`: message execution.
+- `shortcuts/common/runner.go:1278`: input resolution only for flags with an
+  `Input` declaration; `:1152`: validation precedes execution.
+
+The Skill now passes the complete serialized fixed card as one inline argv
+value and leaves stdin empty. Its receipt policy and the Agent instructions
+require evidence for error causes and non-delivery; ambiguous outcomes remain
+UNKNOWN with no resend or key change.
+
+Local verification used Node.js 24.16.0 and pnpm 12.1.0:
+
+- `pnpm install --frozen-lockfile`: passed, no lockfile change.
+- `pnpm test`: 18 passed, none failed or skipped.
+- `pnpm type-check`: passed.
+- `git diff --check`: passed.
+- Released Darwin arm64 CLI `1.0.90`, archive SHA-256 checked against its npm
+  package's `checksums.txt`:
+  `894c68176bd4015e8478094ded6d9c7ad76abf9d9cd5679d36b23d0b74d4db02`.
+  Executed only `--version` and `im +messages-send ... --dry-run`, under macOS
+  `sandbox-exec` with `(deny network*)`, an isolated temporary HOME/config and
+  synthetic app configuration. The argv/stdin examples were parsed directly
+  from the old and updated Skill Markdown, with synthetic recipient/key/URLs.
+  The old example exited 2 with `validation/invalid_argument` and
+  `--content is not valid JSON: -`. The updated example exited 0 with
+  `ok: true`, `dry_run: true`; the planned interactive-message body preserved
+  the full card, recipient and 45-character key. Both existing synthetic URL
+  cases (percent escapes, plus sign, duplicate query keys and encoded quotes)
+  survived byte-for-byte.
+
+This verifies argument compatibility, not live delivery or model compliance.
+No real credentials, production connection, Feishu API request or user message
+was used. No deployment or publication was performed.
