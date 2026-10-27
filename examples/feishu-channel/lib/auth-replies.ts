@@ -18,7 +18,10 @@ export function authorizationReplyText(text: string): string {
   // or model-rewritten links. Unrecognized copy must not claim delivery success.
   const fixedReply = authorizationReplies.find((reply) => text.trimStart().startsWith(reply));
   if (fixedReply) return fixedReply;
-  return /\/api\/agent-connectors\/oauth\/start|\bticket\s*[=:]/iu.test(text) ? safeNotice : text;
+  // The SDK appends the known Host OAuth entry whenever authorization tool
+  // output is present. A bare ticket field is also ordinary business data or
+  // source code, so it cannot establish authorization context on its own.
+  return /\/api\/agent-connectors\/oauth\/start/iu.test(text) ? safeNotice : text;
 }
 
 export function withoutAuthorizationEcho<TState, TContext, TPayload>(

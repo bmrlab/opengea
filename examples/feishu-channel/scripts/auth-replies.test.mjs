@@ -113,7 +113,6 @@ test("unrecognized or rewritten authorization prose gets neutral fixed copy", ()
   for (const text of [
     `发送失败，改用[前往授权](${url})`,
     `授权卡已发送，${url}`,
-    `片段 ${syntheticTicket} ticket=${syntheticTicket}`,
     `https://musegea.com/api/agent-connectors/oauth/start?modified=yes`,
   ]) {
     const safe = authorizationReplyText(text);
@@ -152,3 +151,72 @@ test("ordinary completed text and links survive without tool preview text", asyn
   await f.drain();
   assert.ok(f.payloads.some((payload) => payload.kind === "card-final" && payload.text === text));
 });
+
+// The independent review's ordinary replies must survive the registered Channel,
+// SDK reply extraction, persisted projection state and outbound HTTP serialization.
+const ordinaryReplies = [
+  ["ordinary-ticket-assignment", "工单创建成功，ticket=12345，请联系支持处理。"],
+  ["ordinary-typescript-interface", "interface SupportRequest { ticket: string; priority: number; }"],
+  ["ordinary-issue-link", "[查看工单](https://example.test/support?ticket=12345)"],
+  ["ordinary-control", "pong\n[文档](https://example.test/guide)"],
+];
+for (const [name, text] of ordinaryReplies) {
+  for (const rejectCards of [false, true]) {
+    test(`${name}: preserves ordinary reply in ${rejectCards ? "text fallback" : "card"} output`, async () => {
+      const f = fixture({ rejectCards });
+      await f.emit("run.started");
+      await f.drain();
+      const reply = extractChannelReply({ id: "reply", parts: [{ type: "text", text }] }, "reply");
+      await f.emit("run.succeeded", { reply });
+      await f.drain();
+      const replies = f.payloads.filter((payload) => ["card-final", "card-update", "text-reply"].includes(payload.kind));
+      assert.ok(replies.length > 0);
+      assert.ok(replies.every((payload) => payload.text === text), "preserve the complete ordinary reply");
+      assert.equal(replies.at(-1).kind, rejectCards ? "text-reply" : "card-final");
+      assert.ok(containsText(f.bodies, text), "provider body preserves ordinary reply");
+      assert.equal(JSON.stringify(f.bodies).includes("请查看此私聊中的授权卡"), false);
+    });
+  }
+}
+
+function containsText(value, text) {
+  if (typeof value === "string") {
+    if (value.includes(text)) return true;
+    try { return containsText(JSON.parse(value), text); } catch { return false; }
+  }
+  return value !== null && typeof value === "object"
+    && Object.values(value).some((entry) => containsText(entry, text));
+}
+
+test("a bare ticket field does not establish authorization context", () => {
+  const text = `片段 ${syntheticTicket} ticket=${syntheticTicket}`;
+  assert.equal(authorizationReplyText(text), text);
+});
+
+// The same business replies must still be suppressed when the SDK appends the
+// known Host entry from an authorization tool result, with no delivery claim.
+for (const [name, text] of ordinaryReplies) {
+  for (const status of ["authorization_required", "authorization_available"]) {
+    for (const rejectCards of [false, true]) {
+      test(`${name}: ${status} keeps credentials out of ${rejectCards ? "text fallback" : "card"} output`, async () => {
+        const f = fixture({ rejectCards });
+        await f.emit("run.started");
+        await f.drain();
+        const reply = extractChannelReply({ id: "reply", parts: [
+          { type: "tool-feishu__call", state: "output-available", output: { status, url } },
+          { type: "text", text },
+        ] }, "reply");
+        assert.ok(reply.text.includes(url), "exercise the installed SDK append");
+        await f.emit("run.succeeded", { reply });
+        await f.drain();
+        assertNoAuthorization(f.payloads);
+        assertNoAuthorization(f.bodies);
+        const replies = f.payloads.filter((payload) => ["card-final", "card-update", "text-reply"].includes(payload.kind));
+        assert.ok(replies.length > 0);
+        assert.ok(replies.every((payload) => payload.text === "请查看此私聊中的授权卡；如未收到，请稍后再发一条消息重试。"));
+        assert.ok(replies.every((payload) => !/已发送|未发送/.test(payload.text)));
+        assert.equal(replies.at(-1).kind, rejectCards ? "text-reply" : "card-final");
+      });
+    }
+  }
+}
