@@ -62,3 +62,17 @@ test("auth card key is stable per run, short, and independent of principal and U
   assert.notEqual((await read(ctx)).authCardKey, expected);
   assert.equal((await read(context({ identity: undefined }))).authCardKey, null);
 });
+
+test("a new user-message run in the same session receives its own trusted card key", async () => {
+  const previous = context();
+  const next = structuredClone(previous);
+  next.identity.run.id = "run-private-2";
+  const before = await read(previous);
+  const after = await read(next);
+  assert.equal(previous.identity.chat.id, next.identity.chat.id);
+  assert.equal(after.senderOpenId, before.senderOpenId);
+  assert.equal(after.sharedConversation, false);
+  assert.notEqual(after.authCardKey, before.authCardKey);
+  // A correction keeps the same run identity; a reload must not invent a new key.
+  assert.equal((await read(structuredClone(next))).authCardKey, after.authCardKey);
+});
