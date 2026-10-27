@@ -44,6 +44,7 @@ boundary or a durable delivery system.
    Other GEA installations require a reviewed bundled policy update first.
 4. Read version-matched official CLI guidance with the same Connector:
    `argv: ["im", "+messages-send", "--help"]`, and the lark-im Skill's
+   `references/lark-im-messages-send.md` and
    `references/card/components/button.md` through `skills read`. Discovery is
    read-only. If the documented command is unavailable, treat that as an explicit
    failure; do not improvise another command, app, profile or identity.
@@ -58,12 +59,18 @@ wrap in a Feishu applink, or abbreviate the URL. Do not add callbacks, approve o
 reject actions, other buttons, recipients, titles, summaries, or URL-bearing logs.
 Keep the original URL in this run only; never save tickets to long-term memory.
 
-Call the mounted Feishu `{alias}__call` with this literal argv array (substitute
-only the two trusted `current_sender` values), and stdin = `JSON.stringify(card)`:
+Call the mounted Feishu `{alias}__call` with this argv array. Substitute only
+the two trusted `current_sender` values and the complete `JSON.stringify(card)`
+string as the single argument immediately after `--content`. Leave stdin empty:
 
 ```json
-{"argv":["im","+messages-send","--as","bot","--user-id","<senderOpenId>","--msg-type","interactive","--content","-","--idempotency-key","<authCardKey>"],"stdin":"<JSON.stringify(card)>"}
+{"argv":["im","+messages-send","--as","bot","--user-id","<senderOpenId>","--msg-type","interactive","--content","<JSON.stringify(card)>","--idempotency-key","<authCardKey>"],"stdin":""}
 ```
+
+For this message-send command, `--content` takes inline JSON. Do not use `-`,
+`@file`, or a separate stdin payload for the card. Stdin support in another CLI
+command does not establish support for this flag. Do not double-stringify the
+card or wrap the argument in shell quotes: the tool already accepts an argv array.
 
 Do not include an executable prefix, shell quotes, pipes or redirection. Always
 use `--as bot`; personal login is not a prerequisite for bot delivery. Never call
@@ -80,6 +87,12 @@ claim; do not promise exactly-once delivery or retry after restart.
 ## Receipt and final reply
 
 Inspect the Connector's `exitCode`, `stdout` and `stderr` (including error details).
+A failed tool call may carry the CLI result in its error details; inspect those
+without treating the tool error itself as proof of non-delivery. Report only
+causes supported by the returned evidence. A generic validation error does not
+establish that the CLI lacks stdin support, and a nonzero exit code alone does
+not prove that no message was sent. Never echo raw argv, card JSON, stdout or
+stderr containing the authorization URL/ticket in the final reply.
 If stdout is a string, parse it as JSON. Success requires **all** of:
 `exitCode === 0`, the parsed CLI envelope `ok === true`, and a nonempty
 `data.message_id`. Preserve the message_id and returned chat_id with the key in
@@ -89,7 +102,8 @@ this run. `code: 0`, a tool completion, or an unparsed stdout alone is not succe
   “请点击授权卡中的「前往授权」，完成后回到此私聊发消息继续。”
   Do not handwrite the URL again. Sending the card does not prove OAuth or
   business success.
-- Explicit rejection/failure with evidence that it was not sent: only in the
+- Explicit rejection/failure with evidence that it was not sent (for example,
+  a specific local argument validation rejection before execution): only in the
   confirmed private chat, fall back to `[前往授权](原URL)` using the same original
   trusted URL. Do not retry the card.
 - Timeout, cancellation, lost receipt, malformed/missing success envelope or any
