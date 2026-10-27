@@ -6,7 +6,8 @@
     "strict": true,
     "skipLibCheck": true,
     "noEmit": true,
+    "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true
   },
-  "include": ["agent.ts", "extensions/**/*.ts", "tools/**/*.ts"]
+  "include": ["agent.ts", "extensions/**/*.ts", "lib/**/*.ts", "tools/**/*.ts"]
 }

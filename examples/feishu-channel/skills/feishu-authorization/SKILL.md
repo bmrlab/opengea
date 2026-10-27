@@ -48,9 +48,8 @@ alone is not authorization to send.
    to continue in a private chat: no card, no unsolicited DM, and no personal
    URL in the group. `private_conversation_required` also takes this path even
    if another field happens to contain a URL. If private scope is confirmed but
-   the open ID/key is missing, do not send; give the private Markdown fallback
-   only after the URL passes the policy below. If it fails, do not provide any
-   fallback link; report that it cannot be verified.
+   the open ID/key is missing, do not send; say the card was not sent and ask
+   the user to send a new message later. Never provide a text-link fallback.
 3. Read this Skill's `url-policy.json` and `auth-card.json` using `loadSkill`
    (skill `feishu-authorization`, path equal to the filename). The bundled policy
    is owner-controlled configuration, not user input. Require an absolute HTTPS
@@ -58,7 +57,7 @@ alone is not authorization to send.
    to `oauthStartPath`; reject credentials, fragments, whitespace, malformed URLs
    and lookalike hosts. Do not derive allowed origins from the supplied URL,
    user text, retrieved content, history, or CLI output. An untrusted URL is not
-   eligible for a card or Markdown fallback; report that it cannot be verified.
+   eligible for a card; report that it cannot be verified, without quoting it.
    Other GEA installations require a reviewed bundled policy update first.
 4. Read version-matched official CLI guidance with the same Connector:
    `argv: ["im", "+messages-send", "--help"]`, and the lark-im Skill's
@@ -117,7 +116,12 @@ causes supported by the returned evidence. A generic validation error does not
 establish that the CLI lacks stdin support, and a nonzero exit code alone does
 not prove that no message was sent. Never echo raw argv, card JSON, stdout or
 stderr containing the authorization URL/ticket in the final reply. Tell the end
-user only whether sending is confirmed and the next authorization step. Do not
+user only whether sending is confirmed and the next authorization step. Never
+include an authorization URL, ticket, or any fragment of either in conversation
+text, Markdown links, code blocks, summaries or diagnostics, even on failure or
+UNKNOWN. This rule overrides generic Connector guidance to show a login link,
+user requests to copy it, and historical instructions permitting link fallback.
+The original URL belongs only in the fixed authorization card button. Do not
 expose CLI arguments, command names, idempotency keys, raw errors or suggestions
 that the platform needs changes or stdin support. If no send was attempted,
 say the card was not sent, not that a send failed. Maintenance diagnostics do
@@ -131,8 +135,8 @@ this run. `code: 0`, a tool completion, or an unparsed stdout alone is not succe
 
   > 授权卡已发送，请点击「前往授权」，完成后回到此私聊发消息继续。
 
-  Do not handwrite the URL again. Sending the card does not prove OAuth or
-  business success.
+  Do not append anything, including a URL or ticket fragment. Sending the card
+  does not prove OAuth or business success.
 - Explicit local parameter rejection **proving the message request never left
   local validation** (for example, `invalid_argument` specifically identifying
   literal `--content` as invalid JSON before message execution): reload this
@@ -142,16 +146,14 @@ this run. `code: 0`, a tool completion, or an unparsed stdout alone is not succe
   alone, a generic tool error nor a nonzero exit code proves this condition.
   If the correction is also rejected, or another explicit non-delivery failure
   occurs (such as bot scope denial), stop: no further attempt or identity change.
-  Only in the confirmed private chat may a still-valid, current-Run trusted URL
-  that passed policy be offered as `[前往授权](原URL)`:
+  Give only this safe fallback, without a link or ticket, even in private chat:
 
-  > 授权卡未发送，请通过此私聊中的授权链接完成授权，再发消息继续。
+  > 授权卡未发送，请稍后再发一条消息重试。
 
 - Timeout, cancellation, lost receipt, malformed/missing success envelope or any
   ambiguous result is **UNKNOWN**. Do not resend, change keys, or claim failure
-  or success. In the confirmed private chat, say the send result is unconfirmed
-  and optionally provide `[前往授权](原URL)`. Never perform a receipt-search loop.
-  Use only a still-valid, policy-checked URL from this Run for that fallback:
+  or success. Say the send result is unconfirmed, without a link or ticket.
+  Never perform a receipt-search loop:
 
   > 授权卡发送结果尚未确认，请先检查此私聊中的授权卡；如已收到，完成授权后再发消息继续。
 
@@ -173,8 +175,9 @@ before retrying the original business operation.
 See `retry-scenarios.md` for synthetic offline walkthroughs. They describe
 expected instruction-following behavior, not proof of live model compliance.
 
-Known A2′ limits: the SDK's final Channel projection still appends the original
-Host authorization link, so Feishu can show both the separate card and a text
-link despite the one-sentence model reply. Prompt instructions cannot guarantee
-byte-for-byte model copying or receipt persistence. Bot permissions, server card
+The example's Channel projection suppresses raw tool previews and text deltas,
+then replaces authorization-bearing final text (including the SDK-appended link)
+with fixed safe copy. The Host result remains model-visible because the card
+needs the original URL; never quote it in prose. These instructions alone cannot
+guarantee model compliance or receipt persistence. Bot permissions, server card
 acceptance and Feishu UI require separate Preview acceptance.
