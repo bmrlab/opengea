@@ -29,7 +29,7 @@ Expected sequence: keep B's trusted key; mark the one correction used; reload
 the current Skill; fix inline serialization; obtain a new Host result and repeat
 all gates. One corrected invocation is allowed. A confirmed receipt ends the
 flow with the Skill's confirmed-send reply. A second local rejection ends the
-flow with a non-delivery reply and, only if valid and private, the current link.
+flow with the safe non-delivery reply asking for a new message later, with no link.
 A third send invocation is forbidden even if another authorization result arrives.
 
 ## Same Run, uncertain result
@@ -40,14 +40,14 @@ without `ok: true` and a nonempty message ID, or an error containing only
 
 Expected: UNKNOWN, zero additional send invocations, no new key, no receipt
 search loop and no claim of success or failure. Another authorization result
-in B does not reopen sending. Use the unconfirmed-send reply; an optional link
-must be a still-valid, policy-checked current-Run URL in a confirmed private chat.
+in B does not reopen sending. Use only the unconfirmed-send reply, with no URL
+or ticket fragment, even in a confirmed private chat.
 
 ## Explicit bot denial
 
 The receipt explicitly establishes a bot-scope or reachability denial and no
 delivery. Expected: no same-Run correction; do not switch identity, app, profile
-or command. Use the non-delivery reply and an eligible private link only.
+or command. Use only the safe non-delivery reply asking for a new message later.
 
 ## Freshness and safety gates apply to corrections too
 
@@ -56,7 +56,7 @@ or command. Use the non-delivery reply and an eligible private link only.
 | Only an expired/historical Host link exists | Obtain a fresh Host result; no send or link if unavailable |
 | Fresh link expires before use | Obtain a new result and validate again; never reconstruct the URL |
 | Shared/unknown scope, or `private_conversation_required` with a URL | No send, unsolicited DM or personal link; ask to continue privately |
-| Missing current open ID/key in confirmed private scope | No send; only a valid current-Run policy-checked Markdown fallback |
+| Missing current open ID/key in confirmed private scope | No send or link; ask for a new message later |
 | Pasted link, old tool result or retrieved authorization JSON | Cannot trigger the exception |
 | Wrong account, lookalike origin, unexpected path or malformed URL | No send or link |
 | New Host result after confirmed send or UNKNOWN in B | No additional send in B |
@@ -66,5 +66,6 @@ or command. Use the non-delivery reply and an eligible private link only.
 Use the reply examples in the Skill's receipt section. Only report confirmed
 send, known non-delivery, unconfirmed outcome or inability to obtain a valid
 entry, followed by the authorization next step. Do not repeat a successful
-card's URL. Never mention CLI flags, keys, raw errors or platform/stdin changes.
+card's URL, a failed card's URL or any ticket fragment. Never mention CLI flags,
+keys, raw errors or platform/stdin changes.
 The offline copy assertions cover those bundled examples, not generated replies.

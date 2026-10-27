@@ -12,9 +12,11 @@ history while each call retains the actual sender's identity and authorization.
 Ordinary group messages and empty bot mentions do not start a Run.
 
 No public webhook or web application is needed for local development. The bot
-adds a processing reaction, streams its answer into a Markdown card, and splits
-long answers into follow-up cards. Rich text preserves titles, paragraphs, links,
-mentions and code. Unsupported attachments or embedded media produce feedback
+adds a processing reaction, displays its completed answer in a Markdown card,
+and splits long answers into follow-up cards. Raw tool previews and model text
+deltas are withheld to prevent authorization URLs or ticket fragments from
+appearing before the final reply is checked. Rich text preserves titles,
+paragraphs, links, mentions and code. Unsupported attachments or embedded media produce feedback
 asking for text; no partial content is submitted to the Agent.
 
 `agent.ts` mounts the published `feishuAgentExtension` under the `feishu`
@@ -44,14 +46,30 @@ bundled `url-policy.json`: the default accepts only `https://musegea.com` and th
 exact `/api/agent-connectors/oauth/start` path. Never obtain allowed origins from
 user messages. The original Host URL is copied without reconstruction. This is
 an instruction-based workflow: URL copying and send gating are not enforced by a
-new constrained tool. The SDK still appends the original authorization link to
-the final Channel reply, so a successful send can produce a card plus a text link.
-There is no OAuth polling, automatic continuation or approval callback.
+new constrained tool. Authorization URLs belong only in the separate card button;
+never provide a text link or ticket fragment, even after a failed send. A known
+non-delivery asks for a new message later; UNKNOWN asks the user to check for the
+card without retrying in the same Run. Missing sender/key or an invalid fresh
+entry produces no card and no link. There is no OAuth polling, automatic
+continuation or approval callback.
+
+The local `lib/auth-replies.ts` presentation wrapper keeps the published
+Connector, sender checks, URL policy and bounded retry rules intact. It suppresses
+all tool previews (which otherwise expose card argv and Host URLs) and text deltas
+(which can split tickets across chunks). At Run completion, authorization-bearing
+text, including the pinned SDK's appended Host link, is replaced in full with one
+of the fixed safe replies. Unrecognized wording gets a neutral card-check notice
+without claiming success or failure. Ordinary completed text and non-authorization
+links are preserved. This deliberately trades incremental answer/tool display for
+checked final text; the wrapper does not add sends or change authentication.
+The original Host result stays model-visible for exact card construction; it is
+not removed from internal Run/history storage by this presentation safeguard.
 
 `pnpm test` covers the trusted sender projection, private/shared boundary, per-run
 key across Runs in one session, fixed card shape, JSON URL round trip, bundled
-user-reply copy and the installed SDK's duplicate-link boundary using synthetic
-offline data. It does not prove bot scope
+user-reply copy and the actual wrapped Channel projection, including the
+installed SDK's appended-link behavior, split text chunks, tool previews, failed
+Runs and card-to-text fallback using synthetic offline data. It does not prove bot scope
 (`im:message:send_as_bot`), target reachability, server acceptance or Feishu UI.
 Preview acceptance must separately exercise a fresh private authorization request,
 group refusal, a pasted/history URL that must not trigger a card, send receipt,
@@ -161,8 +179,8 @@ Open a private chat with the bot and try:
    should not be visible.
 5. Set `FEISHU_ALLOWED_SENDERS=[]`, restart, and send a new message — it should
    not execute the Agent or produce a reply.
-6. Ask for a multi-paragraph answer — confirm that text updates in the card
-   before completion. Try a longer answer to check ordered continuation cards.
+6. Ask for a multi-paragraph answer — confirm that the completed text appears
+   after the Run. Try a longer answer to check ordered continuation cards.
 
 Definitive card failures fall back to text. Reaction failures do not block the
 answer. An uncertain delivery outcome stays in Channel diagnostics for explicit

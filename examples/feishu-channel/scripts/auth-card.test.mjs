@@ -59,7 +59,7 @@ test("bundled owner policy uses exact HTTPS origins and the Host OAuth start pat
   assert.equal(policy.oauthStartPath, "/api/agent-connectors/oauth/start");
 });
 
-test("installed SDK still appends the original Host URL after a one-sentence card notice", () => {
+test("installed SDK appends the Host URL, requiring the example's presentation guard", () => {
   const url = "https://musegea.com/api/agent-connectors/oauth/start?ticket=SYNTHETIC";
   const text = "请点击授权卡中的「前往授权」，完成后回到此私聊发消息继续。";
   const result = extractChannelReply({ id: "reply", parts: [
@@ -77,6 +77,7 @@ test("bundled user reply examples contain only send status and authorization nex
   assert.equal(replies.length, 5);
   assert.match(replies[0], /授权卡已发送/);
   assert.match(replies[1], /授权卡未发送/);
+  assert.match(replies[1], /稍后.*消息重试/);
   assert.match(replies[2], /发送结果尚未确认/);
   assert.doesNotMatch(replies[2], /已发送|发送失败/);
   assert.match(replies[3], /未发送.*无法获取有效授权入口/);
@@ -84,6 +85,7 @@ test("bundled user reply examples contain only send status and authorization nex
   for (const reply of replies) {
     assert.match(reply, /授权/);
     assert.match(reply, /点击|请/);
-    assert.doesNotMatch(reply, /CLI|stdin|--\w|idempotency|authCardKey|幂等|参数|平台|改造|stdout|stderr|exitCode|invalid_argument|https?:\/\//i);
+    assert.doesNotMatch(reply, /CLI|stdin|--\w|idempotency|authCardKey|幂等|参数|平台|改造|stdout|stderr|exitCode|invalid_argument|https?:\/\/|ticket|oauth\/start/i);
   }
+  assert.doesNotMatch(skill, /\[前往授权\]\(原URL\)|optionally provide|Markdown fallback|may.*be offered/);
 });

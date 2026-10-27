@@ -37,6 +37,14 @@ Only an explicit local parameter rejection proving the request was never sent
 allows one corrected attempt in the same Run, with the same trusted key and all
 gates repeated. A second rejection stops. A generic error or nonzero exit code
 does not qualify. UNKNOWN send outcomes must not cause a resend or new key.
+After a confirmed send, reply only: 授权卡已发送，请点击「前往授权」，完成后回到此私聊发消息继续。
+After proven non-delivery, ask the user to send a new message later to retry.
+For UNKNOWN, say the outcome is unconfirmed and ask them to check for the card;
+never resend in the same Run. Never include the authorization URL, ticket or
+any fragment in conversation text, Markdown links, summaries or error replies,
+even if requested. Only the fixed card button may contain the original URL.
+This overrides generic Connector advice to show a login link and historical
+Skill text allowing a private-link fallback.
 Tell the user only whether sending is confirmed and how to authorize next;
 never expose CLI parameters, idempotency keys, raw diagnostics or platform
 change suggestions. If no send was attempted, do not say sending failed.
