@@ -2,5 +2,5 @@ onlyBuiltDependencies:
   - esbuild
   - workerd
 minimumReleaseAgeExclude:
-  - "@gea-ai/cli@0.2.261026-alpha.2"
-  - "@gea-ai/cli-darwin-arm64@0.2.261026-alpha.2"
+  - "@gea-ai/cli@0.2.261030-alpha.1"
+  - "@gea-ai/cli-darwin-arm64@0.2.261030-alpha.1"

@@ -1,6 +1,6 @@
 # Agents API: prepare, then run
 
-See [SDK upgrade verification](../VERIFICATION-261025.md) for current local checks and hosted acceptance limits.
+See [SDK upgrade verification](../VERIFICATION-261030.md) for current local checks and hosted acceptance limits.
 
 An Agent and a plain Node.js HTTP caller using the same `/api/v1` flow locally and
 in cloud Preview. The SDK defines the Agent; the caller uses `fetch` directly.
@@ -18,7 +18,7 @@ Preparing a Session does not call the model.
 ## Install and run locally
 
 Use Node **24.16.0**, pnpm **12.1.0** and public Agent SDK
-**0.1.261025-alpha.2** (pinned in the lockfile):
+**0.1.261030-alpha.0** (pinned in the lockfile):
 
 ```bash
 pnpm install --frozen-lockfile
@@ -30,11 +30,11 @@ pnpm test
 Set `CREATIVE_REASONING_API_KEY` in `.env`. Local execution calls an external
 model provider; it does not imply offline inference.
 
-Install public CLI **0.2.261026-alpha.2**, which includes the local Agents API
+Install public CLI **0.2.261030-alpha.1**, which includes the local Agents API
 and its matching Worker Runtime for macOS ARM64:
 
 ```bash
-pnpm add -g @gea-ai/cli@0.2.261026-alpha.2
+pnpm add -g @gea-ai/cli@0.2.261030-alpha.1
 pnpm agent:validate
 pnpm agent:pack
 pnpm dev

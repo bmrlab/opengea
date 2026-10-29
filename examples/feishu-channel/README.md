@@ -1,11 +1,13 @@
 # Feishu Channel
 
+本次升级与 Preview 状态见 [10-30 验证记录](../VERIFICATION-261030.md)。
+
 The runtime configuration follows the Preview v18 source supplied on 2026-10-25.
 [Earlier SDK verification](../VERIFICATION-261025.md) records historical checks,
 not acceptance of this revision.
 
 This example uses published SDK/Contract and Feishu extension
-`0.1.261025-alpha.2` and the `deepseek-v4.1-flash` model. It accepts private text and rich-text (`post`) messages,
+`0.1.261030-alpha.0` and the `deepseek-v4.1-flash` model. It accepts private text and rich-text (`post`) messages,
 and group messages that explicitly mention this application's bot. Group replies
 create or continue the triggering message's topic: members share that topic's
 history while each call retains the actual sender's identity and authorization.
@@ -24,6 +26,36 @@ namespace with the default WebSocket transport. Its business API Connector and
 `lark-cli` Skill are enabled, as in Preview v18. `current_sender` reports the
 current execution principal, environment, trusted Feishu open ID, conversation
 scope, and a fixed per-run authorization-card key.
+
+## 飞书账号 matcher（托管 Preview）
+
+`agent.ts` 通过 SDK 的 `feishuAgentExtension({ platformUserMatcher })` 声明同步函数，
+实现在 `lib/platform-user-matcher.ts`：只在可信发送者的 `openId` 与候选账号的
+`account.accountId` 完全相等时返回 `true`，不做大小写转换、裁剪或姓名匹配。
+Host 负责验证飞书应用与租户、查询本组织飞书 SSO 候选，并要求恰好一个用户通过；
+零匹配、多用户匹配、封禁、成员资格或权限不满足都不放行。函数不会查询账号、选择用户或创建授权。
+
+此声明优先于 `requirePlatformUser`；匹配失败不回退 OAuth 或外部身份，也不启动模型 Run。
+发布产物仅记录 `{ execution: "sdk-function", protocolVersion: 2 }`，函数随普通 Worker 打包，
+没有独立 matcher 模块或二进制。需要配套 Host、Runtime 和安装 Controller 的 v2 协议支持；
+升级 Agent target 本身不能升级旧 Controller。请保留既有安装与配置，遇到能力拒绝由管理员处理。
+本地 `agent dev` 不支持托管 matcher；下方本地收发步骤是无 matcher 时的历史操作说明，
+本版本可在本地执行安装、类型检查、离线测试、validate 和 build，真实收发使用就绪的 Preview。
+
+试用时，先通过组织的飞书 SSO 登录 GEA，确认当前账号具有本项目/Agent Preview 的使用权限。
+然后在已配置的飞书机器人私聊中发送 `Reply with pong only`，预期收到 `pong`；
+再发送 `Call current_sender and show its JSON result` 检查当前身份。匹配前的外部身份私聊历史
+不会自动合并到 GEA 身份会话。飞书业务 `--as user` 的个人同意仍是独立授权，可能继续需要授权卡。
+
+未匹配时私聊提示「未能匹配你的 GEA 账号。请先登录本组织并确认成员资格，再重新发送消息。」；
+多匹配提示「账号匹配异常，请联系管理员。」；配置未就绪提示「账号匹配尚未就绪，请联系管理员。」；
+暂时故障提示「账号匹配暂不可用，请稍后重新发送。」。群内仅提示私聊查看处理指引。
+若安装在初始化时就因能力不足失败，机器人可能无法回复，应先由管理员查看 receiver 状态。
+不要为测试负例修改真实成员、凭据或安装开关。
+
+依据：SDK [Channel matcher 文档](https://github.com/bmrlab/gea/blob/d2f0604c/packages/agent-sdk/src/channels/README.md#platform-user-matcher)
+与 [Feishu 扩展说明](https://github.com/bmrlab/gea/blob/d2f0604c/packages/agent-extension-feishu/src/feishu-extension.md#gea-identity-mode)。
+离线测试覆盖精确匹配/拒绝及挂载后 matcher 元数据保留；Host 的唯一性与真实飞书验收另行验证。
 
 ## Personal authorization card (A2′)
 
@@ -74,7 +106,7 @@ Runs and card-to-text fallback using synthetic offline data. It does not prove b
 Preview acceptance must separately exercise a fresh private authorization request,
 group refusal, a pasted/history URL that must not trigger a card, send receipt,
 and a new user message after authorization before checking business success.
-Deployment is a separate action; these changes have not been pushed to Preview.
+部署结果与真实飞书验收范围见本次 PR 的验证记录。
 The Skill's [offline retry scenarios](skills/feishu-authorization/retry-scenarios.md)
 cover stale session instructions, bounded correction and UNKNOWN separately.
 
@@ -87,10 +119,10 @@ compatible GEA CLI. Install the matching published CLI using the
 [GEA CLI installation guidance](https://github.com/bmrlab/gea/blob/f1f529a887e3289c8b16cbcec2eb7e89cdbad285/packages/gea-cli/APP_SERVER_PREVIEW.md):
 
 ```bash
-npm install -g @gea-ai/cli@0.2.261026-alpha.2
+npm install -g @gea-ai/cli@0.2.261030-alpha.1
 ```
 
-This revision uses CLI `0.2.261026-alpha.2` on macOS arm64;
+This revision uses CLI `0.2.261030-alpha.1` on macOS arm64;
 check the installed version below. No CLI package is
 bundled with the example. `scripts/gea.mjs` uses the trimmed `GEA_CLI_BIN` value
 as the executable, or resolves `gea` from `PATH` if it is unset or blank. To
@@ -151,11 +183,14 @@ their secret classification. Keep `.env`, `.gea`, and credential files out of Gi
 ```bash
 pnpm type-check
 pnpm test
+pnpm build
 pnpm agent:validate
 pnpm agent:pack
 pnpm dev
 ```
 
+`pnpm build` 通过官方 `agent pack` 构建托管 Worker 与归档，不启动本地 receiver；
+`agent build` 面向本地执行，会按 SDK 约束拒绝托管 matcher。
 Validation and packing do not require credentials. Development loads `.env` and,
 optionally, the file named by `GEA_ENV_FILE`. Only declared extension Channel variables are
 exposed through `ctx.env`; the local model key is consumed by the CLI's model
