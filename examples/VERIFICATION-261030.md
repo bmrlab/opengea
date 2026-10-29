@@ -49,7 +49,8 @@ Worker `opengea-feishu-channel`：
 - 回滚记录：v23，`01a17d3c-3f40-74ba-825b-f86e698d6644`（仅记录，未回滚）。
 - 本次新部署：v24，`01a188f8-3324-733c-8282-347fced8bc24`，ready；targets.preview 已指向此 ID。
 - push 约 6.91 秒后报 `Hosted workers/completeDeploymentUpload failed (503 Service Unavailable): Service Unavailable`。
-- receiver 在部署前已为 failed / feishu_handshake，revision 17；部署后初步复核仍绑定 v23。
+- receiver 在部署前已为 failed / feishu_handshake，revision 17；部署后 02:43:09–02:48:09（中国标准时间）六次分钟采样均保持该状态并绑定 v23。
+- 新旧部署日志完整查询覆盖 02:42:06–02:48:31：v24 两条 HTTP 200、v23 零条；窗口内未见 409/503/403 风暴。
 - targets.production 为 null。没有重推、重启、set-enabled、改凭据或回滚。
 
 服务端未给出 matcher 能力拒绝的具体错误，503 原因 UNKNOWN；新 Worker target 不等于 Channel 安装已切版。
