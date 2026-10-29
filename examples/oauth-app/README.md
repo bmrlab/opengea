@@ -1,6 +1,6 @@
 # OAuth app · a complete MuseDAM Worker
 
-See [SDK upgrade verification](../VERIFICATION-261025.md) for current local checks and hosted acceptance limits.
+See [SDK upgrade verification](../VERIFICATION-261030.md) for current local checks and hosted acceptance limits.
 
 A **single GEA Worker** containing a TanStack Start application and its MuseDAM
 Agent. It includes GEA user OAuth, per-user MuseDAM connection setup, a full-screen
@@ -43,7 +43,7 @@ and Connector credentials never reach browser JavaScript.
 - A Studio Project with OAuth enabled.
 - A MuseDAM OAuth client registered for GEA's Connector callback.
 
-The example pins published SDK `0.1.261025-alpha.2` and CLI `0.2.261026-alpha.2`. `defineAgent`
+The example pins published SDK `0.1.261030-alpha.0` and CLI `0.2.261030-alpha.1`. `defineAgent`
 owns the Agent's instructions and Connector, and `defineWorker` registers that
 ordinary definition together with the web Fetch handler. No package wrapper is
 needed. This CLI release ships only macOS arm64; Windows and Linux native Runtime
@@ -187,7 +187,7 @@ tool approvals and inline document viewers are outside this example.
 ## Local development and tests
 
 Local Agent execution uses the same browser OAuth login and per-user backend
-bearer as hosted execution. It uses the published CLI `0.2.261026-alpha.2`;
+bearer as hosted execution. It uses the published CLI `0.2.261030-alpha.1`;
 the older `0.2.261019-alpha.1` targeted a reserved legacy API port and failed
 discovery. Current Vite/native consumer checks are recorded in VERIFICATION.md.
 Do not repair OAuth with a Project Key: that selects service authority rather
