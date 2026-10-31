@@ -8,6 +8,11 @@
   "compatibilityFlags": ["nodejs_compat"],
   "durableObjectBindings": [
     {
+      "name": "NAMESPACE_PROBES",
+      "className": "NamespaceProbe",
+      "namespace": "worker"
+    },
+    {
       "name": "LOGIN_FLOWS",
       "className": "LoginFlow",
       "namespace": "worker"

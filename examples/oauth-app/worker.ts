@@ -7,6 +7,7 @@ export {
   OAuthSession,
   ConversationRuns,
 } from "./server/session-objects";
+export { NamespaceProbe } from "./server/namespace-probe-object";
 
 export default defineWorker({
   // Platform-only execution. Application calls use the Agents API and fixed IDs.

@@ -13,8 +13,8 @@
     "test": "node --test scripts/*.test.mjs"
   },
   "dependencies": {
-    "@gea-ai/agent-extension-feishu": "0.1.261030-alpha.0",
-    "@gea-ai/agent-sdk": "0.1.261030-alpha.0",
+    "@gea-ai/agent-extension-feishu": "0.1.261031-alpha.0",
+    "@gea-ai/agent-sdk": "0.1.261031-alpha.0",
     "zod": "4.6.5"
   },
   "devDependencies": {

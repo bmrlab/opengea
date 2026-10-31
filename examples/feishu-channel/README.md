@@ -1,13 +1,13 @@
 # Feishu Channel
 
-本次升级与 Preview 状态见 [10-30 验证记录](../VERIFICATION-261030.md)。
+本次升级与 Preview 状态见 [10-31 验证记录](../VERIFICATION-261031.md)。
 
 The runtime configuration follows the Preview v18 source supplied on 2026-10-25.
 [Earlier SDK verification](../VERIFICATION-261025.md) records historical checks,
 not acceptance of this revision.
 
 This example uses published SDK/Contract and Feishu extension
-`0.1.261030-alpha.0` and the `deepseek-v4.1-flash` model. It accepts private text and rich-text (`post`) messages,
+`0.1.261031-alpha.0` and the `deepseek-v4.1-flash` model. It accepts private text and rich-text (`post`) messages,
 and group messages that explicitly mention this application's bot. Group replies
 create or continue the triggering message's topic: members share that topic's
 history while each call retains the actual sender's identity and authorization.
@@ -119,10 +119,10 @@ compatible GEA CLI. Install the matching published CLI using the
 [GEA CLI installation guidance](https://github.com/bmrlab/gea/blob/f1f529a887e3289c8b16cbcec2eb7e89cdbad285/packages/gea-cli/APP_SERVER_PREVIEW.md):
 
 ```bash
-npm install -g @gea-ai/cli@0.2.261030-alpha.1
+npm install -g @gea-ai/cli@0.2.261031-alpha.0
 ```
 
-This revision uses CLI `0.2.261030-alpha.1` on macOS arm64;
+This revision uses CLI `0.2.261031-alpha.0` on macOS arm64;
 check the installed version below. No CLI package is
 bundled with the example. `scripts/gea.mjs` uses the trimmed `GEA_CLI_BIN` value
 as the executable, or resolves `gea` from `PATH` if it is unset or blank. To

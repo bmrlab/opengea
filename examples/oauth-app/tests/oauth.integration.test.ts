@@ -494,6 +494,34 @@ afterAll(async () => {
     );
 });
 describe("GEA OAuth HTTP application", () => {
+  it("protects synthetic business writes with Preview, origin and login checks", async () => {
+    expect((await runtime.fetch(request("/api/namespace-probe", "", {}))).status).toBe(403);
+    await runtime.restart({ AGENT_ENVIRONMENT: "preview" });
+    expect((await runtime.fetch(request("/api/namespace-probe", "", {}))).status).toBe(401);
+    const loggedIn = await signIn();
+    const crossOrigin = request("/api/namespace-probe", loggedIn, {});
+    crossOrigin.headers.set("origin", "https://other.example");
+    expect((await runtime.fetch(crossOrigin)).status).toBe(403);
+  });
+
+  it("writes unique synthetic records through the real native business DO", async () => {
+    await runtime.restart({ AGENT_ENVIRONMENT: "preview" });
+    const loggedIn = await signIn();
+    const response = await runtime.fetch(request("/api/namespace-probe", loggedIn, { marker: "must-not-store-user-input" }));
+    expect(response.status, await response.clone().text()).toBe(201);
+    const receipt = await response.json();
+    expect(receipt.className).toBe("NamespaceProbe");
+    expect(receipt.objectIdPrefix).toMatch(/^[a-f0-9]{16}$/);
+    expect(receipt.record.probeId).toMatch(/^[a-f0-9-]{36}$/);
+    expect(receipt.record.marker).toMatch(/^synthetic-[a-f0-9-]{36}$/);
+    expect(JSON.stringify(receipt)).not.toContain("must-not-store-user-input");
+    const another = await runtime.fetch(request("/api/namespace-probe", loggedIn, {}));
+    expect(another.status).toBe(201);
+    const next = await another.json();
+    expect(next.objectIdPrefix).not.toBe(receipt.objectIdPrefix);
+    expect(next.record.probeId).not.toBe(receipt.record.probeId);
+  });
+
   it("serves the app and protects the embedded Agent in one Worker", async () => {
     const page = await runtime.fetch(new Request("http://localhost:4000/"));
     expect(page.status).toBe(200);
