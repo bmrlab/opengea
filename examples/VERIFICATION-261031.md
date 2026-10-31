@@ -90,7 +90,7 @@ OAuth 示例新增 Preview 专用 `/namespace-probe` 页面：已登录的网页
 - Worker ID `01a0a80e-b909-761e-bbdb-17325a254484`；Preview **v26**。
 - deploymentId `01a192af-acd1-7128-ae78-1fe426cc7f21`；2026-10-31 23:59:15.988 +08:00 激活。
 - 远端 Worker contentHash：`sha256:d51f49a574385a88c9af698df697e2bfb69cf3bb70ca27757f517588f2e25863`。
-- Builder Agent 详情确认 Preview v26，snapshotHash 为 `sha256:4e26c8b7565e672437ab06a5d655a98f0d8c4ff1b2fc7cb188ced29985404d27`，与本地归档一致。
+- Builder Agent 详情确认 Preview v26，页面显示 snapshotHash 前缀 `sha256:4e26c8b7565`，与本地归档前缀一致；未独立核验远端完整 manifest。
 - 页面显示的 public Agent ID：`01a0a903-48d6-7764-bd9d-6260bb2117c2`；OAuth applicationId 尚未独立取得，不能把 Agent ID 当作 applicationId。
 - 网页登录及 MuseDAM 已有连接恢复；2026-11-01 **00:02:50.104 +08:00** 写入返回 201。
 - probeId `fbfe6d03-bbb5-4c85-ad2e-bf844cbd6c2f`；class `NamespaceProbe`；网页对象 ID 前缀 `1ea9f6ee643bb7a4`。
