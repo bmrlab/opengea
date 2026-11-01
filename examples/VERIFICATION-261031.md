@@ -6,6 +6,9 @@
 OAuth Preview v26 已发布，网页合成对象写入通过；新 Session 在 SDK 初始化时失败，Tool 未执行。
 飞书 Preview 发布被 CLI 本地 schema 拒绝，matcher 真实验收未运行。已定位两项底层缺陷，详见下文。
 
+后续：两项底层缺陷已在 SDK `0.1.261101-alpha.0` 与 CLI `0.2.261101-alpha.0` 修复，
+OAuth Preview 业务 DO 验收见 [VERIFICATION-261101.md](VERIFICATION-261101.md)。
+
 ## 为何升级与为何必须重建发布
 
 - SDK、Contract 与飞书扩展固定为 `0.1.261031-alpha.0`；CLI 固定为 `0.2.261031-alpha.0`。
