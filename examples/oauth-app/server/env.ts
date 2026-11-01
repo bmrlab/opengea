@@ -1,5 +1,6 @@
 import { env as workerEnv } from "cloudflare:workers";
 import type { DurableObjectNamespace } from "@cloudflare/workers-types";
+import type { NamespaceProbe } from "./namespace-probe-object";
 import type {
   LoginFlow,
   OAuthSession,
@@ -91,6 +92,7 @@ export function getEnv() {
 export type AuthConfig = ReturnType<typeof getEnv>;
 
 export interface WorkerBindings {
+  NAMESPACE_PROBES: DurableObjectNamespace<NamespaceProbe>;
   APP_ORIGIN?: string;
   LOCAL_AGENTS_API_URL?: string;
   TOKEN_ENCRYPTION_KEY?: string;

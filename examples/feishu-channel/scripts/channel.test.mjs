@@ -2,9 +2,10 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { feishuAgentExtension } from "@gea-ai/agent-extension-feishu";
 import agent from "../agent.ts";
+import { matchFeishuAccount } from "../lib/platform-user-matcher.ts";
 
 // Synthetic Channel capabilities and HTTP transport; no live WebSocket or Runtime.
-const channel = feishuAgentExtension({ transport: "http" }).channels[0];
+const channel = feishuAgentExtension({ transport: "http", platformUserMatcher: matchFeishuAccount }).channels[0];
 
 test("example matches Preview v18 with the Feishu Channel and business Connector", () => {
   assert.equal(agent.model, "deepseek-v4.1-flash");
@@ -36,7 +37,7 @@ function event({ group = false, sender = "ou_alice", id = "message-1", root, typ
   };
 }
 
-function fixture(allowed = "*") {
+function fixture(allowed = "*", matcherRejection) {
   const sends = [], feedback = [], requests = [], exchanges = [];
   const ctx = {
     env: { FEISHU_APP_ID: "app-test", FEISHU_APP_SECRET: "secret-test", FEISHU_VERIFICATION_TOKEN: "token-test", FEISHU_ALLOWED_SENDERS: allowed },
@@ -60,6 +61,11 @@ function fixture(allowed = "*") {
       assert.equal(url, "https://open.feishu.cn/open-apis/bot/v3/info");
       assert.equal(options.headers.authorization, "Bearer access-test");
       return Response.json({ code: 0, bot: { open_id: "bot-test" } });
+    },
+    async authenticateUser(principal) {
+      return matcherRejection
+        ? { status: "authorization_required", matcherRejection, identity: { principal } }
+        : { status: "external", identity: { principal } };
     },
     from(address, identity, options) {
       return {
@@ -180,4 +186,27 @@ test("tenant and application identities cannot collide", async () => {
   await f.accept(appEvent);
   assert.equal(new Set(f.sends.map((call) => call.identity.principal.principalId)).size, 3);
   assert.notEqual(f.sends[0].address, f.sends[1].address);
+});
+
+for (const [reason, text] of [
+  ["no_match", "未能匹配你的 GEA 账号。请先登录本组织并确认成员资格，再重新发送消息。"],
+  ["ambiguous", "账号匹配异常，请联系管理员。"],
+  ["configuration", "账号匹配尚未就绪，请联系管理员。"],
+  ["fault", "账号匹配暂不可用，请稍后重新发送。"],
+]) {
+  test(`Host matcher rejection ${reason} gives private guidance without Agent input`, async () => {
+    const f = fixture("*", reason);
+    assert.equal((await f.accept(event())).status, 200);
+    assert.equal(f.sends.length, 0);
+    assert.equal(f.feedback.length, 1);
+    assert.equal(f.feedback[0].output.text, text);
+    assert.doesNotMatch(JSON.stringify(f.feedback), /https?:/);
+  });
+}
+
+test("group matcher rejection gives only private-chat guidance without Agent input", async () => {
+  const f = fixture("*", "ambiguous");
+  assert.equal((await f.accept(event({ group: true }))).status, 200);
+  assert.equal(f.sends.length, 0);
+  assert.equal(f.feedback[0].output.text, "本条消息未提交给 Agent，请私聊机器人查看处理指引。");
 });

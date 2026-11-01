@@ -1,6 +1,6 @@
 # OAuth app · a complete MuseDAM Worker
 
-See [SDK upgrade verification](../VERIFICATION-261025.md) for current local checks and hosted acceptance limits.
+See [SDK upgrade verification](../VERIFICATION-261101.md) for current local checks and hosted acceptance limits.
 
 A **single GEA Worker** containing a TanStack Start application and its MuseDAM
 Agent. It includes GEA user OAuth, per-user MuseDAM connection setup, a full-screen
@@ -43,7 +43,7 @@ and Connector credentials never reach browser JavaScript.
 - A Studio Project with OAuth enabled.
 - A MuseDAM OAuth client registered for GEA's Connector callback.
 
-The example pins published SDK `0.1.261025-alpha.2` and CLI `0.2.261026-alpha.2`. `defineAgent`
+The example pins published SDK `0.1.261101-alpha.0` and CLI `0.2.261101-alpha.0`. `defineAgent`
 owns the Agent's instructions and Connector, and `defineWorker` registers that
 ordinary definition together with the web Fetch handler. No package wrapper is
 needed. This CLI release ships only macOS arm64; Windows and Linux native Runtime
@@ -187,7 +187,7 @@ tool approvals and inline document viewers are outside this example.
 ## Local development and tests
 
 Local Agent execution uses the same browser OAuth login and per-user backend
-bearer as hosted execution. It uses the published CLI `0.2.261026-alpha.2`;
+bearer as hosted execution. It uses the published CLI `0.2.261101-alpha.0`;
 the older `0.2.261019-alpha.1` targeted a reserved legacy API port and failed
 discovery. Current Vite/native consumer checks are recorded in VERIFICATION.md.
 Do not repair OAuth with a Project Key: that selects service authority rather
@@ -266,6 +266,37 @@ chat acceptance are recorded separately. Runtime overrides above also apply to
 tests. `GEA_TEST_WORKER_DIR` selects an extracted combined Agent artifact.
 
 ## SDK upgrades and existing conversations
+
+The `0.1.261101-alpha.0` SDK and `0.2.261101-alpha.0` CLI include the application
+Durable Object namespace fix (GEA #1084) and artifact partitioning (GEA #1088).
+SDK `0.1.261101-alpha.0` also fixes Agent startup with artifacts enabled: the
+Artifact scope now carries only the principal's type and ID. A Worker built with
+`0.1.261031-alpha.0` fails a new Session before any Tool runs with
+`ZodError: Unrecognized key: "attributes"` whenever the OAuth principal carries
+attributes.
+Rebuild, repack and publish the Worker and its matching Preview application release:
+changing dependencies alone cannot update an already published bundle. Confirm
+`durable-object-application-namespace-v1` in the generated Worker manifest and use
+a **new Session** for acceptance. Older Sessions can retain the old release and
+namespace; historical installation data is not automatically migrated.
+
+### Preview business DO check
+
+After signing into the existing Preview app, open `/namespace-probe` and click
+**创建合成记录** once. The authenticated same-origin request generates a unique
+synthetic record in the `NamespaceProbe` class. The object name includes Preview,
+the authenticated organization and the generated probe ID. No OAuth data is stored
+in this class, and the endpoint refuses Production. The write receipt includes the
+record and object ID prefix; an uncertain write is never automatically retried.
+
+Create a **new conversation** in the same app and ask the Agent to call
+`read_namespace_probe` with only the receipt's `probeId`. Compare the actual Tool
+receipt's marker, creation time and object ID prefix with the web receipt. Do not
+give the model the expected marker. The Tool derives the organization/environment
+from trusted execution context and reads the same class/name through the Worker's
+declared business binding. A missing record is an error. Preserve both receipts,
+Run/Session IDs, timestamps and the platform's redacted namespace-owner prefixes.
+Local HTTP/SQLite checks do not establish hosted OAuth namespace equivalence.
 
 The Rust cloud Agents API requires the Worker transport introduced in SDK
 `0.1.260916-alpha.1` for stream reconnection and Worker-observed cancellation.

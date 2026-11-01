@@ -62,7 +62,7 @@ export async function createTestRuntime(bindings: Record<string, string>) {
             ),
             durableObjectNamespace: "018f0000-0000-7000-8000-000000000099",
             durableObjectIdScope: "worker",
-            requiredCapabilities: ["durable-object-worker-namespace-v1"],
+            requiredCapabilities: manifest.requiredCapabilities,
             compatibilityDate: "2026-09-15",
             compatibilityFlags: ["nodejs_compat"],
           },
