@@ -59,8 +59,54 @@ test("rejects a different target, parent or reused parent session", () => {
   wrongParent.child.parent_run_id = "other";
   assert.throws(() => checkEvidence(wrongParent));
   const sameSession = evidence();
-  sameSession.receipt.sessionId = "parent-session";
+  sameSession.receipt = { ...sameSession.receipt, sessionId: "parent-session" };
   assert.throws(() => checkEvidence(sameSession));
+});
+function hostedEvidence() {
+  const e = evidence();
+  e.remoteTransport = true;
+  e.child.parent_run_id = null;
+  e.parentMessages = structuredClone(messages);
+  e.parentMessages[0].parts.push({
+    type: "tool-runWait",
+    state: "output-available",
+    input: { runIds: [e.child.id] },
+    output: {
+      reason: "completed",
+      runs: [
+        {
+          runId: e.child.id,
+          sessionId: e.child.session_id,
+          status: "finished",
+          text: e.marker,
+        },
+      ],
+    },
+  });
+  return e;
+}
+test("a local-to-hosted call joins the foreign Run through its actual runWait result", () => {
+  checkEvidence(hostedEvidence());
+});
+test("a foreign Run needs matching completed runWait evidence, not just parent text", () => {
+  for (const change of [
+    (e) => {
+      e.parentMessages[0].parts.pop();
+    },
+    (e) => {
+      e.parentMessages[0].parts.at(-1).output.runs[0].runId = "other";
+    },
+    (e) => {
+      e.parentMessages[0].parts.at(-1).output.runs[0].status = "running";
+    },
+    (e) => {
+      e.parentMessages[0].parts.at(-1).output.runs[0].text = "no result";
+    },
+  ]) {
+    const e = hostedEvidence();
+    change(e);
+    assert.throws(() => checkEvidence(e));
+  }
 });
 test("rejects a child result missing from the final parent response", () => {
   const e = evidence();

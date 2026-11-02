@@ -50,11 +50,37 @@ export function checkEvidence(e) {
     "finished",
     "A receipt is not a completed child",
   );
-  assert.equal(
-    e.child.parent_run_id,
-    e.parent.id,
-    "Child must belong to this parent Run",
-  );
+  if (e.remoteTransport) {
+    // A local parent is not a row in the hosted Run directory. Its AgentSession
+    // owns the relation; verify the actual completed foreign receipt there.
+    const waits = e.parentMessages
+      .filter((message) => message.role === "assistant")
+      .flatMap((message) => message.parts)
+      .filter(
+        (part) =>
+          part.type === "tool-runWait" &&
+          part.state === "output-available" &&
+          part.input?.runIds?.includes(e.child.id),
+      );
+    assert.ok(
+      waits.some((part) =>
+        part.output?.runs?.some(
+          (run) =>
+            run.runId === e.child.id &&
+            run.sessionId === e.child.session_id &&
+            run.status === "finished" &&
+            run.text?.includes(e.marker),
+        ),
+      ),
+      "Local parent must observe the completed hosted Run and its actual result",
+    );
+  } else {
+    assert.equal(
+      e.child.parent_run_id,
+      e.parent.id,
+      "Child must belong to this parent Run",
+    );
+  }
   assert.equal(e.childSession.id, e.receipt.sessionId);
   assert.equal(
     e.childSession.agent_id,

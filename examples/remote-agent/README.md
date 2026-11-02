@@ -32,7 +32,37 @@ The shipped native CLI supports macOS arm64. Credentials and `.gea` evidence sta
 out of Git. The generated package must declare `publication-shared-worker-v1` and
 `durable-object-application-namespace-v1` for the new hosted publication model.
 
-## Run the local transport example
+## Run a local caller against the actual hosted Agent
+
+Configure `.env` with a real user OAuth access token, its
+`GEA_LOCAL_OAUTH_CLIENT_ID`, and `GEA_LOCAL_OAUTH_BASE_URL`. The OAuth application
+must have an exact local callback registered and request `agents:invoke`. Use
+the normal authorization-code/PKCE flow; a CLI developer login or local Project
+Key cannot replace the user's token.
+
+```sh
+pnpm verify:remote
+```
+
+This starts **only the caller** in the local native Runtime. Its
+`defineRemoteAgent` declaration uses the actual MuseDAMChat public ID from
+`subagents/musedam.ts` and OAuth authority. `GEA_REMOTE_ENVIRONMENT` selects
+`preview` or `production` for the hosted target; no local target is generated.
+The source declaration remains unchanged for later hosted deployment.
+
+The local API verifies the OAuth token with the real issuer. The same user's
+authority is used to admit the hosted target. The verifier reads the parent
+history locally and the child Run/Session/history from the issuer's hosted
+Agents API. The local parent's `agent` receipt and completed `runWait` result
+link the two: a local parent has no row in the hosted Run directory, so the
+cloud child's `parent_run_id` is not the relation for this transport.
+
+Evidence is under `.gea/local-to-hosted/<id>/`. The command makes billable real
+model calls and stops its own local process afterward. A successful run proves
+local-to-hosted invocation; it proves cross-tenant admission only if the OAuth
+user's consumer tenant actually differs from the target publisher.
+
+## Optional local-only fixture
 
 ```sh
 pnpm exec gea login

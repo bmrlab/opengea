@@ -6,8 +6,11 @@ Published SDK **0.1.261102-alpha.0**, CLI **0.2.261102-alpha.0**, Node.js
 ## Passed
 
 - Dependency installation; TypeScript `tsc --noEmit`.
-- Five verifier tests: genuine finished result; reject missing tool receipts,
-  unfinished/failed children, wrong target/parent/Session and missing result return.
+- Eight verifier tests: genuine finished result; reject missing tool receipts,
+  unfinished/failed children, wrong target/parent/Session and missing result return;
+  local-to-hosted completed `runWait` evidence; separate HTTP directories and
+  denied cloud reads. The new local-to-hosted evidence case failed against the
+  previous verifier before its implementation was updated.
 - `pnpm build`: real CLI build of the OAuth-only caller. Generated manifest
   contains `publication-shared-worker-v1` and
   `durable-object-application-namespace-v1`. The reference retains the configured
@@ -32,6 +35,15 @@ The owned dev process was stopped afterward. No deployment or installation is
 performed by the local verifier.
 
 ## Not yet verified
+
+`pnpm verify:remote` now provides the actual local-caller-to-hosted-target entry.
+It packages only the caller, requires a user OAuth token, and reads the child from
+the real issuer's Agents API. It has **not yet been run against MuseDAMChat**.
+Creating the dedicated test OAuth application was blocked by automatic approval
+review pending explicit user authorization for the client and its scopes. No
+client credentials were issued by that rejected action. Existing applications'
+callbacks and secrets were not changed. The second step, deploying the caller to
+`softwarecopyright` and exercising cross-tenant admission, has not started.
 
 The local fixture registers two definitions on one local API/Worker with local
 Project Key admission. It is **not** a cross-tenant OAuth test and did not invoke

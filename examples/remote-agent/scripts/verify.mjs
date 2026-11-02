@@ -13,6 +13,7 @@ export async function verify({
   targetId,
   environment,
   directory,
+  remoteApi,
 }) {
   const origin = new URL(api);
   assert.ok(
@@ -29,14 +30,33 @@ export async function verify({
     "Provide caller ID, target ID and an access token",
   );
   assert.ok(["local", "preview", "production"].includes(environment));
-  const report = { status: "running", environment, callerId, targetId };
+  if (remoteApi) {
+    const remote = new URL(remoteApi);
+    assert.equal(remote.protocol, "https:");
+    assert.ok(
+      !remote.username && !remote.password && !remote.search && !remote.hash,
+    );
+    assert.equal(
+      environment,
+      "local",
+      "Split local/hosted verification requires a local caller",
+    );
+    assert.equal(origin.protocol, "http:");
+  }
+  const report = {
+    status: "running",
+    environment,
+    callerId,
+    targetId,
+    remoteTransport: !!remoteApi,
+  };
   await mkdir(directory, { recursive: true, mode: 0o700 });
   const save = () =>
     writeFile(`${directory}/report.json`, JSON.stringify(report, null, 2), {
       mode: 0o600,
     });
-  async function json(method, path, body) {
-    const response = await fetch(`${api.replace(/\/$/u, "")}${path}`, {
+  async function json(method, path, body, base = api) {
+    const response = await fetch(`${base.replace(/\/$/u, "")}${path}`, {
       method,
       headers: {
         authorization: `Bearer ${token}`,
@@ -92,14 +112,25 @@ export async function verify({
     report.receipt = receipt;
     await save();
     const [child, childSession, childMessages] = await Promise.all([
-      json("GET", `/runs/${receipt.runId}`),
-      json("GET", `/sessions/${receipt.sessionId}`),
-      json("GET", `/sessions/${receipt.sessionId}/messages?limit=100`),
+      json("GET", `/runs/${receipt.runId}`, undefined, remoteApi ?? api),
+      json(
+        "GET",
+        `/sessions/${receipt.sessionId}`,
+        undefined,
+        remoteApi ?? api,
+      ),
+      json(
+        "GET",
+        `/sessions/${receipt.sessionId}/messages?limit=100`,
+        undefined,
+        remoteApi ?? api,
+      ),
     ]);
     Object.assign(report, {
       child,
       childSession,
       childMessages: childMessages.items,
+      remoteTransport: !!remoteApi,
     });
     await save();
     checkEvidence({
@@ -111,6 +142,7 @@ export async function verify({
       child,
       childSession,
       childMessages: childMessages.items,
+      remoteTransport: !!remoteApi,
     });
     report.status = "passed";
     await save();
