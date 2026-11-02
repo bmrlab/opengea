@@ -16,10 +16,10 @@ history while each call retains the actual sender's identity and authorization.
 Ordinary group messages and empty bot mentions do not start a Run.
 
 No public webhook or web application is needed for local development. The bot
-adds a processing reaction, displays its completed answer in a Markdown card,
-and splits long answers into follow-up cards. Raw tool previews and model text
-deltas are withheld to prevent authorization URLs or ticket fragments from
-appearing before the final reply is checked. Rich text preserves titles,
+adds a processing reaction, streams tool status and its answer into a Markdown card,
+and splits long answers into follow-up cards. Streaming stops for the rest of a
+Run as soon as tool data or answer text contains an authorization entry or ticket,
+so they never appear before the final reply is checked. Rich text preserves titles,
 paragraphs, links, mentions and code. Unsupported attachments or embedded media produce feedback
 asking for text; no partial content is submitted to the Agent.
 
@@ -115,14 +115,18 @@ entry produces no card and no link. There is no OAuth polling, automatic
 continuation or approval callback.
 
 The local `lib/auth-replies.ts` presentation wrapper keeps the published
-Connector, sender checks, URL policy and bounded retry rules intact. It suppresses
-all tool previews (which otherwise expose card argv and Host URLs) and text deltas
-(which can split tickets across chunks). At Run completion, authorization-bearing
-text, including the pinned SDK's appended Host link, is replaced in full with one
-of the fixed safe replies. Unrecognized wording gets a neutral card-check notice
-without claiming success or failure. Ordinary completed text and non-authorization
-links are preserved. This deliberately trades incremental answer/tool display for
-checked final text; the wrapper does not add sends or change authentication.
+Connector, sender checks, URL policy and bounded retry rules intact. Tool previews
+render only the extension's fixed status labels. Text deltas stream until the
+streamed tail (64 characters) plus the next delta contains
+`/api/agent-connectors/oauth/start` or `ticket=`/`ticket:`; that delta and every
+later one are dropped and the card stops streaming (the extension's persisted
+`streamFailed` flag). Tool data containing the same markers stops streaming too.
+At Run completion, authorization-bearing text, including the pinned SDK's appended
+Host link, is replaced in full with one of the fixed safe replies. Unrecognized
+wording gets a neutral card-check notice without claiming success or failure.
+Ordinary completed text and non-authorization links are preserved. A bare opaque
+value echoed without either marker is not detectable while streaming; the
+wrapper does not add sends or change authentication.
 The original Host result stays model-visible for exact card construction; it is
 not removed from internal Run/history storage by this presentation safeguard.
 
