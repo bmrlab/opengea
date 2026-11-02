@@ -69,29 +69,57 @@ or hosted Builder execution result. Builtin publication roots have a different
 admission path; the finding concerns ordinary Builder and local CLI callers.
 
 These are platform identity-path gaps for the requested CLI/Builder demo, not a
-missing target ID or a requirement to create an extra OAuth application. The user
-has paused creation of a test OAuth client. No OAuth application was created,
-and no existing callback, secret, target deployment or installation was changed.
+missing target ID or a requirement to create an extra OAuth application. At that stage, OAuth client creation was paused. The subsequently authorized
+hosted-to-hosted attempt is recorded below.
+
+## Hosted-to-hosted OAuth attempt: deployment preparation blocked
+
+On 2026-11-02 the user approved a caller application in `softwarecopyright`
+with only `openid` and `agents:invoke` and a loopback OAuth callback. Both Agent
+executions are hosted; the callback only receives the browser authorization code.
+The real authorization-code/PKCE exchange returned the consuming organization
+`softwarecopyright` and the caller application identity.
+
+Completed through the normal management APIs:
+
+- Published caller `01a19b59-5570-7448-9cae-192ac04cb475` to Production,
+  deployment `01a19b59-4413-764a-9199-22eb2116b2c7`.
+- Promoted the specified MuseDAMChat build to Production, deployment
+  `01a19658-9abb-710b-80dc-7130cda94ad2`.
+- Submitted and approved the target application's two existing entry identities
+  with explicit user approval. Only the specified entry was promoted; the other
+  entry remains unpublished in Production.
+- Enabled store distribution and installed the application in `softwarecopyright`.
+- Enabled the caller application's OAuth and completed real user consent.
+
+The verifier successfully created Session
+`2043b642-b9a3-4f20-bfbf-d64dfe356eac`, then caller Run creation returned HTTP 503.
+Read-only checks found no Run or message. One controlled request on that same
+Session, with an Idempotency-Key, retained the exact failure:
+`publication_deployment_prepare_failed`, request
+`54fc21f6-b0b9-4493-8a82-9fab9e9155b7`.
+
+The GEA shared-Worker descriptor reader passes a relative storage key to
+`getObjectBuffer`, which requires a URL. A regression using the real reader and
+a loopback HTTP object fixture reproduces `Invalid URL` before the fix. Converting
+the prefixed key to the server-side object-store URL fixes the local integration
+case. The platform fix must be reviewed and deployed before continuing the live
+attempt. No platform deployment was performed during this verification.
+
+**No parent Run or remote child Run was created. This is not a successful
+cross-tenant remote invocation.** The target's store launch URL still points at
+its existing Preview web app; this attempt invokes the Production canonical Agent
+ID directly through the caller and does not validate that launch UI.
 
 ## Not yet verified
 
-`pnpm verify:remote` now provides the actual local-caller-to-hosted-target entry.
+`pnpm verify:remote` provides the actual local-caller-to-hosted-target entry.
 It packages only the caller, requires a user OAuth token, and reads the child from
-the real issuer's Agents API. This OAuth-admitted path has **not yet been run
-against MuseDAMChat**. The attempted ordinary local Project-Key admission above
-failed. The second step, deploying the caller to `softwarecopyright` and
-exercising cross-tenant admission, has not started.
+the real issuer's Agents API. This local OAuth-admitted path has not been run
+against MuseDAMChat; the ordinary local Project-Key attempt above failed.
 
-The local fixture registers two definitions on one local API/Worker with local
-Project Key admission. It is **not** a cross-tenant OAuth test and did not invoke
-hosted MuseDAMChat. No claim is made about two independent hosted deployments,
-consumer billing, private data isolation or Connector credential forwarding.
-
-For the intended hosted demo, MuseDAMChat in tenant `tezign` was observed at
-Preview v27 with no Production release. Tenant `softwarecopyright` had no store
-installation. Store approval, Production publication, consumer installation and
-an OAuth-admitted caller remain prerequisites to running `pnpm verify` against
-that target. The earlier direct Preview smoke is not remote-call evidence.
-
-No live test access token, credentials, generated package, database or process
-logs are committed. CI has not been run for this change.
+The local fixture registers two definitions on one local API/Worker. It is not a
+cross-tenant OAuth test. Hosted parent/child completion, result return, consumer
+billing, private data isolation and Connector credential forwarding remain
+unverified. No live token, credentials, generated package, database or process
+logs are committed.
