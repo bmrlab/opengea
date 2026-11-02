@@ -34,7 +34,7 @@ Raw evidence is ignored under `.gea/local-remote-smoke/4f65b22b-ffa6-4116-9b6c-a
 The owned dev process was stopped afterward. No deployment or installation is
 performed by the local verifier.
 
-## Actual hosted-target attempt: blocked by caller identity
+## Earlier local attempt: blocked by caller identity on alpha.0
 
 On 2026-11-02 a temporary project registered **only the local caller**, declared
 the actual MuseDAMChat public ID `01a0a903-48d6-7764-bd9d-6260bb2117c2`, and selected
@@ -72,7 +72,7 @@ These are platform identity-path gaps for the requested CLI/Builder demo, not a
 missing target ID or a requirement to create an extra OAuth application. At that stage, OAuth client creation was paused. The subsequently authorized
 hosted-to-hosted attempt is recorded below.
 
-## Hosted-to-hosted OAuth attempt: deployment preparation blocked
+## Earlier hosted attempt: descriptor preparation failed before platform update
 
 On 2026-11-02 the user approved a caller application in `softwarecopyright`
 with only `openid` and `agents:invoke` and a loopback OAuth callback. Both Agent
@@ -103,23 +103,67 @@ The GEA shared-Worker descriptor reader passes a relative storage key to
 `getObjectBuffer`, which requires a URL. A regression using the real reader and
 a loopback HTTP object fixture reproduces `Invalid URL` before the fix. Converting
 the prefixed key to the server-side object-store URL fixes the local integration
-case. The platform fix must be reviewed and deployed before continuing the live
-attempt. No platform deployment was performed during this verification.
-
-**No parent Run or remote child Run was created. This is not a successful
-cross-tenant remote invocation.** The target's store launch URL still points at
+case. This was fixed by GEA #1105. After the owner updated Web/Worker, the live
+recheck below passed without rebuilding this example or publishing a new npm
+cohort. This earlier failed attempt created no parent or child Run. The target's store launch URL still points at
 its existing Preview web app; this attempt invokes the Production canonical Agent
 ID directly through the caller and does not validate that launch UI.
 
-## Not yet verified
+## Hosted recheck after platform update: passed
 
-`pnpm verify:remote` provides the actual local-caller-to-hosted-target entry.
-It packages only the caller, requires a user OAuth token, and reads the child from
-the real issuer's Agents API. This local OAuth-admitted path has not been run
-against MuseDAMChat; the ordinary local Project-Key attempt above failed.
+On 2026-11-02, the existing caller in **softwarecopyright** invoked the existing
+**tezign** MuseDAMChat Production v23. No target code was bundled into the caller,
+and no installation, release or permission was changed for these invocations.
+The caller kept the published alpha.0 SDK/CLI build.
 
-The local fixture registers two definitions on one local API/Worker. It is not a
-cross-tenant OAuth test. Hosted parent/child completion, result return, consumer
-billing, private data isolation and Connector credential forwarding remain
-unverified. No live token, credentials, generated package, database or process
-logs are committed.
+| Entry path                              | Parent Run                             | Remote child Run                       | Result                                                    |
+| --------------------------------------- | -------------------------------------- | -------------------------------------- | --------------------------------------------------------- |
+| Browser user, Preview → Production      | `01a19be0-90a0-74d9-b899-808cf8d2c522` | `0bca80c8-561c-4f95-a5b5-e01cb7b16fcc` | Both finished; `REMOTE_PREVIEW_20261102_1849` returned    |
+| Browser user, Production → Production   | `01a19be3-3ea7-744f-83dd-c642ebf41ec5` | `3fb82451-8ed4-4109-ba55-b1f21e17a8b9` | Both finished; `REMOTE_PRODUCTION_20261102_1853` returned |
+| User OAuth API, Production → Production | `5cee4ebe-a58e-49c9-9108-342b912e1e35` | `0812e336-d83b-4132-a09d-cfd9a52120e3` | Verifier passed all parent/child/target/result assertions |
+
+Browser evidence includes actual `agent` receipts and completed `runWait` outputs,
+plus finished parent Trace records. OAuth API verification directly read both
+Runs, the target Session and message histories. The child's `parent_run_id`
+exactly matches the parent above; its Session has target Agent ID
+`01a0a903-48d6-7764-bd9d-6260bb2117c2` and environment `production`. Its marker was
+`REMOTE_SMOKE_d5e8698e-3ec3-4412-985c-58606f1b49bf`.
+
+The previous short-lived OAuth token returned 401 before creating a Session.
+Normal sign-in using the same application and existing scopes restored access;
+no additional OAuth application or grant was created.
+
+Consumer organization usage showed both caller and target-installation usage,
+attributed to the current user. After the two browser calls it recorded 8 model
+requests, 21,056 tokens and 61.948 usage points, with no pending/unpriced usage.
+After the API call it showed 12 requests, approximately 31.6K tokens and 81.65
+points. This verifies product usage attribution, not an external invoice audit.
+
+### UI issues observed
+
+- New conversation → switch from Preview to Production produced one
+  `getPlaygroundComputerTarget` 404 and a full-page error. Refresh restored the
+  Playground; the Production invocation then completed. Stable reproduction has
+  not yet been established.
+- The target installation's Run list returned HTTP 200 with `items: []` after
+  both browser remote children finished. Delegated child execution is therefore
+  not fully represented in that installation view. The empty list is not evidence
+  of absent execution or absent metering.
+
+### Remaining acceptance boundaries
+
+- The real local caller → hosted MuseDAMChat `pnpm verify:remote` OAuth path has
+  not been completed. The earlier alpha.0 Project-Key/CLI-login attempt failed;
+  it is not representative of the newer App Server login bridge.
+- Automatic CLI login propagation needs the updated native App Server/npm CLI
+  and a new interactive Session. This example has not yet tested that released
+  package, and its dependency pins remain on the available alpha.0 cohort.
+- Fresh UI-driven installation, uninstalled/revoked-access negative cases,
+  a separate non-admin browser user, private asset isolation and Connector
+  credential forwarding were not tested. Prompts asked only for harmless text.
+- The store launch URL still points to the original Preview web app; this test
+  calls the canonical Production Agent and does not validate that launch UI.
+
+No live credentials, raw customer data, screenshots, generated packages,
+databases or process logs are committed. No cluster/production database access,
+platform deployment or merge was performed during this recheck.

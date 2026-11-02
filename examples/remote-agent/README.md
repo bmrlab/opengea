@@ -37,8 +37,15 @@ out of Git. The generated package must declare `publication-shared-worker-v1` an
 Configure `.env` with a real user OAuth access token, its
 `GEA_LOCAL_OAUTH_CLIENT_ID`, and `GEA_LOCAL_OAUTH_BASE_URL`. The OAuth application
 must have an exact local callback registered and request `agents:invoke`. Use
-the normal authorization-code/PKCE flow; a CLI developer login or local Project
-Key cannot replace the user's token.
+the normal authorization-code/PKCE flow. With the pinned alpha.0 CLI, a developer
+login is not automatically carried into the local Session's remote authority.
+
+The newer platform/App Server implementation in GEA #1105 supports existing CLI
+login for newly created interactive Sessions through native App Server. This
+example keeps its published alpha.0 dependencies until the replacement npm cohort
+is available and tested. Its `verify:remote` script still exercises explicit OAuth;
+it is not an acceptance test of automatic CLI login propagation. Public local
+Project-Key/service Sessions do not implicitly borrow the CLI user's login.
 
 ```sh
 pnpm verify:remote
@@ -89,18 +96,41 @@ child, a failed child or a different target cannot pass.
 
 ## Run the hosted cross-tenant example
 
-Use Production on both sides for the cross-tenant demo. Do not use the Developer
-Playground or `gea agent run` as proof of OAuth delegation: those use developer
-admission, not the original OAuth user's authority.
+The deployed platform supports two user entry paths:
+
+- **Builder Playground:** sign in to the consumer tenant, open the caller Agent,
+  choose Preview or Production, and ask it to delegate to `musedam`. The trusted
+  current user is checked against the target installation. No separate OAuth app
+  is needed for this first-party path. Preview may call an explicitly declared
+  Production remote target; this example's target is Production.
+- **Public Agents API:** use the caller application's user OAuth flow and run
+  `pnpm verify`. This verifies OAuth delegation separately. Direct `/api/v1`
+  does not accept the browser cookie as a bearer credential.
+
+Both paths have completed real hosted cross-tenant calls; see `VERIFICATION.md`.
+A successful Playground run does not by itself prove the OAuth API path or the
+local CLI path.
 
 1. In publisher tenant A, build/publish the target Worker to Production with the
    matching SDK/CLI/Host/Runtime. Submit its application for store review and have
    a platform administrator approve the exact entry/scopes snapshot.
-2. In consumer tenant B, install that approved application. Installation belongs
-   to B; it does not replace each user's OAuth consent.
+2. In consumer tenant B, open **System administration → Installed applications →
+   Store applications** (`/admin/agent-installations`). Find the approved app and
+   click **Install** as a tenant administrator. Installation belongs to B; no
+   Workspace selection is needed. First-party signed-in users use this installed
+   entitlement; third-party OAuth consumers still complete user consent.
+
+   For this demo, the store application is **OpenGEA OAuth Worker Test**, published
+   by **tezign**, and its installed Agent is **MuseDAMChat**. The recorded setup
+   used the normal `platformApplications.authorize` management API in
+   `softwarecopyright`; the current UI uses the same operation. The UI was
+   inspected in the installed state, but a fresh button-driven installation has
+   not been separately tested.
+
 3. Publish this caller to a dedicated Builder Project in B, and promote its tested
-   Preview build to Production. Keep the target environment in
-   `subagents/musedam.ts` aligned with the caller's environment. For example:
+   Preview build to Production for the API demo. Keep the target environment in
+   `subagents/musedam.ts` explicitly set to `production`; it also works when the
+   caller is selected as Preview in Playground. For example:
 
    ```sh
    pnpm exec gea workspace use --json '{"orgSlug":"softwarecopyright","workspaceSlug":"default"}'
