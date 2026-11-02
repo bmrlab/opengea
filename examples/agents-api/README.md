@@ -1,5 +1,7 @@
 # Agents API: prepare, then run
 
+CLI remains pinned to `0.2.261102-alpha.0`; it does not include the local WS proxy fix in GEA #1100. SDK alpha.1 checks and source-built CLI results are recorded in [the alpha.1 verification report](../VERIFICATION-261102-alpha1.md).
+
 See [SDK upgrade verification](../VERIFICATION-261101.md) for current local checks and hosted acceptance limits.
 
 An Agent and a plain Node.js HTTP caller using the same `/api/v1` flow locally and
@@ -18,7 +20,7 @@ Preparing a Session does not call the model.
 ## Install and run locally
 
 Use Node **24.16.0**, pnpm **12.1.0** and public Agent SDK
-**0.1.261101-alpha.0** (pinned in the lockfile):
+**0.1.261102-alpha.1** (pinned in the lockfile):
 
 ```bash
 pnpm install --frozen-lockfile
@@ -30,11 +32,11 @@ pnpm test
 Set `CREATIVE_REASONING_API_KEY` in `.env`. Local execution calls an external
 model provider; it does not imply offline inference.
 
-Install public CLI **0.2.261101-alpha.0**, which includes the local Agents API
+Install public CLI **0.2.261102-alpha.0**, which includes the local Agents API
 and its matching Worker Runtime for macOS ARM64:
 
 ```bash
-pnpm add -g @gea-ai/cli@0.2.261101-alpha.0
+pnpm add -g @gea-ai/cli@0.2.261102-alpha.0
 pnpm agent:validate
 pnpm agent:pack
 pnpm dev

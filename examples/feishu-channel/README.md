@@ -1,13 +1,15 @@
 # Feishu Channel
 
-本次升级与 Preview 状态见 [10-31 验证记录](../VERIFICATION-261031.md)。
+CLI remains pinned to `0.2.261102-alpha.0`; it does not include the local WS proxy fix in GEA #1100. SDK alpha.1 checks and source-built CLI results are recorded in [the alpha.1 verification report](../VERIFICATION-261102-alpha1.md).
+
+本次 SDK alpha.1 升级与本地验证见 [11-02 alpha.1 验证记录](../VERIFICATION-261102-alpha1.md)。历史 Preview 记录不代表当前版本验收。
 
 The runtime configuration follows the Preview v18 source supplied on 2026-10-25.
 [Earlier SDK verification](../VERIFICATION-261025.md) records historical checks,
 not acceptance of this revision.
 
 This example uses published SDK/Contract and Feishu extension
-`0.1.261031-alpha.0` and the `deepseek-v4.1-flash` model. It accepts private text and rich-text (`post`) messages,
+`0.1.261102-alpha.1` and the `deepseek-v4.1-flash` model. It accepts private text and rich-text (`post`) messages,
 and group messages that explicitly mention this application's bot. Group replies
 create or continue the triggering message's topic: members share that topic's
 history while each call retains the actual sender's identity and authorization.
@@ -37,10 +39,12 @@ Host 负责验证飞书应用与租户、查询本组织飞书 SSO 候选，并�
 
 此声明优先于 `requirePlatformUser`；匹配失败不回退 OAuth 或外部身份，也不启动模型 Run。
 发布产物仅记录 `{ execution: "sdk-function", protocolVersion: 2 }`，函数随普通 Worker 打包，
-没有独立 matcher 模块或二进制。需要配套 Host、Runtime 和安装 Controller 的 v2 协议支持；
-升级 Agent target 本身不能升级旧 Controller。请保留既有安装与配置，遇到能力拒绝由管理员处理。
+没有独立 matcher 模块或二进制。需要配套 Host、Runtime 的 `channel-platform-user-matcher-v2`
+与 `channel-connection-v1` 能力。每个安装只有一个连接对象，随 Worker 环境目标 converge；
+不再有独立 Controller 发布/交接。旧 bundle 必须用新 SDK 重建，不能删除能力声明来绕过拒绝。
 本地 `agent dev` 不支持托管 matcher；下方本地收发步骤是无 matcher 时的历史操作说明，
-本版本可在本地执行安装、类型检查、离线测试、validate 和 build，真实收发使用就绪的 Preview。
+本版本可在本地执行安装、类型检查、离线测试、validate 和 build。托管 matcher 的真实验收
+需要独立授权和配置；本次任务不部署或连接托管环境。
 
 试用时，先通过组织的飞书 SSO 登录 GEA，确认当前账号具有本项目/Agent Preview 的使用权限。
 然后在已配置的飞书机器人私聊中发送 `Reply with pong only`，预期收到 `pong`；
@@ -53,9 +57,34 @@ Host 负责验证飞书应用与租户、查询本组织飞书 SSO 候选，并�
 若安装在初始化时就因能力不足失败，机器人可能无法回复，应先由管理员查看 receiver 状态。
 不要为测试负例修改真实成员、凭据或安装开关。
 
-依据：SDK [Channel matcher 文档](https://github.com/bmrlab/gea/blob/d2f0604c/packages/agent-sdk/src/channels/README.md#platform-user-matcher)
-与 [Feishu 扩展说明](https://github.com/bmrlab/gea/blob/d2f0604c/packages/agent-extension-feishu/src/feishu-extension.md#gea-identity-mode)。
+依据：SDK [Channel matcher 文档](https://github.com/bmrlab/gea/blob/55b8fe9da33a21dc0c0d5fc830a05c4ef72f7ee7/packages/agent-sdk/src/channels/README.md#platform-user-matcher)
+与 [Feishu 扩展说明](https://github.com/bmrlab/gea/blob/55b8fe9da33a21dc0c0d5fc830a05c4ef72f7ee7/packages/agent-extension-feishu/src/feishu-extension.md#gea-identity-mode)。
 离线测试覆盖精确匹配/拒绝及挂载后 matcher 元数据保留；Host 的唯一性与真实飞书验收另行验证。
+
+## ADR-0009 connection and authorization
+
+`agent.ts` explicitly selects the managed WebSocket transport. The published
+extension owns socket resume and the `ctx.event` protocol; the example only
+supplies the account matcher and wraps answer presentation. Do not add a second
+`channels/feishu.ts` registration alongside that extension.
+
+Host signs `channel_member` / `oauth_token` references and binds them to the
+installation, external sender and principal. Pass returned identities unchanged;
+do not manufacture a reference from a member/token ID or persist an authorization
+decision in the connection object. Host rechecks the underlying authorization on
+use, including revocation. Matcher HTTP callbacks are unsupported because they
+lack Runtime-attested frames.
+
+The extension claims each provider event through `ctx.event` on the original
+conversation and external sender. AddressDO retains its first rejected/forwarded
+decision for 24 hours; reauthentication cannot move a redelivery to a different
+identity or change its first outcome. Connection convergence keeps the socket and
+routes subsequent frames to the new deployment; requests targeting the old binding
+receive 409 `channel_object_moved`. The retired controller-publication / v4
+handoff routes must not be used.
+
+These are the SDK contract, not a claim that all paths passed this example's
+acceptance. See the dated verification record for executed and unexecuted layers.
 
 ## Personal authorization card (A2′)
 
@@ -119,10 +148,10 @@ compatible GEA CLI. Install the matching published CLI using the
 [GEA CLI installation guidance](https://github.com/bmrlab/gea/blob/f1f529a887e3289c8b16cbcec2eb7e89cdbad285/packages/gea-cli/APP_SERVER_PREVIEW.md):
 
 ```bash
-npm install -g @gea-ai/cli@0.2.261031-alpha.0
+npm install -g @gea-ai/cli@0.2.261102-alpha.0
 ```
 
-This revision uses CLI `0.2.261031-alpha.0` on macOS arm64;
+This revision uses CLI `0.2.261102-alpha.0` on macOS arm64;
 check the installed version below. No CLI package is
 bundled with the example. `scripts/gea.mjs` uses the trimmed `GEA_CLI_BIN` value
 as the executable, or resolves `gea` from `PATH` if it is unset or blank. To
@@ -290,12 +319,13 @@ by the platform.
 ## Upgrade an existing installation
 
 Upgrade the SDK, extension and CLI together, reinstall dependencies, and run `agent push` for the same Studio
-Project and Worker slug. The hosted switch checks readiness and drains the old
-receiver before replacing its target. The migration replaces a file-defined Channel with an extension Channel; do not
-assume the prior Channel key, installation or Session history is retained. Inspect
-the newly built manifest and hosted migration behavior before switching a bot.
-Existing-installation continuity is NOT RUN in this upgrade. Confirm the receiver is `ready`
-on the new deployment before repeating the private/group/rich-text checks.
+Project and Worker slug. Under ADR-0009 the installation's connection object
+converges to the selected Worker target; the old Controller publication/drain
+handoff is retired. Rebuild old bundles instead of dropping capability checks.
+The 2026-11-02 Preview publication retained the existing installation and reached
+`ready` on v26; see [the verification record](../VERIFICATION-261102.md). This does
+not establish socket continuity across that upgrade, Session history continuity,
+or real private/group/rich-text message delivery.
 
 Publishing an SDK version alone does not update an existing Agent bundle.
 After the streaming adapter has written its new output state, returning to the

@@ -1,5 +1,7 @@
 # Subagent concurrency and retained history
 
+CLI remains pinned to `0.2.261102-alpha.0`; it does not include the local WS proxy fix in GEA #1100. SDK alpha.1 checks and source-built CLI results are recorded in [the alpha.1 verification report](../VERIFICATION-261102-alpha1.md).
+
 See [SDK upgrade verification](../VERIFICATION-261101.md) for current local checks and hosted acceptance limits.
 
 A coordinator with `maxConcurrentSubagents: 2` calls a private worker through
@@ -8,8 +10,8 @@ has a bounded `pause` tool, so two unfinished children occupy both slots while
 the parent attempts a third. The verifier checks actual tool receipts, terminal
 Run states and persisted messages; it never trusts the model's final summary.
 
-The example pins public SDK `0.1.261101-alpha.0`. Use published CLI
-`0.2.261101-alpha.0` on macOS arm64, the platform used for the current local
+The example pins public SDK `0.1.261102-alpha.1`. Use published CLI
+`0.2.261102-alpha.0` on macOS arm64, the platform used for the current local
 validation. SDK installation alone does not update the CLI. See
 [VERIFICATION.md](VERIFICATION.md) for local checks and historical hosted results;
 the full 140-child matrix has not yet passed end to end.
@@ -19,7 +21,7 @@ the full 140-child matrix has not yet passed end to end.
 Use Node.js 24.16.0 and pnpm 12.1.0. Install the compatible CLI first:
 
 ```sh
-npm install --global @gea-ai/cli@0.2.261101-alpha.0
+npm install --global @gea-ai/cli@0.2.261102-alpha.0
 ```
 
 ```sh

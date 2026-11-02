@@ -1,5 +1,7 @@
 # Context management with observational memory
 
+CLI remains pinned to `0.2.261102-alpha.0`; it does not include the local WS proxy fix in GEA #1100. SDK alpha.1 checks and source-built CLI results are recorded in [the alpha.1 verification report](../VERIFICATION-261102-alpha1.md).
+
 See [SDK upgrade verification](../VERIFICATION-261101.md) for current local checks and hosted acceptance limits.
 
 An Agent that maintains observations in a chat-scoped Durable Object, plus a real-model comparison against uncompressed history and the SDK's default summarizer. It demonstrates the public `prepareStep`, `onStepEnd`, `onEnd`, `model`, `recordUsage`, `updateMessages` and `waitUntil` APIs.
@@ -12,7 +14,7 @@ See [the recorded local verification](VALIDATION.md) for the original 15-field r
 
 ## Setup
 
-Use Node 24.16.0 and pnpm 12.1.0. The example pins published packages: Agent SDK `0.1.261101-alpha.0` and CLI `0.2.261101-alpha.0`. The SDK brings the matching Contract version. No local GEA checkout or SDK tarballs are required.
+Use Node 24.16.0 and pnpm 12.1.0. The example pins published packages: Agent SDK `0.1.261102-alpha.1` and CLI `0.2.261102-alpha.0`. The SDK brings the matching Contract version. No local GEA checkout or SDK tarballs are required.
 
 ```sh
 pnpm install --frozen-lockfile
@@ -82,4 +84,4 @@ Replace `my-project` with your Studio Project slug. Push registers all three Age
 
 Dependencies and the lockfile are local to this example. Model credentials, native state and generated verification reports are ignored by Git. CI installs only public dependencies and runs type checking and Node tests without model credentials; `pnpm verify` makes paid API calls and is run explicitly.
 
-Current dependency and package verification uses macOS arm64, SDK `0.1.261101-alpha.0`, and CLI `0.2.261101-alpha.0`. This CLI release ships only macOS arm64; Windows and Linux native execution are not verified.
+Current dependency and package verification uses macOS arm64, SDK `0.1.261102-alpha.1`, and CLI `0.2.261102-alpha.0`. This CLI release ships only macOS arm64; Windows and Linux native execution are not verified.

@@ -4,8 +4,13 @@ import { feishuAgentExtension } from "@gea-ai/agent-extension-feishu";
 import agent from "../agent.ts";
 import { matchFeishuAccount } from "../lib/platform-user-matcher.ts";
 
-// Synthetic Channel capabilities and HTTP transport; no live WebSocket or Runtime.
-const channel = feishuAgentExtension({ transport: "http", platformUserMatcher: matchFeishuAccount }).channels[0];
+// HTTP parsing fixtures have no matcher: only managed receiver frames can prove
+// matcher identity. Capabilities below are synthetic, not Host/DO acceptance.
+const channel = feishuAgentExtension({ transport: "http" }).channels[0];
+
+test("matcher rejects HTTP transport without Runtime frame provenance", () => {
+  assert.throws(() => feishuAgentExtension({ transport: "http", platformUserMatcher: matchFeishuAccount }), /requires the WebSocket transport/);
+});
 
 test("example matches Preview v18 with the Feishu Channel and business Connector", () => {
   assert.equal(agent.model, "deepseek-v4.1-flash");
@@ -67,10 +72,21 @@ function fixture(allowed = "*", matcherRejection) {
         ? { status: "authorization_required", matcherRejection, identity: { principal } }
         : { status: "external", identity: { principal } };
     },
-    from(address, identity, options) {
+    event(topic, principal, { operationId, scope }) {
+      // Stateless protocol stub. Persistent first-decision/deduplication belongs
+      // to SDK AddressDO and must be verified separately in native execution.
       return {
-        async send(message, input) { sends.push({ address, identity, options, message, input }); return {}; },
-        async enqueueOutput(kind, output, input) { feedback.push({ address, identity, options, kind, output, input }); return {}; },
+        async reject(kind, output, input) {
+          feedback.push({ address: topic, identity: { principal }, kind, output, input: { ...input, operationId } });
+          return { decision: "rejected", duplicate: false };
+        },
+        async forward(address, identity, options) {
+          assert.equal(options?.scope, scope);
+          return { decision: "forwarded", duplicate: false, target: {
+            async send(message, input) { sends.push({ address, identity, options, message, input: { ...input, operationId } }); return {}; },
+            async enqueueOutput(kind, output, input) { feedback.push({ address, identity, options, kind, output, input }); return {}; },
+          } };
+        },
       };
     },
   };
