@@ -17,7 +17,7 @@ you are authorized to call. Knowing an ID does not grant permission.
 ## Install and build
 
 Use Node.js **24.16.0**, pnpm **12.8.1**. This example pins public SDK
-`0.1.261102-alpha.0` and CLI `0.2.261102-alpha.0`; it does not use a private GEA
+`0.1.261102-alpha.1` and CLI `0.2.261102-alpha.1`; it does not use a private GEA
 checkout or your globally installed CLI.
 
 ```sh
@@ -37,15 +37,15 @@ out of Git. The generated package must declare `publication-shared-worker-v1` an
 Configure `.env` with a real user OAuth access token, its
 `GEA_LOCAL_OAUTH_CLIENT_ID`, and `GEA_LOCAL_OAUTH_BASE_URL`. The OAuth application
 must have an exact local callback registered and request `agents:invoke`. Use
-the normal authorization-code/PKCE flow. With the pinned alpha.0 CLI, a developer
-login is not automatically carried into the local Session's remote authority.
+the normal authorization-code/PKCE flow. This verifier deliberately uses explicit
+OAuth, so it can inspect hosted child resources using that same bearer token.
 
-The newer platform/App Server implementation in GEA #1105 supports existing CLI
-login for newly created interactive Sessions through native App Server. This
-example keeps its published alpha.0 dependencies until the replacement npm cohort
-is available and tested. Its `verify:remote` script still exercises explicit OAuth;
-it is not an acceptance test of automatic CLI login propagation. Public local
-Project-Key/service Sessions do not implicitly borrow the CLI user's login.
+The pinned alpha.1 CLI includes the native App Server bridge for existing CLI
+login on newly created interactive Sessions (GEA #1105). It keeps credentials in
+App Server rather than forwarding cookies to the Worker. This is separate from
+`verify:remote`: the example has not yet completed a real local-to-hosted
+acceptance run for that automatic-login path. Public local Project-Key/service
+Sessions do not implicitly borrow the CLI user's login.
 
 ```sh
 pnpm verify:remote

@@ -1,9 +1,23 @@
 # Verification — 2026-11-02
 
-Published SDK **0.1.261102-alpha.0**, CLI **0.2.261102-alpha.0**, Node.js
+The original build and live deployment used published SDK **0.1.261102-alpha.0**,
+CLI **0.2.261102-alpha.0**, Node.js
 **24.16.0**, pnpm **12.8.1**, macOS arm64 native Runtime.
 
-## Passed
+## Current dependency cohort: alpha.1
+
+After OpenGEA #29 updated the other nine examples, this example independently
+upgraded SDK to `0.1.261102-alpha.1` and CLI to `0.2.261102-alpha.1`, both verified
+published in npm. Only four GEA lockfile packages changed; the exact release-age
+exceptions were updated without weakening the general policy.
+
+Frozen installation, TypeScript checking, all eight verifier tests and the real
+published CLI build passed. The generated remote declaration still selects the
+same MuseDAMChat ID, Production and OAuth authority. This is local package/build
+validation; it does not replace the hosted evidence recorded below or establish
+a real local CLI-login-to-hosted invocation. The new bundle was not deployed.
+
+## Original alpha.0 validation
 
 - Dependency installation; TypeScript `tsc --noEmit`.
 - Eight verifier tests: genuine finished result; reject missing tool receipts,
@@ -155,9 +169,11 @@ points. This verifies product usage attribution, not an external invoice audit.
 - The real local caller → hosted MuseDAMChat `pnpm verify:remote` OAuth path has
   not been completed. The earlier alpha.0 Project-Key/CLI-login attempt failed;
   it is not representative of the newer App Server login bridge.
-- Automatic CLI login propagation needs the updated native App Server/npm CLI
-  and a new interactive Session. This example has not yet tested that released
-  package, and its dependency pins remain on the available alpha.0 cohort.
+- Automatic CLI login propagation needs a new interactive Session. The example
+  now pins the released alpha.1 CLI with that App Server bridge, but a real
+  local-to-hosted run using it remains unverified. The successful hosted evidence
+  above came from the existing alpha.0-built deployments, not a republished alpha.1
+  Worker.
 - Fresh UI-driven installation, uninstalled/revoked-access negative cases,
   a separate non-admin browser user, private asset isolation and Connector
   credential forwarding were not tested. Prompts asked only for harmless text.

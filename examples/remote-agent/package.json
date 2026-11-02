@@ -12,11 +12,11 @@
     "verify:remote": "node scripts/live.mjs"
   },
   "dependencies": {
-    "@gea-ai/agent-sdk": "0.1.261102-alpha.0",
+    "@gea-ai/agent-sdk": "0.1.261102-alpha.1",
     "zod": "4.6.5"
   },
   "devDependencies": {
-    "@gea-ai/cli": "0.2.261102-alpha.0",
+    "@gea-ai/cli": "0.2.261102-alpha.1",
     "typescript": "5.9.3"
   },
   "engines": {
