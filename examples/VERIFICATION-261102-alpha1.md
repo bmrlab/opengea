@@ -6,8 +6,9 @@ SDK 为发布包 `0.1.261102-alpha.1`。本地合成 Channel 的 HTTP 事件去�
 converge 请求仍返回 403，因此不能宣布跨部署 socket 保持、旧目标 409、matcher
 授权引用负例已经在完整本地栈跑通。
 
-本轮没有部署、访问 Preview/Production、发送真实飞书消息或读取飞书凭据。
-[alpha.0 历史记录](VERIFICATION-261102.md) 中的 Preview 操作不属于本轮。
+升级验证阶段未部署；随后用户单独授权部署 Preview，并发送真实飞书测试消息。
+**Preview v27 部署成功，但真实收发验收失败：用户未收到处理表情或回复。**
+未访问或部署 Production；没有读取/输出飞书凭据。以下新增章节单独记录部署后的证据。
 
 ## 版本与改动
 
@@ -185,13 +186,72 @@ Provider frame verifier 和 matcher resolve 是替身。不是实际 PostgreSQL�
 本地 WS 到 Host 的全链路或真实飞书 E2E；不能用它填补授权负例的完整栈缺口。
 本地 Host 没有托管 matcher 身份服务，示例没有移除 matcher 以冒充身份验收。
 
+## 用户授权后的 Preview v27：部署完成，真实收发失败
+
+2026-11-02 19:17（Asia/Shanghai），使用官方 CLI `0.2.261102-alpha.0`，从
+`5a83ede612497b85d7a73512fe7eaa59b573aba0` 重打包并部署既有 Preview；归档 SHA-256
+与上文一致。执行命令（cwd 为 `examples/feishu-channel`）：
+
+```sh
+gea agent push --json '{"cwd":".","project":"opengea-feishu-channel","slug":"opengea-feishu-channel"}'
+```
+
+- 新部署：v27，`01a19bfa-554b-71fa-976f-da8ed7310a46`，状态 ready。
+- Preview target 与 receiver 的 worker/connection deployment 均指向 v27；
+  receiver ready、permission allowed、lastError/retryAt 均为空。
+- socketOpenSince 与 v26 记录一致；这仅证明报告的连接时间连续，不证明飞书收发成功。
+- Production target 部署前后均为 null；没有操作 Production。
+
+用户随后发送真实消息并报告：**与之前一样，没有表情，也没有回复**。对应只读证据：
+
+```sh
+gea run get --json '{"projectSlug":"opengea-feishu-channel","runId":"4ad3c2a3-f63b-86cb-b46c-729d0125da2c"}'
+gea trace inspect --json '{"project":"opengea-feishu-channel","traceId":"dfaed7856acc1e77c9f2b0f90e6fe15a"}'
+gea worker logs --json '{"deployment":"01a19bfa-554b-71fa-976f-da8ed7310a46","since":"2026-11-02T11:17:16Z","until":"2026-11-02T11:20:00Z","order":"oldest"}'
+```
+
+结果：Run 于 19:19:02 开始、19:19:06 finished，模型 HTTP 200、output tokens 18、
+输出非空，session completed。session_begin/session_terminal 均为 200。
+这是与上午 v26 失败消息相同的 session；没有公开原始输入、模型输出或授权链接。
+v27 日志查询 complete=true，Worker response 为 200×104、404×1，但返回记录中
+没有 Channel observation/projection/outbound 事件，因此没有投递成功证据。
+旧 v26 的同期日志查询 complete=false、reason=time_budget，空结果不能解释为无活动。
+
+### 投影阻塞线索：本地机制复现通过，线上根因仍未确认
+
+固定 GEA 源码 `d678850e76e15433cc1483d27b2e173f2871d87c` 的
+`packages/agent-sdk/src/agent-channel-runtime.ts` 中，projectEvents 按 journal 顺序，
+使用每个 operation 被接受时的 executionTarget；投影失败不推进 checkpoint。
+在隔离源码的 recovery test 中添加单个诊断用例，并运行：
+
+```sh
+pnpm exec vp test run packages/agent-sdk/src/agent-channel-runtime-recovery.test.ts -t 'diagnostic:'
+```
+
+**1 通过、18 未选择**。替身 Host 令旧 deployment 的 project_events 持续失败：
+旧/新两条输入均 accepted，均有 run.succeeded，但发送数为 0、checkpoint 保持 0，
+投影只访问旧 deployment；恢复旧投影后，两条输出继续发送。
+这是内存 storage/替身 Host 的机制测试，不是真实 Preview 诊断结论，也不是新 SDK 的完整 E2E。
+诊断用例仅存在隔离临时源码目录，没有修改 opengea 的产品代码或部署这个实验。
+
+尚缺该真实 Channel 地址的 lastError/checkpoint/operation executionTarget，不能将
+“旧 alpha.0 待投影事件阻塞新消息”写成已确认根因。管理命令 deliveries/operation
+需要 receipt 中的 principalId/conversationId（operation 查询还需 operationId），
+当前 run/trace 结果没有提供这些字段。尝试现有管理员会话导出返回
+FORBIDDEN/missing_permission；普通项目会话查询返回 null，不能据此声称会话不存在。
+下一步需由有权读取该 Preview Channel 状态的诊断入口，按上面的 run/session
+关联地址并取得投影错误和目标版本，再确定恢复方案。
+没有重启 receiver、重放事件、清理队列或发送额外测试消息。
+
+本机脱敏证据：`/private/tmp/opengea-alpha1/preview-evidence/`；不提交原始运行日志。
+
 ## 尚未验证与真实飞书/Preview 验收条件
 
 - **CLI 发布产物**：需对应正式发布 CLI；本轮未验证它的 npm 标签、CI artifact 或实际安装回归。
 - **完整本地生命周期**：需解决/解释以上组合的 converge 403，再执行跨部署 socket 保持、
   下一帧新目标、旧目标 409、重投在身份变化后保持首次决定，以及真实授权签发/伪造/吊销链路。
-- **真实飞书/Preview**：需要另行部署授权、具备配套能力的 Host/Runtime、alpha.1 重打包的
-  Worker，以及既有飞书应用和正确的组织 SSO/成员/Agent 权限。在私聊和群话题中实测表情、
+- **真实飞书/Preview**：已获授权部署 alpha.1 Worker，但用户测试未收到表情/回复，验收失败。
+  需先读取真实 Channel 投影/投递错误并修复，再在私聊和群话题中实测表情、
   回复送达、current_sender、授权卡不泄漏与重新授权；同时验证未匹配/多匹配/吊销拒绝。
   历史 receiver ready 或模型完成不能替代这些验收。
 - **多节点与 owner 转移**：未验证。单进程本地 socket 或 Runtime 测试不构成分布式验收。
