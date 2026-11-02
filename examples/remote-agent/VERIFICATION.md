@@ -34,16 +34,53 @@ Raw evidence is ignored under `.gea/local-remote-smoke/4f65b22b-ffa6-4116-9b6c-a
 The owned dev process was stopped afterward. No deployment or installation is
 performed by the local verifier.
 
+## Actual hosted-target attempt: blocked by caller identity
+
+On 2026-11-02 a temporary project registered **only the local caller**, declared
+the actual MuseDAMChat public ID `01a0a903-48d6-7764-bd9d-6260bb2117c2`, and selected
+Preview with `invocationAuthority: "oauth"`. The CLI was logged in for hosted
+model access; the caller Session used the CLI's ordinary local Project Key.
+
+- Parent Run: `08bd42f7-2a7f-479c-8919-2302c5144bef`.
+- Parent Session: `ab8b35af-2b37-4845-8a6e-2b62dbacd84e`.
+- The real model issued one `agent(target: "musedam")` call.
+- The actual tool result was HTTP **503**, `remote_run_rejected`, with no child
+  Session/Run receipt. Parent `finished` is **not** delegation success.
+- Raw evidence remains ignored under
+  `.gea/cli-identity-probe/4dc69fc2-f31d-4e15-ba0e-bd0ef8044c00/evidence/report.json`.
+  The owned local process was stopped afterward.
+
+Source inspection at GEA main `49fae7c24dfec552f85c7f159dfb5728476a946b` explains
+the boundary:
+
+- `crates/api/src/local.rs` accepts a local Project Key or user OAuth bearer at
+  public admission. Its outbound OAuth binding requires the root Session's
+  retained OAuth authority; ambient CLI login is not used as the Session user.
+- `packages/orpc/src/router/agent-api-cloud.ts` identifies ordinary Builder
+  Playground user Runs as `kind: "host"`.
+- `packages/orpc/src/agent-harness-v2/agent-child-authority.ts` rejects that
+  identity with `root_oauth_required` before installed-target admission. Omitting
+  `invocationAuthority` selects `project_key`, not current-user entitlement.
+
+The focused existing authority tests passed **6 cases**, with **66 unselected**
+cases. They ran in the existing cross-tenant checkout; the authority implementation
+and test files are identical to the main commit above. This is not a full-suite
+or hosted Builder execution result. Builtin publication roots have a different
+admission path; the finding concerns ordinary Builder and local CLI callers.
+
+These are platform identity-path gaps for the requested CLI/Builder demo, not a
+missing target ID or a requirement to create an extra OAuth application. The user
+has paused creation of a test OAuth client. No OAuth application was created,
+and no existing callback, secret, target deployment or installation was changed.
+
 ## Not yet verified
 
 `pnpm verify:remote` now provides the actual local-caller-to-hosted-target entry.
 It packages only the caller, requires a user OAuth token, and reads the child from
-the real issuer's Agents API. It has **not yet been run against MuseDAMChat**.
-Creating the dedicated test OAuth application was blocked by automatic approval
-review pending explicit user authorization for the client and its scopes. No
-client credentials were issued by that rejected action. Existing applications'
-callbacks and secrets were not changed. The second step, deploying the caller to
-`softwarecopyright` and exercising cross-tenant admission, has not started.
+the real issuer's Agents API. This OAuth-admitted path has **not yet been run
+against MuseDAMChat**. The attempted ordinary local Project-Key admission above
+failed. The second step, deploying the caller to `softwarecopyright` and
+exercising cross-tenant admission, has not started.
 
 The local fixture registers two definitions on one local API/Worker with local
 Project Key admission. It is **not** a cross-tenant OAuth test and did not invoke
