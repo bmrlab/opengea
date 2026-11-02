@@ -24,27 +24,55 @@ export function authorizationReplyText(text: string): string {
   return /\/api\/agent-connectors\/oauth\/start/iu.test(text) ? safeNotice : text;
 }
 
+// An authorization entry (or the ticket after it) may appear in tool data or in
+// streamed text, possibly split across deltas.
+const authorizationMarker = /\/api\/agent-connectors\/oauth\/start|ticket[=:]/iu;
+type StreamingState = { outputs?: Record<string, { text?: string; streamFailed?: boolean }> };
+
 export function withoutAuthorizationEcho<TState, TContext, TPayload>(
   channel: DefinedChannel<TState, TContext, TPayload>,
 ): DefinedChannel<TState, TContext, TPayload> {
+  type Handler = (typeof channel.events)[string];
+  // `streamFailed` is the extension's persisted "stop streaming" flag: the card
+  // closes with what was already shown and the terminal reply replaces it.
+  const reply = (ctx: Parameters<Handler>[1], operationId: string) =>
+    (ctx.state as StreamingState).outputs?.[operationId];
+  const guarded = (type: string, handler: Handler): Handler => {
+    if (type === "text-delta")
+      return async (event, ctx) => {
+        const delta = z.object({ delta: z.string().optional() }).passthrough().parse(event.data);
+        const current = reply(ctx, event.operationId);
+        if (current?.streamFailed) return;
+        // Keep a bounded tail so a marker split across deltas is still found.
+        if (authorizationMarker.test(`${current?.text?.slice(-64) ?? ""}${delta.delta ?? ""}`)) {
+          await handler({ ...event, data: { ...delta, delta: "" } }, ctx);
+          const created = reply(ctx, event.operationId);
+          if (created) created.streamFailed = true;
+          return;
+        }
+        return handler(event, ctx);
+      };
+    if (type.startsWith("tool-"))
+      // Tool previews render fixed status labels only; tool data never reaches the card.
+      return async (event, ctx) => {
+        await handler(event, ctx);
+        const current = reply(ctx, event.operationId);
+        if (current && authorizationMarker.test(JSON.stringify(event.data))) current.streamFailed = true;
+      };
+    if (type === "run.succeeded")
+      return (event, ctx) => {
+        const data = completed.passthrough().parse(event.data);
+        return handler({
+          ...event,
+          data: { ...data, reply: { ...data.reply, text: authorizationReplyText(data.reply.text) } },
+        }, ctx);
+      };
+    return handler;
+  };
   return {
     ...channel,
-    events: Object.fromEntries(Object.entries(channel.events).map(([type, handler]) => [
-      type,
-      type.startsWith("tool-") || type === "text-delta"
-        // Raw tool previews include card argv/Host results. A URL or ticket can
-        // also span text deltas, so defer all answer text to the terminal event.
-        // This changes presentation only; model inputs and tool execution remain intact.
-        ? () => {}
-        : type === "run.succeeded"
-          ? (event, ctx) => {
-            const data = completed.passthrough().parse(event.data);
-            return handler({
-              ...event,
-              data: { ...data, reply: { ...data.reply, text: authorizationReplyText(data.reply.text) } },
-            }, ctx);
-          }
-          : handler,
-    ])),
+    events: Object.fromEntries(
+      Object.entries(channel.events).map(([type, handler]) => [type, guarded(type, handler)]),
+    ),
   };
 }

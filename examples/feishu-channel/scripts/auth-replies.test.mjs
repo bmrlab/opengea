@@ -45,9 +45,10 @@ function fixture({ rejectCards = false } = {}) {
     // Persist/reload between events, as the real Channel projection does.
     ctx.state = channel.stateSchema.parse(JSON.parse(JSON.stringify(ctx.state)));
   }
-  async function drain() {
-    for (let turns = 0; pending.length; turns++) {
-      assert.ok(turns < 40, "offline delivery must reach a terminal state");
+  // `turns` bounds deliveries when a running tool preview animates on every receipt.
+  async function drain(turns = Infinity) {
+    for (let turn = 0; pending.length && turn < turns; turn++) {
+      assert.ok(turns !== Infinity || turn < 40, "offline delivery must reach a terminal state");
       const { ref, payload } = pending.shift();
       const result = await channel.outbound({ id: ref.key, payload }, capabilities);
       await emit(result.status === "sent" ? "delivery.sent" : "delivery.failed", {
@@ -150,6 +151,41 @@ test("ordinary completed text and links survive without tool preview text", asyn
   await f.emit("run.succeeded", { reply: { text } });
   await f.drain();
   assert.ok(f.payloads.some((payload) => payload.kind === "card-final" && payload.text === text));
+});
+
+test("ordinary answer text streams into the card before the Run finishes", async () => {
+  const f = fixture();
+  await f.emit("input.accepted");
+  await f.emit("run.started");
+  await f.drain();
+  await f.emit("tool-input-start", { toolCallId: "lookup", toolName: "current_sender" });
+  await f.drain(2);
+  await f.emit("text-delta", { id: "text", delta: "第一段，" });
+  await f.drain();
+  await f.emit("text-delta", { id: "text", delta: "第二段。" });
+  await f.drain();
+  const streamed = f.payloads.filter((payload) => payload.kind === "stream-update").map((payload) => payload.text);
+  assert.ok(streamed.some((text) => text.includes("正在处理")), "tool status previews stream");
+  assert.ok(streamed.includes("第一段，第二段。"), "answer text streams before run.succeeded");
+});
+
+test("an authorization entry split across deltas stops streaming before its ticket", async () => {
+  const f = fixture();
+  await f.emit("input.accepted");
+  await f.emit("run.started");
+  await f.drain();
+  const split = url.indexOf("ticket") + 3;
+  for (const delta of ["请打开 ", url.slice(0, split), url.slice(split), "\n继续"]) {
+    await f.emit("text-delta", { id: "text", delta });
+    await f.drain();
+  }
+  const streamed = f.payloads.filter((payload) => payload.kind === "stream-update");
+  assert.deepEqual(streamed.map((payload) => payload.text), ["请打开 "]);
+  await f.emit("run.succeeded", { reply: { text: `请打开 ${url}\n继续` } });
+  await f.drain();
+  assertNoAuthorization(f.payloads);
+  assertNoAuthorization(f.bodies);
+  assert.ok(f.payloads.some((payload) => payload.kind === "card-final"));
 });
 
 // The independent review's ordinary replies must survive the registered Channel,
