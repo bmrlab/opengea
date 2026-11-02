@@ -1,0 +1,28 @@
+name: Remote Agent example
+on:
+  push:
+    branches: [main]
+    paths: ["examples/remote-agent/**", ".github/workflows/remote-agent.yml"]
+  pull_request:
+    paths: ["examples/remote-agent/**", ".github/workflows/remote-agent.yml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  checks:
+    # The pinned public CLI package currently declares macOS support only.
+    runs-on: macos-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: examples/remote-agent
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: examples/remote-agent/.node-version
+      - name: Install pnpm
+        run: npm install --global pnpm@12.8.1
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm type-check
+      - run: pnpm test
