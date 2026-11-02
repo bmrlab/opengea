@@ -3,7 +3,12 @@ import { defineAgent } from "@gea-ai/agent-sdk";
 import { withoutAuthorizationEcho } from "./lib/auth-replies.ts";
 import { matchFeishuAccount } from "./lib/platform-user-matcher.ts";
 
-const feishu = feishuAgentExtension({ platformUserMatcher: matchFeishuAccount });
+// Matcher identity requires Runtime-attested managed receiver frames (ADR-0009).
+// The published extension owns connection resume, ctx.event and Host references.
+const feishu = feishuAgentExtension({
+  transport: "websocket",
+  platformUserMatcher: matchFeishuAccount,
+});
 const channels = feishu.channels.map((channel) => {
   if (!("events" in channel)) throw new Error("Expected an executable Feishu Channel.");
   return withoutAuthorizationEcho(channel);

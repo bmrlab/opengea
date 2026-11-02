@@ -1,5 +1,7 @@
 # Memory notebook Agent
 
+CLI remains pinned to `0.2.261102-alpha.0`; it does not include the local WS proxy fix in GEA #1100. SDK alpha.1 checks and source-built CLI results are recorded in [the alpha.1 verification report](../VERIFICATION-261102-alpha1.md).
+
 A small Agent using the published `@gea-ai/agent-sdk/memory` API to save, read,
 search, correct and remove durable facts across Sessions. Unlike
 [observational-memory](../observational-memory/), this example uses the SDK fact
@@ -10,8 +12,8 @@ make auxiliary model calls.
 
 Use Node 24.16.0 and pnpm 12.8.1 on macOS Apple Silicon (the pinned CLI
 publishes a Darwin arm64 executable).
-Dependencies are public npm packages: SDK `0.1.261101-alpha.0` and CLI
-`0.2.261101-alpha.0`. Each example owns its lockfile; no private repository or
+Dependencies are public npm packages: SDK `0.1.261102-alpha.1` and CLI
+`0.2.261102-alpha.0`. Each example owns its lockfile; no private repository or
 workspace dependency is required.
 
 ```sh
@@ -81,9 +83,9 @@ background job or eviction.
 GEA enhancements [#837](https://github.com/bmrlab/gea/pull/837) (attempt diagnostics),
 [#838](https://github.com/bmrlab/gea/pull/838) (native CI) and
 [#839](https://github.com/bmrlab/gea/pull/839) (multi-slot recall budget) are merged.
-The current published SDK `0.1.261101-alpha.0` includes them. This example pins
+The current published SDK `0.1.261102-alpha.1` includes them. This example pins
 that release to validate the current published SDK. Its single-slot, tool-only
-behavior does not exercise the multi-slot recall allowance. CLI is also upgraded to the published macOS `0.2.261101-alpha.0`.
+behavior does not exercise the multi-slot recall allowance. CLI is also upgraded to the published macOS `0.2.261102-alpha.0`.
 
 Local validation results and untested boundaries are recorded in
 [VERIFICATION.md](VERIFICATION.md). The example is ready for review; no deployment

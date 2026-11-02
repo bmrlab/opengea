@@ -167,12 +167,12 @@ importers:
   .:
     dependencies:
       '@gea-ai/agent-sdk':
-        specifier: 0.1.261101-alpha.0
-        version: 0.1.261101-alpha.0(esbuild@0.28.0)
+        specifier: 0.1.261102-alpha.1
+        version: 0.1.261102-alpha.1(esbuild@0.28.0)
     devDependencies:
       '@gea-ai/cli':
-        specifier: 0.2.261101-alpha.0
-        version: 0.2.261101-alpha.0
+        specifier: 0.2.261102-alpha.0
+        version: 0.2.261102-alpha.0
       typescript:
         specifier: 5.9.3
         version: 5.9.3
@@ -379,16 +379,16 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@gea-ai/agent-sdk@0.1.261101-alpha.0':
-    resolution: {integrity: sha512-Yan+b9D0vPF/0y7AGaCiLAuz7J3ljPJ3jXegTMSyQpQSG0flFW5OhVwwF6VUhuGg0K/gHBeLaqdLG8KzF/uGVw==}
+  '@gea-ai/agent-sdk@0.1.261102-alpha.1':
+    resolution: {integrity: sha512-zvSrMUv7STtzcPsTCwuQLzblTFZLN6OrF88Bicq2Kb4EQ2LiL/9s6imOgyOypfET73u6qySYVupq58nb+MccBQ==}
     peerDependencies:
       esbuild: ^0.28.0
     peerDependenciesMeta:
       esbuild:
         optional: true
 
-  '@gea-ai/cli-darwin-arm64@0.2.261101-alpha.0':
-    resolution: {integrity: sha512-FCib9FXG3x0WkeWWtsT/8d13AnsIL/a2kDvocDnqSSTgM5ABIa8UMREcvhmVeozELRAe4WpNqaV9YVho/kdshw==}
+  '@gea-ai/cli-darwin-arm64@0.2.261102-alpha.0':
+    resolution: {integrity: sha512-js3jeiUcyRK+ZXrKEAbkMQV9mc0TvT1anPzNgEGlOUGGnYZKEGP2fiDF1IfdcHYllK9a+kIRb9r0RDlSoYW5Vg==}
     cpu: [arm64]
     os: [darwin]
     hasBin: true
@@ -396,13 +396,13 @@ packages:
       - esbuild
       - sharp
 
-  '@gea-ai/cli@0.2.261101-alpha.0':
-    resolution: {integrity: sha512-m3BJEhZOdZ2xL26JTjZh/asOeR7sSwIcxUHYNVycLly22EGF93wPkbRLuGh/j9y7EHTNffIRrp4YfvCWbmpSAg==}
+  '@gea-ai/cli@0.2.261102-alpha.0':
+    resolution: {integrity: sha512-NsB/n/Em3Poh33mxovmNHn6TNMGzZG50JhvgCzqDsAuL8VMsXd+k3hyaZX1O3vWCQwaHA/aznyWphuCALKoHWg==}
     os: [darwin]
     hasBin: true
 
-  '@gea-ai/contract@0.1.261101-alpha.0':
-    resolution: {integrity: sha512-VnJ+o0zZ5VAFTNSUaBjIf0Ig0N9Isb1/nGyE1dniDOJDHqJAiN74+aM7QbMi+9gxno7hiMLdIaSNsBwai/WsbQ==}
+  '@gea-ai/contract@0.1.261102-alpha.1':
+    resolution: {integrity: sha512-azpm9bUA0EDSeIGaNBvr4sTfkfrf72dikjUU/ehKSTfwzqGyAmWYzPrhmEP2tjcTSpG4Y08mqzBvpjGSC/rC+A==}
 
   '@jitl/quickjs-ffi-types@0.32.0':
     resolution: {integrity: sha512-v9T+GQpmk43VDJ7d72sf0Nexhk+ArvtUihW27dy7lqAl0zBObFKtSBBIm5RBjwIhE8VwsPPm9PNuvPvNqLWUEg==}
@@ -1030,7 +1030,7 @@ snapshots:
   '@esbuild/win32-x64@0.28.0':
     optional: true
 
-  '@gea-ai/agent-sdk@0.1.261101-alpha.0(esbuild@0.28.0)':
+  '@gea-ai/agent-sdk@0.1.261102-alpha.1(esbuild@0.28.0)':
     dependencies:
       '@ai-sdk/anthropic': 4.0.67(zod@4.6.5)
       '@ai-sdk/openai': 4.0.79(zod@4.6.5)
@@ -1038,7 +1038,7 @@ snapshots:
       '@ai-sdk/otel': 1.0.119(zod@4.6.5)
       '@ai-sdk/provider': 4.0.19
       '@ai-sdk/provider-utils': 5.0.50(zod@4.6.5)
-      '@gea-ai/contract': 0.1.261101-alpha.0
+      '@gea-ai/contract': 0.1.261102-alpha.1
       '@opentelemetry/api': 1.9.1
       '@opentelemetry/context-async-hooks': 2.10.0(@opentelemetry/api@1.9.1)
       '@opentelemetry/core': 2.10.0(@opentelemetry/api@1.9.1)
@@ -1058,14 +1058,14 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@gea-ai/cli-darwin-arm64@0.2.261101-alpha.0':
+  '@gea-ai/cli-darwin-arm64@0.2.261102-alpha.0':
     optional: true
 
-  '@gea-ai/cli@0.2.261101-alpha.0':
+  '@gea-ai/cli@0.2.261102-alpha.0':
     optionalDependencies:
-      '@gea-ai/cli-darwin-arm64': 0.2.261101-alpha.0
+      '@gea-ai/cli-darwin-arm64': 0.2.261102-alpha.0
 
-  '@gea-ai/contract@0.1.261101-alpha.0':
+  '@gea-ai/contract@0.1.261102-alpha.1':
     dependencies:
       '@bufbuild/protobuf': 2.13.0
       '@opentelemetry/api': 1.9.1

@@ -1,8 +1,10 @@
 # Independent subagents
 
+CLI remains pinned to `0.2.261102-alpha.0`; it does not include the local WS proxy fix in GEA #1100. SDK alpha.1 checks and source-built CLI results are recorded in [the alpha.1 verification report](../VERIFICATION-261102-alpha1.md).
+
 See [SDK upgrade verification](../VERIFICATION-261101.md) for current local checks and hosted acceptance limits.
 
-An arithmetic team using public `@gea-ai/agent-sdk@0.1.261101-alpha.0` and
+An arithmetic team using public `@gea-ai/agent-sdk@0.1.261102-alpha.1` and
 `agentCore()`. Each child has its own Session. Every invocation returns a
 `{ sessionId, runId }` receipt; Agent IDs identify definitions, not conversations.
 
@@ -70,9 +72,9 @@ pnpm test
 cp .env.example .env
 ```
 
-Use CLI `0.2.261101-alpha.0` with its bundled Runtime for local execution, and
+Use CLI `0.2.261102-alpha.0` with its bundled Runtime for local execution, and
 GEA v0.56 or newer for hosted verification. Both support the Session/Run protocol
-used by this SDK. Install the CLI with `pnpm add -g @gea-ai/cli@0.2.261101-alpha.0`.
+used by this SDK. Install the CLI with `pnpm add -g @gea-ai/cli@0.2.261102-alpha.0`.
 `GEA_CLI_BIN` remains available for testing a compatible local executable.
 
 ```sh

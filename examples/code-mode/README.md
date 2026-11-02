@@ -1,8 +1,10 @@
 # Code mode: discover tools, then compose them in JavaScript
 
+CLI remains pinned to `0.2.261102-alpha.0`; it does not include the local WS proxy fix in GEA #1100. SDK alpha.1 checks and source-built CLI results are recorded in [the alpha.1 verification report](../VERIFICATION-261102-alpha1.md).
+
 See [SDK upgrade verification](../VERIFICATION-261101.md) for current local checks and hosted acceptance limits.
 
-Four Agents using public SDK **0.1.261101-alpha.0** and macOS CLI **0.2.261101-alpha.0**:
+Four Agents using public SDK **0.1.261102-alpha.1** and macOS CLI **0.2.261102-alpha.0**:
 
 | Agent                 | Purpose                                                                                                                          |
 | --------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
