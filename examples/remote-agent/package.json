@@ -1,0 +1,26 @@
+{
+  "name": "@opengea/remote-agent",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "gea agent build",
+    "type-check": "tsc --noEmit",
+    "test": "node --test scripts/*.test.mjs",
+    "verify": "node scripts/verify.mjs",
+    "verify:local": "node scripts/local.mjs",
+    "verify:remote": "node scripts/live.mjs"
+  },
+  "dependencies": {
+    "@gea-ai/agent-sdk": "0.1.261102-alpha.1",
+    "zod": "4.6.5"
+  },
+  "devDependencies": {
+    "@gea-ai/cli": "0.2.261102-alpha.1",
+    "typescript": "5.9.3"
+  },
+  "engines": {
+    "node": ">=24.16.0"
+  },
+  "packageManager": "pnpm@12.8.1"
+}

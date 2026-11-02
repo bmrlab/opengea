@@ -1,0 +1,181 @@
+# Remote Agent by public ID
+
+This Worker contains only a caller. Its `musedam` reference selects an independently
+admitted Agent with `defineRemoteAgent({ agentId, invocationAuthority: "oauth" })`.
+The target code is not copied into the caller's published bundle.
+
+```text
+User OAuth → caller Agent → agent(target: "musedam") → remote Session / Run
+                         ← runWait + actual remote result ←
+```
+
+`subagents/musedam.ts` currently selects the MuseDAMChat demo's **public Agent ID**
+`01a0a903-48d6-7764-bd9d-6260bb2117c2`. The Builder editor resource ID in its page
+URL is different and must not be used here. Replace the reference with a target
+you are authorized to call. Knowing an ID does not grant permission.
+
+## Install and build
+
+Use Node.js **24.16.0**, pnpm **12.8.1**. This example pins public SDK
+`0.1.261102-alpha.1` and CLI `0.2.261102-alpha.1`; it does not use a private GEA
+checkout or your globally installed CLI.
+
+```sh
+cd examples/remote-agent
+pnpm install --frozen-lockfile
+pnpm type-check
+pnpm test
+pnpm build
+```
+
+The shipped native CLI supports macOS arm64. Credentials and `.gea` evidence stay
+out of Git. The generated package must declare `publication-shared-worker-v1` and
+`durable-object-application-namespace-v1` for the new hosted publication model.
+
+## Run a local caller against the actual hosted Agent
+
+Configure `.env` with a real user OAuth access token, its
+`GEA_LOCAL_OAUTH_CLIENT_ID`, and `GEA_LOCAL_OAUTH_BASE_URL`. The OAuth application
+must have an exact local callback registered and request `agents:invoke`. Use
+the normal authorization-code/PKCE flow. This verifier deliberately uses explicit
+OAuth, so it can inspect hosted child resources using that same bearer token.
+
+The pinned alpha.1 CLI includes the native App Server bridge for existing CLI
+login on newly created interactive Sessions (GEA #1105). It keeps credentials in
+App Server rather than forwarding cookies to the Worker. This is separate from
+`verify:remote`: the example has not yet completed a real local-to-hosted
+acceptance run for that automatic-login path. Public local Project-Key/service
+Sessions do not implicitly borrow the CLI user's login.
+
+```sh
+pnpm verify:remote
+```
+
+This starts **only the caller** in the local native Runtime. Its
+`defineRemoteAgent` declaration uses the actual MuseDAMChat public ID from
+`subagents/musedam.ts` and OAuth authority. `GEA_REMOTE_ENVIRONMENT` selects
+`preview` or `production` for the hosted target; no local target is generated.
+The source declaration remains unchanged for later hosted deployment.
+
+The local API verifies the OAuth token with the real issuer. The same user's
+authority is used to admit the hosted target. The verifier reads the parent
+history locally and the child Run/Session/history from the issuer's hosted
+Agents API. The local parent's `agent` receipt and completed `runWait` result
+link the two: a local parent has no row in the hosted Run directory, so the
+cloud child's `parent_run_id` is not the relation for this transport.
+
+Evidence is under `.gea/local-to-hosted/<id>/`. The command makes billable real
+model calls and stops its own local process afterward. A successful run proves
+local-to-hosted invocation; it proves cross-tenant admission only if the OAuth
+user's consumer tenant actually differs from the target publisher.
+
+## Optional local-only fixture
+
+```sh
+pnpm exec gea login
+pnpm verify:local
+```
+
+This command uses your existing CLI login for **real hosted model requests**, so
+model usage is billable. Agent execution itself is in the **local native Runtime**.
+It creates an ignored temporary project, adds a separate public target definition,
+discovers its canonical ID, restarts with an ID-only `defineRemoteAgent` reference,
+and invokes the parent through the local Agents API. It does not substitute a
+same-Worker `slug` reference. It shuts down only its own child process afterward.
+
+The local fixture registers both definitions on one local API/Worker and uses its
+local Project Key. It verifies ID dispatch, distinct child Session/Run identities,
+parent linkage, completion and result return. **It does not verify the hosted
+MuseDAMChat target, OAuth delegation, installation or cross-tenant isolation.**
+The actual example source remains OAuth-only and points to the hosted target;
+the local fixture never changes that source or publishes its test target.
+
+Evidence and process logs are under `.gea/local-remote-smoke/<id>/`. The verifier
+reads actual tool receipts and child Runs; a parent's claim of success, a started
+child, a failed child or a different target cannot pass.
+
+## Run the hosted cross-tenant example
+
+The deployed platform supports two user entry paths:
+
+- **Builder Playground:** sign in to the consumer tenant, open the caller Agent,
+  choose Preview or Production, and ask it to delegate to `musedam`. The trusted
+  current user is checked against the target installation. No separate OAuth app
+  is needed for this first-party path. Preview may call an explicitly declared
+  Production remote target; this example's target is Production.
+- **Public Agents API:** use the caller application's user OAuth flow and run
+  `pnpm verify`. This verifies OAuth delegation separately. Direct `/api/v1`
+  does not accept the browser cookie as a bearer credential.
+
+Both paths have completed real hosted cross-tenant calls; see `VERIFICATION.md`.
+A successful Playground run does not by itself prove the OAuth API path or the
+local CLI path.
+
+1. In publisher tenant A, build/publish the target Worker to Production with the
+   matching SDK/CLI/Host/Runtime. Submit its application for store review and have
+   a platform administrator approve the exact entry/scopes snapshot.
+2. In consumer tenant B, open **System administration → Installed applications →
+   Store applications** (`/admin/agent-installations`). Find the approved app and
+   click **Install** as a tenant administrator. Installation belongs to B; no
+   Workspace selection is needed. First-party signed-in users use this installed
+   entitlement; third-party OAuth consumers still complete user consent.
+
+   For this demo, the store application is **OpenGEA OAuth Worker Test**, published
+   by **tezign**, and its installed Agent is **MuseDAMChat**. The recorded setup
+   used the normal `platformApplications.authorize` management API in
+   `softwarecopyright`; the current UI uses the same operation. The UI was
+   inspected in the installed state, but a fresh button-driven installation has
+   not been separately tested.
+
+3. Publish this caller to a dedicated Builder Project in B, and promote its tested
+   Preview build to Production for the API demo. Keep the target environment in
+   `subagents/musedam.ts` explicitly set to `production`; it also works when the
+   caller is selected as Preview in Playground. For example:
+
+   ```sh
+   pnpm exec gea workspace use --json '{"orgSlug":"softwarecopyright","workspaceSlug":"default"}'
+   pnpm exec gea agent push --json '{"cwd":".","project":"remote-agent-demo","slug":"remote-agent-caller"}'
+   ```
+
+   Create the project first. These are explicit hosted writes; the local smoke
+   command does not perform them or change your selected organization.
+
+4. Use the caller application's normal OAuth flow with a B user and
+   `agents:invoke`. The source user must be entitled to the target installation.
+   The target's Project Key is not configured and is not a fallback. Target
+   admission follows the original caller, not a requirement to associate the
+   source OAuth Client with the target Project.
+5. Copy `.env.example` to `.env`. Set the caller's **public** Agent ID and a fresh
+   user OAuth access token. Keep this token server-side and out of terminal
+   history, browser JavaScript, prompts, logs and commits. Run:
+
+   ```sh
+   pnpm verify
+   ```
+
+The verifier creates a fresh parent Session, requests a unique harmless marker,
+waits for the parent, finds the real `agent` receipt, reads the child Run/Session,
+and checks the target ID, parent link, terminal state and marker in both histories.
+It does not directly call MuseDAMChat as a substitute for delegation. It records
+partial evidence on failure and never retries mutation requests automatically.
+
+To demonstrate the authorization boundary, perform a fresh invocation before B
+installs the target (must be denied), after install/consent (must succeed), and
+after explicitly disabling B's test installation (new admission must be denied).
+A negative result is only meaningful after the caller itself is authenticated and
+runnable. Restore only the test installation you intentionally changed.
+
+## Boundaries
+
+- OAuth authorizes the remote code; data access and billing follow the original
+  caller and consumer tenant. Verify tenant/Run/usage records separately; this
+  script cannot prove billing ownership from a successful answer.
+- Remote personal Connector credentials are not automatically forwarded. This
+  smoke asks for text only and does not test MuseDAM asset search or file access.
+- Parent and target need separate Runs; no new public target URL is created for
+  each installation. Run release/deployment records are execution provenance.
+- New Sessions are used deliberately. Old Sessions without a valid stable storage
+  namespace may be read-only or fail execution with
+  `publication_session_storage_unresolved`.
+- See `VERIFICATION.md` for what was actually run. Local success is not a hosted
+  or cross-tenant acceptance result.
