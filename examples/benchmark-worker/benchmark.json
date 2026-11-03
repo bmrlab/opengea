@@ -1,0 +1,738 @@
+{
+  "key": "knowledge-search",
+  "title": "Knowledge base search regression",
+  "cases": [
+    {
+      "id": "password",
+      "input": {
+        "query": "forgotten password email",
+        "documents": [
+          {
+            "id": "reset",
+            "title": "Reset password",
+            "text": "Reset a forgotten password using the email recovery link. The link expires after thirty minutes."
+          },
+          {
+            "id": "mfa",
+            "title": "Recover two factor access",
+            "text": "Use backup codes when your authenticator device is lost. Contact support if all recovery codes are missing."
+          },
+          {
+            "id": "refund",
+            "title": "Refund policy",
+            "text": "Request a refund within fourteen days of purchase. Annual subscription refunds are prorated."
+          },
+          {
+            "id": "cancel",
+            "title": "Cancel subscription",
+            "text": "Cancel your subscription in billing settings. Access continues until the paid period ends."
+          },
+          {
+            "id": "invoice",
+            "title": "Download invoice",
+            "text": "Download a tax invoice from billing history. Set your company address before the next invoice."
+          },
+          {
+            "id": "export",
+            "title": "Export workspace",
+            "text": "Workspace owners can export documents as JSON. Large exports run asynchronously and provide a download link."
+          },
+          {
+            "id": "invite",
+            "title": "Invite members",
+            "text": "Workspace admins invite members by email. Invitations expire after seven days."
+          },
+          {
+            "id": "roles",
+            "title": "Member permissions",
+            "text": "Owners manage billing and delete workspaces. Editors change documents. Viewers have read only access."
+          },
+          {
+            "id": "api",
+            "title": "API rate limits",
+            "text": "The API allows sixty requests per minute. Retry rate limited requests with exponential backoff."
+          },
+          {
+            "id": "delete",
+            "title": "Delete workspace",
+            "text": "Workspace deletion permanently removes documents after a thirty day recovery window."
+          }
+        ]
+      },
+      "reference": {
+        "relevantIds": ["reset"]
+      }
+    },
+    {
+      "id": "device",
+      "input": {
+        "query": "lost authenticator backup codes",
+        "documents": [
+          {
+            "id": "reset",
+            "title": "Reset password",
+            "text": "Reset a forgotten password using the email recovery link. The link expires after thirty minutes."
+          },
+          {
+            "id": "mfa",
+            "title": "Recover two factor access",
+            "text": "Use backup codes when your authenticator device is lost. Contact support if all recovery codes are missing."
+          },
+          {
+            "id": "refund",
+            "title": "Refund policy",
+            "text": "Request a refund within fourteen days of purchase. Annual subscription refunds are prorated."
+          },
+          {
+            "id": "cancel",
+            "title": "Cancel subscription",
+            "text": "Cancel your subscription in billing settings. Access continues until the paid period ends."
+          },
+          {
+            "id": "invoice",
+            "title": "Download invoice",
+            "text": "Download a tax invoice from billing history. Set your company address before the next invoice."
+          },
+          {
+            "id": "export",
+            "title": "Export workspace",
+            "text": "Workspace owners can export documents as JSON. Large exports run asynchronously and provide a download link."
+          },
+          {
+            "id": "invite",
+            "title": "Invite members",
+            "text": "Workspace admins invite members by email. Invitations expire after seven days."
+          },
+          {
+            "id": "roles",
+            "title": "Member permissions",
+            "text": "Owners manage billing and delete workspaces. Editors change documents. Viewers have read only access."
+          },
+          {
+            "id": "api",
+            "title": "API rate limits",
+            "text": "The API allows sixty requests per minute. Retry rate limited requests with exponential backoff."
+          },
+          {
+            "id": "delete",
+            "title": "Delete workspace",
+            "text": "Workspace deletion permanently removes documents after a thirty day recovery window."
+          }
+        ]
+      },
+      "reference": {
+        "relevantIds": ["mfa"]
+      }
+    },
+    {
+      "id": "money",
+      "input": {
+        "query": "annual subscription refund",
+        "documents": [
+          {
+            "id": "reset",
+            "title": "Reset password",
+            "text": "Reset a forgotten password using the email recovery link. The link expires after thirty minutes."
+          },
+          {
+            "id": "mfa",
+            "title": "Recover two factor access",
+            "text": "Use backup codes when your authenticator device is lost. Contact support if all recovery codes are missing."
+          },
+          {
+            "id": "refund",
+            "title": "Refund policy",
+            "text": "Request a refund within fourteen days of purchase. Annual subscription refunds are prorated."
+          },
+          {
+            "id": "cancel",
+            "title": "Cancel subscription",
+            "text": "Cancel your subscription in billing settings. Access continues until the paid period ends."
+          },
+          {
+            "id": "invoice",
+            "title": "Download invoice",
+            "text": "Download a tax invoice from billing history. Set your company address before the next invoice."
+          },
+          {
+            "id": "export",
+            "title": "Export workspace",
+            "text": "Workspace owners can export documents as JSON. Large exports run asynchronously and provide a download link."
+          },
+          {
+            "id": "invite",
+            "title": "Invite members",
+            "text": "Workspace admins invite members by email. Invitations expire after seven days."
+          },
+          {
+            "id": "roles",
+            "title": "Member permissions",
+            "text": "Owners manage billing and delete workspaces. Editors change documents. Viewers have read only access."
+          },
+          {
+            "id": "api",
+            "title": "API rate limits",
+            "text": "The API allows sixty requests per minute. Retry rate limited requests with exponential backoff."
+          },
+          {
+            "id": "delete",
+            "title": "Delete workspace",
+            "text": "Workspace deletion permanently removes documents after a thirty day recovery window."
+          }
+        ]
+      },
+      "reference": {
+        "relevantIds": ["refund"]
+      }
+    },
+    {
+      "id": "stop",
+      "input": {
+        "query": "cancel subscription access",
+        "documents": [
+          {
+            "id": "reset",
+            "title": "Reset password",
+            "text": "Reset a forgotten password using the email recovery link. The link expires after thirty minutes."
+          },
+          {
+            "id": "mfa",
+            "title": "Recover two factor access",
+            "text": "Use backup codes when your authenticator device is lost. Contact support if all recovery codes are missing."
+          },
+          {
+            "id": "refund",
+            "title": "Refund policy",
+            "text": "Request a refund within fourteen days of purchase. Annual subscription refunds are prorated."
+          },
+          {
+            "id": "cancel",
+            "title": "Cancel subscription",
+            "text": "Cancel your subscription in billing settings. Access continues until the paid period ends."
+          },
+          {
+            "id": "invoice",
+            "title": "Download invoice",
+            "text": "Download a tax invoice from billing history. Set your company address before the next invoice."
+          },
+          {
+            "id": "export",
+            "title": "Export workspace",
+            "text": "Workspace owners can export documents as JSON. Large exports run asynchronously and provide a download link."
+          },
+          {
+            "id": "invite",
+            "title": "Invite members",
+            "text": "Workspace admins invite members by email. Invitations expire after seven days."
+          },
+          {
+            "id": "roles",
+            "title": "Member permissions",
+            "text": "Owners manage billing and delete workspaces. Editors change documents. Viewers have read only access."
+          },
+          {
+            "id": "api",
+            "title": "API rate limits",
+            "text": "The API allows sixty requests per minute. Retry rate limited requests with exponential backoff."
+          },
+          {
+            "id": "delete",
+            "title": "Delete workspace",
+            "text": "Workspace deletion permanently removes documents after a thirty day recovery window."
+          }
+        ]
+      },
+      "reference": {
+        "relevantIds": ["cancel"]
+      }
+    },
+    {
+      "id": "tax",
+      "input": {
+        "query": "company tax invoice",
+        "documents": [
+          {
+            "id": "reset",
+            "title": "Reset password",
+            "text": "Reset a forgotten password using the email recovery link. The link expires after thirty minutes."
+          },
+          {
+            "id": "mfa",
+            "title": "Recover two factor access",
+            "text": "Use backup codes when your authenticator device is lost. Contact support if all recovery codes are missing."
+          },
+          {
+            "id": "refund",
+            "title": "Refund policy",
+            "text": "Request a refund within fourteen days of purchase. Annual subscription refunds are prorated."
+          },
+          {
+            "id": "cancel",
+            "title": "Cancel subscription",
+            "text": "Cancel your subscription in billing settings. Access continues until the paid period ends."
+          },
+          {
+            "id": "invoice",
+            "title": "Download invoice",
+            "text": "Download a tax invoice from billing history. Set your company address before the next invoice."
+          },
+          {
+            "id": "export",
+            "title": "Export workspace",
+            "text": "Workspace owners can export documents as JSON. Large exports run asynchronously and provide a download link."
+          },
+          {
+            "id": "invite",
+            "title": "Invite members",
+            "text": "Workspace admins invite members by email. Invitations expire after seven days."
+          },
+          {
+            "id": "roles",
+            "title": "Member permissions",
+            "text": "Owners manage billing and delete workspaces. Editors change documents. Viewers have read only access."
+          },
+          {
+            "id": "api",
+            "title": "API rate limits",
+            "text": "The API allows sixty requests per minute. Retry rate limited requests with exponential backoff."
+          },
+          {
+            "id": "delete",
+            "title": "Delete workspace",
+            "text": "Workspace deletion permanently removes documents after a thirty day recovery window."
+          }
+        ]
+      },
+      "reference": {
+        "relevantIds": ["invoice"]
+      }
+    },
+    {
+      "id": "backup",
+      "input": {
+        "query": "export documents JSON",
+        "documents": [
+          {
+            "id": "reset",
+            "title": "Reset password",
+            "text": "Reset a forgotten password using the email recovery link. The link expires after thirty minutes."
+          },
+          {
+            "id": "mfa",
+            "title": "Recover two factor access",
+            "text": "Use backup codes when your authenticator device is lost. Contact support if all recovery codes are missing."
+          },
+          {
+            "id": "refund",
+            "title": "Refund policy",
+            "text": "Request a refund within fourteen days of purchase. Annual subscription refunds are prorated."
+          },
+          {
+            "id": "cancel",
+            "title": "Cancel subscription",
+            "text": "Cancel your subscription in billing settings. Access continues until the paid period ends."
+          },
+          {
+            "id": "invoice",
+            "title": "Download invoice",
+            "text": "Download a tax invoice from billing history. Set your company address before the next invoice."
+          },
+          {
+            "id": "export",
+            "title": "Export workspace",
+            "text": "Workspace owners can export documents as JSON. Large exports run asynchronously and provide a download link."
+          },
+          {
+            "id": "invite",
+            "title": "Invite members",
+            "text": "Workspace admins invite members by email. Invitations expire after seven days."
+          },
+          {
+            "id": "roles",
+            "title": "Member permissions",
+            "text": "Owners manage billing and delete workspaces. Editors change documents. Viewers have read only access."
+          },
+          {
+            "id": "api",
+            "title": "API rate limits",
+            "text": "The API allows sixty requests per minute. Retry rate limited requests with exponential backoff."
+          },
+          {
+            "id": "delete",
+            "title": "Delete workspace",
+            "text": "Workspace deletion permanently removes documents after a thirty day recovery window."
+          }
+        ]
+      },
+      "reference": {
+        "relevantIds": ["export"]
+      }
+    },
+    {
+      "id": "team",
+      "input": {
+        "query": "invite members email",
+        "documents": [
+          {
+            "id": "reset",
+            "title": "Reset password",
+            "text": "Reset a forgotten password using the email recovery link. The link expires after thirty minutes."
+          },
+          {
+            "id": "mfa",
+            "title": "Recover two factor access",
+            "text": "Use backup codes when your authenticator device is lost. Contact support if all recovery codes are missing."
+          },
+          {
+            "id": "refund",
+            "title": "Refund policy",
+            "text": "Request a refund within fourteen days of purchase. Annual subscription refunds are prorated."
+          },
+          {
+            "id": "cancel",
+            "title": "Cancel subscription",
+            "text": "Cancel your subscription in billing settings. Access continues until the paid period ends."
+          },
+          {
+            "id": "invoice",
+            "title": "Download invoice",
+            "text": "Download a tax invoice from billing history. Set your company address before the next invoice."
+          },
+          {
+            "id": "export",
+            "title": "Export workspace",
+            "text": "Workspace owners can export documents as JSON. Large exports run asynchronously and provide a download link."
+          },
+          {
+            "id": "invite",
+            "title": "Invite members",
+            "text": "Workspace admins invite members by email. Invitations expire after seven days."
+          },
+          {
+            "id": "roles",
+            "title": "Member permissions",
+            "text": "Owners manage billing and delete workspaces. Editors change documents. Viewers have read only access."
+          },
+          {
+            "id": "api",
+            "title": "API rate limits",
+            "text": "The API allows sixty requests per minute. Retry rate limited requests with exponential backoff."
+          },
+          {
+            "id": "delete",
+            "title": "Delete workspace",
+            "text": "Workspace deletion permanently removes documents after a thirty day recovery window."
+          }
+        ]
+      },
+      "reference": {
+        "relevantIds": ["invite"]
+      }
+    },
+    {
+      "id": "access",
+      "input": {
+        "query": "viewers read only permissions",
+        "documents": [
+          {
+            "id": "reset",
+            "title": "Reset password",
+            "text": "Reset a forgotten password using the email recovery link. The link expires after thirty minutes."
+          },
+          {
+            "id": "mfa",
+            "title": "Recover two factor access",
+            "text": "Use backup codes when your authenticator device is lost. Contact support if all recovery codes are missing."
+          },
+          {
+            "id": "refund",
+            "title": "Refund policy",
+            "text": "Request a refund within fourteen days of purchase. Annual subscription refunds are prorated."
+          },
+          {
+            "id": "cancel",
+            "title": "Cancel subscription",
+            "text": "Cancel your subscription in billing settings. Access continues until the paid period ends."
+          },
+          {
+            "id": "invoice",
+            "title": "Download invoice",
+            "text": "Download a tax invoice from billing history. Set your company address before the next invoice."
+          },
+          {
+            "id": "export",
+            "title": "Export workspace",
+            "text": "Workspace owners can export documents as JSON. Large exports run asynchronously and provide a download link."
+          },
+          {
+            "id": "invite",
+            "title": "Invite members",
+            "text": "Workspace admins invite members by email. Invitations expire after seven days."
+          },
+          {
+            "id": "roles",
+            "title": "Member permissions",
+            "text": "Owners manage billing and delete workspaces. Editors change documents. Viewers have read only access."
+          },
+          {
+            "id": "api",
+            "title": "API rate limits",
+            "text": "The API allows sixty requests per minute. Retry rate limited requests with exponential backoff."
+          },
+          {
+            "id": "delete",
+            "title": "Delete workspace",
+            "text": "Workspace deletion permanently removes documents after a thirty day recovery window."
+          }
+        ]
+      },
+      "reference": {
+        "relevantIds": ["roles"]
+      }
+    },
+    {
+      "id": "throttle",
+      "input": {
+        "query": "API requests rate backoff",
+        "documents": [
+          {
+            "id": "reset",
+            "title": "Reset password",
+            "text": "Reset a forgotten password using the email recovery link. The link expires after thirty minutes."
+          },
+          {
+            "id": "mfa",
+            "title": "Recover two factor access",
+            "text": "Use backup codes when your authenticator device is lost. Contact support if all recovery codes are missing."
+          },
+          {
+            "id": "refund",
+            "title": "Refund policy",
+            "text": "Request a refund within fourteen days of purchase. Annual subscription refunds are prorated."
+          },
+          {
+            "id": "cancel",
+            "title": "Cancel subscription",
+            "text": "Cancel your subscription in billing settings. Access continues until the paid period ends."
+          },
+          {
+            "id": "invoice",
+            "title": "Download invoice",
+            "text": "Download a tax invoice from billing history. Set your company address before the next invoice."
+          },
+          {
+            "id": "export",
+            "title": "Export workspace",
+            "text": "Workspace owners can export documents as JSON. Large exports run asynchronously and provide a download link."
+          },
+          {
+            "id": "invite",
+            "title": "Invite members",
+            "text": "Workspace admins invite members by email. Invitations expire after seven days."
+          },
+          {
+            "id": "roles",
+            "title": "Member permissions",
+            "text": "Owners manage billing and delete workspaces. Editors change documents. Viewers have read only access."
+          },
+          {
+            "id": "api",
+            "title": "API rate limits",
+            "text": "The API allows sixty requests per minute. Retry rate limited requests with exponential backoff."
+          },
+          {
+            "id": "delete",
+            "title": "Delete workspace",
+            "text": "Workspace deletion permanently removes documents after a thirty day recovery window."
+          }
+        ]
+      },
+      "reference": {
+        "relevantIds": ["api"]
+      }
+    },
+    {
+      "id": "remove",
+      "input": {
+        "query": "delete workspace recovery",
+        "documents": [
+          {
+            "id": "reset",
+            "title": "Reset password",
+            "text": "Reset a forgotten password using the email recovery link. The link expires after thirty minutes."
+          },
+          {
+            "id": "mfa",
+            "title": "Recover two factor access",
+            "text": "Use backup codes when your authenticator device is lost. Contact support if all recovery codes are missing."
+          },
+          {
+            "id": "refund",
+            "title": "Refund policy",
+            "text": "Request a refund within fourteen days of purchase. Annual subscription refunds are prorated."
+          },
+          {
+            "id": "cancel",
+            "title": "Cancel subscription",
+            "text": "Cancel your subscription in billing settings. Access continues until the paid period ends."
+          },
+          {
+            "id": "invoice",
+            "title": "Download invoice",
+            "text": "Download a tax invoice from billing history. Set your company address before the next invoice."
+          },
+          {
+            "id": "export",
+            "title": "Export workspace",
+            "text": "Workspace owners can export documents as JSON. Large exports run asynchronously and provide a download link."
+          },
+          {
+            "id": "invite",
+            "title": "Invite members",
+            "text": "Workspace admins invite members by email. Invitations expire after seven days."
+          },
+          {
+            "id": "roles",
+            "title": "Member permissions",
+            "text": "Owners manage billing and delete workspaces. Editors change documents. Viewers have read only access."
+          },
+          {
+            "id": "api",
+            "title": "API rate limits",
+            "text": "The API allows sixty requests per minute. Retry rate limited requests with exponential backoff."
+          },
+          {
+            "id": "delete",
+            "title": "Delete workspace",
+            "text": "Workspace deletion permanently removes documents after a thirty day recovery window."
+          }
+        ]
+      },
+      "reference": {
+        "relevantIds": ["delete"]
+      }
+    },
+    {
+      "id": "billing",
+      "input": {
+        "query": "subscription billing",
+        "documents": [
+          {
+            "id": "reset",
+            "title": "Reset password",
+            "text": "Reset a forgotten password using the email recovery link. The link expires after thirty minutes."
+          },
+          {
+            "id": "mfa",
+            "title": "Recover two factor access",
+            "text": "Use backup codes when your authenticator device is lost. Contact support if all recovery codes are missing."
+          },
+          {
+            "id": "refund",
+            "title": "Refund policy",
+            "text": "Request a refund within fourteen days of purchase. Annual subscription refunds are prorated."
+          },
+          {
+            "id": "cancel",
+            "title": "Cancel subscription",
+            "text": "Cancel your subscription in billing settings. Access continues until the paid period ends."
+          },
+          {
+            "id": "invoice",
+            "title": "Download invoice",
+            "text": "Download a tax invoice from billing history. Set your company address before the next invoice."
+          },
+          {
+            "id": "export",
+            "title": "Export workspace",
+            "text": "Workspace owners can export documents as JSON. Large exports run asynchronously and provide a download link."
+          },
+          {
+            "id": "invite",
+            "title": "Invite members",
+            "text": "Workspace admins invite members by email. Invitations expire after seven days."
+          },
+          {
+            "id": "roles",
+            "title": "Member permissions",
+            "text": "Owners manage billing and delete workspaces. Editors change documents. Viewers have read only access."
+          },
+          {
+            "id": "api",
+            "title": "API rate limits",
+            "text": "The API allows sixty requests per minute. Retry rate limited requests with exponential backoff."
+          },
+          {
+            "id": "delete",
+            "title": "Delete workspace",
+            "text": "Workspace deletion permanently removes documents after a thirty day recovery window."
+          }
+        ]
+      },
+      "reference": {
+        "relevantIds": ["cancel", "refund", "invoice"]
+      }
+    },
+    {
+      "id": "recovery",
+      "input": {
+        "query": "recovery",
+        "documents": [
+          {
+            "id": "reset",
+            "title": "Reset password",
+            "text": "Reset a forgotten password using the email recovery link. The link expires after thirty minutes."
+          },
+          {
+            "id": "mfa",
+            "title": "Recover two factor access",
+            "text": "Use backup codes when your authenticator device is lost. Contact support if all recovery codes are missing."
+          },
+          {
+            "id": "refund",
+            "title": "Refund policy",
+            "text": "Request a refund within fourteen days of purchase. Annual subscription refunds are prorated."
+          },
+          {
+            "id": "cancel",
+            "title": "Cancel subscription",
+            "text": "Cancel your subscription in billing settings. Access continues until the paid period ends."
+          },
+          {
+            "id": "invoice",
+            "title": "Download invoice",
+            "text": "Download a tax invoice from billing history. Set your company address before the next invoice."
+          },
+          {
+            "id": "export",
+            "title": "Export workspace",
+            "text": "Workspace owners can export documents as JSON. Large exports run asynchronously and provide a download link."
+          },
+          {
+            "id": "invite",
+            "title": "Invite members",
+            "text": "Workspace admins invite members by email. Invitations expire after seven days."
+          },
+          {
+            "id": "roles",
+            "title": "Member permissions",
+            "text": "Owners manage billing and delete workspaces. Editors change documents. Viewers have read only access."
+          },
+          {
+            "id": "api",
+            "title": "API rate limits",
+            "text": "The API allows sixty requests per minute. Retry rate limited requests with exponential backoff."
+          },
+          {
+            "id": "delete",
+            "title": "Delete workspace",
+            "text": "Workspace deletion permanently removes documents after a thirty day recovery window."
+          }
+        ]
+      },
+      "reference": {
+        "relevantIds": ["reset", "mfa", "delete"]
+      }
+    }
+  ]
+}

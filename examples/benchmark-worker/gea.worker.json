@@ -1,0 +1,17 @@
+{
+  "main": "dist/worker/worker.mjs",
+  "compatibilityDate": "2026-10-30",
+  "durableObjectBindings": [
+    {
+      "name": "BENCHMARK_STORE",
+      "className": "BenchmarkStore",
+      "namespace": "worker"
+    }
+  ],
+  "platformBindings": [
+    {
+      "name": "IDENTITY",
+      "type": "identity"
+    }
+  ]
+}
