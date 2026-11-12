@@ -1,0 +1,26 @@
+{
+  "name": "opengea-benchmark-worker",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "tsx --test tests/*.test.ts",
+    "type-check": "tsc --noEmit",
+    "build": "node scripts/source-tool.mjs build",
+    "dev": "node scripts/source-tool.mjs dev",
+    "verify:local": "node scripts/verify-local.mjs",
+    "report": "node scripts/report.mjs"
+  },
+  "dependencies": {
+    "@gea-ai/agent-sdk": "0.1.261102-alpha.2",
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "24.10.1",
+    "tsx": "4.20.6",
+    "typescript": "5.9.3"
+  },
+  "engines": {
+    "node": ">=24.16.0"
+  },
+  "packageManager": "pnpm@12.8.1"
+}
