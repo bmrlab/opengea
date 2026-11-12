@@ -1,0 +1,11 @@
+{
+  "input": { "message": "我想买一个轻便背包。" },
+  "simulator": {
+    "persona": "你是一个想买轻便背包的顾客，喜欢蓝色。用简短中文回答店员的问题。",
+    "goal": "获得一款蓝色轻便背包的推荐和明确价格。如果店员询问颜色，就回答喜欢蓝色；看到符合要求的推荐和价格后结束对话。不需要购买或下单。",
+    "model": "creative-reasoning-1.5",
+    "maxTurns": 3,
+    "stopWhen": "done"
+  },
+  "judgeRules": { "recommendation": { "minScore": 1 } }
+}
