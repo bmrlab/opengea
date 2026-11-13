@@ -1,0 +1,21 @@
+{
+  "name": "@opengea/eval-simulator",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --experimental-wasm-jspi --test scripts/recommendation.test.mjs",
+    "eval": "node --env-file-if-exists=.gea/model.env scripts/run.mjs",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@gea-ai/agent-sdk": "0.2.261113-alpha.0"
+  },
+  "engines": {
+    "node": ">=24.16.0"
+  },
+  "packageManager": "pnpm@12.8.1",
+  "devDependencies": {
+    "typescript": "5.9.3",
+    "@gea-ai/cli": "0.2.261113-alpha.0"
+  }
+}

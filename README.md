@@ -16,6 +16,7 @@ Each example owns its dependencies and lockfile. There is no root workspace or s
 | [code-mode](examples/code-mode/)                       | Compare ordinary tools and code mode over remote read-only MCP, with real production traces and data-volume measurements.                                         |
 | [remote-agent](examples/remote-agent/)                 | Delegate by public Agent ID, verify real child Run receipts and result return, and document OAuth cross-tenant installation.                                      |
 | [subagent-limits](examples/subagent-limits/)           | Regression verifier for concurrency admission, 140 sequential child Runs and retained history; full hosted acceptance remains pending.                            |
+| [eval-simulator](examples/eval-simulator/)             | Draft Eval User Simulator: multi-turn backpack advice with evolving constraints, a tool-free Simulator and independent Judge, using published SDK/CLI packages. |
 
 Start with [oauth-app](examples/oauth-app/) for the complete deployable application; the other examples focus on specific APIs and Agent patterns. Read each example README. You need Node.js and pnpm. Agent examples need a Creative Reasoning API key for local model calls; The complete OAuth Worker app uses a GEA application registration and built-in SQLite; no external database is needed. Agent development additionally requires a supported GEA CLI platform. Building the Next.js application works independently of the CLI, including on Linux.
 
