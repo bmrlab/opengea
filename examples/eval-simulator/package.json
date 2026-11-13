@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "test": "node --test scripts/recommendation.test.mjs",
     "eval": "node --env-file-if-exists=.gea/model.env scripts/run.mjs",
     "type-check": "tsc --noEmit"
   },

@@ -1,4 +1,6 @@
-# 多轮 Eval User Simulator 实际运行结果
+# 多轮 Eval User Simulator 历史运行结果
+
+> **旧源码 runner 的历史证据**：以下对话、判分、请求边界和 thinking 校验来自旧源码 runner，**不是当前已发布 `@gea-ai/cli@0.2.261113-alpha.0` 入口的运行结果**。当前 CLI 的完整多轮模型验收仍待执行；本轮 Judge 修复仅进行离线回放与构造负例验证，没有运行真实模型 Eval，也没有改写下方历史记录。
 
 Run: 9e5da760-a98e-4d25-b4f2-43608df39434
 用户输入轮数：7
