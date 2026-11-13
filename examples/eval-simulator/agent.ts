@@ -5,6 +5,6 @@ export default defineAgent({
   name: "backpack",
   slug: "backpack",
   model: "creative-reasoning-1.5",
-  maxOutputTokens: 1024,
+  maxOutputTokens: 4096,
   computer: { enabled: false },
 });
