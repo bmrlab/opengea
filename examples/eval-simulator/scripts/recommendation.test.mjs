@@ -73,6 +73,131 @@ const cases = [
     fails: "finalFit",
     mutate: appendFinal(value),
   })),
+
+  ...[
+    "之前城行22加防雨罩的总价358元，现在轻旅24含防雨罩总价429元。",
+    "总价不是499元，而是429元。",
+    "城行22不适合，推荐轻旅24。",
+    "防雨罩已包含，可按需购买电脑内胆袋。",
+    "防雨罩不会另外收费。",
+    "防雨罩不需要支付额外费用，无需额外购买。",
+  ].map((value) => ({ name: `r2 positive: ${value}`, score: 1, mutate: appendFinal(value) })),
+  {
+    name: "r2 positive: separate base, accessory and total prices",
+    score: 1,
+    mutate: (messages) => setText(messages[7], `${text(messages[7])}城行22的价格是329元，防雨罩29元，含配件总价358元，比350元预算超出8元。`),
+  },
+  ...[
+    "实际总价¥499。",
+    "防雨罩需要另付29元。",
+    "防雨罩\n需要另加钱。",
+    "轻旅24不值得推荐。",
+    "更正：轻旅24实际自重950g，超过800g限制。",
+    "更正：最终颜色不是蓝色，是黑色。",
+    "实际总价为人民币499元。",
+    "实际总价499.00元。",
+  ].map((value) => ({ name: `r2 negative: ${value}`, fails: "finalFit", mutate: appendFinal(value) })),
+  {
+    name: "r2 negative: reject budget increase while retaining 500",
+    fails: "progressiveDisclosure",
+    mutate: (messages) => setText(messages[8], text(messages[8]).replace("这样预算的话我可以提到500元左右", "预算不能提高到500元，仍然最多350元")),
+  },
+  {
+    name: "r2 negative: incorrect initial base price and budget claim",
+    fails: "initialRecommendation",
+    mutate: (messages) => setText(messages[5], "初选城行22蓝色，价格399元，在350元预算内。"),
+  },
+  {
+    name: "r2 negative: correct rain total but incorrect budget claim",
+    fails: "initialRecommendation",
+    mutate: (messages) => setText(messages[7], "城行22加防雨罩总价358元，完全在350元预算内，无须考虑超支。"),
+  },
+  {
+    name: "r2 negative: reject correct rain quote and assert 399",
+    fails: "initialRecommendation",
+    mutate: (messages) => setText(messages[7], "358元是错误报价，您实际应付399元。"),
+  },
+  {
+    name: "r2 negative: refuse adjustment before correct final reply",
+    fails: "adjustment",
+    mutate: (messages) => {
+      setText(messages[9], "城行22只有22L，但轻旅24不推荐，还是城行22。");
+      setText(messages[11], "继续选城行22。");
+    },
+  },
+  ...[
+    ["price", "总价499元，更正：总价不是499元，而是429元。"],
+    ["weight", "轻旅24自重950g，更正：自重不是950g，是780g。"],
+    ["color", "最终颜色黑色，更正：颜色不是黑色，是蓝色。"],
+    ["cover", "防雨罩另付29元，更正：防雨罩已包含，不会另外收费。"],
+    ["selection", "轻旅24不推荐，更正：推荐轻旅24。"],
+  ].map(([attribute, value]) => ({ name: `ordered correction positive: ${attribute}`, score: 1, mutate: appendFinal(value) })),
+  ...[
+    ["price", "总价不是429元，而是499元。"],
+    ["weight", "轻旅24自重不是780g，是950g。"],
+    ["color", "最终颜色不是蓝色，而是黑色。"],
+    ["cover", "防雨罩不会另外收费，更正：防雨罩另付29元。"],
+    ["selection", "推荐轻旅24，更正：继续选城行22。"],
+    ["capacity", "更正：轻旅24容量22L。"],
+    ["computer", "更正：轻旅24电脑隔层最大支持13英寸。"],
+  ].map(([attribute, value]) => ({ name: `ordered contradiction negative: ${attribute}`, fails: "finalFit", mutate: appendFinal(value) })),
+  {
+    name: "positive: explicit revised selection and rejection of old capacity",
+    score: 1,
+    mutate: (messages) => {
+      setText(messages[9], "城行22只有22L，不够周末使用，推荐轻旅24。轻旅24容量24L，自重780g。");
+      setText(messages[11], "继续选轻旅24，容量24L，自重780g。");
+    },
+  },
+  {
+    name: "positive: initial and rain price correction",
+    score: 1,
+    mutate: (messages) => {
+      setText(messages[5], "初选城行22蓝色，价格不是399元，而是329元，在350元预算内。");
+      setText(messages[7], "城行22加防雨罩总价不是399元，而是358元，比350元预算超出8元。");
+    },
+  },
+  {
+    name: "positive: explicit authorized budget correction",
+    score: 1,
+    mutate: (messages) => setText(messages[8], text(messages[8]).replace("这样预算的话我可以提到500元左右", "预算不是350元，而是500元")),
+  },
+  {
+    name: "negative: later user revokes authorized budget",
+    fails: "finalFit",
+    mutate: (messages) => setText(messages[12], `${text(messages[12])}更正：预算仍然最多350元。`),
+  },
+  {
+    name: "negative: adjustment later withdrawn",
+    fails: "adjustment",
+    mutate: (messages) => setText(messages[11], `${text(messages[11])}更正：继续选城行22。`),
+  },
+
+  ...[
+    "防雨罩已包含，可按需购买电脑内胆袋29元。",
+    "城行22自重850g，颜色黑色，总价358元。推荐轻旅24。",
+    "轻旅24自重0.78kg，含防雨罩总价￥429.00。",
+  ].map((value) => ({ name: `object binding positive: ${value}`, score: 1, mutate: appendFinal(value) })),
+  {
+    name: "negative: explicitly deny catalogue base price",
+    fails: "finalFit",
+    mutate: appendFinal("轻旅24价格不是429元。"),
+  },
+  {
+    name: "negative: wrong base price in rain breakdown",
+    fails: "initialRecommendation",
+    mutate: (messages) => setText(messages[7], `${text(messages[7])}城行22的价格399元，防雨罩29元，含配件总价358元，比350元预算超出8元。`),
+  },
+  {
+    name: "positive: rain compares base budget and accessory budget separately",
+    score: 1,
+    mutate: (messages) => setText(messages[7], "城行22加防雨罩总价358元，比350元预算超出8元。城行22裸价329元，在350元预算内。"),
+  },
+  {
+    name: "negative: incorrect base budget claim",
+    fails: "initialRecommendation",
+    mutate: (messages) => setText(messages[5], "初选城行22蓝色，价格329元，超出350元预算。"),
+  },
 ];
 
 assert.equal(history.messages.length, 14);
@@ -82,7 +207,7 @@ for (const scenario of cases) {
     scenario.mutate?.(messages);
     const result = await judge.evaluate({ messages, output: text(messages.at(-1)) });
     const { checks } = JSON.parse(result.reason);
-    t.diagnostic(JSON.stringify({ score: result.score, checks }));
+    t.diagnostic(JSON.stringify({ name: scenario.name, score: result.score, checks }));
     if (scenario.score === 1) {
       assert.equal(result.score, 1);
       assert.ok(Object.values(checks).every(Boolean));
