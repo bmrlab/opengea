@@ -1,0 +1,8 @@
+allowBuilds:
+  "@mongodb-js/zstd": false
+  node-liblzma: false
+minimumReleaseAgeExclude:
+  - "@gea-ai/cli-darwin-arm64@0.2.261113-alpha.0"
+  - "@gea-ai/cli@0.2.261113-alpha.0"
+  - "@gea-ai/agent-sdk@0.2.261113-alpha.0"
+  - "@gea-ai/contract@0.2.261113-alpha.0"
