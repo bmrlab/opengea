@@ -1,6 +1,6 @@
 # 多轮 Eval User Simulator
 
-一个背包顾问、一个 Case、一个独立代码 Judge。顾客边聊边明确需求，助手根据后续信息修正推荐。没有预录 transcript，助手回复、Simulator 用户消息和结构化 done 均由真实模型生成。
+一个背包顾问、一个 Case、一个独立 LLM Judge。顾客边聊边明确需求，助手根据后续信息修正推荐。没有预录 transcript，助手回复、Simulator 用户消息和结构化 done 均由真实模型生成。
 
 ## 场景设计
 
@@ -20,25 +20,24 @@
 - 目标 Agent 只拿商品目录和咨询规则（`AGENTS.md`），不知道顾客尚未披露的限制。所有提问都用普通文字，不调用 `askUser`。
 - Simulator 使用 GEA #1280 的无工具实现，只接收 persona、goal 和可见对话，不读取 Judge、评分规则或预期型号。返回 `{"done":false,"message":"…","reason":"…"}` 或 `{"done":true,"reason":"…"}`；done 只表示顾客结束交互，不表示质量达标。
 - 模型请求由已发布 CLI 的 `modelSource=local` 入口处理；Simulator 原有 1024-token 输出上限和目标 Agent 的 4096-token 输出预算不变。公开 CLI 不接收旧 runner 的 `hostedModelRequest` JavaScript 回调，因此不再执行 `scripts/model.mjs` 中的传输适配、thinking 配置及请求边界观测；当前运行不能声称逐请求校验了 thinking、无工具和输入字段。
-- 独立代码 Judge 检查六项：足够的对话、主动澄清、逐步披露、初选及雨天成本、条件变化后的调整、最终方案。每项等权，全部满足才得 1 分并达到 gate；它不读取 Simulator done 来打分。
+- Judge 直接使用已发布 SDK 的 Markdown LLM 评分能力：`benchmarks/judges/recommendation.judge.md` 由 CLI 发现，交给 `createAgentEvalWorker` 的 Markdown 路径。runner 显式设置 `judgeModel: "creative-reasoning-1.5"`，沿用公开 CLI 的本地模型配置，无需额外依赖或自写模型客户端。
+- rubric 要求先用 `queryRun` 查询全部对话，必要时用 `readEvidence` 读取完整证据，再逐轮核对当时已披露的条件。它按六个维度评分：conversation、clarification、progressiveDisclosure、initialRecommendation、adjustment、finalFit。每项 0/1、等权平均，全部通过才达到原有 `minScore=1`。
+- 初选核对城行22的329元、加雨罩后358元及超原预算8元；调整检查容量、预算和重量变化；最终核对蓝色轻旅24、24L、780g、14英寸电脑和429元含雨罩。更正按语义及阶段理解，最后答对不能补偿缺失的过程。
+- Judge 用 `submitEvaluation` 返回 score、reason 和真实消息证据引用。rubric 约定 reason 为带六项分数、解释和消息 ID 的 JSON 字符串；SDK 校验顶层提交 schema、分数范围及证据引用，reason 内的六项明细和平均分一致性由 LLM 按 prompt 执行，并非额外代码校验。证据读取失败应返回 error，不能当作通过。
 
-Judge 使用限定于此中文目录的断言语法，再按阶段核对事实。词法识别对象、属性谓词、金额/单位和关系；每个值绑定自己的谓词，保留 `eq/ne/gt/ge/lt/le` 及原文证据。裸包价、配件费、总价、预算、比较价与差额分别处理，同句多个金额不会共享费用类型。对比连接词开启新的断言，否定只在当前谓词内生效；跨句省略或代词延续主题，可选内胆袋的费用不会归给雨罩。并列推荐保留全部候选，最终汇总可通过明确的“型号：规格”表达选择。
+本例没有稳定的结构化购买方案/预算字段，因此保持纯 LLM 业务评分，不修改 Agent 输出契约，也没有另加确定性商品或预算检查。原有 `recommendation-facts.ts`、代码 Judge、否定/比较/金额绑定逻辑及 r3 大夹具已删除。LLM 可能误判；本例不承诺覆盖全部自然语言或否定/矛盾句式。
 
-同一对象、属性按断言顺序归并。否定/范围约束保留并与已有值核对，后续明确肯定更正可更新结论；初选、雨天、调整、最终四个阶段独立消费自己的事实及矛盾，不能用最终正确答复修复确认前的明确退回。雨罩“包含在总报价中”和“配件免费”是不同断言：最终必须明确包含雨罩、总价正确，任何另收费断言仍会失败。用户预算使用同一金额词法，区分批准、拒绝和撤回；其他商品的金额不能授权开支。失败评分附对应阶段的对象、关系和原文证据，便于定位。
+安装后运行 `corepack pnpm@12.8.1 test`：仅保留 **6 个离线用例**，包含 Markdown 入口/评分维度/gate 契约、历史14条消息回放、错误最终价格与拒绝调整两个清晰负例、越界分数拒绝、证据不足错误。测试通过公开 `createAgentEvalWorker` 运行证据查询和提交；模型传输完全 mock，不读取 key，不访问模型，不运行 CLI Eval，不写 `results/latest.md`。历史夹具保留原文，回放时仅补测试消息 ID。
 
-这是有限领域的确定性解析器，不是通用自然语言质量评估器；未支持的复杂指代、双重否定、嵌套条件等仍可能误判。六项检查、等权和 `minScore=1` 不变；既要求至少 5 次用户输入，也要求不同阶段的新约束和对应助手反应。
-
-安装依赖后运行 `corepack pnpm@12.8.1 test` 做离线验证：每例独立复制冻结的历史 14 条消息，直接调用实际 Judge。共 **207 例（76 正例、131 负例）**：原有 65 例原文保留；r3 报告全部 51 个明确预期原文存于 `scripts/fixtures/recommendation-r3.json`（包括 P15、N22 正例；N17 观察项不计）；另有 91 个语法组合对照，覆盖标点、否定方向、金额格式、对象、并列选择、约束归并及阶段矛盾。
-
-历史正例为 1；r1 两组原始负例各为 5/6；r3 的 20 个正例均为 1、31 个负例均低于 1。最终 429 全改 459 为 5/6，删除预算提高为 2/3，删除最终确认及答复为 1/2。测试不启动 CLI、不读取模型密钥、不调用模型，也不写入 `results/latest.md`；离线通过不代表当前 CLI 的真实多轮链路已验收。
+这些分数是预设 mock 响应，验证 SDK 接口与错误传播，不证明 LLM 会给出相同分数。为在 Node 24 下执行 SDK WASM，测试命令开启 `--experimental-wasm-jspi`，测试内仅把 SDK WASM 编译为模块以适配 Node；实际 `pnpm eval` 仍由发布版 CLI 原生 Runtime 执行。
 
 ## 已发布依赖与 Draft 状态
 
 本例使用精确版本 `@gea-ai/agent-sdk@0.2.261113-alpha.0` 和 `@gea-ai/cli@0.2.261113-alpha.0`，无需私有源码 checkout。Node **24.16.0**、pnpm **12.8.1**；该 CLI 版本发布的平台包为 macOS Apple Silicon。
 
-`pnpm eval` 保留原来的 `scripts/run.mjs` 结果整理，通过公开的 `@gea-ai/cli/runtime` 定位已安装 npm 平台包，再启动其 `gea agent eval --json <payload>` 命令。payload 为 `{ cwd, modelSource: "local", trace: true, concurrency: 1 }`。CLI 自带所需原生 Runtime 与 system workers，runner 不导入私有 Eval API 或 TypeScript loader。
+`pnpm eval` 保留原来的 `scripts/run.mjs` 结果整理，通过公开的 `@gea-ai/cli/runtime` 定位已安装 npm 平台包，再启动其 `gea agent eval --json <payload>` 命令。payload 为 `{ cwd, modelSource: "local", judgeModel: "creative-reasoning-1.5", trace: true, concurrency: 1 }`。CLI 自带所需原生 Runtime 与 system workers，runner 不导入私有 Eval API 或 TypeScript loader。
 
-PR 保持 draft。2026-11-13 的 CLI 接入验证通过安装和类型检查，实际启动 Eval 后因缺少 `CREATIVE_REASONING_API_KEY` 退出 1；尚未完成本地模型模式的真实多轮验证。下面保留的成功对话来自历史源码 runner，不是本次 CLI 验收结果。
+PR 保持 draft。2026-11-13 的 CLI 接入验证通过安装和类型检查，实际启动 Eval 后因缺少 `CREATIVE_REASONING_API_KEY` 退出 1；尚未完成本地模型模式的真实多轮验证。本次 LLM Judge 修改只完成离线契约测试及轻量检查，未调用真实模型。下面保留的成功对话和旧 Judge 分数来自历史源码 runner，不是当前 CLI 或新 LLM Judge 验收结果。完整真实多轮 Eval 等 r5 复审 PASS 后再跑。
 
 ## 运行
 
@@ -66,7 +65,7 @@ node --env-file-if-exists=.gea/model.env scripts/run.mjs
 
 ## 看结果与历史证据
 
-历史源码 runner 验证 Run：`9e5da760-a98e-4d25-b4f2-43608df39434`。**7 次用户输入、7 次助手回复、7 次 Simulator 调用**；第 7 次 Simulator 返回结构化 done，`stopReason=simulator_done`，Judge 六项全过、得分 1、gate passed（1/1）。7 轮小于 `maxTurns=10`，不是靠上限终止。逐轮核对 Simulator 输入均为完整可见对话前缀，7 次请求均无工具；14 次实际模型请求均校验关闭 thinking。
+历史源码 runner 验证 Run：`9e5da760-a98e-4d25-b4f2-43608df39434`。**7 次用户输入、7 次助手回复、7 次 Simulator 调用**；第 7 次 Simulator 返回结构化 done，`stopReason=simulator_done`，当时的旧规则 Judge 六项全过、得分 1、gate passed（1/1）。7 轮小于 `maxTurns=10`，不是靠上限终止。逐轮核对 Simulator 输入均为完整可见对话前缀，7 次请求均无工具；14 次实际模型请求均校验关闭 thinking。
 
 真实对话中，顾客还把加雨罩后的超预算金额说成 20 元，助手纠正为 8 元；此后从城行22 调整为蓝色轻旅24（24L、780g、适配14英寸电脑、429元含防雨罩），回应了新增的周末用途、预算和重量要求。
 

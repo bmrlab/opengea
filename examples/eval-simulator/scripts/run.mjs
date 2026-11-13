@@ -29,7 +29,7 @@ const child = spawn(
     "agent",
     "eval",
     "--json",
-    JSON.stringify({ cwd: root, modelSource: "local", trace: true, concurrency: 1 }),
+    JSON.stringify({ cwd: root, modelSource: "local", judgeModel: "creative-reasoning-1.5", trace: true, concurrency: 1 }),
   ],
   { cwd: root, env: environment, stdio: ["ignore", "pipe", "inherit"] },
 );
