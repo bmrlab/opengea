@@ -1,6 +1,7 @@
 import { defineJudge } from "@gea-ai/agent-sdk/evals";
 import {
   catalogue,
+  type Attribute,
   extractBudget,
   extractFacts,
   factState,
@@ -72,17 +73,23 @@ export default defineJudge(({ messages, output }) => {
   const final = factState(finalFacts);
   const initialBudget = budget >= 0 ? extractBudget(dialogue[budget].text) : undefined;
   let authorizedBudget = initialBudget;
-  for (const message of users) authorizedBudget = extractBudget(message.text) ?? authorizedBudget;
+  for (const message of users) authorizedBudget = extractBudget(message.text, authorizedBudget, initialBudget);
   const matchesIfStated = (
     state: ReturnType<typeof factState>,
     product: "城行22" | "轻旅24",
-    attribute: "price" | "coverFee" | "priceOverBudget",
-    expected: number | boolean,
+    attribute: Attribute,
+    expected: number | boolean | string,
   ) =>
-    !state.denies(product, attribute, expected) &&
-    (state.get(product, attribute) === undefined || state.get(product, attribute) === expected);
+    state.agrees(product, attribute, expected);
   const old = catalogue.城行22;
   const target = catalogue.轻旅24;
+  const consistent = (state: ReturnType<typeof factState>, product: "城行22" | "轻旅24") => {
+    const item = catalogue[product];
+    return (["price", "total", "coverFee", "capacity", "weight"] as const)
+      .every((attribute) => state.agrees(product, attribute, item[attribute])) &&
+      state.computerFits(product, 14, item.computer) &&
+      state.agrees(product, "color", "蓝色");
+  };
   const checks = {
     // Length alone cannot pass: separate disclosures and reactions are required.
     conversation: users.length >= 5 && assistants.length === users.length,
@@ -105,12 +112,23 @@ export default defineJudge(({ messages, output }) => {
       rainState.get("城行22", "totalOverBudget") === (old.total > initialBudget) &&
       matchesIfStated(initial, "城行22", "priceOverBudget", false) &&
       matchesIfStated(rainState, "城行22", "price", old.price) &&
-      matchesIfStated(rainState, "城行22", "coverFee", old.coverFee),
+      matchesIfStated(rainState, "城行22", "coverFee", old.coverFee) &&
+      matchesIfStated(rainState, "城行22", "coverIncluded", true) &&
+      consistent(initial, "城行22") && consistent(rainState, "城行22") &&
+      matchesIfStated(initial, "城行22", "totalOverBudget", old.total > initialBudget) &&
+      matchesIfStated(rainState, "城行22", "priceOverBudget", false),
     adjustment:
       adjusted.selected === "轻旅24" &&
       adjusted.get("城行22", "capacityInsufficient") === true &&
       adjusted.get("轻旅24", "capacity") === target.capacity &&
-      adjusted.get("轻旅24", "weight") === target.weight,
+      adjusted.get("轻旅24", "weight") === target.weight &&
+      matchesIfStated(adjusted, "轻旅24", "computer", target.computer) &&
+      matchesIfStated(adjusted, "轻旅24", "total", target.total) &&
+      matchesIfStated(adjusted, "轻旅24", "coverFee", 0) &&
+      matchesIfStated(adjusted, "轻旅24", "coverIncluded", true) &&
+      consistent(adjusted, "轻旅24") &&
+      matchesIfStated(adjusted, "轻旅24", "totalOverBudget", false) &&
+      matchesIfStated(adjusted, "轻旅24", "priceOverBudget", false),
     finalFit:
       confirmation > weight && weight > revision && revision > rain &&
       final.selected === "轻旅24" &&
@@ -119,10 +137,15 @@ export default defineJudge(({ messages, output }) => {
       final.get("轻旅24", "weight") === target.weight &&
       final.get("轻旅24", "computer") === 14 &&
       final.get("轻旅24", "coverIncluded") === true &&
-      final.get("轻旅24", "coverFee") === 0 &&
+      // Inclusion plus a correct package total is sufficient; any explicitly
+      // claimed surcharge must still agree with zero (checked by consistent).
+      matchesIfStated(final, "轻旅24", "coverFee", 0) &&
       final.get("轻旅24", "total") === target.total &&
       matchesIfStated(final, "轻旅24", "price", target.price) &&
-      authorizedBudget !== undefined && target.total <= authorizedBudget,
+      authorizedBudget !== undefined && target.total <= authorizedBudget &&
+      consistent(final, "轻旅24") &&
+      matchesIfStated(final, "轻旅24", "totalOverBudget", target.total > authorizedBudget) &&
+      matchesIfStated(final, "轻旅24", "priceOverBudget", target.price > authorizedBudget),
   };
   const passed = Object.values(checks).filter(Boolean).length;
   return {
@@ -132,6 +155,10 @@ export default defineJudge(({ messages, output }) => {
       authorizedBudget,
       userTurns: users.length,
       assistantTurns: assistants.length,
+      // Keep object/relation/evidence available to diagnose a failed phase.
+      ...(!checks.initialRecommendation ? { initialFacts, rainFacts } : {}),
+      ...(!checks.adjustment ? { adjustmentFacts } : {}),
+      ...(!checks.finalFit ? { finalFacts } : {}),
     }),
   };
 });

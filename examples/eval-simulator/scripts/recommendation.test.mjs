@@ -200,21 +200,124 @@ const cases = [
   },
 ];
 
+// Verbatim independent review r3 inputs; each starts from the same frozen history.
+const r3 = JSON.parse(await readFile(new URL("./fixtures/recommendation-r3.json", import.meta.url), "utf8"));
+assert.equal(r3.length, 51);
+for (const scenario of r3) {
+  cases.push({
+    name: `r3 ${scenario.id}: ${scenario.text}`,
+    score: scenario.positive ? 1 : ["B01", "B02", "B03"].includes(scenario.id) ? 2 / 3 : 5 / 6,
+    fails: ["N15", "N16", "N18", "N19"].includes(scenario.id) ? "initialRecommendation"
+      : ["N20", "N21"].includes(scenario.id) ? "adjustment"
+      : ["B01", "B02", "B03"].includes(scenario.id) ? "progressiveDisclosure" : "finalFit",
+    mutate: (messages) => {
+      const original = text(messages[scenario.index]);
+      setText(messages[scenario.index], scenario.operation === "追加"
+        ? `${original}\n${scenario.text}`
+        : scenario.operation === "预算短语替换"
+          ? original.replace("这样预算的话我可以提到500元左右", scenario.text)
+          : scenario.text);
+    },
+  });
+}
+
+// Compose independent grammar dimensions instead of adding sentence exceptions.
+for (const separator of ["而是", "，而是", "，是"]) {
+  for (const [property, correct, incorrect] of [
+    ["总价", "429元", "499元"], ["自重", "780g", "950g"], ["颜色", "蓝色", "黑色"],
+  ]) {
+    for (const positive of [true, false]) {
+      const value = `轻旅24${property}不是${positive ? incorrect : correct}${separator}${positive ? correct : incorrect}。`;
+      cases.push({ name: `grammar correction ${value}`, ...(positive ? { score: 1 } : { fails: "finalFit" }), mutate: appendFinal(value) });
+    }
+  }
+}
+for (const format of [(n) => `${n}元`, (n) => `￥${n}`, (n) => `${n}块`, (n) => `¥${n}.00`]) {
+  for (const separator of ["加", "，"]) {
+    for (const positive of [true, false]) {
+      const value = `城行22裸价${format(329)}${separator}防雨罩${format(29)}，总价${format(positive ? 358 : 359)}，超出350元预算。`;
+      cases.push({ name: `grammar money roles ${value}`, ...(positive ? { score: 1 } : { fails: "initialRecommendation" }),
+        mutate: (messages) => setText(messages[7], value) });
+    }
+  }
+  for (const [prefix, suffix, positive] of [["现在可以提高到", "", true], ["不能接受提高到", "", false], ["提高到", "是不可能的", false]]) {
+    const value = `预算先说350元，${prefix}${format(500)}${suffix}`;
+    cases.push({ name: `grammar budget polarity ${value}`, ...(positive ? { score: 1 } : { fails: "progressiveDisclosure" }),
+      mutate: (messages) => setText(messages[8], text(messages[8]).replace("这样预算的话我可以提到500元左右", value)) });
+  }
+}
+for (const [index, product, fails] of [[5, "城行22", "initialRecommendation"], [7, "城行22", "initialRecommendation"], [11, "轻旅24", "adjustment"], [13, "轻旅24", "finalFit"]]) {
+  for (const claim of ["容量18L", "自重960g", "不支持14英寸电脑"]) {
+    cases.push({ name: `grammar stage contradiction m[${index}] ${product}${claim}`, fails,
+      mutate: (messages) => setText(messages[index], `${text(messages[index])}更正：${product}${claim}。`) });
+  }
+}
+for (const coordinator of ["或", "，或", "和", "，以及"]) {
+  cases.push({ name: `grammar coordinated selection ${coordinator}`, fails: "finalFit",
+    mutate: appendFinal(`最终推荐轻旅24${coordinator}城行22。`) });
+}
+for (const connector of ["但", "，但", "但是"]) {
+  for (const positive of [true, false]) {
+    for (const order of [true, false]) {
+      const cover = positive ? "防雨罩无需购买" : "防雨罩需要另付29元";
+      const other = "电脑内胆袋不需要买";
+      const value = (order ? [cover, other] : [other, cover]).join(connector);
+      cases.push({ name: `grammar accessory arguments ${value}`, ...(positive ? { score: 1 } : { fails: "finalFit" }), mutate: appendFinal(value) });
+    }
+  }
+}
+
+for (const [value, positive] of [
+  ["您的轻旅24重780g。", true], ["您的轻旅24重950g。", false],
+  ["轻旅24价格不是429元，也不是499元。", false],
+  ["轻旅24价格不是429元，也不是499元，更正：价格429元。", true],
+  ["轻旅24总价429元，并不在500元预算内。", false],
+]) {
+  cases.push({ name: `grammar retained constraints ${value}`, ...(positive ? { score: 1 } : { fails: "finalFit" }), mutate: appendFinal(value) });
+}
+for (const [value, positive] of [
+  ["预算350元，电脑内胆袋500元", false],
+  ["预算350元电脑内胆袋500元", false],
+  ["预算提高到500元，电脑内胆袋29元", true],
+  ["预算提高到500元电脑内胆袋29元", true],
+]) {
+  cases.push({ name: `grammar budget subject ${value}`, ...(positive ? { score: 1 } : { fails: "progressiveDisclosure" }),
+    mutate: (messages) => setText(messages[8], text(messages[8]).replace("这样预算的话我可以提到500元左右", value)) });
+}
+cases.push({ name: "grammar negative within-budget claim for rain", score: 1,
+  mutate: (messages) => setText(messages[7], "城行22加防雨罩总价358元，并不在350元预算内。") });
+cases.push({ name: "grammar negative within-budget claim for initial", fails: "initialRecommendation",
+  mutate: (messages) => setText(messages[5], "初选城行22蓝色，价格329元，并不在350元预算内。") });
+
+cases.push({ name: "grammar priced cover included in rain package", score: 1,
+  mutate: (messages) => setText(messages[7], "城行22裸价329元加防雨罩29元，总价358元，超出350元预算8元。防雨罩包含在此报价中。") });
+cases.push({ name: "grammar free cover contradicts rain breakdown", fails: "initialRecommendation",
+  mutate: (messages) => setText(messages[7], "城行22裸价329元加防雨罩29元，总价358元，超出350元预算8元。防雨罩免费。") });
+
+for (const separator of ["", "，"]) {
+  for (const positive of [true, false]) {
+    const value = `城行22加防雨罩329+29=358元${separator}实际总价${positive ? 358 : 399}元，超出350元预算。`;
+    cases.push({ name: `grammar arithmetic operand scope ${value}`, ...(positive ? { score: 1 } : { fails: "initialRecommendation" }),
+      mutate: (messages) => setText(messages[7], value) });
+  }
+}
+
 assert.equal(history.messages.length, 14);
 for (const scenario of cases) {
   test(scenario.name, async (t) => {
     const messages = structuredClone(history.messages);
     scenario.mutate?.(messages);
     const result = await judge.evaluate({ messages, output: text(messages.at(-1)) });
-    const { checks } = JSON.parse(result.reason);
-    t.diagnostic(JSON.stringify({ name: scenario.name, score: result.score, checks }));
+    const { checks, authorizedBudget } = JSON.parse(result.reason);
+    t.diagnostic(JSON.stringify({ name: scenario.name, score: result.score, authorizedBudget, checks }));
+    if (scenario.score !== undefined) assert.equal(result.score, scenario.score);
     if (scenario.score === 1) {
       assert.equal(result.score, 1);
       assert.ok(Object.values(checks).every(Boolean));
     } else {
       assert.notDeepEqual(messages, history.messages, "negative must change the dialogue");
       assert.ok(result.score >= 0 && result.score < 1, "negative must fail the minScore=1 gate");
-      assert.equal(checks[scenario.fails], false);
+      if (scenario.fails) assert.equal(checks[scenario.fails], false);
     }
   });
 }
