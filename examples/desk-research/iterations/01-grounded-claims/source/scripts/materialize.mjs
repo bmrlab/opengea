@@ -24,9 +24,11 @@ const common = [
   "gea.worker.json",
   "connectors/search.ts",
   "tools/search-sources.ts",
+  "tools/read-source.ts",
   "lib/evidence.ts",
   "benchmarks",
   "tests/evidence.test.mjs",
+  "tests/source-content.test.mjs",
 ];
 const full = [
   "bindings.d.ts",
@@ -73,6 +75,6 @@ if (stage === "v1-research") {
 }
 await writeFile(
   path.join(target, "README.md"),
-  `# Desk Research — ${stage}\n\nGenerated from OpenGEA. Install with \`pnpm install --frozen-lockfile\`, then run \`pnpm type-check\` and \`pnpm test\`. Configure GEA login, Workspace and \`gea connector --list\` before \`pnpm dev\`.\n\n${stage !== "v1-research" ? "Run `pnpm prepare:local` before dev. Configure the workbench with `scripts/configure-app.mjs`, then `pnpm app`. See the source tutorial for actual origin/key-file arguments.\n\n" : "This stage provides search only; it has no research DO or frontend.\n\n"}${stage === "v3-feishu" ? "Configure the Feishu test bot variables and sender allowlist before startup.\n\n" : ""}Use explicit benchmark paths: \`benchmarks/single-turn\` and \`benchmarks/multi-turn\`. The latter remains local-only. Full instructions: https://github.com/bmrlab/opengea/tree/main/examples/desk-research\n`,
+  `# Desk Research — ${stage}\n\nGenerated from OpenGEA. Install with \`pnpm install --frozen-lockfile\`, then run \`pnpm type-check\` and \`pnpm test\`. Configure GEA login, Workspace and \`gea agent connect research-search\` before \`pnpm dev\`.\n\n${stage !== "v1-research" ? "Run `pnpm prepare:local` before dev. Configure the workbench with `scripts/configure-app.mjs`, then `pnpm app`. See the source README for actual origin/key-file arguments.\n\n" : "This stage provides search only; it has no research DO or frontend.\n\n"}${stage === "v3-feishu" ? "Configure the Feishu test bot variables and sender allowlist before startup; see https://github.com/bmrlab/opengea/blob/main/examples/desk-research/FEISHU.md.\n\n" : ""}Use explicit benchmark paths: \`benchmarks/single-turn\` and \`benchmarks/multi-turn\`. The latter remains local-only. Full instructions: https://github.com/bmrlab/opengea/tree/main/examples/desk-research\n`,
 );
 console.log(`Created ${stage}: ${target}`);

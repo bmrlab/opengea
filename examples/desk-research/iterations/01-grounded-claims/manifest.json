@@ -1,11 +1,11 @@
 {
   "id": "01-grounded-claims",
-  "createdAt": "2026-11-14T05:36:14.901Z",
+  "createdAt": "2026-11-15T13:26:16.157Z",
   "node": "v24.16.0",
-  "cli": "0.2.261113-alpha.0",
+  "cli": "0.2.261114-alpha.0",
   "npm": "12.2.2",
   "packageManager": "pnpm@12.8.1",
-  "sourceSha256": "2515dfd35dd42b280c9379f20f5bdcaac4699f0a4dbcbe29bfff0dd8c8fb8f71",
+  "sourceSha256": "d8cc27e30f6a0428152084d98e80d0676991294c94805e0496dd56353da62026",
   "benchmarkSha256": "b450423b937c9ec33b5352dbed1309ea7eff35512781d25f275f48d5d1b38773",
   "files": [
     {
@@ -14,11 +14,11 @@
     },
     {
       "path": "agent.ts",
-      "sha256": "8907e9838f8c99c16503a9bb35c6e230f848b20cbf30af4f58b680959cc9a62b"
+      "sha256": "5524117476dfd6228a88754b67783859b8f8ce82cc8e0dd00e6fd78da9a590f5"
     },
     {
       "path": "app/client.js",
-      "sha256": "da6eb7dc7e37f50b35d8c9dd4688357778cf5e971e0f8912881040349c2292ca"
+      "sha256": "d96a69db0a70985ccf8e04919767de4107cd628c29066d4f2565443611d5f048"
     },
     {
       "path": "app/index.html",
@@ -26,7 +26,7 @@
     },
     {
       "path": "app/server.mjs",
-      "sha256": "1e8a4b337c94228949a827005ad266eb85188fe9776095d33253f02268ffb31f"
+      "sha256": "b5514188f012ee89532074915bbaf82dc995ea0b279fae88796e2b33526e4880"
     },
     {
       "path": "app/style.css",
@@ -138,11 +138,11 @@
     },
     {
       "path": "connectors/search.ts",
-      "sha256": "649c1ce1c8cc4b679526112bd232b92240ab714f6a86538a5978421df2b68466"
+      "sha256": "07debbcaea01e1e3aeada7bedde8776675b452a582c603f9814c67b72516f3c8"
     },
     {
       "path": "durable-objects/research-store.ts",
-      "sha256": "0d40ec06402f98e953cc1707d3ae32c38fc88957f2aab6e54cc7569b30e4f5f6"
+      "sha256": "d18945456c3254e23257279cf2bf1a24032e2e3fabe3a7f7fb86e264c9fa654a"
     },
     {
       "path": "gea.worker.json",
@@ -150,11 +150,11 @@
     },
     {
       "path": "instructions.ts",
-      "sha256": "55472e055e3b33a617313bde60ecd6080d1e7a64925d1eb02812e439d2cc5228"
+      "sha256": "7d4ca22768c8a0fb0d20ed4d5aa5bde0362bf30c3e9eca66ad38dc08305891c3"
     },
     {
       "path": "lib/evidence.ts",
-      "sha256": "42fbccd566071aca81bdcba66b12bf8e8af44a17451e741bd89e0749b3254743"
+      "sha256": "50d50282b4c38e3507d2a77b37c6ac8f5957e107e85df4d143cf23cfd6c6df10"
     },
     {
       "path": "lib/research.ts",
@@ -162,19 +162,19 @@
     },
     {
       "path": "package.json",
-      "sha256": "fec86ef342b39aa08c4a00b384953c6a6b3915fca2cb287ebacd2973a057e4a0"
+      "sha256": "30e573788f6408a7dbf9bdecdb59aa6bb7ae22ceede345840ec177bd330bd0b8"
     },
     {
       "path": "pnpm-lock.yaml",
-      "sha256": "e61b9e16d0c74c93c371eace1cd10e4e7427530f18d8afbe257b2f86884d907d"
+      "sha256": "080211ef5f42a24b66dcbbcea30770b1624b12fb6a7cbe12bc08ab9fdd75ea64"
     },
     {
       "path": "pnpm-workspace.yaml",
-      "sha256": "865b67b7f35336471ff300b171cd60cf21e6370bf697b1b0ac130c335613eda1"
+      "sha256": "5b53c80ac4be35c7d719800195a318088d3918815d8ee0c487239f010f87c335"
     },
     {
       "path": "scripts/configure-app.mjs",
-      "sha256": "9dc7a9918ebf9b16e7193a0ba1e23928d41721bae57775d166cc79a86aacf06b"
+      "sha256": "c29c5db1e4b5163e2469fa18726cb282521334fb18e6affb1c8c95d67482700a"
     },
     {
       "path": "scripts/dev.mjs",
@@ -182,7 +182,7 @@
     },
     {
       "path": "scripts/materialize.mjs",
-      "sha256": "613d8c491f96ca4ffe958bb91302190d85380abf08fb03cfa75f5ba931d70578"
+      "sha256": "fb38809664b883fa2d91c498b4cc1c58520ea9c39a7ea813a9003e063bd256cf"
     },
     {
       "path": "scripts/prepare-local.mjs",
@@ -190,15 +190,19 @@
     },
     {
       "path": "scripts/snapshot-iteration.mjs",
-      "sha256": "1d1d7dfe53b9d02182dc556d91109c4a699cb0084ee398993b5773a68e80ed63"
+      "sha256": "fa992b95a8a06f445b8b79303ab093e1709367641a29b56f00a9392186d047a9"
     },
     {
       "path": "tests/app.test.mjs",
-      "sha256": "d29d06e5be8265d6772fe9262418715614e42e959c7e1c30ca91b9c912daeff1"
+      "sha256": "951e4a0dc88d6f566d0335337c99da5fb99ce1f7b9c1ea5f6dc98861e9c44a6b"
     },
     {
       "path": "tests/evidence.test.mjs",
-      "sha256": "73993eec741d44c09e39abacc32ab3b01f30d658ef8c9b33a0e8fc015f8df737"
+      "sha256": "6ad90874e74c87e43118000d82e1c8a6a77aced625479b53758b5a49ae156d40"
+    },
+    {
+      "path": "tests/source-content.test.mjs",
+      "sha256": "2645ac2c17134b0f3eb882db951bc975b3dd13938715844131513da367eee323"
     },
     {
       "path": "tests/stages.test.mjs",
@@ -206,7 +210,11 @@
     },
     {
       "path": "tests/store.test.mjs",
-      "sha256": "43954e3cd6ee77dc61a57bc897415e5fd6cbbd29fa8bfe2b3f909ff0f23487ab"
+      "sha256": "c8cc2932f2114413cd0b24c20a0e4a5e2326c3394d0743ac80c0689790b54b25"
+    },
+    {
+      "path": "tools/read-source.ts",
+      "sha256": "e1e6e9f6d51c937196756e1d68ecb7beae9114e8398d54cb2e162d5bba09d315"
     },
     {
       "path": "tools/research-record.ts",
@@ -214,7 +222,7 @@
     },
     {
       "path": "tools/search-sources.ts",
-      "sha256": "dfd07163c1e30edafd9949faa3788c74cff2e781f306ee385e238ffdab9d0e07"
+      "sha256": "85ee475b32a5afe181bd56843423ceeef7e9afc97f94ae4df98e59aa47d879f7"
     },
     {
       "path": "tsconfig.json",
@@ -222,11 +230,11 @@
     },
     {
       "path": "versions/README.md",
-      "sha256": "9a6157f5e505b898027307213fcf2bf68c7de9ddf9175f0a3b144cc63497b910"
+      "sha256": "0dfeefa13ce3b925dce88f09a89a97c79ff3b0044b8349aebe9b00db4a5f59e6"
     },
     {
       "path": "versions/v1-research/agent.ts",
-      "sha256": "1bb5b801438993e3ba529af0c737da22662c75476147980f0d2181b33e973dcd"
+      "sha256": "00c54436b7c6c4b9bbfb33986fa8f56f0eb65b6154f6446bdb742f47c661bedc"
     },
     {
       "path": "versions/v1-research/gea.worker.json",
@@ -234,7 +242,7 @@
     },
     {
       "path": "versions/v1-research/instructions.ts",
-      "sha256": "081efdd34ba3fc950ccbdfe04b3ee5b337aa581c5e2bdfe2c22a76be83f856bd"
+      "sha256": "a5be4ad44408c7fb31b505e4c184f3b626a853bb66ed3999af0ec0cea17c2f8b"
     },
     {
       "path": "versions/v1-research/worker.ts",
@@ -246,7 +254,7 @@
     },
     {
       "path": "versions/v3-feishu/agent.ts",
-      "sha256": "f12cf9f600b870048e1c48220be2f0a7901051be60f81b811a9391ebab1f0ac8"
+      "sha256": "0818507b9860ced97ea9843f07ea7b17982da3d6c1b7fe89c6b980514cb15034"
     },
     {
       "path": "worker.ts",

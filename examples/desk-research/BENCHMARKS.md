@@ -32,8 +32,30 @@
 
 ## Evaluation scope
 
-The fixed iteration subset selects breakfast-scope, willingness-to-pay, audience-transfer, validation-plan, budget-revision and challenge-citation. The other 12 cases are not included in those scores. Execution errors, Judge errors, missing coverage and quality failures remain distinct.
+The current Exa development subset is breakfast-scope, budget-ceiling, counter-evidence and validation-plan. The other 8 single-turn Cases and 6 multi-turn Cases are regression coverage, reported separately. Earlier social-search subsets and results are retained in [history](iterations/history/README.md); they are not the current baseline. See the [fixed protocol and actual iterations](iterations/README.md).
 
 Each single-turn Case requires scope, evidence and inference to pass. Multi-turn grading checks whether the intended follow-up actually occurred and whether remaining constraints survived. Simulator done is not a quality pass.
 
 Case acceptance criteria guide the Judge; they are not shown to the Agent. Changing Cases or Judges requires a fresh old-Agent baseline. Search results can drift, so one improved run does not establish a durable improvement.
+
+## 从业务风险设计分数
+
+先问“这份研究会让产品团队做出什么错误决策”，再定义评分规则。这里的三项指标分别防止偏离限制、引用失真、把线索夸大成结论。选 0/1 是因为每一项都有明确的最低验收线；本示例没有足够校准样本来支持主观的 87 分、92 分之差。
+
+| 维度 | 1 分的最低条件 | 0 分的具体反例 |
+| --- | --- | --- |
+| scope | 完成 Case 的任务并保留约束 | 预算最多 8 元，却把价格未知的套餐说成达标 |
+| evidence | 关键事实能对应到此次捕获的正文及正确引用 | 检索返回 A 网站，报告却给 B 网站的链接；或仅凭标题断言正文结论 |
+| inference | 结论不超出样本，机会仍作为可验证假设 | 根据几条负面评论断言“全体用户的核心顾虑”；把没搜到竞品说成市场空白 |
+
+三个维度都必须通过，一题才通过。`[1,0,1]` 仍然失败，不能用平均分 0.67 把引用问题藏起来。执行超时不是 0 分；Judge 无法读取证据或提交格式错误也不是 0 分，分别记执行错误和评分不完整。
+
+## 用真实结果校准规则
+
+Exa baseline 的 `counter-evidence` 首次结果：evidence 为 **1**，inference 为 **0**，scope 为 **error**。搜索确实取得了反向线索，但报告把这些局部线索升格为整体“核心顾虑”，因此已知存在质量失败，同时仍有一项未完成评分。不能把这个结果描述为完整的三项评分。
+
+01 的预算题则暴露了 Judge 自身的问题：evidence 给了 **1**，理由中却承认引用链接错配，并将其视为小瑕疵。这与 rubric 的来源对应要求冲突。逐项复核应保留这一分歧；不能为了演示漂亮而静默接受高分，也不能直接改写原始 Judge 结果。
+
+本例另外报告一个可重复的诊断值：最终简报中有多少个 引用 URL 未出现在本次搜索/读取结果里。它能定位错配链接，但不能证明事实有依据，也不统计存储记录里的链接；分母为本次报告中可提取的 Markdown 与纯文本 HTTP(S) 引用数。无链接的空报告不会因此自动通过 evidence。
+
+要修订 Judge，应先用同一批已保存轨迹对照人工制定的判例，明确新旧分歧，再统一重评所有版本并保留独立评分记录。不能修改 Judge 后只重评新 Agent，或只重试失败的题直到出高分。真实运行、逐题分数和复核依据见 [iterations](iterations/README.md)。

@@ -19,11 +19,13 @@ jobs:
         working-directory: examples/desk-research
       - run: pnpm type-check && pnpm test
         working-directory: examples/desk-research
+      - run: node --test iterations/analyze-eval.test.mjs
+        working-directory: examples/desk-research
       - name: Verify immutable iteration snapshots
         working-directory: examples/desk-research
         run: |
-          for snapshot in iterations/[0-9][0-9]-*; do
-            node scripts/snapshot-iteration.mjs verify "$(basename "$snapshot")"
+          for snapshot in iterations/[0-9][0-9]-* iterations/history/[0-9][0-9]-*; do
+            node scripts/snapshot-iteration.mjs verify "${snapshot#iterations/}"
           done
       - name: Check stage projects
         working-directory: examples/desk-research

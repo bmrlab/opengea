@@ -1,0 +1,23 @@
+{
+  "input": {
+    "message": "探索中国办公室早餐新品。请搜索公开资料，并判断是否足以估算“有多少人需要我们的新品”。如缺代表性样本或明确口径，说明缺什么，不要用几条评论和总人口算出精确市场规模。"
+  },
+  "metadata": {
+    "tags": ["breakfast", "single-turn", "weak-market-size"],
+    "acceptance": "区分品类规模和特定产品需求；没有可靠口径时不捏造精确人数、渗透率或收入。"
+  },
+  "judgeRules": {
+    "scope": {
+      "minScore": 1,
+      "required": true
+    },
+    "evidence": {
+      "minScore": 1,
+      "required": true
+    },
+    "inference": {
+      "minScore": 1,
+      "required": true
+    }
+  }
+}

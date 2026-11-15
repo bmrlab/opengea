@@ -1,53 +1,80 @@
-# 真实 Evals 驱动迭代
+# 从 Exa baseline 开始改进研究质量
 
-已保留三轮研究版本、一次工作台接入修复、Exa 切换与工具链升级快照。每份源码不可覆盖，带逐文件SHA-256、工具链和相同Benchmark摘要。原始失败、评审校准、人工复核和评分不完整项均保留；没有构造一路上涨的分数。
+这条主线从一个已经能用 Exa 检索、读取网页和保存研究记录的 Agent 开始。每轮先读 Case 的回答与 trajectory，找出一个具体问题，再改 Agent，重跑同一组题。功能接入不计作研究质量提升。
 
-| 版本 | 改动 | 固定6题自动通过 | 质量失败 | 执行错误 | Judge错误/缺失 |
-| --- | --- | ---: | ---: | ---: | ---: |
-| [00](00-baseline/README.md) | 基线 | 2 | 2 | 2 | 0 |
-| [01](01-grounded-claims/README.md) | 文本澄清、引用与推断边界 | 4 | 0 | 0 | 2 |
-| [02](02-read-sources/README.md) | 核对关键来源文本 | 3 | 0 | 0 | 3 |
-| [03](03-local-workbench/README.md) | 本地API与工作台 | 不新增质量分数 | — | — | — |
-| [04](04-exa-ready/README.md) | 正式示例切回 Exa | 待建立新基线 | — | — | — |
-| [05](05-published-toolchain/README.md) | 升级已发布工具链并准备仓库发布 | 不新增质量分数 | — | — | — |
+旧的 00–05 保留在[历史归档](history/README.md)，其中使用 social-search 的分数不能与这里的 Exa 分数相减。
 
-固定比较是4个单轮题+2个多轮题，不是全部18题。多个多轮Run存在“对话/Judge产物完成，但外层任务未收尾”的问题；不能把产物完成当成命令成功。01预算题自动通过后仍有人审纠错未解决，见对应review-notes。
+## 版本
 
-00–03 均为 social-search 历史探索，当前源码已改为 Exa；需要单独建立 Exa 基线，不能直接比较更换服务前后的分数。Walkthrough 使用当前源码的完整工作台；深入讲评测时用00→01解释真实交互修复，用02展示增加能力后仍需检查证据质量、评分可靠性与退化。平台Annotation尚未创建/导出，本地review-notes不能冒充它。
+- [00：Exa baseline](00-exa-baseline/README.md)。
+- [01：关键事实与来源对应](01-grounded-claims/README.md)。
+- [02：收敛证据工作集](02-focused-evidence/README.md)。
+- [03：限制推断范围](03-scoped-inference/README.md)。
 
-预检、Judge校准和存储问题见 [PREFLIGHT.md](PREFLIGHT.md)。题目与标准见 [BENCHMARKS.md](../BENCHMARKS.md)。
+环境和 Judge 故障详见 [预检记录](PREFLIGHT.md)。
 
-## 固定题集
+## 固定比较条件
 
-单轮 12 题：通勤场景、付费意愿、反向证据、无加热条件、预算、人群迁移、营销/用户证据、矛盾资料、市场规模、替代行为、时效性、验证计划。每题有任务约束、证据、推断三项必过标准。
+[protocol.json](protocol.json) 固定模型、运行预算、题目和运行器。开发集是 4 题：研究范围、8 元预算、反向证据、验证计划。它们代表四种决策风险，而不是四个措辞不同的同一问题。其余 8 个单轮题和 6 个多轮题用于检查改动的迁移与退化。
 
-多轮 6 题：澄清并追加条件、预算收紧、追问引用、人群变更、跨轮保留限制、拒绝把假设写成定论。Simulator 不替 Agent 研究；未触发目标追问单独记录为未覆盖。
+每题的 scope、evidence、inference 都是独立的 0/1 必过项。只有三项完成且均为 1 才算该题通过；执行失败、Judge 错误和缺少评分单独统计。具体评分设计见 [Benchmark 说明](../BENCHMARKS.md)。不能用平均分掩盖证据失败。
 
-固定题目和 Judge 不代表固定检索结果。每次保留实际搜索证据，比较时说明数据漂移。需要调整题目或 Judge 时，先让旧 Agent 在新标准上建立基线，不能直接把两个不同标准的分数相减。
+比较时保持 Cases、Judges、Exa Connector、工具实现和运行参数不变。修改评分标准时，必须在新标准上重跑旧 Agent；不能把换了标准后的分数称为提升。Exa 搜索结果和模型别名可能漂移，因此报告同时保留实际查询、来源信息和原始产物摘要，单次差异不代表统计显著提升。
 
-## 保存与复现
+## 首次结果对照
 
-在示例根目录保存一轮不可覆盖的完整源码：
+| 版本 | 完整自动通过 | 已知质量失败 | 评分不完整 | 执行错误 | 合法判分 / 应有判分 |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| [00](00-exa-baseline/README.md) | 0 | 2 | 2 | 0 | 3/12 |
+| [01](01-grounded-claims/README.md) | 0 | 0 | 2 | 2 | 2/12 |
+| [02](02-focused-evidence/README.md) | 1 | 1 | 2 | 0 | 8/12 |
+| [03](03-scoped-inference/README.md) | 1 | 0 | 2 | 1 | 6/12 |
+
+每行是同样 4 题。已知质量失败的题可能同时有缺失评分；每轮详情页列出全部判分。这里的自动通过不替代复核：03 预算题自动三项通过，却把 8.5 元组合写进“8 元以内案例”，Codex 复核明确保留这个问题。分数未完整且存在 Judge 漏判，不能据此宣称整体通过率稳定提高。
+
+能确认的具体变化：00 的预算题 4 个引用中有 3 个未匹配实际来源；02 变为 3 个引用全部匹配，并取得首次三项有效通过。02 的 4 份完整报告合计 12 个引用均匹配，00 为 24 个引用中 6 个未匹配。03 的研究范围题从“个案推出常态”改为逐项限定样本，inference 从 02 的 0 变为 1。但 03 验证计划题在 240 秒预算内没有正常结束，多轮引用追问也发生同类超时；不能把这轮称为全面优于 02。
+
+这组材料适合演示“读结果与轨迹 → 提出一个假设 → 小改动 → 同题复跑 → 检查回归与裁判”。它还不是一套全部通过的发布验收结果。
+
+## 03 的独立回归
+
+没有用以下四题修改 00–03 instructions，且只运行 03，不能声称它们相对 baseline 有提升。
+
+| Case | 首次自动结果 | 复核边界 |
+| --- | --- | --- |
+| audience-transfer | evidence=1、inference=1、scope=error | 评分不完整 |
+| freshness-limits | scope=1、inference=1、evidence=error | 评分不完整 |
+| challenge-citation | 执行超时 | 已发生引用追问，不能将部分回答算通过 |
+| retain-constraints | conversation=1 | 只发生一次追问，要求的第二次排序追问未发生；完整场景未覆盖 |
+
+[单轮回归回答和轨迹](03-scoped-inference/regression-single.json) · [多轮对话和轨迹](03-scoped-inference/regression-multi.json)。完整题库共 18 题，本次 4 个开发题 + 4 个独立回归题；其余 10 题未执行。多轮的 `simulator_done` 只表示 Simulator 结束，不能替代目标追问覆盖检查。
+
+## 阅读一轮迭代
+
+- 先看 README 中上一轮的失败证据，以及这轮要验证的假设。
+- 查看相邻 `source/` 的差异，确认改动只针对该问题。
+- 对照 `results.json` 的逐题分数、Judge 理由、回答和 trajectory。
+- 阅读 Codex 逐项复核，区分自动判分、研究质量问题和执行环境问题。
+- 看未改善项和回归结果，再决定下一轮是否值得做。
+
+`source/` 是不可覆盖的完整项目，`manifest.json` 提供逐文件哈希与 Benchmark 摘要。分享结果中的工具输出仅保留检索查询和来源元信息；完整正文和原始轨迹留在本地。这里的 Codex 逐项复核是本地记录，不冒充 Builder Annotation。
+
+## 复现与新增迭代
+
+在某轮 `source/` 中安装锁定依赖，登录 GEA，并配置 `research-search` 的本机 Connection。密钥不属于快照或报告。然后用相同的选题和预算运行：
 
 ```bash
-node scripts/snapshot-iteration.mjs create 06-next-experiment
-node scripts/snapshot-iteration.mjs verify 06-next-experiment
+gea agent eval --json '{"benchmarkPath":"benchmarks/single-turn","caseIds":["breakfast-scope","budget-ceiling","counter-evidence","validation-plan"],"modelSource":"hosted","judgeModel":"gea-pro","concurrency":2,"overrides":{"engine":{"maxSteps":16,"timeout":{"totalMs":240000}}}}'
 ```
 
-每轮 `manifest.json` 包含逐文件 SHA-256、源码摘要、题集摘要和工具链版本。`source/` 不含凭据或运行状态。安装该目录的锁定依赖后，可用相同 CLI 运行其中的 Benchmark。
+本次实际运行采用 Node + jiti 启动未修改的 GEA CLI 源码，搭配已发布的原生运行时，详见 protocol。原因是本机发布版 Bun CLI 的 Exa POST 路径超时，而 Node 路径能取得真实结果。因此这里不声称上述发布版 CLI 命令已通过本机端到端验收。运行器必须在各轮保持一致；不要悄悄切换后继续比较。
 
-执行结果留在 `.gea/`，不直接提交原始外部资料和完整运行轨迹。迭代说明必须指向实际 Run/结果目录，并提供经过检查的逐题结果与必要证据摘录；不能只写平均分。
+在示例根目录记录下一轮源码，并导出经过逐项检查的分享结果：
 
-每轮说明包括：
+```bash
+node scripts/snapshot-iteration.mjs create 04-next-hypothesis
+node scripts/snapshot-iteration.mjs verify 04-next-hypothesis
+node iterations/analyze-eval.mjs /path/to/eval-result iterations/04-next-hypothesis/results.json
+```
 
-- 要验证的问题和上轮证据；
-- Agent 的具体改动，以及保持不变的 Cases/Judges/模型；
-- 实际 Run、逐题评分、错误、未完成、Simulator 未覆盖；
-- 人工复核与 Judge 判定是否一致；
-- 改善、退化、资料漂移和下一轮选择。
-
-`00` 是 social-search 首次真实基线。后续 `01`、`02` 只在根据真实结果实施改动后建立；功能增加、环境修复和 Judge 口径变化不冒充 Agent 质量提升。
-
-## 02 的其余 12 题覆盖
-
-补跑 8 个单轮题：7 通过、1 执行错误；补跑 4 个多轮题：3 通过、1 Judge 错误。合并 02 原有固定 6 题，18 题共 13 通过、1 执行错误、4 Judge 错误，不能记为全量通过。结果分别在 `02-read-sources/results/coverage-single.json` 与 `coverage-multi.json`。外层 CLI 收尾与产物状态另行记录。
+导出工具拒绝覆盖旧文件。再次执行或重评分使用新文件名，并写明与原始 Run 的关系。调整后的报告不能替代首次结果。

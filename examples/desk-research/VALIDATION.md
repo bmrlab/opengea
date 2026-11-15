@@ -2,11 +2,21 @@
 
 源码、实际运行、自动质量评分和仓库发布状态分别记录。
 
-## 2026-11-15 仓库更新
+## 2026-11-15 Exa 质量迭代
+
+当前示例对应 [03：限制推断范围](iterations/03-scoped-inference/README.md)。新主线 00–03 从 Exa 开始，只修改研究 instructions；Cases/Judges、模型、Connector、工具、DO 和前端保持一致。旧的 00–05 在 history 中保留原始源码与哈希，不混入新分数。
+
+每轮重跑同一组 4 个开发题；最终版本另选 2 个单轮与 2 个多轮做回归。18 题是完整题库，本次没有声称 18 题全部验证。逐题结果、完整报告与精简 trajectory 见 [iterations](iterations/README.md)，执行失败、评分失败、质量失败分别记录。
+
+正式质量运行使用 Node 24.16.0 + jiti 启动同一未修改的 GEA CLI 源码，搭配已发布 `0.2.261114-alpha.0` 原生组件与 SDK。发布版 Bun CLI 的本机 Exa POST 超时尚未修复，不能把 Node 路径的成功说成发布版 CLI 端到端通过。详见 [预检记录](iterations/PREFLIGHT.md)。
+
+完整项目类型检查、11 项测试通过；分享结果分析器的独立行为测试通过。三个新生成阶段完成 frozen install、类型检查与测试（5/9/9 项）。公开 CLI 的完整项目 validate 和 pack 通过；10 份新旧源码快照哈希全部校验通过。离线检查不代表所有研究结论正确。
+
+## 2026-11-15 仓库更新（较早记录）
 
 当前 CLI、SDK、Feishu 包更新为 npm registry 最新 `0.2.261114-alpha.0`；npm 最新仍为 `12.2.2`。历史 00–04 快照保留原依赖与证据，不改写历史分数。
 
-完整项目与三个重新生成阶段均完成 frozen install、类型检查及测试，分别为 11/5/9/9 项、0 跳过。全部四个项目用公开 CLI 的 validate/pack 通过。新增 [05 快照](iterations/05-published-toolchain/README.md)，旧快照保持不变。发布工作流重复这些离线检查，并校验历史快照哈希；不在 CI 调用模型、Exa 或飞书。
+完整项目与三个重新生成阶段均完成 frozen install、类型检查及测试，分别为 11/5/9/9 项、0 跳过。全部四个项目用公开 CLI 的 validate/pack 通过。新增 [05 快照](iterations/history/05-published-toolchain/README.md)，旧快照保持不变。发布工作流重复这些离线检查，并校验历史快照哈希；不在 CI 调用模型、Exa 或飞书。
 
 Quick Start 面向 coding agent 独立开发，本完整示例增加独立的 [飞书接入说明](FEISHU.md)。仓库更新由 PR 合并记录证明；以下真实服务验收缺口仍然保留。
 
@@ -29,13 +39,13 @@ Quick Start 面向 coding agent 独立开发，本完整示例增加独立的 [�
 
 ## 仍未完成
 
-1. 用户本机配置 Exa Connection 后，以当前 05 源码建立新的 18 题 Exa 基线，以及 Judge 格式错误、证据读取错误、缺失评分的稳定完成；首次运行与重评分保留分别记录。
+1. 发布版 CLI 的本机 Exa POST 路径，以及 Judge 格式错误和宽松判分的可靠性问题。剩余 10 题未纳入本次 Exa 迭代的真实回归；本次首次结果与诊断尝试分别保留。
 2. Builder Preview 的 Agent / 单轮 Benchmark / Eval 上传、Trace Annotation 创建及导出。当前 review-notes.json 是本地纠错，不是平台 Annotation。
 3. 飞书测试机器人真实收发与追加条件；Exa 版本的完整工作台真实彩排。历史 social-search 浏览器验收已通过，不能代替 Exa 搜索验收。
 4. GEA 网站的生产发布与 OpenGEA 仓库合并是独立操作；本仓库更新不代表平台已部署。
 
 Simulator Benchmark 与多轮结果在当前源码仍拒绝托管发布/上传（hosted_multi_turn_not_supported），多轮演示使用本地路径。CI 只安装、类型检查和测试，不访问模型、搜索或飞书。原始运行证据保留在私有 .gea，分享版迭代结果不包含上游账户与访问参数。
 
-当前源码和 Quick Start 已恢复 Exa；仅配置本机环境变量不会自动创建 GEA Connection，需使用 `gea agent connect` 授权。详见 [04 接入记录](iterations/04-exa-ready/README.md)。
+当前源码和 Quick Start 已恢复 Exa；仅配置本机环境变量不会自动创建 GEA Connection，需使用 `gea agent connect` 授权。详见 [04 接入记录](iterations/history/04-exa-ready/README.md)。
 
 Quick Start 的 coding-agent 任务现使用自行生成的 4 单轮 + 2 多轮小题集，与本完整示例的 18 题分别描述。文档命令、内链、JSON 与构建检查通过；尚未执行新的 coding-agent 从空项目到真实评测的完整验收。

@@ -2,14 +2,14 @@
 
 这是可独立运行的完整 Desk Research 示例；Quick Start 则面向 coding agent，从空项目自行构建，两者不互相依赖。任务是研究上班族早餐的使用场景、困难与已有方案，输出带来源的机会简报，并区分观察、推断和待验证假设。
 
-- [Coding Agent Quick Start](./QUICKSTART.md)：从 `gea agent init` 自行构建并评测，不复制本例。
+- [Coding Agent Quick Start](./QUICKSTART.md)：从创建 Project 开始的官方 walkthrough。
 - [验收记录](./VALIDATION.md)：已执行的本地检查与尚未完成的真实验收。
 - [English tutorial](./QUICKSTART.en.md)。
 - [18 道题与验收标准](./BENCHMARKS.md)。
 - [质量迭代记录](./iterations/README.md)：源码快照、固定题集、真实结果与改动说明。
 - [阶段版本与 coding agent 升级任务](./versions/README.md)：生成三个独立项目，用同一套 Benchmark 比较。
 
-本例没有预置研究结论、伪造用户引文或虚构 Eval 分数。搜索数据和 Judge 分数需要实际运行后产生。
+当前源码对应 Exa 质量主线的 [03 版本](iterations/03-scoped-inference/README.md)。历史快照与实际结果用于展示从失败中迭代；研究结论由运行时检索产生。环境问题、未完成评分与已知质量缺陷在验收记录中单列。
 
 ## 从完整源码启动
 
@@ -33,7 +33,7 @@ pnpm prepare:local
 pnpm dev
 ```
 
-搜索使用 Exa，Connector key 为 `research-search`。通过本机授权流程配置 API key；单独设置环境变量不会创建 Connection。返回有长度上限的网页文本，缺失和截断会明确标记。历史 social-search 结果保留在 iterations，不能作为当前 Exa 基线。
+搜索使用 Exa，Connector key 为 `research-search`。通过本机授权流程配置 API key；单独设置环境变量不会创建 Connection。返回有长度上限的网页文本，缺失和截断会明确标记。新的质量迭代从 Exa baseline 开始；早期 social-search 与功能接入记录放在 `iterations/history/`，不参与新分数比较。
 
 第二个终端进入此目录，将 dev 输出的两个 origin 和 key 文件路径交给配置脚本：
 

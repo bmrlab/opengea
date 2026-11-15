@@ -1,56 +1,75 @@
 import { z } from "zod";
-
-export const webUrl = z.url().refine((value) => /^https?:\/\//u.test(value));
+export const webUrl = z
+  .url()
+  .refine(
+    (value) =>
+      /^https?:\/\//u.test(value) &&
+      !new URL(value).username &&
+      !new URL(value).password,
+  );
 const envelope = z.object({
   ok: z.boolean(),
-  data: z.object({
-    ok: z.boolean(),
-    status: z.number().int(),
-    data: z.unknown().optional(),
-  }),
+  status: z.number().int(),
+  data: z.unknown().optional(),
 });
-const note = z.object({
-  id: z.string().regex(/^[a-zA-Z0-9_-]+$/u),
+const item = z.object({
+  url: webUrl,
   title: z.string().nullish(),
-  desc: z.string().nullish(),
-  timestamp: z.number().int().nonnegative().nullish(),
+  text: z.string().nullish(),
+  publishedDate: z.string().nullish(),
 });
 const payload = z.object({
-  code: z.literal(200),
-  data: z.object({
-    code: z.literal(0),
-    success: z.literal(true),
-    data: z.object({
-      items: z.array(z.object({ note: note.optional() })).max(100),
-    }),
-  }),
+  results: z.array(item).max(100),
+  statuses: z
+    .array(z.object({ id: z.string(), status: z.string() }))
+    .optional(),
 });
-
-export function parseSocialSearchResponse(value: unknown) {
+function readResponse(value: unknown) {
   const response = envelope.parse(value);
-  if (!response.ok || !response.data.ok)
-    throw new Error(`Social Search failed (HTTP ${response.data.status}).`);
-  const result = payload.parse(response.data.data);
-  const notes = result.data.data.items.flatMap((item) =>
-    item.note ? [item.note] : [],
-  );
-  const unique = [...new Map(notes.map((item) => [item.id, item])).values()];
+  if (!response.ok || response.status < 200 || response.status >= 300)
+    throw new Error(`Exa request failed (HTTP ${response.status}).`);
+  return payload.parse(response.data);
+}
+function source(value: z.infer<typeof item>, limit: number, textScope: string) {
+  return {
+    title: value.title || "Untitled source",
+    url: value.url,
+    text: (value.text ?? "").slice(0, limit),
+    truncated: (value.text?.length ?? 0) >= limit,
+    textLimit: limit,
+    publishedAt: value.publishedDate ?? null,
+    sourceType: "web-page",
+    textScope,
+  };
+}
+const limitations =
+  "仅使用服务实际返回的网页文本；提取有长度上限，不能保证全文、图片、评论或视频已读取。检索时间不是来源发表时间，公开资料不是代表性抽样。";
+export function parseSearchResponse(value: unknown) {
+  const result = readResponse(value);
   return {
     retrievedAt: new Date().toISOString(),
     sourceLimit: 5,
-    availableNoteCount: unique.length,
-    limitations:
-      "仅为搜索返回的社交笔记摘录，未读取评论、图片或视频；不能代表目标人群总体。链接可能需要平台登录。",
-    sources: unique.slice(0, 5).map((item) => ({
-      title: item.title || "Untitled social post",
-      url: `https://www.xiaohongshu.com/explore/${item.id}`,
-      text: (item.desc ?? "").slice(0, 6000),
-      truncated: (item.desc?.length ?? 0) > 6000,
-      publishedAt: item.timestamp
-        ? new Date(item.timestamp * 1000).toISOString()
-        : null,
-      sourceType: "social-post",
-      textScope: "search-excerpt",
-    })),
+    limitations,
+    sources: result.results
+      .slice(0, 5)
+      .map((value) => source(value, 6000, "search-text")),
+  };
+}
+export function parseContentsResponse(value: unknown, requestedUrl: string) {
+  const url = webUrl.parse(requestedUrl);
+  const result = readResponse(value);
+  if (result.statuses?.some((value) => value.status !== "success"))
+    throw new Error(
+      "Exa could not retrieve the requested page; preserve the evidence gap.",
+    );
+  const found = result.results.find((value) => value.url === url);
+  if (!found)
+    throw new Error(
+      "The requested URL was not returned; do not substitute another page as evidence.",
+    );
+  return {
+    retrievedAt: new Date().toISOString(),
+    limitations,
+    source: source(found, 12000, "page-text"),
   };
 }

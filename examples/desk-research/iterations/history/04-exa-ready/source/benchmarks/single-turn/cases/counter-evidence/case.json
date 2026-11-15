@@ -1,0 +1,23 @@
+{
+  "input": {
+    "message": "研究办公室即食早餐产品。请同时寻找便捷以外的顾虑与已有替代方案，区分资料中的观察、推断和待验证假设，不能只挑支持新品的资料。范围为中国城市通勤人群，不需要追问。"
+  },
+  "metadata": {
+    "tags": ["breakfast", "single-turn", "counter-evidence"],
+    "acceptance": "明确检索和呈现反向线索与替代方案；没有找到时说明缺口，不编造反对意见。"
+  },
+  "judgeRules": {
+    "scope": {
+      "minScore": 1,
+      "required": true
+    },
+    "evidence": {
+      "minScore": 1,
+      "required": true
+    },
+    "inference": {
+      "minScore": 1,
+      "required": true
+    }
+  }
+}

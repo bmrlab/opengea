@@ -75,9 +75,18 @@ export function createWorkbench(options) {
         target = new URL("/api/v1/sessions", settings.apiOrigin);
         body = {
           agent_id: settings.agentId,
-          environment: "preview",
+          environment: "local",
           metadata: { source: "product-research-quick-start" },
         };
+      } else if (
+        method === "GET" &&
+        /^\/api\/runs\/[0-9a-f-]{36}$/u.test(pathname) &&
+        z.uuid().safeParse(pathname.split("/").at(-1)).success
+      ) {
+        target = new URL(
+          `/api/v1/runs/${pathname.split("/").at(-1)}`,
+          settings.apiOrigin,
+        );
       } else {
         const match = sessionRoute.exec(pathname);
         if (!match || !z.uuid().safeParse(match[1]).success)
