@@ -1,0 +1,23 @@
+{
+  "input": {
+    "message": "针对中国通勤者早餐，请同时研究“越便捷越好”和“口感、新鲜度或价格更重要”的公开线索。若资料矛盾，请解释可能的场景差异，保留不能解决的分歧，不要强行给唯一赢家。"
+  },
+  "metadata": {
+    "tags": ["breakfast", "single-turn", "conflicting-findings"],
+    "acceptance": "保留不同场景和相反线索，避免靠没有来源的比例或伪共识消除矛盾。"
+  },
+  "judgeRules": {
+    "scope": {
+      "minScore": 1,
+      "required": true
+    },
+    "evidence": {
+      "minScore": 1,
+      "required": true
+    },
+    "inference": {
+      "minScore": 1,
+      "required": true
+    }
+  }
+}

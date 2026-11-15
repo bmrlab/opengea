@@ -1,0 +1,29 @@
+[
+  {
+    "id": "R01",
+    "type": "local-review-correction",
+    "platformAnnotationCreated": false,
+    "caseId": "budget-revision",
+    "agentRunId": "de19cb17-6392-46fe-afa1-c3e036e4a953",
+    "trace": null,
+    "artifact": "quality-00-multi/.gea/evals/20261114T053300.431Z-dd9383dc/cases/product-research/budget-revision.json",
+    "problem": "Agent 调用 askUser，导致自动多轮对话停在等待工具/人工输入，没有覆盖预算收紧。",
+    "expectedBehavior": "信息足够时直接研究；必要澄清使用普通文本结束本轮，不调用 askUser。",
+    "implementedIn": "01-grounded-claims"
+  },
+  {
+    "id": "R02",
+    "type": "local-review-correction",
+    "platformAnnotationCreated": false,
+    "caseId": "audience-transfer",
+    "agentRunId": "664fe703-fd66-40d2-9232-ffef40c9cbb3",
+    "trace": {
+      "spanId": "bf6ecc12acd74b71",
+      "traceId": "5f1a3a7a65ea4c51971488e4b8dfbbb8"
+    },
+    "artifact": "quality-00-single/.gea/evals/20261114T053249.530Z-797d87b5/cases/product-research/audience-transfer.json",
+    "problem": "回答断言“通勤早餐的核心矛盾”并声称学生/健身人群不会遇到同类问题，缺少比较和排序证据。",
+    "expectedBehavior": "限制为捕获样本中的观察，明确其他人群、排序、总体情况未知；免责声明不能抵消正文的强断言。",
+    "implementedIn": "01-grounded-claims"
+  }
+]

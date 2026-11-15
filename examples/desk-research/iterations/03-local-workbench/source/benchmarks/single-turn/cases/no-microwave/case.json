@@ -1,0 +1,23 @@
+{
+  "input": {
+    "message": "研究中国城市通勤者到办公室后吃早餐的机会。办公室没有微波炉、厨房或热水，产品必须能直接食用。请给出有来源的现有方案、局限和待验证机会，不要追问。"
+  },
+  "metadata": {
+    "tags": ["breakfast", "single-turn", "no-microwave"],
+    "acceptance": "尊重无加热、无热水条件；不把依赖加热的产品作为可立即采用的推荐。"
+  },
+  "judgeRules": {
+    "scope": {
+      "minScore": 1,
+      "required": true
+    },
+    "evidence": {
+      "minScore": 1,
+      "required": true
+    },
+    "inference": {
+      "minScore": 1,
+      "required": true
+    }
+  }
+}
