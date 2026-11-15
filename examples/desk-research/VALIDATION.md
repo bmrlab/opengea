@@ -6,7 +6,7 @@
 
 当前 CLI、SDK、Feishu 包更新为 npm registry 最新 `0.2.261114-alpha.0`；npm 最新仍为 `12.2.2`。历史 00–04 快照保留原依赖与证据，不改写历史分数。
 
-完整项目与三个重新生成阶段均完成 frozen install、类型检查及测试，分别为 11/5/9/9 项、0 跳过。发布工作流重复这些离线检查，并校验历史快照哈希；不在 CI 调用模型、Exa 或飞书。
+完整项目与三个重新生成阶段均完成 frozen install、类型检查及测试，分别为 11/5/9/9 项、0 跳过。全部四个项目用公开 CLI 的 validate/pack 通过。新增 [05 快照](iterations/05-published-toolchain/README.md)，旧快照保持不变。发布工作流重复这些离线检查，并校验历史快照哈希；不在 CI 调用模型、Exa 或飞书。
 
 Quick Start 面向 coding agent 独立开发，本完整示例增加独立的 [飞书接入说明](FEISHU.md)。仓库更新由 PR 合并记录证明；以下真实服务验收缺口仍然保留。
 
@@ -29,7 +29,7 @@ Quick Start 面向 coding agent 独立开发，本完整示例增加独立的 [�
 
 ## 仍未完成
 
-1. 用户本机配置 Exa Connection 后，以 04 源码建立新的 18 题 Exa 基线，以及 Judge 格式错误、证据读取错误、缺失评分的稳定完成；首次运行与重评分保留分别记录。
+1. 用户本机配置 Exa Connection 后，以当前 05 源码建立新的 18 题 Exa 基线，以及 Judge 格式错误、证据读取错误、缺失评分的稳定完成；首次运行与重评分保留分别记录。
 2. Builder Preview 的 Agent / 单轮 Benchmark / Eval 上传、Trace Annotation 创建及导出。当前 review-notes.json 是本地纠错，不是平台 Annotation。
 3. 飞书测试机器人真实收发与追加条件；Exa 版本的完整工作台真实彩排。历史 social-search 浏览器验收已通过，不能代替 Exa 搜索验收。
 4. GEA 网站的生产发布与 OpenGEA 仓库合并是独立操作；本仓库更新不代表平台已部署。
