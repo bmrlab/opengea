@@ -1,28 +1,39 @@
-# 预检与评审校准（不计入质量迭代）
+# 本次 Exa 运行的环境与评分问题
 
-2026-11-14。实际发布工具链：CLI、SDK、Feishu 包 `0.2.261113-alpha.0`，npm `12.2.2`，Node `24.16.0`，pnpm `12.8.1`。
+这些记录用于区分 Agent 质量与运行环境故障，不计入质量提升。
 
-## 真实数据与模型
+## Exa Connection 与本地 HTTP 路径
 
-Workspace 已有 `social-search` Connector。一次真实小红书搜索返回 20 条笔记；示例保留前 5 条，不传递账户和上游访问参数。实测摘录通常只有 60 字，不是完整正文、评论、图片或视频，不能当总体样本。搜索预检的原始响应保留在私有 `.gea/iterations/preflight/`。
+使用用户提供的本机 Exa 凭据，已通过本地 Connection API 保存授权。凭据不进入源码、快照或本报告。也验证了 CLI 支持的 Connector 环境变量路径，结果相同。
 
-轻量模型预检 Run `b132c1c5-ec37-4b7f-b23b-69123591a507`：真实 `gea-pro` 返回 READY，Eval completed，命令退出 0。此任务没有 Judge，不是研究题通过。
+发布版 `@gea-ai/cli@0.2.261114-alpha.0` 的首次尝试 `f657e2fb-2173-44d2-9728-685f0c1fc7aa` 在 Connector 请求处失败，之后取消；它不是有意义的质量 baseline。DO 读取和模型调用正常，Worker 记录等待平台响应头 120 秒超时。直接使用同一 Exa 请求，Python、Node 和 Bun 原生 fetch 能返回真实正文；启用 CLI 的 HTTP 初始化后，Bun 下 POST 请求出现卡住。该定位限于本机环境，不声称 Exa 服务整体故障。
 
-## 打包与存储
+为继续检验 Agent，正式 00–03 均使用同一未修改的 GEA 源码 CLI，经 Node 24.16.0 + jiti 启动，并指定 npm 已发布的 App Server、Worker Runtime 和 system-workers。源码提交和完整条件见 protocol。预检 `32554d66-60fa-4c1a-992c-6b83c86f3248` 已取得真实 Exa 正文，但其 90 秒预算不足；正式各轮统一使用 240 秒预算。
 
-- 未声明环境变量的 v1 Worker，生成的清单包含 `environment: undefined`，导致 JSON 解析失败；源码定位到清单读取之前已写入非法 JSON。v1 显式声明 `environment: []` 后，发布 CLI 的模型与研究预检能够运行。没有修改 CLI 授权或校验。
-- 原同步 SQL 的研究记录 DO 已激活，但完整研究没有产出结果；本次尝试被取消，不计为回答失败。Run `620ab119-5b76-4868-bf66-765fee0eb82f` 保留在私有目录。
-- 使用异步 KV 的隔离预检 Run `9cbf9f44-a972-417e-be7b-747315094bf6` 能读取空记录；Run `76acafa1-3297-48cd-ac31-63a8d3a9b373` 实际完成读空、保存、再次读回相同标题。后续完整示例改用 KV。没有据此宣称跨重启持久化、浏览器工作台或飞书通过。
-- 诊断中曾用源码 CLI 混用发布 App Server，出现事件协议不匹配；同源 App Server 本地构建成功。正式质量回归统一使用发布 CLI/Runtime，诊断构建不参与分数比较。
+临时诊断日志已从 GEA 源码恢复。此工作没有修改共享 CLI 的网络实现，也没有声称发布版 CLI 的问题已修复。正式各轮的 Agent、SDK、工具及 Exa 调用均为真实执行，没有替换搜索结果或模拟成功。
 
-## Judge 校准
+## Judge 的有效结果与失败
 
-研究预检 Run `cb877d76-b889-4152-9765-279f277df545` 完成真实搜索和回答，命令退出 0，但 evidence Judge 的 evidence/status 格式错误，判为 judge_error。inference Judge 对“接受度高”“真正痛点”等无总体证据的强判断给了 1 分，人工复核不认同。
+00 的执行完整，但 12 项评分只有 3 项合法完成，9 项是 error。部分提交把 `status` 的标签混进 reason，未形成合法提交。分析文字不是有效分数，不能手工补齐 status 后冒充自动通过。
 
-因此在正式 00 基线之前补充 Judge 的强结论检查及提交格式约束。00 与后续版本使用相同的新题集摘要，不能把预检的分数与正式迭代相减。未将失败改成跳过，也未填造分数。
+另一次用 `gea-fast` 的单项重评分探查使用发布版 CLI，任务 `4df17e0f-b629-41b1-aaf9-e3d4bbf8b943` 未取得有效判分；取消请求超时，随后终止了独占该探查的本地 Host。命令退出 1，评分文件仍为 running，按未完成保留，不进入跨版本比较。没有用它替代原评分，也没有改变主线的 Judge 模型。
 
-## 结果范围
+01 的预算题 evidence 自动给 1，但理由承认引用错配；Codex 逐项复核不同意该宽松解释。原分数保留，争议单列。若之后校准 Judge，必须统一重评所有版本，不能只给新 Agent 换更宽松的裁判。
 
-质量回归先在 v1 搜索阶段执行固定的 4 个单轮 + 2 个多轮题，便于隔离模型行为与 DO/前端接入。完整题库有 12 + 6 题；未运行的题不计为通过。功能阶段 v1/v2/v3 与质量迭代 00/01/02 是两条不同的版本线。
+## 维护者复现本次 Node 运行器
 
-`review-notes.json` 是关联真实 Case/Trace 的本地人工纠错记录，不是 Builder Annotation API 的导出。Studio 创建、导出 Annotation 的端到端验收仍须单独完成。
+需要已有 GEA 源码 checkout，固定到 protocol 中的提交并完成仓库依赖安装；不要在有未提交工作的 checkout 中切换提交。以下是本次 macOS arm64 路径，其他平台不在此次验证范围。进入要评测的完整快照目录，先配置该项目的本机 Exa Connection，再运行：
+
+```bash
+export GEA_SOURCE_ROOT=/absolute/path/to/gea-at-recorded-commit
+export GEA_PUBLISHED_ROOT="$(npm root -g)/@gea-ai/cli/node_modules/@gea-ai/cli-darwin-arm64"
+export GEA_APP_SERVER_BINARY="$GEA_PUBLISHED_ROOT/gea-app-server"
+export GEA_WORKER_RUNTIME_BINARY="$GEA_PUBLISHED_ROOT/gea-worker-runtime"
+export WORKER_RUNTIME_SYSTEM_WORKER_ROOT="$GEA_PUBLISHED_ROOT/system-workers"
+
+node "$GEA_SOURCE_ROOT/packages/gea-cli/node_modules/jiti/lib/jiti-cli.mjs" \
+  "$GEA_SOURCE_ROOT/packages/gea-cli/src/bin.ts" agent eval --json \
+  '{"cwd":".","benchmarkPath":"benchmarks/single-turn","caseIds":["breakfast-scope","budget-ceiling","counter-evidence","validation-plan"],"modelSource":"hosted","judgeModel":"gea-pro","concurrency":2,"overrides":{"engine":{"maxSteps":16,"timeout":{"totalMs":240000}}}}'
+```
+
+这只是与已记录实验保持一致的维护者复现方式，不是要求普通 Quick Start 用户依赖 GEA 源码。不要复用其他项目的 .gea 或把本机凭据复制进快照。本次正式轮次使用独立项目目录和新 Session；历史 Run 的研究记录没有注入新 Case。

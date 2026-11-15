@@ -1,10 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { DatabaseSync } from "node:sqlite";
 import { registerHooks } from "node:module";
 
-// Test the actual business SQL on SQLite. This shim supplies only the DO base;
-// it does not stand in for a real Worker Runtime integration test.
+// Exercise record isolation and updates against the asynchronous storage contract.
+// This in-memory store is a unit fixture, not proof of Runtime persistence.
 registerHooks({
   resolve(specifier, context, next) {
     if (specifier === "cloudflare:workers")
@@ -18,16 +17,17 @@ registerHooks({
 const { ResearchStore } = await import("../durable-objects/research-store.ts");
 
 test("research survives object recreation and updates only the selected session", async () => {
-  const database = new DatabaseSync(":memory:");
+  const records = new Map();
   const context = {
     storage: {
-      sql: {
-        exec(query, ...bindings) {
-          const statement = database.prepare(query);
-          if (query.startsWith("SELECT")) return statement.all(...bindings);
-          statement.run(...bindings);
-          return [];
-        },
+      async get(key) {
+        return structuredClone(records.get(key));
+      },
+      async put(key, value) {
+        records.set(key, structuredClone(value));
+      },
+      async list({ prefix }) {
+        return new Map([...records].filter(([key]) => key.startsWith(prefix)));
       },
     },
   };
@@ -42,7 +42,7 @@ test("research survives object recreation and updates only the selected session"
         sources: [],
       }),
     });
-  try {
+  {
     let store = new ResearchStore(context);
     assert.equal((await store.fetch(write("session-a", "A"))).status, 200);
     assert.equal((await store.fetch(write("session-b", "B"))).status, 200);
@@ -80,7 +80,5 @@ test("research survives object recreation and updates only the selected session"
       ).json(),
       null,
     );
-  } finally {
-    database.close();
   }
 });

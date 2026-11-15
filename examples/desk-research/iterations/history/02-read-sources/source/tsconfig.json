@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "allowImportingTsExtensions": true,
+    "lib": ["ES2022", "DOM"],
+    "types": ["@cloudflare/workers-types"]
+  },
+  "include": [
+    "agent.ts",
+    "worker.ts",
+    "instructions.ts",
+    "bindings.d.ts",
+    "tools/**/*.ts",
+    "connectors/**/*.ts",
+    "durable-objects/**/*.ts",
+    "lib/**/*.ts"
+  ],
+  "exclude": ["node_modules", ".gea"]
+}

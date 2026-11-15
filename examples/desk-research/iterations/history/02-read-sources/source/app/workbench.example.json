@@ -1,0 +1,6 @@
+{
+  "apiOrigin": "http://127.0.0.1:REPLACE_API_PORT",
+  "workerOrigin": "http://127.0.0.1:REPLACE_WORKER_PORT",
+  "agentId": "REPLACE_WITH_LOCAL_CANONICAL_AGENT_UUID",
+  "apiKeyFile": "/absolute/path/from/agent-dev-output"
+}

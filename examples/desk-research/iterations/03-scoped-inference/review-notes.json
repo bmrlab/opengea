@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "opengea.iteration-review.v1",
+  "reviewer": "Codex",
+  "reviewType": "Local coding-agent review, not independent human review or Builder Annotation",
+  "policy": "Original automatic scores and execution artifacts remain unchanged. Findings are observations, not imported replacement scores.",
+  "notes": [
+    {
+      "caseId": "budget-ceiling",
+      "finding": "Remaining defect: a sentence headed “8元以内案例” includes an 8.5-yuan combination. All three automatic Judges gave 1, so the automatic pass misses this constraint inconsistency.",
+      "judgeDisagreement": "Codex review does not endorse the scope pass. This is an unresolved failure example, not silently corrected output.",
+      "nextHypothesis": "Add an explicit arithmetic/constraint check for every price classified as within budget; calibrate the scope Judge on this captured counterexample."
+    },
+    {
+      "caseId": "breakfast-scope",
+      "finding": "Unlike 02, the report explicitly limits the 2018 promotion, 2023 industry commentary and Taiwan forum to their own scopes. The inference Judge completed with 1.",
+      "limitation": "Some important statements lack adjacent source links, and other Judges were incomplete. An inference improvement is not a full Case pass."
+    },
+    {
+      "caseId": "validation-plan",
+      "finding": "Execution trace records Total timeout exceeded at the fixed 240-second budget. Partial output is not a completed research answer."
+    },
+    {
+      "caseId": "challenge-citation",
+      "finding": "The requested citation challenge occurred, but the Agent exceeded the fixed execution budget. Preserve the partial response and execution error."
+    },
+    {
+      "caseId": "retain-constraints",
+      "finding": "Only one follow-up occurred. The Simulator stopped before the requested second follow-up asking for two ranked directions. The Judge gave 1 and explicitly acknowledged this missing coverage.",
+      "coverage": "Not accepted as full scenario coverage; distinguish correct behavior in the observed turn from the untested final turn."
+    }
+  ]
+}
