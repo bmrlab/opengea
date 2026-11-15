@@ -1,0 +1,22 @@
+{
+  "input": {
+    "message": "研究中国通勤上班族到办公室后吃早餐的机会：不需要加热，每份预算最多 10 元。请直接研究。"
+  },
+  "metadata": {
+    "tags": ["breakfast", "multi-turn", "retain-constraints"],
+    "acceptance": "两次追问确实发生；始终保留原人群、无加热与预算限制；新增携带条件后排序与理由一致。"
+  },
+  "judgeRules": {
+    "conversation": {
+      "minScore": 1,
+      "required": true
+    }
+  },
+  "simulator": {
+    "persona": "产品经理，原条件始终有效；你之后新增便于通勤携带，最终想得到两个优先验证方向。",
+    "goal": "首份报告后增加“还要便于通勤携带，不易洒漏”，待修订后要求挑两个最值得验证的方向及理由；不要撤销初始条件。完成后结束。 不代替 Agent 搜索或写报告，不提供评分标准。",
+    "model": "gea-pro",
+    "maxTurns": 6,
+    "stopWhen": "done"
+  }
+}

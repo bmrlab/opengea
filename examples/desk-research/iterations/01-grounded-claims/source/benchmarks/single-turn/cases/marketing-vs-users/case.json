@@ -1,0 +1,23 @@
+{
+  "input": {
+    "message": "研究中国办公室早餐产品。请区分品牌宣传、商品信息和真实用户讨论，尤其核对“高蛋白更受上班族欢迎”是否有用户证据。找不到用户讨论就说明，不要用营销语替代。"
+  },
+  "metadata": {
+    "tags": ["breakfast", "single-turn", "marketing-vs-users"],
+    "acceptance": "明确区分来源类型；品牌宣称不等于用户行为或真实需求，不暗示已做访谈。"
+  },
+  "judgeRules": {
+    "scope": {
+      "minScore": 1,
+      "required": true
+    },
+    "evidence": {
+      "minScore": 1,
+      "required": true
+    },
+    "inference": {
+      "minScore": 1,
+      "required": true
+    }
+  }
+}

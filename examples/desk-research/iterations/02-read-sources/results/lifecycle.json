@@ -1,0 +1,30 @@
+{
+  "note": "Artifact results and CLI/backend lifecycle are separate evidence. No automatic retry or replacement of failed cases.",
+  "runs": [
+    {
+      "runId": "1194358c-fb31-419e-a2e5-37b0defa4dec",
+      "artifactStatus": "completed",
+      "passed": 2,
+      "cliExitCode": 1,
+      "finalTaskStatus": "cancelled"
+    },
+    {
+      "runId": "1c175509-db47-43ba-a1ab-d9e7917b7059",
+      "artifactStatus": "failed",
+      "passed": 7,
+      "executionErrors": 1,
+      "cliExitCode": 137,
+      "finalTaskStatus": "unconfirmed",
+      "cleanup": "Official local-cancel timed out; SIGTERM did not exit; killed only the verified task CLI after all case artifacts were saved."
+    },
+    {
+      "runId": "5c58bb11-2af1-496e-b050-d7804ed9e35b",
+      "artifactStatus": "completed",
+      "passed": 3,
+      "judgeErrors": 1,
+      "cliExitCode": 137,
+      "finalTaskStatus": "unconfirmed",
+      "cleanup": "Official local-cancel timed out; SIGTERM did not exit; killed only the verified task CLI after all case artifacts were saved."
+    }
+  ]
+}

@@ -1,28 +1,25 @@
 # OpenGEA
 
-Independent examples for building applications with [GEA](https://musegea.com/developers).
-Each example owns its dependencies and lockfile. There is no root workspace or shared runtime to install.
+Build, evaluate and improve an Agent with [GEA Agent Builder](https://musegea.com/developers).
 
-| Example                                                | What you build                                                                                                                                                    |
-| ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [benchmark-worker](examples/benchmark-worker/)         | Experimental Worker search-quality benchmark: BM25/overlap retrieval, persisted results, batch scoring and an exported custom report (source toolchain required). |
-| [basic](examples/basic/)                               | A real Hacker News research Agent, a Benchmark, and a self-hosted Next.js chat application using AI SDK and AI Elements.                                          |
-| [oauth-app](examples/oauth-app/)                       | Complete single-Worker app: TanStack Start, GEA OAuth, embedded MuseDAM Agent, user connections, attachments and SQLite sessions.                                 |
-| [agents-api](examples/agents-api/)                     | One HTTP flow for Local and Preview: prepare a Session, upload files, edit Computer, run an Agent and reuse its outputs.                                          |
-| [memory-agent](examples/memory-agent/)                 | SDK fact-store tools for cross-Session save, read, lexical search, correction and removal.                                                                        |
-| [observational-memory](examples/observational-memory/) | Configurable context management: raw history, default summaries and a chat DO observations strategy, with recall and prompt-cache comparisons.                    |
-| [feishu-channel](examples/feishu-channel/)             | A Feishu bot backed by an Agent, with WebSocket delivery, per-sender authorization and shared group topics.                                                       |
-| [subagents](examples/subagents/)                       | Private nested Agents, explicit same-Worker references and self copies, with automatic parent continuation and isolated child history.                            |
-| [code-mode](examples/code-mode/)                       | Compare ordinary tools and code mode over remote read-only MCP, with real production traces and data-volume measurements.                                         |
-| [remote-agent](examples/remote-agent/)                 | Delegate by public Agent ID, verify real child Run receipts and result return, and document OAuth cross-tenant installation.                                      |
-| [subagent-limits](examples/subagent-limits/)           | Regression verifier for concurrency admission, 140 sequential child Runs and retained history; full hosted acceptance remains pending.                            |
+The repository focuses on one complete example: **[Desk Research](examples/desk-research/)**, a product innovation assistant researching breakfast opportunities for commuting office workers.
 
-Start with [oauth-app](examples/oauth-app/) for the complete deployable application; the other examples focus on specific APIs and Agent patterns. Read each example README. You need Node.js and pnpm. Agent examples need a Creative Reasoning API key for local model calls; The complete OAuth Worker app uses a GEA application registration and built-in SQLite; no external database is needed. Agent development additionally requires a supported GEA CLI platform. Building the Next.js application works independently of the CLI, including on Linux.
+- [Quick Start（中文）](examples/desk-research/QUICKSTART.md) / [English](examples/desk-research/QUICKSTART.en.md): give a coding agent a task, review its Cases, run real Evals and iterate from evidence; this guide does not copy the runnable example.
+- [Runnable stages and upgrade tasks](examples/desk-research/versions/README.md): search → persistent research/workbench → Feishu, using the same evaluation criteria.
+- [Validation](examples/desk-research/VALIDATION.md): local checks and remaining live acceptance.
 
-[Developer documentation](https://musegea.com/developers) · [Agent + Next.js guide](https://musegea.com/developers/agent-nextjs) · [Agent Studio configuration](https://musegea.com/developers/agent-studio-configuration)
+Start in `examples/desk-research`. Use Node 24.16.0, pnpm 12.8.1 and a compatible GEA CLI/Runtime. Dependencies and lockfile are independent of any private repository. Real research requires model access and an authorized Exa research-search Connection; Feishu additionally requires a test bot. No research findings or Eval scores are fabricated.
+
+The workbench is a complete local development frontend, not a multi-user public deployment. Follow its README for credentials and data boundaries.
+
+Older examples are retained in Git history. Do not copy their retired SDK or private Worker invocation patterns into new applications.
 
 ## Contributing
 
-Put each example under `examples/<name>/`, with its own installation, configuration, verification and deployment instructions. Use published public packages; never add dependencies on a private repository or cross-repository workspace links. Keep credentials and generated Agent artifacts out of Git.
+Keep the example reproducible using public packages. Maintain both tutorials and the runnable stages together. Run type checks, tests, Agent validation and packaging; separately record live model, evaluation and channel acceptance. Keep credentials, `.gea/`, dependencies and generated Agent artifacts out of Git.
 
-Licensed under Apache-2.0. Vendored AI Elements and shadcn components retain their upstream licenses; see each example's third-party notices.
+Licensed under Apache-2.0.
+
+## Repository consolidation
+
+The previous 11 examples and their workflows were retired in favor of this complete research workflow; their source remains in Git history. The separate [Eval Simulator proposal #32](https://github.com/bmrlab/opengea/pull/32) is superseded by the multi-turn benchmark here. Its backpack scenario and historical evidence remain on that PR branch; they are not presented as Desk Research results.

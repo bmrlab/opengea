@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "before": {
+    "messages": 2,
+    "records": 1,
+    "sources": 6
+  },
+  "after": {
+    "messages": 2,
+    "records": 1
+  },
+  "errors": []
+}

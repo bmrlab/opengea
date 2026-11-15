@@ -1,7 +1,0 @@
-{
-  "cwd": ".",
-  "host": "127.0.0.1",
-  "port": 8794,
-  "apiPort": 8795,
-  "modelSource": "local"
-}

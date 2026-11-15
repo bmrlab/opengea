@@ -1,0 +1,23 @@
+{
+  "input": {
+    "message": "搜索中国城市上班族早餐机会。资料若来自大学生、儿童或健身人群，请分析是否能支持通勤上班族需求；不能直接混为一谈。最终列出可用观察、迁移限制和需要补做的研究。"
+  },
+  "metadata": {
+    "tags": ["breakfast", "single-turn", "audience-transfer"],
+    "acceptance": "标出来源人群及迁移限制；不能将其他人群的数据直接说成目标人群数据。"
+  },
+  "judgeRules": {
+    "scope": {
+      "minScore": 1,
+      "required": true
+    },
+    "evidence": {
+      "minScore": 1,
+      "required": true
+    },
+    "inference": {
+      "minScore": 1,
+      "required": true
+    }
+  }
+}

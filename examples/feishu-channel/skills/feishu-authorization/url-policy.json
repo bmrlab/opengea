@@ -1,4 +1,0 @@
-{
-  "allowedOrigins": ["https://musegea.com"],
-  "oauthStartPath": "/api/agent-connectors/oauth/start"
-}
