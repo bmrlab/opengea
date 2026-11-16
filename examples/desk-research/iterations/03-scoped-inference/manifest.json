@@ -5,7 +5,7 @@
   "cli": "0.2.261114-alpha.0",
   "npm": "12.2.2",
   "packageManager": "pnpm@12.8.1",
-  "sourceSha256": "104da413b5abf319c6a5cf92add60543ea29bd8e8d0a3e984c5936497f3cbe78",
+  "sourceSha256": "058db46ff8660e482bfe3159fa112a37f552b00fddbb43e91352a3f45f82103c",
   "benchmarkSha256": "ea19def6137a1a46b6a76089935ef7c789942f657fc4e51aa25efd3e9599c7bc",
   "files": [
     {
@@ -178,7 +178,15 @@
     },
     {
       "path": "evaluation/README.md",
-      "sha256": "a4ba02bb5c5ff9a99f4da8576a24aba51d4aa1a663a1355e216a80a008a44855"
+      "sha256": "b70753f93cac215f50ff208bb1a315f02d25eb47011bb0068cd8e96cf5aef8ec"
+    },
+    {
+      "path": "evaluation/results/r2-coverage-summary.json",
+      "sha256": "adf2134e49c2b3fd06a3179facf719e6f3e9494476bee14701ca882610dac4b9"
+    },
+    {
+      "path": "evaluation/results/r2-quality-four-share.json",
+      "sha256": "96d8af6e4efcdf2c12868dad3a210ce414c21d0b9c4595e2bf03ada6ff30b68f"
     },
     {
       "path": "evaluation/retain-constraints.case.json",

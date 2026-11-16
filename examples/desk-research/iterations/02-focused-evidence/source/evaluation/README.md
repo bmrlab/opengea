@@ -60,3 +60,11 @@ Judge预算与Agent执行预算分开：这里为完整证据核对设300秒Judg
 保存研究记录时，工作台会核对报告与来源列表中的URL是否由本次对话的真实搜索或读取返回。错误链接会拒绝保存并反馈给Agent纠正；不会自动替换链接，也不会因为链接存在就判定事实正确。纯研究阶段不保存记录，仍依靠独立evidence Judge核对。
 
 正文读取保留同一完整URL，按最多2000字符的窗口返回；query定位原句，nextOffset继续当前提取。未找到与提取截断都不是事实不存在的证明。搜索仅返回最多3页、每页600字符预览；范围、价格、人群等结论需要当前来源的具体支持。
+
+## 2026-11-16 R2 有界复验
+
+源码60f9e1c使用同一gea-pro、Agent 16步/240秒、Judge 12步/300秒；Judge规则未改。此前四道质量失败题（alternatives-not-products、audience-transfer、counter-evidence、validation-plan）本轮全部执行完成，12项严格Judge全部为1。[逐题回答与评分](results/r2-quality-four-share.json)。这仅关闭这四题当前候选的已观察失败，不代表全部题集或所有版本已经通过。
+
+coverage在126203c到60f9e1c期间规则和Case目标相同。本轮19个固定正反例全部匹配，覆盖六类场景，not_applicable=0、error=0。[原生评分摘要](results/r2-coverage-summary.json)。这些是合成对话的真实Judge校准，不是Agent多轮实跑。
+
+验收使用未发布的候选CLI（gea #1355，4015a5665，二进制SHA-256 a2874ae7f24404b6cd0802cd4fbab17c1961f7d0bfdff11b57090e521b55d357）和本地构建的SDK/contract（gea 5bd4093e）。公开npm版本本身尚未通过同一验收；未合并、发包或部署。
