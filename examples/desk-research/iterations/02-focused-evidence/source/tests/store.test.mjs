@@ -212,3 +212,85 @@ test("source references render the exact captured URL without fuzzy replacement"
     null,
   );
 });
+
+test("structured saves validate quotes against this conversation's captured passages before writing", async () => {
+  const values = new Map();
+  const store = new ResearchStore({
+    storage: {
+      async get(key) {
+        return structuredClone(values.get(key));
+      },
+      async put(key, value) {
+        values.set(key, structuredClone(value));
+      },
+      async list({ prefix }) {
+        return new Map([...values].filter(([key]) => key.startsWith(prefix)));
+      },
+    },
+  });
+  const captured = await (
+    await store.fetch(
+      new Request("https://research.internal/sources?id=a", {
+        method: "POST",
+        body: JSON.stringify({
+          sources: [
+            {
+              url: "https://example.org/item",
+              title: "单个产品",
+              text: "本产品食用前需要加入热水冲泡。",
+              publishedAt: "2025-01-01",
+            },
+          ],
+        }),
+      }),
+    )
+  ).json();
+  const sourceId = captured.sources[0].sourceId;
+  const brief = {
+    title: "产品使用条件",
+    scope: "无热水",
+    status: "complete",
+    observations: [
+      {
+        sourceId,
+        quote: "本产品食用前需要加入热水冲泡",
+        constraint: "无热水",
+        fit: "mismatch",
+        reasoning: "该产品不匹配。",
+      },
+    ],
+    hypotheses: [],
+    gaps: ["其他产品未核验"],
+  };
+  const save = (id, input) =>
+    store.fetch(
+      new Request(`https://research.internal/brief-record?id=${id}`, {
+        method: "PUT",
+        body: JSON.stringify(input),
+      }),
+    );
+  const valid = await save("a", brief);
+  assert.equal(valid.status, 200);
+  const record = await valid.json();
+  assert.match(record.report, /https:\/\/example.org\/item/);
+  assert.equal(record.sources[0].excerpt, brief.observations[0].quote);
+  assert.equal(record.sources[0].sourceId, sourceId);
+  assert.equal((await save("b", brief)).status, 400);
+  assert.equal(
+    (
+      await save("a", {
+        ...brief,
+        observations: [
+          { ...brief.observations[0], quote: "整个免煮早餐品类都依赖热水" },
+        ],
+      })
+    ).status,
+    400,
+  );
+  assert.deepEqual(
+    await (
+      await store.fetch(new Request("https://research.internal/record?id=a"))
+    ).json(),
+    record,
+  );
+});

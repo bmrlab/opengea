@@ -1,10 +1,7 @@
 import { defineTool, defineToolSet } from "@gea-ai/agent-sdk";
 import { z } from "zod";
-import {
-  RESEARCH_OBJECT,
-  referencedResearchInput,
-  type ResearchRecord,
-} from "../lib/research";
+import { briefInput } from "../lib/research-brief.ts";
+import { RESEARCH_OBJECT, type ResearchRecord } from "../lib/research";
 
 export default defineToolSet([
   defineTool({
@@ -24,13 +21,13 @@ export default defineToolSet([
   defineTool({
     name: "save_research",
     description:
-      "保存当前对话的完整研究记录。sources只填写search_sources/read_source返回的sourceId，report用[[sourceId]]引用，不手抄URL；工具按本对话捕获记录生成完整URL，返回已保存的完整简报供最终答复使用。标识只证明来源身份，不证明事实支持。更新前先读取并保留仍有效来源；不要保存凭据或个人隐私。",
-    input: referencedResearchInput,
+      "保存本对话的结构化研究简报。observations逐个选择已捕获sourceId及其连续原文quote；系统核验摘录并生成逐来源事实栏。fit/reasoning仅判断此来源案例对用户条件的适配；跨案例机会放hypotheses，写验证和放弃条件。系统生成完整URL和report，最终答复使用返回的report。更新前先read_research；不保存凭据或隐私。",
+    input: briefInput,
     execute: async (input, context) => {
       const response = await context.durableObjects.RESEARCH.getByName(
         RESEARCH_OBJECT,
       ).fetch(
-        `https://research.internal/referenced-record?id=${encodeURIComponent(context.identity.chat.id)}`,
+        `https://research.internal/brief-record?id=${encodeURIComponent(context.identity.chat.id)}`,
         {
           method: "PUT",
           headers: { "content-type": "application/json" },
@@ -44,14 +41,16 @@ export default defineToolSet([
           error: string;
           urls?: string[];
           availableUrls?: string[];
+          sourceId?: string;
         };
         return {
           saved: false,
+          sourceId: rejection.sourceId,
           error: rejection.error,
           urls: rejection.urls ?? [],
           availableUrls: rejection.availableUrls ?? [],
           instruction:
-            "记录尚未保存。请核对原工具返回的sourceId和正文：sources使用该sourceId，report写[[sourceId]]，不要填写URL或猜标识；每条引用都必须列在sources中。标识不证明事实支持，不可盲目替换。",
+            "记录尚未保存。核对sourceId和该来源返回的正文，quote须是一段逐字连续摘录（不拼接、不加省略号）。正文缺失时read_source补读，仍无证据就保留缺口。不要猜原文、扩大范围或宣称保存成功。",
         };
       }
       if (!response.ok) throw new Error("Research save failed.");

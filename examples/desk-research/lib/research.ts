@@ -44,7 +44,13 @@ export const referencedResearchInput = researchInput.extend({
     )
     .max(30),
 });
-export type CapturedReference = { sourceId: string; url: string };
+export type CapturedReference = {
+  sourceId: string;
+  url: string;
+  title?: string;
+  publishedAt?: string | null;
+  passages?: string[];
+};
 
 export type ResearchInput = z.infer<typeof researchInput>;
 export type ResearchRecord = ResearchInput & { id: string; updatedAt: string };
@@ -52,7 +58,14 @@ export const RESEARCH_OBJECT = "quick-start";
 
 // The read-only v1 stage has no store. Workbench stages record provider URLs,
 // never URLs proposed by the model, before returning the search result.
-export async function captureSourceUrls<T extends { url: string }>(
+export async function captureSourceUrls<
+  T extends {
+    url: string;
+    title?: string;
+    text?: string;
+    publishedAt?: string | null;
+  },
+>(
   sources: T[],
   context: {
     durableObjects: Readonly<{ RESEARCH?: AgentDurableObjectNamespace }>;
@@ -68,7 +81,14 @@ export async function captureSourceUrls<T extends { url: string }>(
       {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ urls: sources.map((s) => s.url) }),
+        body: JSON.stringify({
+          sources: sources.map(({ url, title, text, publishedAt }) => ({
+            url,
+            title,
+            text,
+            publishedAt,
+          })),
+        }),
       },
     );
   if (!response.ok) throw new Error("Could not record captured sources.");

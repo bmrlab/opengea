@@ -5,7 +5,7 @@
   "cli": "0.2.261114-alpha.0",
   "npm": "12.2.2",
   "packageManager": "pnpm@12.8.1",
-  "sourceSha256": "6f43c67bca4bc94ef621e8e4e5b7d6faafe5c7ec291d97f1c3d58ac8dd0a6498",
+  "sourceSha256": "54622e8a1a30e446e9ccdc048d4c261072b3005b0f0bc75053c6000a0337a6b5",
   "benchmarkSha256": "ea19def6137a1a46b6a76089935ef7c789942f657fc4e51aa25efd3e9599c7bc",
   "files": [
     {
@@ -146,7 +146,7 @@
     },
     {
       "path": "durable-objects/research-store.ts",
-      "sha256": "2fdf5798eed1ee150e7839b718c48b2fcb7dbc01ecb159559522f3058d4ac390"
+      "sha256": "3b3175921ff3891712c5d43793d396596a3f469a21c68e8700823adc2c1ffe98"
     },
     {
       "path": "evaluation/evaluation.test.mjs",
@@ -202,7 +202,7 @@
     },
     {
       "path": "instructions.ts",
-      "sha256": "34d24fbb18d66071f664b10614672f5da22624f21d849b7b9031836128959ee5"
+      "sha256": "022b211e7d82121cc059b9aa04fa1bd6289c3ce74229ad08c1bdff46288ba2a0"
     },
     {
       "path": "iterations/analyze-eval.mjs",
@@ -217,8 +217,12 @@
       "sha256": "2d104ff86d914798fef47008b188f3ca07601af4d058536f622319628c69d6f7"
     },
     {
+      "path": "lib/research-brief.ts",
+      "sha256": "13b955e98f6228dec94c4cd9d13592f26465e1396c60150b72b1f6a6ef0e64b5"
+    },
+    {
       "path": "lib/research.ts",
-      "sha256": "f667d3c395755adb2959962e79a9159cff50ec2493e8eb10a92906398e83cde8"
+      "sha256": "33bcc30a0d3a038caa76f83791d804b4d86fc56b2059c985582ac45ce6ed9cc2"
     },
     {
       "path": "package.json",
@@ -242,7 +246,7 @@
     },
     {
       "path": "scripts/materialize.mjs",
-      "sha256": "e62e0363c3c3a7b404b1b47a1fb14ef30194049585d9dec5c3413a63574e478b"
+      "sha256": "479de729a3ed72cf4a5205ada651d04e94afd49b10a8a25292b9a2601957c61b"
     },
     {
       "path": "scripts/prepare-local.mjs",
@@ -261,6 +265,10 @@
       "sha256": "566ac65b1dda393fe8c47449defaeda8095754084a6f4592df88426e626b870b"
     },
     {
+      "path": "tests/research-brief.test.mjs",
+      "sha256": "700a43d6b957c127ad7c3106ea51a897aef30ad0220b2c96cb8edd032e958a4d"
+    },
+    {
       "path": "tests/save-feedback.test.mjs",
       "sha256": "926853d2813508c9519de76cead9c3672f4a9c61536cbf3b4d5c08dcdc2915b8"
     },
@@ -274,15 +282,15 @@
     },
     {
       "path": "tests/store.test.mjs",
-      "sha256": "b6eb672990684690484aff710044868ee23acca29eca2b8bfaa1b94bab93d54d"
+      "sha256": "9f064ad4f282970c7700f5bc19565030801f8db1d0d61edc9cb38cfc058212f1"
     },
     {
       "path": "tools/read-source.ts",
-      "sha256": "b54a5067b685e7eb1cec37ac4028fb0498e5ec2832971659d5ee04abf885e0ab"
+      "sha256": "f28692805b7c42081d47e88c0788f2d4b8857ea0e4984bee8e019572c1e01d28"
     },
     {
       "path": "tools/research-record.ts",
-      "sha256": "9fa37487e2a6bb908ba1e73f3c8339e93f94e9d11bb7524edc1a3b3356399a95"
+      "sha256": "0c1af89868923f26ce1158e1d72ec0473a2af4cf379036e08f500b75f6db947e"
     },
     {
       "path": "tools/search-sources.ts",
