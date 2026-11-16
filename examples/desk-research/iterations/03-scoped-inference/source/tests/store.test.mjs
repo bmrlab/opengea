@@ -145,3 +145,70 @@ test("saved citations must belong to sources captured in the same conversation",
   assert.equal(record.sources[0].url, source);
   assert.equal((await capture("a", ["file:///private"])).status, 400);
 });
+
+test("source references render the exact captured URL without fuzzy replacement", async () => {
+  const values = new Map();
+  const store = new ResearchStore({
+    storage: {
+      async get(key) {
+        return structuredClone(values.get(key));
+      },
+      async put(key, value) {
+        values.set(key, structuredClone(value));
+      },
+      async list({ prefix }) {
+        return new Map([...values].filter(([key]) => key.startsWith(prefix)));
+      },
+    },
+  });
+  const url =
+    "https://dir.jd.com/guide/jd-geo-guide-ji-shi-ying-yang-zao-can-su-shi-dai-can-v1";
+  const capture = await store.fetch(
+    new Request("https://research.internal/sources?id=a", {
+      method: "POST",
+      body: JSON.stringify({ urls: [url] }),
+    }),
+  );
+  const { sources } = await capture.json();
+  assert.equal(sources.length, 1);
+  const sourceId = sources[0].sourceId;
+  assert.match(sourceId, /^src_[a-f0-9]{16}$/);
+  const save = (id, ref = sourceId, report = `该指南的产品建议 [[${ref}]]`) =>
+    store.fetch(
+      new Request(`https://research.internal/referenced-record?id=${id}`, {
+        method: "PUT",
+        body: JSON.stringify({
+          title: "研究",
+          scope: "办公室",
+          status: "complete",
+          report,
+          sources: [{ sourceId: ref, title: "指南", excerpt: "原文" }],
+        }),
+      }),
+    );
+  const saved = await save("a");
+  assert.equal(saved.status, 200);
+  const record = await saved.json();
+  assert.equal(record.sources[0].url, url);
+  assert.equal(record.report, `该指南的产品建议 ${url}`);
+  assert.equal((await save("b")).status, 400);
+  assert.equal((await save("a", "src_0000000000000000")).status, 400);
+  assert.equal(
+    (await save("a", sourceId, "错误 [[src_0000000000000000]]")).status,
+    400,
+  );
+  assert.equal(
+    (await save("a", sourceId, url.replace("su-shi", "san"))).status,
+    400,
+  );
+  const unchanged = await (
+    await store.fetch(new Request("https://research.internal/record?id=a"))
+  ).json();
+  assert.deepEqual(unchanged, record);
+  assert.equal(
+    await (
+      await store.fetch(new Request("https://research.internal/record?id=b"))
+    ).json(),
+    null,
+  );
+});

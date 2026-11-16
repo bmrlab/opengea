@@ -26,7 +26,9 @@ export default defineTool({
         },
       }),
     );
-    await captureSourceUrls(result.sources, context);
-    return result;
+    return {
+      ...result,
+      sources: await captureSourceUrls(result.sources, context),
+    };
   },
 });

@@ -2,7 +2,7 @@ import { defineTool, defineToolSet } from "@gea-ai/agent-sdk";
 import { z } from "zod";
 import {
   RESEARCH_OBJECT,
-  researchInput,
+  referencedResearchInput,
   type ResearchRecord,
 } from "../lib/research";
 
@@ -24,13 +24,13 @@ export default defineToolSet([
   defineTool({
     name: "save_research",
     description:
-      "保存当前对话的完整研究记录。正文引用和sources链接必须直接复制本对话实际检索到的URL，否则拒绝保存；拒绝后核对工具返回值并纠正，不猜链接。更新前先读取并保留仍有效来源；不要保存凭据或个人隐私。",
-    input: researchInput,
+      "保存当前对话的完整研究记录。sources只填写search_sources/read_source返回的sourceId，report用[[sourceId]]引用，不手抄URL；工具按本对话捕获记录生成完整URL，返回已保存的完整简报供最终答复使用。标识只证明来源身份，不证明事实支持。更新前先读取并保留仍有效来源；不要保存凭据或个人隐私。",
+    input: referencedResearchInput,
     execute: async (input, context) => {
       const response = await context.durableObjects.RESEARCH.getByName(
         RESEARCH_OBJECT,
       ).fetch(
-        `https://research.internal/record?id=${encodeURIComponent(context.identity.chat.id)}`,
+        `https://research.internal/referenced-record?id=${encodeURIComponent(context.identity.chat.id)}`,
         {
           method: "PUT",
           headers: { "content-type": "application/json" },
@@ -51,7 +51,7 @@ export default defineToolSet([
           urls: rejection.urls ?? [],
           availableUrls: rejection.availableUrls ?? [],
           instruction:
-            "记录尚未保存。availableUrls是本对话已捕获的同域名URL候选，核对各自正文后纠正正文与sources；候选不证明事实支持，不可盲目替换。不要猜链接或宣称已保存。",
+            "记录尚未保存。请核对原工具返回的sourceId和正文：sources使用该sourceId，report写[[sourceId]]，不要填写URL或猜标识；每条引用都必须列在sources中。标识不证明事实支持，不可盲目替换。",
         };
       }
       if (!response.ok) throw new Error("Research save failed.");

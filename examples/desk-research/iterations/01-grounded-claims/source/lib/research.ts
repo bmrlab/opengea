@@ -15,26 +15,52 @@ export const researchInput = z.object({
       z.object({
         title: z.string().min(1).max(500),
         url: webUrl,
+        sourceId: z
+          .string()
+          .regex(/^src_[a-f0-9]{16}$/u)
+          .optional(),
         excerpt: z.string().max(6000),
       }),
     )
     .max(30),
 });
+// Model-facing saves select captured identities; the stored/public record keeps
+// canonical URLs for the workbench and existing consumers.
+export const sourceIdInput = z.string().regex(/^src_[a-f0-9]{16}$/u);
+export const referencedResearchInput = researchInput.extend({
+  report: z
+    .string()
+    .max(30000)
+    .describe(
+      "Markdown with [[sourceId]] citations, e.g. [[src_0123456789abcdef]]. Do not type URLs.",
+    ),
+  sources: z
+    .array(
+      z.object({
+        sourceId: sourceIdInput,
+        title: z.string().min(1).max(500),
+        excerpt: z.string().max(6000),
+      }),
+    )
+    .max(30),
+});
+export type CapturedReference = { sourceId: string; url: string };
+
 export type ResearchInput = z.infer<typeof researchInput>;
 export type ResearchRecord = ResearchInput & { id: string; updatedAt: string };
 export const RESEARCH_OBJECT = "quick-start";
 
 // The read-only v1 stage has no store. Workbench stages record provider URLs,
 // never URLs proposed by the model, before returning the search result.
-export async function captureSourceUrls(
-  sources: Array<{ url: string }>,
+export async function captureSourceUrls<T extends { url: string }>(
+  sources: T[],
   context: {
     durableObjects: Readonly<{ RESEARCH?: AgentDurableObjectNamespace }>;
     identity: Pick<AgentToolContext<{}>["identity"], "chat">;
   },
 ) {
   const namespace = context.durableObjects.RESEARCH;
-  if (!namespace) return;
+  if (!namespace) return sources;
   const response = await namespace
     .getByName(RESEARCH_OBJECT)
     .fetch(
@@ -46,6 +72,12 @@ export async function captureSourceUrls(
       },
     );
   if (!response.ok) throw new Error("Could not record captured sources.");
+  const captured = (await response.json()) as { sources: CapturedReference[] };
+  return sources.map((source) => {
+    const reference = captured.sources.find((item) => item.url === source.url);
+    if (!reference) throw new Error("Missing captured source identity.");
+    return { ...source, sourceId: reference.sourceId };
+  });
 }
 
 export function reportUrls(report: string): string[] {

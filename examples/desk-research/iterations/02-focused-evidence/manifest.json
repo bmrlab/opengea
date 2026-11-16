@@ -5,7 +5,7 @@
   "cli": "0.2.261114-alpha.0",
   "npm": "12.2.2",
   "packageManager": "pnpm@12.8.1",
-  "sourceSha256": "10185544aac4bbc5694607b1a3b1b0c348a4df2ea9a789e6677b92264a474eda",
+  "sourceSha256": "bd183fcb0b62495b5efdbff230fd6633643c00b77a484aad9373ec86cc8efd58",
   "benchmarkSha256": "ea19def6137a1a46b6a76089935ef7c789942f657fc4e51aa25efd3e9599c7bc",
   "files": [
     {
@@ -146,7 +146,7 @@
     },
     {
       "path": "durable-objects/research-store.ts",
-      "sha256": "e83c9220a62308aabeff101a0850196e9dbaef1fc86a651cd6230d15161b81de"
+      "sha256": "2fdf5798eed1ee150e7839b718c48b2fcb7dbc01ecb159559522f3058d4ac390"
     },
     {
       "path": "evaluation/evaluation.test.mjs",
@@ -202,7 +202,7 @@
     },
     {
       "path": "instructions.ts",
-      "sha256": "84f22646443e8de8e096003b6b08e4c29ed1358a5830ab2f522e5a1247b6d0d0"
+      "sha256": "3f282eb251b47313e74e92b08fb6eae3618526c59e4bf60050674bcd7a6a3b13"
     },
     {
       "path": "iterations/analyze-eval.mjs",
@@ -218,7 +218,7 @@
     },
     {
       "path": "lib/research.ts",
-      "sha256": "b1ec023efbaaedd9336d7d5088d39d5571e5849734ab91f4cbc0cb5d55917d0a"
+      "sha256": "f667d3c395755adb2959962e79a9159cff50ec2493e8eb10a92906398e83cde8"
     },
     {
       "path": "package.json",
@@ -274,19 +274,19 @@
     },
     {
       "path": "tests/store.test.mjs",
-      "sha256": "f983d14b8d8c7e90a90ac6e2e68ee1639ba6315da1a0ef6410f69dabcd0943e5"
+      "sha256": "b6eb672990684690484aff710044868ee23acca29eca2b8bfaa1b94bab93d54d"
     },
     {
       "path": "tools/read-source.ts",
-      "sha256": "e6ee4ac2c5e09c4c99fb006b4cbb3efca9c257fb5c1947fe8ee33abd37fb49e9"
+      "sha256": "b54a5067b685e7eb1cec37ac4028fb0498e5ec2832971659d5ee04abf885e0ab"
     },
     {
       "path": "tools/research-record.ts",
-      "sha256": "a0b0430920b91b9e9cde23d3f55320c356a69c9ca3739eb74e4946b8132244ef"
+      "sha256": "9fa37487e2a6bb908ba1e73f3c8339e93f94e9d11bb7524edc1a3b3356399a95"
     },
     {
       "path": "tools/search-sources.ts",
-      "sha256": "1911f65a0ba0d4f276a324496ab6cbea29ace7456ea3879376381b914b16b049"
+      "sha256": "0bc3df40fb71a5927b5c4b967830d80f58068357b12f4105e3c655d0a3370609"
     },
     {
       "path": "tsconfig.json",

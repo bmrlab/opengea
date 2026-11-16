@@ -22,7 +22,7 @@ export default defineTool({
       }),
       url,
     );
-    await captureSourceUrls([result.source], context);
-    return sourceWindow(result, { query, offset });
+    const [source] = await captureSourceUrls([result.source], context);
+    return sourceWindow({ ...result, source }, { query, offset });
   },
 });

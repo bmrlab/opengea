@@ -1,6 +1,8 @@
 import { DurableObject } from "cloudflare:workers";
 import {
   researchInput,
+  referencedResearchInput,
+  type CapturedReference,
   capturedSourceKey,
   reportUrls,
   type ResearchRecord,
@@ -22,7 +24,7 @@ export class ResearchStore extends DurableObject {
     }
     const id = url.searchParams.get("id");
     if (
-      !["/record", "/sources"].includes(url.pathname) ||
+      !["/record", "/referenced-record", "/sources"].includes(url.pathname) ||
       !id ||
       id.length > 200
     )
@@ -35,18 +37,80 @@ export class ResearchStore extends DurableObject {
         .safeParse(await request.json());
       if (!parsed.success)
         return Response.json({ error: "Invalid sources" }, { status: 400 });
-      await Promise.all(
-        parsed.data.urls.map(async (source) =>
-          this.ctx.storage.put(await capturedSourceKey(id, source), {
-            url: source,
-          }),
-        ),
-      );
-      return Response.json({ captured: parsed.data.urls.length });
+      const sources: CapturedReference[] = [];
+      for (const source of parsed.data.urls) {
+        const key = await capturedSourceKey(id, source);
+        const sourceId = `src_${key.slice(-64, -48)}`;
+        const referenceKey = `source-ref:${id}:${sourceId}`;
+        const existing =
+          await this.ctx.storage.get<CapturedReference>(referenceKey);
+        // Do not silently remap a short identity, even on a hash collision.
+        if (existing && (await capturedSourceKey(id, existing.url)) !== key)
+          return Response.json(
+            { error: "Source identity collision" },
+            { status: 409 },
+          );
+        const reference = existing ?? { sourceId, url: source };
+        await this.ctx.storage.put(key, reference);
+        await this.ctx.storage.put(referenceKey, reference);
+        sources.push({ ...reference, url: source });
+      }
+      return Response.json({ captured: sources.length, sources });
     }
     const key = `research:${id}`;
     if (request.method === "PUT") {
-      const parsed = researchInput.safeParse(await request.json());
+      let input: unknown = await request.json();
+      if (url.pathname === "/referenced-record") {
+        const referenced = referencedResearchInput.safeParse(input);
+        if (!referenced.success)
+          return Response.json(
+            { error: "Invalid referenced research" },
+            { status: 400 },
+          );
+        if (reportUrls(referenced.data.report).length)
+          return Response.json(
+            { error: "Use [[sourceId]] citations, not typed URLs" },
+            { status: 400 },
+          );
+        const resolved = new Map<string, CapturedReference>();
+        for (const source of referenced.data.sources) {
+          const captured = await this.ctx.storage.get<CapturedReference>(
+            `source-ref:${id}:${source.sourceId}`,
+          );
+          if (!captured)
+            return Response.json(
+              {
+                error: "Uncaptured source identity",
+                sourceId: source.sourceId,
+              },
+              { status: 400 },
+            );
+          resolved.set(source.sourceId, captured);
+        }
+        const markers = [
+          ...referenced.data.report.matchAll(/\[\[([^\]]+)\]\]/gu),
+        ];
+        if (markers.some((match) => !resolved.has(match[1])))
+          return Response.json(
+            {
+              error: "Every citation must select a captured source in sources",
+            },
+            { status: 400 },
+          );
+        input = {
+          ...referenced.data,
+          report: referenced.data.report.replace(
+            /\[\[([^\]]+)\]\]/gu,
+            (_match, ref: string) => resolved.get(ref)!.url,
+          ),
+          sources: referenced.data.sources.map(({ sourceId, ...source }) => ({
+            ...source,
+            sourceId,
+            url: resolved.get(sourceId)!.url,
+          })),
+        };
+      }
+      const parsed = researchInput.safeParse(input);
       if (!parsed.success)
         return Response.json({ error: "Invalid research" }, { status: 400 });
       const urls = [
