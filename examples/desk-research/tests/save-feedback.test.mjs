@@ -29,13 +29,18 @@ test("save validation returns actionable feedback and never claims success", asy
     {},
     context(
       Response.json(
-        { error: "Uncaptured source URLs", urls: [url] },
+        {
+          error: "Uncaptured source URLs",
+          urls: [url],
+          availableUrls: ["https://example.org/captured"],
+        },
         { status: 400 },
       ),
     ),
   );
   assert.equal(rejected.saved, false);
   assert.deepEqual(rejected.urls, [url]);
+  assert.deepEqual(rejected.availableUrls, ["https://example.org/captured"]);
   assert.match(rejected.instruction, /尚未保存/);
   const record = { id: "chat-a", title: "已纠正" };
   assert.deepEqual(

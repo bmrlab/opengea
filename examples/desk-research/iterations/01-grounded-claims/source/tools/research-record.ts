@@ -43,13 +43,15 @@ export default defineToolSet([
         const rejection = (await response.json()) as {
           error: string;
           urls?: string[];
+          availableUrls?: string[];
         };
         return {
           saved: false,
           error: rejection.error,
           urls: rejection.urls ?? [],
+          availableUrls: rejection.availableUrls ?? [],
           instruction:
-            "记录尚未保存。核对本对话搜索/读取工具返回的完整URL，纠正正文与sources；不要猜链接或宣称已保存。",
+            "记录尚未保存。availableUrls是本对话已捕获的同域名URL候选，核对各自正文后纠正正文与sources；候选不证明事实支持，不可盲目替换。不要猜链接或宣称已保存。",
         };
       }
       if (!response.ok) throw new Error("Research save failed.");

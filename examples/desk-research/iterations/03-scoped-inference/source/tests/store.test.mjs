@@ -93,6 +93,9 @@ test("saved citations must belong to sources captured in the same conversation",
       async put(key, value) {
         values.set(key, structuredClone(value));
       },
+      async list({ prefix }) {
+        return new Map([...values].filter(([key]) => key.startsWith(prefix)));
+      },
     },
   };
   let store = new ResearchStore(context);
@@ -122,12 +125,16 @@ test("saved citations must belong to sources captured in the same conversation",
   assert.equal((await save("a", source)).status, 200);
   const typo = await save("a", "https://example.org/article/12624");
   assert.equal(typo.status, 400);
-  assert.equal((await typo.json()).error, "Uncaptured source URLs");
+  const feedback = await typo.json();
+  assert.equal(feedback.error, "Uncaptured source URLs");
+  assert.deepEqual(feedback.availableUrls, [source]);
   assert.equal(
     (await save("a", source, "[引用](https://example.org/wrong)")).status,
     400,
   );
-  assert.equal((await save("b", source)).status, 400);
+  const otherSession = await save("b", source);
+  assert.equal(otherSession.status, 400);
+  assert.deepEqual((await otherSession.json()).availableUrls, []);
   assert.equal(
     (await save("a", source, `[引用](${source}#section)`)).status,
     200,

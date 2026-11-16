@@ -37,7 +37,9 @@ export class ResearchStore extends DurableObject {
         return Response.json({ error: "Invalid sources" }, { status: 400 });
       await Promise.all(
         parsed.data.urls.map(async (source) =>
-          this.ctx.storage.put(await capturedSourceKey(id, source), true),
+          this.ctx.storage.put(await capturedSourceKey(id, source), {
+            url: source,
+          }),
         ),
       );
       return Response.json({ captured: parsed.data.urls.length });
@@ -62,11 +64,30 @@ export class ResearchStore extends DurableObject {
         )
           uncaptured.push(source);
       }
-      if (uncaptured.length)
+      if (uncaptured.length) {
+        const captured = await this.ctx.storage.list<{ url?: string } | true>({
+          prefix: `source:${id}:`,
+        });
+        const origins = new Set(
+          uncaptured.flatMap((value) => {
+            try {
+              return [new URL(value).origin];
+            } catch {
+              return [];
+            }
+          }),
+        );
+        const availableUrls = [...captured.values()]
+          .flatMap((value) =>
+            typeof value === "object" && value.url ? [value.url] : [],
+          )
+          .filter((value) => origins.has(new URL(value).origin))
+          .slice(0, 10);
         return Response.json(
-          { error: "Uncaptured source URLs", urls: uncaptured },
+          { error: "Uncaptured source URLs", urls: uncaptured, availableUrls },
           { status: 400 },
         );
+      }
       const record: ResearchRecord = {
         ...parsed.data,
         id,

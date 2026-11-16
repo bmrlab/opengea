@@ -5,7 +5,7 @@
   "cli": "0.2.261114-alpha.0",
   "npm": "12.2.2",
   "packageManager": "pnpm@12.8.1",
-  "sourceSha256": "7689694343908722e232b47c8ed085b20951bcb157813c30337d4e60bb2278dd",
+  "sourceSha256": "0c15fb6d32fc1842cd55bc366c1b18e128623d86f0d76a28e32d80644e44391e",
   "benchmarkSha256": "ea19def6137a1a46b6a76089935ef7c789942f657fc4e51aa25efd3e9599c7bc",
   "files": [
     {
@@ -146,7 +146,7 @@
     },
     {
       "path": "durable-objects/research-store.ts",
-      "sha256": "e8349371d8f2c20fdaf9cfa0ab874785206f869e5830e8a9a7d7835c76a14ed7"
+      "sha256": "e83c9220a62308aabeff101a0850196e9dbaef1fc86a651cd6230d15161b81de"
     },
     {
       "path": "evaluation/evaluation.test.mjs",
@@ -254,7 +254,7 @@
     },
     {
       "path": "tests/save-feedback.test.mjs",
-      "sha256": "f3bdfbae8090973cff11fca6494c17b14d9a9f2d0b2f4ac20e8f60684306d86b"
+      "sha256": "926853d2813508c9519de76cead9c3672f4a9c61536cbf3b4d5c08dcdc2915b8"
     },
     {
       "path": "tests/source-content.test.mjs",
@@ -266,7 +266,7 @@
     },
     {
       "path": "tests/store.test.mjs",
-      "sha256": "55fea331d4169a1e575fb75ffcc41ad0569fb17de2113ce79fd51a5dea0c5341"
+      "sha256": "f983d14b8d8c7e90a90ac6e2e68ee1639ba6315da1a0ef6410f69dabcd0943e5"
     },
     {
       "path": "tools/read-source.ts",
@@ -274,7 +274,7 @@
     },
     {
       "path": "tools/research-record.ts",
-      "sha256": "0d8c89a9dde76122c6a3d760c18d3f15152f4457db1f1667234dca58aef5651c"
+      "sha256": "a0b0430920b91b9e9cde23d3f55320c356a69c9ca3739eb74e4946b8132244ef"
     },
     {
       "path": "tools/search-sources.ts",
