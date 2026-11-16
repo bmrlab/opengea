@@ -37,7 +37,7 @@ pnpm dev
 
 搜索每次最多返回3页、每页600字符预览，供选择来源。`read_source` 按完整URL读取最多12000字符的提取文本，每次展示2000字符；可用`query`定位原句或按`nextOffset`继续。`queryFound:false`只表示当前提取未找到，`nextOffset:null`也不保证网页全文已读完；仍须检查`extractionTruncated`。原文窗口始终保留对应URL和范围，不能把其他页面的事实配到这个链接。
 
-工作台阶段的搜索/正文结果包含同一对话内的 `sourceId` 与 `passages[{passageId,text}]`。`save_research` 接收结构化 `observations`：选择来源及原文片段 `quoteId`，再针对用户条件填写 `fit` 与直接依据 `constraintEvidenceId`；缺乏条件依据必须保持 `unknown`。一份短简报选择最多4条关键观察；`hypotheses` 最多2个，以`basedOn`中的观察序号（从1开始）指向本简报已收录的证据，单独记录待验证问题、验证对象/动作、指标和放弃条件，`gaps` 记录本次资料缺口。工具从已捕获片段生成原文和规范 URL，不让模型重抄长链接或引文；未知、跨来源、跨对话标识均拒绝。身份与原文校验不等于事实相关性或适配语义已验证，仍需严格 Judge 与来源核对。
+工作台阶段的搜索/正文结果包含同一对话内的 `sourceId` 与 `passages[{passageId,text}]`。`save_research` 接收结构化 `observations`：用 `subject` 点名本条讨论的具体产品、组合或行为，选择来源及原文片段 `quoteId`，再针对用户条件填写 `fit` 与直接依据 `constraintEvidenceId`；缺乏条件依据必须保持 `unknown`。一份短简报选择最多4条关键观察；`hypotheses` 最多2个，以`basedOn`中的观察序号（从1开始）指向本简报已收录的证据，单独记录待验证问题、验证对象/动作、指标和放弃条件，`gaps` 记录本次资料缺口。工具从已捕获片段生成原文和规范 URL，不让模型重抄长链接或引文；未知、跨来源、跨对话标识均拒绝。身份与原文校验不等于事实相关性或适配语义已验证，仍需严格 Judge 与来源核对。
 
 保存记录继续提供 `report` 和 `sources` 给工作台，保留片段标识供追问复用；最终交付采用生成的简报。只读 v1 没有研究存储，仍返回有界原文文本，不提供保存能力。
 

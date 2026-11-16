@@ -24,6 +24,7 @@ const brief = {
     {
       sourceId,
       quoteId: passageId,
+      subject: "本款燕麦条",
       constraint: "无热水",
       fit: "mismatch",
       constraintEvidenceId: passageId,
@@ -44,6 +45,7 @@ test("captured passage identities render verbatim facts and fit attached to one 
   const result = compileBrief(briefInput.parse(brief), catalog);
   assert.equal(result.ok, true);
   assert.match(result.record.report, /> 本款燕麦条需用60—80℃热水冲泡/);
+  assert.match(result.record.report, /具体案例：本款燕麦条/);
   assert.match(result.record.report, /仅对该来源案例的适配推断/);
   assert.match(result.record.report, /待验证问题/);
   assert.deepEqual(result.record.sources, [
@@ -166,4 +168,24 @@ test("hypothesis observation numbers resolve to that observation's captured URL"
   const hypotheses = result.record.report.split("## 待验证机会")[1];
   assert.match(hypotheses, /https:\/\/example\.org\/second/);
   assert.doesNotMatch(hypotheses, /https:\/\/example\.org\/product/);
+});
+
+test("different products on one page retain their own fit verdicts", () => {
+  const value = briefInput.parse({
+    ...brief,
+    observations: [
+      { ...brief.observations[0], subject: "原文中的燕麦条" },
+      {
+        ...brief.observations[0],
+        subject: "原文中的其他产品",
+        fit: "unknown",
+        constraintEvidenceId: null,
+      },
+    ],
+  });
+  const result = compileBrief(value, catalog);
+  assert.equal(result.ok, true);
+  const records = result.record.report.split("### 来源记录");
+  assert.match(records[1], /具体案例：原文中的燕麦条[\s\S]*不匹配/);
+  assert.match(records[2], /具体案例：原文中的其他产品[\s\S]*适配性未知/);
 });

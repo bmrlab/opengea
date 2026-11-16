@@ -20,6 +20,14 @@ export const briefInput = z.strictObject({
     .array(
       z.strictObject({
         sourceId: sourceIdInput,
+        subject: z
+          .string()
+          .trim()
+          .min(1)
+          .max(120)
+          .describe(
+            "本条判断涉及的具体产品、组合、行为或样本；同页有多个对象时分别记录，不把整页当成一种方案。",
+          ),
         quoteId: z
           .string()
           .regex(/^p_[a-f0-9]{16}$/u)
@@ -144,6 +152,7 @@ export function compileBrief(
     observations.push(
       [
         `### 来源记录 ${observations.length + 1}：${line(source.title || "Untitled source")}`,
+        `具体案例：${line(observation.subject)}`,
         `检索元数据日期（未核验，不能据此确认正文发布日期）：${line(source.publishedAt || "未知")}；来源：${source.url}`,
         "原文摘录（该来源的表述，不等于独立核验或代表性结论）：",
         quote

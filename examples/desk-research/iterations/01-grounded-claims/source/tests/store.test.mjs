@@ -266,6 +266,7 @@ test("structured saves validate quotes against this conversation's captured pass
     status: "complete",
     observations: [
       {
+        subject: "该来源案例",
         sourceId,
         quoteId: captured.sources[0].passageEntries[0].passageId,
         constraint: "无热水",
