@@ -5,7 +5,7 @@
   "cli": "0.2.261114-alpha.0",
   "npm": "12.2.2",
   "packageManager": "pnpm@12.8.1",
-  "sourceSha256": "c4ac8cbd6865cf48f97b69a810432ae848aca5cefeb37943f60217b3fbe8b8c1",
+  "sourceSha256": "9ecf9ec1ef33ccbaa6a9ab9c024ff9c4b1e3ec012427c8e9ba9f0de94f4ffdbf",
   "benchmarkSha256": "ea19def6137a1a46b6a76089935ef7c789942f657fc4e51aa25efd3e9599c7bc",
   "files": [
     {
@@ -202,7 +202,7 @@
     },
     {
       "path": "instructions.ts",
-      "sha256": "5d444717381ef967810f018f38d4bc1faaf8a6ce0a7d27e43eea270d2bdfbcc2"
+      "sha256": "efaca69a7ecbfde32eab8a718c233d3d74f55aae8c2912776ef2058ea17d9d17"
     },
     {
       "path": "iterations/analyze-eval.mjs",
@@ -306,7 +306,7 @@
     },
     {
       "path": "versions/v1-research/instructions.ts",
-      "sha256": "6c8d02db895e81c5905e45e567b2dabee5a0b90ab786dbaadc1b82d45afc763e"
+      "sha256": "eac953b7625f06ea7b30236d349dc7851a3ed66c6798c3c26df89a2ae50137d1"
     },
     {
       "path": "versions/v1-research/worker.ts",
