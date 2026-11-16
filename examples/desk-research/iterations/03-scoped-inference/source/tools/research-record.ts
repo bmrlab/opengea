@@ -37,8 +37,22 @@ export default defineToolSet([
           body: JSON.stringify(input),
         },
       );
-      if (!response.ok)
-        throw new Error(`Research save rejected: ${await response.text()}`);
+      // Expected validation failures must remain visible to the model. Runtime
+      // sanitizes thrown exceptions, hiding the URLs that need correction.
+      if (response.status === 400) {
+        const rejection = (await response.json()) as {
+          error: string;
+          urls?: string[];
+        };
+        return {
+          saved: false,
+          error: rejection.error,
+          urls: rejection.urls ?? [],
+          instruction:
+            "记录尚未保存。核对本对话搜索/读取工具返回的完整URL，纠正正文与sources；不要猜链接或宣称已保存。",
+        };
+      }
+      if (!response.ok) throw new Error("Research save failed.");
       return (await response.json()) as ResearchRecord;
     },
   }),
