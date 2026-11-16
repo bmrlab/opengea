@@ -1,8 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { briefInput, compileBrief } from "../lib/research-brief.ts";
-
-const sourceId = "src_0123456789abcdef";
+const sourceId = "src_0123456789abcdef",
+  passageId = "p_0123456789abcdef";
+const text = "本款燕麦条需用60—80℃热水冲泡，其他产品请查各自说明。";
 const catalog = new Map([
   [
     sourceId,
@@ -11,7 +12,7 @@ const catalog = new Map([
       url: "https://example.org/product",
       title: "一个具体产品",
       publishedAt: "2025-03-01",
-      passages: ["本款燕麦条需用60—80℃热水冲泡，其他产品请查各自说明。"],
+      passageEntries: [{ passageId, text }],
     },
   ],
 ]);
@@ -22,10 +23,10 @@ const brief = {
   observations: [
     {
       sourceId,
-      quote: "本款燕麦条需用60—80℃热水冲泡",
+      quoteId: passageId,
       constraint: "无热水",
       fit: "mismatch",
-      constraintEvidence: "本款燕麦条需用60—80℃热水冲泡",
+      constraintEvidenceId: passageId,
       reasoning: "该产品的冲泡条件与本题不匹配。",
     },
   ],
@@ -40,37 +41,34 @@ const brief = {
   ],
   gaps: ["尚未核对其他品牌的食用说明和该办公室实际需求。"],
 };
-
-test("brief keeps verbatim facts and inferred fit attached to one captured source", () => {
+test("captured passage identities render verbatim facts and fit attached to one source", () => {
   const result = compileBrief(briefInput.parse(brief), catalog);
   assert.equal(result.ok, true);
   assert.match(result.record.report, /> 本款燕麦条需用60—80℃热水冲泡/);
   assert.match(result.record.report, /仅对该来源案例的适配推断/);
   assert.match(result.record.report, /待验证问题/);
-  assert.match(result.record.report, /https:\/\/example.org\/product/);
   assert.deepEqual(result.record.sources, [
     {
       title: "一个具体产品",
       sourceId,
       url: "https://example.org/product",
-      excerpt: brief.observations[0].quote,
+      excerpt: text,
+      quoteId: passageId,
+      constraintEvidenceId: passageId,
     },
   ]);
 });
-
-test("fabricated, cross-source and unseen quotes cannot be saved as facts", () => {
-  for (const quote of [
-    "所有免煮早餐均需要热水",
-    "本款燕麦条需用热水冲泡",
-    "其他来源的真实原文",
-  ]) {
-    const result = compileBrief(
-      { ...brief, observations: [{ ...brief.observations[0], quote }] },
-      catalog,
-    );
-    assert.equal(result.ok, false);
-    assert.equal(result.error, "Quote is not present in captured text");
-  }
+test("unknown and cross-source passage identities cannot become saved facts", () => {
+  const wrong = {
+    ...brief,
+    observations: [{ ...brief.observations[0], quoteId: "p_ffffffffffffffff" }],
+  };
+  assert.equal(compileBrief(wrong, catalog).ok, false);
+  const crossSource = new Map([
+    [sourceId, { ...catalog.get(sourceId), passageEntries: [] }],
+    ["src_ffffffffffffffff", catalog.get(sourceId)],
+  ]);
+  assert.equal(compileBrief(brief, crossSource).ok, false);
   assert.equal(compileBrief(brief, new Map()).ok, false);
   assert.equal(
     compileBrief(
@@ -85,47 +83,51 @@ test("fabricated, cross-source and unseen quotes cannot be saved as facts", () =
     false,
   );
 });
-
-test("free factual report fields are not accepted alongside the structured brief", () => {
+test("free factual reports, paraphrases and hand-transcribed quotes are rejected by the input contract", () => {
   assert.equal(
     briefInput.safeParse({ ...brief, report: "整个品类需要热水" }).success,
     false,
   );
-  assert.equal(
-    briefInput.safeParse({
-      ...brief,
-      observations: [{ ...brief.observations[0], summary: "市场通常都如此" }],
-    }).success,
-    false,
-  );
+  for (const extra of [
+    { summary: "市场通常都如此" },
+    { quote: "所有免煮早餐均需热水" },
+  ])
+    assert.equal(
+      briefInput.safeParse({
+        ...brief,
+        observations: [{ ...brief.observations[0], ...extra }],
+      }).success,
+      false,
+    );
 });
-
-test("a captured fact alone cannot support a fit verdict without quoted constraint evidence", () => {
+test("a captured fact alone cannot support a fit verdict without a constraint evidence passage", () => {
   const missing = compileBrief(
     {
       ...brief,
-      observations: [{ ...brief.observations[0], constraintEvidence: null }],
+      observations: [{ ...brief.observations[0], constraintEvidenceId: null }],
     },
     catalog,
   );
   assert.equal(missing.ok, false);
   assert.equal(
     missing.error,
-    "Fit verdict requires quoted constraint evidence",
+    "Fit verdict requires a constraint evidence passage",
   );
-  const unsupported = compileBrief(
-    {
-      ...brief,
-      observations: [
-        {
-          ...brief.observations[0],
-          constraintEvidence: "所有同类产品都有这一使用条件",
-        },
-      ],
-    },
-    catalog,
+  assert.equal(
+    compileBrief(
+      {
+        ...brief,
+        observations: [
+          {
+            ...brief.observations[0],
+            constraintEvidenceId: "p_ffffffffffffffff",
+          },
+        ],
+      },
+      catalog,
+    ).ok,
+    false,
   );
-  assert.equal(unsupported.ok, false);
   const unknown = compileBrief(
     {
       ...brief,
@@ -133,7 +135,7 @@ test("a captured fact alone cannot support a fit verdict without quoted constrai
         {
           ...brief.observations[0],
           fit: "unknown",
-          constraintEvidence: null,
+          constraintEvidenceId: null,
           reasoning: "该来源未给出本题所需的条件依据。",
         },
       ],

@@ -28,12 +28,14 @@ const common = [
   "lib/evidence.ts",
   "lib/research.ts",
   "lib/research-brief.ts",
+  "lib/source-passages.ts",
   "benchmarks",
   "evaluation",
   "iterations/analyze-eval.mjs",
   "iterations/analyze-eval.test.mjs",
   "tests/evidence.test.mjs",
   "tests/source-content.test.mjs",
+  "tests/source-passages.test.mjs",
 ];
 const full = [
   "bindings.d.ts",

@@ -4,6 +4,7 @@ import type {
   AgentDurableObjectNamespace,
 } from "@gea-ai/agent-sdk";
 import { webUrl } from "./evidence.ts";
+import type { SourcePassage } from "./source-passages.ts";
 
 export const researchInput = z.object({
   title: z.string().trim().min(1).max(200),
@@ -20,6 +21,15 @@ export const researchInput = z.object({
           .regex(/^src_[a-f0-9]{16}$/u)
           .optional(),
         excerpt: z.string().max(6000),
+        quoteId: z
+          .string()
+          .regex(/^p_[a-f0-9]{16}$/u)
+          .optional(),
+        constraintEvidenceId: z
+          .string()
+          .regex(/^p_[a-f0-9]{16}$/u)
+          .nullable()
+          .optional(),
       }),
     )
     .max(30),
@@ -40,6 +50,15 @@ export const referencedResearchInput = researchInput.extend({
         sourceId: sourceIdInput,
         title: z.string().min(1).max(500),
         excerpt: z.string().max(6000),
+        quoteId: z
+          .string()
+          .regex(/^p_[a-f0-9]{16}$/u)
+          .optional(),
+        constraintEvidenceId: z
+          .string()
+          .regex(/^p_[a-f0-9]{16}$/u)
+          .nullable()
+          .optional(),
       }),
     )
     .max(30),
@@ -49,7 +68,7 @@ export type CapturedReference = {
   url: string;
   title?: string;
   publishedAt?: string | null;
-  passages?: string[];
+  passageEntries?: SourcePassage[];
 };
 
 export type ResearchInput = z.infer<typeof researchInput>;
@@ -96,7 +115,13 @@ export async function captureSourceUrls<
   return sources.map((source) => {
     const reference = captured.sources.find((item) => item.url === source.url);
     if (!reference) throw new Error("Missing captured source identity.");
-    return { ...source, sourceId: reference.sourceId };
+    const { text, ...metadata } = source;
+    return {
+      ...metadata,
+      textLength: text?.length ?? 0,
+      sourceId: reference.sourceId,
+      passages: reference.passageEntries ?? [],
+    };
   });
 }
 

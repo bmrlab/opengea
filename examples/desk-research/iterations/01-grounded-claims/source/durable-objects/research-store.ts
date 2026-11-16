@@ -10,6 +10,7 @@ import {
 import { briefInput, compileBrief } from "../lib/research-brief.ts";
 import { webUrl } from "../lib/evidence.ts";
 import { z } from "zod";
+import { sourcePassages } from "../lib/source-passages.ts";
 
 export class ResearchStore extends DurableObject {
   async fetch(request: Request): Promise<Response> {
@@ -74,23 +75,37 @@ export class ResearchStore extends DurableObject {
             { error: "Source identity collision" },
             { status: 409 },
           );
-        const passages = [
-          ...new Set([
-            ...(existing?.passages ?? []),
-            ...(item.text ? [item.text] : []),
-          ]),
-        ].slice(-32);
+        const returnedPassages = await sourcePassages(
+          sourceId,
+          item.text ?? "",
+        );
+        for (const passage of returnedPassages) {
+          const passageKey = `passage:${id}:${sourceId}:${passage.passageId}`;
+          const prior = await this.ctx.storage.get<{ text: string }>(
+            passageKey,
+          );
+          if (prior && prior.text !== passage.text)
+            return Response.json(
+              { error: "Passage identity collision" },
+              { status: 409 },
+            );
+          // Independent immutable keys avoid losing another concurrent reader's window.
+          await this.ctx.storage.put(passageKey, passage);
+        }
         const reference: CapturedReference = {
           ...existing,
           sourceId,
           url: existing?.url ?? source,
           title: item.title ?? existing?.title,
           publishedAt: item.publishedAt ?? existing?.publishedAt,
-          passages,
         };
         await this.ctx.storage.put(key, reference);
         await this.ctx.storage.put(referenceKey, reference);
-        sources.push({ ...reference, url: source });
+        sources.push({
+          ...reference,
+          url: source,
+          passageEntries: returnedPassages,
+        });
       }
       return Response.json({ captured: sources.length, sources });
     }
@@ -105,11 +120,24 @@ export class ResearchStore extends DurableObject {
             { status: 400 },
           );
         const catalog = new Map<string, CapturedReference>();
-        for (const { sourceId } of brief.data.observations) {
+        for (const { sourceId, quoteId, constraintEvidenceId } of brief.data
+          .observations) {
           const source = await this.ctx.storage.get<CapturedReference>(
             `source-ref:${id}:${sourceId}`,
           );
-          if (source) catalog.set(sourceId, source);
+          if (source) {
+            const entries = catalog.get(sourceId)?.passageEntries ?? [];
+            for (const passageId of new Set(
+              [quoteId, constraintEvidenceId].filter((value) => value !== null),
+            )) {
+              const passage = await this.ctx.storage.get<{
+                passageId: string;
+                text: string;
+              }>(`passage:${id}:${sourceId}:${passageId}`);
+              if (passage) entries.push(passage);
+            }
+            catalog.set(sourceId, { ...source, passageEntries: entries });
+          }
         }
         const compiled = compileBrief(brief.data, catalog);
         if (!compiled.ok) return Response.json(compiled, { status: 400 });

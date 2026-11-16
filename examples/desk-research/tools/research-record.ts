@@ -21,12 +21,15 @@ export default defineToolSet([
   defineTool({
     name: "save_research",
     description:
-      "保存本对话的结构化研究简报。observations逐个选择已捕获sourceId及其连续原文quote；系统核验摘录并生成逐来源事实栏。fit/reasoning仅判断此来源案例对用户条件的适配；跨案例机会放hypotheses，写验证和放弃条件。系统生成完整URL和report，最终答复使用返回的report。更新前先read_research；不保存凭据或隐私。",
+      "保存本对话的结构化研究简报。observations逐个选择已捕获sourceId及该来源返回的quoteId（passageId）；系统取回原文并生成逐来源事实栏。fit/reasoning仅判断此来源案例对用户条件的适配，匹配/不匹配必须给constraintEvidenceId；跨案例机会放hypotheses，写验证和放弃条件。系统生成完整URL和report，最终答复使用返回的report。更新前先read_research；不保存凭据或隐私。",
     input: briefInput,
     toModelOutput: ({ output }) => ({
       type: "text",
       value:
-        typeof output === "object" && output !== null && "report" in output && typeof output.report === "string"
+        typeof output === "object" &&
+        output !== null &&
+        "report" in output &&
+        typeof output.report === "string"
           ? `记录已保存。以下为最终交付的完整简报，请原样交付，不新增概括或依据。\n\n${output.report}`
           : JSON.stringify(output),
     }),
@@ -57,7 +60,7 @@ export default defineToolSet([
           urls: rejection.urls ?? [],
           availableUrls: rejection.availableUrls ?? [],
           instruction:
-            "记录尚未保存。核对sourceId和该来源返回的正文，quote须是一段逐字连续摘录（不拼接、不加省略号）。正文缺失时read_source补读，仍无证据就保留缺口。不要猜原文、扩大范围或宣称保存成功。",
+            "记录尚未保存。核对sourceId和该来源返回的正文，quoteId/constraintEvidenceId须是该sourceId返回的passageId，不手抄摘录。正文缺失时read_source补读，仍无证据就保留缺口。不要猜原文、扩大范围或宣称保存成功。",
         };
       }
       if (!response.ok) throw new Error("Research save failed.");

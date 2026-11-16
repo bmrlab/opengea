@@ -44,7 +44,7 @@ const sourceInfo = (source) => ({
   url: cleanUrl(source.url),
   title: source.title,
   publishedAt: source.publishedAt,
-  textLength: source.text?.length ?? 0,
+  textLength: source.textLength ?? source.text?.length ?? 0,
   textScope: source.textScope,
   truncated: source.truncated,
 });

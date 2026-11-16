@@ -20,13 +20,11 @@ export const briefInput = z.strictObject({
     .array(
       z.strictObject({
         sourceId: sourceIdInput,
-        quote: z
+        quoteId: z
           .string()
-          .trim()
-          .min(8)
-          .max(400)
+          .regex(/^p_[a-f0-9]{16}$/u)
           .describe(
-            "逐字复制此sourceId实际返回的一段连续正文，不拼接、不加省略号；保留限定条件。",
+            "选择该sourceId返回的passageId，系统取回原文，不手抄摘录。",
           ),
         constraint: z
           .string()
@@ -35,14 +33,12 @@ export const briefInput = z.strictObject({
           .max(300)
           .describe("本题待对照的具体用户条件。"),
         fit: z.enum(["match", "mismatch", "unknown"]),
-        constraintEvidence: z
+        constraintEvidenceId: z
           .string()
-          .trim()
-          .min(8)
-          .max(400)
+          .regex(/^p_[a-f0-9]{16}$/u)
           .nullable()
           .describe(
-            "能直接支持fit的同源连续原文。只知道价格、销量或商品名称不能推导使用条件；没有涉及用户条件的直接依据，填null且fit=unknown，不靠常识补齐。",
+            "直接支持fit的同源passageId；只有价格、销量或商品名不能推导使用条件。来源没有涉及用户条件时填null且fit=unknown。",
           ),
         reasoning: z
           .string()
@@ -101,34 +97,39 @@ export function compileBrief(
         error: "Uncaptured source identity",
         sourceId: observation.sourceId,
       };
-    if (!source.passages?.some((text) => text.includes(observation.quote)))
+    const quote = source.passageEntries?.find(
+      (passage) => passage.passageId === observation.quoteId,
+    )?.text;
+    if (!quote)
       return {
         ok: false,
-        error: "Quote is not present in captured text",
+        error: "Uncaptured passage identity for this source",
         sourceId: observation.sourceId,
       };
-    if (observation.fit !== "unknown" && !observation.constraintEvidence)
+    if (observation.fit !== "unknown" && !observation.constraintEvidenceId)
       return {
         ok: false,
-        error: "Fit verdict requires quoted constraint evidence",
+        error: "Fit verdict requires a constraint evidence passage",
         sourceId: observation.sourceId,
       };
-    if (
-      observation.constraintEvidence &&
-      !source.passages?.some((text) =>
-        text.includes(observation.constraintEvidence!),
-      )
-    )
+    const constraintEvidence = observation.constraintEvidenceId
+      ? source.passageEntries?.find(
+          (passage) => passage.passageId === observation.constraintEvidenceId,
+        )?.text
+      : null;
+    if (observation.constraintEvidenceId && !constraintEvidence)
       return {
         ok: false,
-        error: "Constraint evidence is not present in captured text",
+        error: "Uncaptured constraint evidence passage for this source",
         sourceId: observation.sourceId,
       };
     sources.push({
       sourceId: source.sourceId,
       title: source.title || "Untitled source",
       url: source.url,
-      excerpt: observation.quote,
+      excerpt: quote,
+      quoteId: observation.quoteId,
+      constraintEvidenceId: observation.constraintEvidenceId,
     });
     const fit = { match: "匹配", mismatch: "不匹配", unknown: "未知" }[
       observation.fit
@@ -138,16 +139,19 @@ export function compileBrief(
         `### 来源记录 ${observations.length + 1}：${line(source.title || "Untitled source")}`,
         `来源日期：${line(source.publishedAt || "未知")}；来源：${source.url}`,
         "原文摘录（该来源的表述，不等于独立核验或代表性结论）：",
-        observation.quote
+        quote
           .split(/\r?\n/u)
           .map((text) => `> ${text}`)
           .join("\n"),
-        observation.constraintEvidence
-          ? `条件依据（同源原文）：\n${observation.constraintEvidence
-              .split(/\r?\n/u)
-              .map((text) => `> ${text}`)
-              .join("\n")}`
-          : "条件依据：本来源未提供可引用的直接依据，适配性未知。",
+        constraintEvidence &&
+        observation.constraintEvidenceId === observation.quoteId
+          ? "条件依据：同上原文（只支持本案例）。"
+          : constraintEvidence
+            ? `条件依据（同源原文）：\n${constraintEvidence
+                .split(/\r?\n/u)
+                .map((text) => `> ${text}`)
+                .join("\n")}`
+            : "条件依据：本来源未提供可引用的直接依据，适配性未知。",
         `仅对该来源案例的适配推断：针对“${line(observation.constraint)}”，${fit}。${line(observation.reasoning)}`,
       ].join("\n\n"),
     );

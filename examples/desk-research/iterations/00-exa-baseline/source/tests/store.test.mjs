@@ -246,6 +246,20 @@ test("structured saves validate quotes against this conversation's captured pass
     )
   ).json();
   const sourceId = captured.sources[0].sourceId;
+  // A later read of another window must not invalidate the earlier passage.
+  await store.fetch(
+    new Request("https://research.internal/sources?id=a", {
+      method: "POST",
+      body: JSON.stringify({
+        sources: [
+          {
+            url: "https://example.org/item",
+            text: "另一窗口只介绍包装和生产日期。",
+          },
+        ],
+      }),
+    }),
+  );
   const brief = {
     title: "产品使用条件",
     scope: "无热水",
@@ -253,10 +267,10 @@ test("structured saves validate quotes against this conversation's captured pass
     observations: [
       {
         sourceId,
-        quote: "本产品食用前需要加入热水冲泡",
+        quoteId: captured.sources[0].passageEntries[0].passageId,
         constraint: "无热水",
         fit: "mismatch",
-        constraintEvidence: "本产品食用前需要加入热水冲泡",
+        constraintEvidenceId: captured.sources[0].passageEntries[0].passageId,
         reasoning: "该产品不匹配。",
       },
     ],
@@ -274,7 +288,7 @@ test("structured saves validate quotes against this conversation's captured pass
   assert.equal(valid.status, 200);
   const record = await valid.json();
   assert.match(record.report, /https:\/\/example.org\/item/);
-  assert.equal(record.sources[0].excerpt, brief.observations[0].quote);
+  assert.equal(record.sources[0].excerpt, "本产品食用前需要加入热水冲泡。");
   assert.equal(record.sources[0].sourceId, sourceId);
   assert.equal((await save("b", brief)).status, 400);
   assert.equal(
@@ -282,7 +296,7 @@ test("structured saves validate quotes against this conversation's captured pass
       await save("a", {
         ...brief,
         observations: [
-          { ...brief.observations[0], quote: "整个免煮早餐品类都依赖热水" },
+          { ...brief.observations[0], quoteId: "p_ffffffffffffffff" },
         ],
       })
     ).status,
