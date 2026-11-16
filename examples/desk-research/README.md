@@ -35,6 +35,13 @@ pnpm dev
 
 搜索使用 Exa，Connector key 为 `research-search`。通过本机授权流程配置 API key；单独设置环境变量不会创建 Connection。返回有长度上限的网页文本，缺失和截断会明确标记。新的质量迭代从 Exa baseline 开始；早期 social-search 与功能接入记录放在 `iterations/history/`，不参与新分数比较。
 
+搜索每次最多返回3页、每页600字符预览，供选择来源。`read_source` 按完整URL读取最多12000字符的提取文本，每次展示2000字符；可用`query`定位原句或按`nextOffset`继续。`queryFound:false`只表示当前提取未找到，`nextOffset:null`也不保证网页全文已读完；仍须检查`extractionTruncated`。原文窗口始终保留对应URL和范围，不能把其他页面的事实配到这个链接。
+
+工作台阶段的搜索/正文结果包含同一对话内的 `sourceId` 与 `passages[{passageId,text}]`。`save_research` 接收结构化 `observations`：用 `subject` 点名本条讨论的具体产品、组合或行为，选择来源及原文片段 `quoteId`，再针对用户条件填写 `fit` 与直接依据 `constraintEvidenceId`；缺乏条件依据必须保持 `unknown`。一份短简报选择最多4条关键观察；`hypotheses` 最多2个，以`basedOn`中的观察序号（从1开始）指向本简报已收录的证据，单独记录待验证问题、验证对象/动作、指标和放弃条件，`gaps` 记录本次资料缺口。工具从已捕获片段生成原文和规范 URL，不让模型重抄长链接或引文；未知、跨来源、跨对话标识均拒绝。身份与原文校验不等于事实相关性或适配语义已验证，仍需严格 Judge 与来源核对。
+
+保存记录继续提供 `report` 和 `sources` 给工作台，保留片段标识供追问复用；最终交付采用生成的简报。只读 v1 没有研究存储，仍返回有界原文文本，不提供保存能力。
+
+
 第二个终端进入此目录，将 dev 输出的两个 origin 和 key 文件路径交给配置脚本：
 
 ```bash
@@ -56,7 +63,7 @@ gea agent eval --json '{"cwd":".","benchmarkPath":"benchmarks/single-turn","mode
 gea agent eval --json '{"cwd":".","benchmarkPath":"benchmarks/multi-turn","modelSource":"hosted","judgeModel":"gea-pro","concurrency":1}'
 ```
 
-第一条是 12 Case × 3 Markdown Judge，第二条是 6 个 Simulator Case × 1 个对话 Judge。每题的 `maxTurns` 包含首条用户消息；Simulator done 不是 Judge 通过。
+第一条是 12 Case × 3 Markdown Judge，第二条是 6 个 Simulator Case × 2 个 Judge（coverage 与 conversation）。每题的 `maxTurns` 包含首条用户消息；Simulator done 不是 Judge 通过。
 
 两套 Benchmark 保持分开。单轮结果可以按教程推到 Studio 做 Trace Annotation；当前基线明确拒绝发布 Simulator Benchmark 与上传多轮结果，不通过删字段绕过。
 
@@ -84,3 +91,5 @@ gea agent eval --json '{"cwd":".","benchmarkPath":"benchmarks/multi-turn","model
 更新后执行 `pnpm type-check`、`pnpm test`，以及匹配 CLI 的 `gea agent validate --json '{"cwd":"."}'` / `gea agent pack --json '{"cwd":"."}'`。
 
 本仓库只依赖公开 npm 包，标准安装不需要 GEA 私有源码。版本生成器仅复制源码与固定题集，不复制 `.gea/`、凭据、构建产物或依赖；不会覆盖已有目录。
+
+后续只询问解释、取舍或引用核对时，直接回答所问部分，不重复生成整份报告。更新简报时复用同一会话的来源标识和片段；读取记录的模型视图不重复发送已经包含在report中的摘录，工作台保存的完整记录不变。

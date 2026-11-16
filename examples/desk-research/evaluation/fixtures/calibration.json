@@ -1,0 +1,1011 @@
+{
+  "schemaVersion": "desk-research.calibration.v1",
+  "description": "Authored synthetic evidence, not real Agent execution. Expected labels never enter Judge context.",
+  "fixtures": [
+    {
+      "id": "over-budget",
+      "judge": "scope",
+      "input": "为中国通勤上班族比较办公室早餐，每份最多8元；价格未知就注明，不要当作已达标。",
+      "acceptance": "逐项遵守人群、场景、每份预算；区分事实、未知和范围。",
+      "messages": [
+        {
+          "role": "user",
+          "text": "为中国通勤上班族比较办公室早餐，每份最多8元；价格未知就注明，不要当作已达标。"
+        },
+        {
+          "role": "assistant",
+          "sources": [],
+          "text": "8元以内案例包括早餐车8.5元组合。其余资料有限。"
+        }
+      ],
+      "expected": {
+        "status": "completed",
+        "score": 0
+      }
+    },
+    {
+      "id": "wrong-sum",
+      "judge": "scope",
+      "input": "为中国通勤上班族比较办公室早餐，每份最多8元；价格未知就注明，不要当作已达标。",
+      "acceptance": "逐项遵守人群、场景、每份预算；区分事实、未知和范围。",
+      "messages": [
+        {
+          "role": "user",
+          "text": "为中国通勤上班族比较办公室早餐，每份最多8元；价格未知就注明，不要当作已达标。"
+        },
+        {
+          "role": "assistant",
+          "sources": [],
+          "text": "饭团5元加豆浆4元合计8元，符合上限。"
+        }
+      ],
+      "expected": {
+        "status": "completed",
+        "score": 0
+      }
+    },
+    {
+      "id": "wrong-portion",
+      "judge": "scope",
+      "input": "为中国通勤上班族比较办公室早餐，每份最多8元；价格未知就注明，不要当作已达标。",
+      "acceptance": "逐项遵守人群、场景、每份预算；区分事实、未知和范围。",
+      "messages": [
+        {
+          "role": "user",
+          "text": "为中国通勤上班族比较办公室早餐，每份最多8元；价格未知就注明，不要当作已达标。"
+        },
+        {
+          "role": "assistant",
+          "sources": [],
+          "text": "两人份16元，建议一人买这一整份作为8元早餐。"
+        }
+      ],
+      "expected": {
+        "status": "completed",
+        "score": 0
+      }
+    },
+    {
+      "id": "wrong-audience",
+      "judge": "scope",
+      "input": "为中国通勤上班族比较办公室早餐，每份最多8元；价格未知就注明，不要当作已达标。",
+      "acceptance": "逐项遵守人群、场景、每份预算；区分事实、未知和范围。",
+      "messages": [
+        {
+          "role": "user",
+          "text": "为中国通勤上班族比较办公室早餐，每份最多8元；价格未知就注明，不要当作已达标。"
+        },
+        {
+          "role": "assistant",
+          "sources": [],
+          "text": "本研究以小学生为目标，提出校内早餐机会。"
+        }
+      ],
+      "expected": {
+        "status": "completed",
+        "score": 0
+      }
+    },
+    {
+      "id": "scoped-unknown-positive",
+      "judge": "scope",
+      "input": "为中国通勤上班族比较办公室早餐，每份最多8元；价格未知就注明，不要当作已达标。",
+      "acceptance": "逐项遵守人群、场景、每份预算；区分事实、未知和范围。",
+      "messages": [
+        {
+          "role": "user",
+          "text": "为中国通勤上班族比较办公室早餐，每份最多8元；价格未知就注明，不要当作已达标。"
+        },
+        {
+          "role": "assistant",
+          "sources": [],
+          "text": "仅两处上海网点的观察：饭团5元+豆浆3元=8元/份；早餐车8.5元明确超限；另一款价格未知，不能确认符合预算。面向通勤上班族在办公室食用，便携性待访谈验证。"
+        }
+      ],
+      "expected": {
+        "status": "completed",
+        "score": 1
+      }
+    },
+    {
+      "id": "wrong-page",
+      "judge": "evidence",
+      "input": "为中国通勤上班族比较办公室早餐，每份最多8元；价格未知就注明，不要当作已达标。",
+      "acceptance": "逐项遵守人群、场景、每份预算；区分事实、未知和范围。",
+      "messages": [
+        {
+          "role": "user",
+          "text": "为中国通勤上班族比较办公室早餐，每份最多8元；价格未知就注明，不要当作已达标。"
+        },
+        {
+          "role": "assistant",
+          "sources": [
+            {
+              "url": "https://example.org/a",
+              "title": "上海门店调查",
+              "publishedAt": "2025-01-17",
+              "textScope": "body",
+              "text": "2025年1月17日，仅上海青浦两个网点：饭团一份5元，豆浆一杯3元。访谈对象为通勤上班族。早餐车烧饼+茶叶蛋组合8.5元，与饭团+豆浆是不同方案。另一款价格未知。"
+            },
+            {
+              "url": "https://example.org/b",
+              "textScope": "body",
+              "text": "北京公园午间客流增长。此文没有早餐价格。"
+            }
+          ],
+          "text": "上海两个网点饭团每份5元。[来源B](https://example.org/b)"
+        }
+      ],
+      "expected": {
+        "status": "completed",
+        "score": 0
+      }
+    },
+    {
+      "id": "wrong-date",
+      "judge": "evidence",
+      "input": "为中国通勤上班族比较办公室早餐，每份最多8元；价格未知就注明，不要当作已达标。",
+      "acceptance": "逐项遵守人群、场景、每份预算；区分事实、未知和范围。",
+      "messages": [
+        {
+          "role": "user",
+          "text": "为中国通勤上班族比较办公室早餐，每份最多8元；价格未知就注明，不要当作已达标。"
+        },
+        {
+          "role": "assistant",
+          "sources": [
+            {
+              "url": "https://example.org/a",
+              "title": "上海门店调查",
+              "publishedAt": "2025-01-17",
+              "textScope": "body",
+              "text": "2025年1月17日，仅上海青浦两个网点：饭团一份5元，豆浆一杯3元。访谈对象为通勤上班族。早餐车烧饼+茶叶蛋组合8.5元，与饭团+豆浆是不同方案。另一款价格未知。"
+            }
+          ],
+          "text": "2026年最新上海门店调查：饭团一份5元。[来源](https://example.org/a)"
+        }
+      ],
+      "expected": {
+        "status": "completed",
+        "score": 0
+      }
+    },
+    {
+      "id": "wrong-scope",
+      "judge": "evidence",
+      "input": "为中国通勤上班族比较办公室早餐，每份最多8元；价格未知就注明，不要当作已达标。",
+      "acceptance": "逐项遵守人群、场景、每份预算；区分事实、未知和范围。",
+      "messages": [
+        {
+          "role": "user",
+          "text": "为中国通勤上班族比较办公室早餐，每份最多8元；价格未知就注明，不要当作已达标。"
+        },
+        {
+          "role": "assistant",
+          "sources": [
+            {
+              "url": "https://example.org/a",
+              "title": "上海门店调查",
+              "publishedAt": "2025-01-17",
+              "textScope": "body",
+              "text": "2025年1月17日，仅上海青浦两个网点：饭团一份5元，豆浆一杯3元。访谈对象为通勤上班族。早餐车烧饼+茶叶蛋组合8.5元，与饭团+豆浆是不同方案。另一款价格未知。"
+            }
+          ],
+          "text": "全国通勤者普遍以5元买到饭团。[来源](https://example.org/a)"
+        }
+      ],
+      "expected": {
+        "status": "completed",
+        "score": 0
+      }
+    },
+    {
+      "id": "wrong-price-arithmetic",
+      "judge": "evidence",
+      "input": "为中国通勤上班族比较办公室早餐，每份最多8元；价格未知就注明，不要当作已达标。",
+      "acceptance": "逐项遵守人群、场景、每份预算；区分事实、未知和范围。",
+      "messages": [
+        {
+          "role": "user",
+          "text": "为中国通勤上班族比较办公室早餐，每份最多8元；价格未知就注明，不要当作已达标。"
+        },
+        {
+          "role": "assistant",
+          "sources": [
+            {
+              "url": "https://example.org/a",
+              "title": "上海门店调查",
+              "publishedAt": "2025-01-17",
+              "textScope": "body",
+              "text": "2025年1月17日，仅上海青浦两个网点：饭团一份5元，豆浆一杯3元。访谈对象为通勤上班族。早餐车烧饼+茶叶蛋组合8.5元，与饭团+豆浆是不同方案。另一款价格未知。"
+            }
+          ],
+          "text": "上海门店饭团5元+豆浆3元共7元。[来源](https://example.org/a)"
+        }
+      ],
+      "expected": {
+        "status": "completed",
+        "score": 0
+      }
+    },
+    {
+      "id": "captured-positive",
+      "judge": "evidence",
+      "input": "为中国通勤上班族比较办公室早餐，每份最多8元；价格未知就注明，不要当作已达标。",
+      "acceptance": "逐项遵守人群、场景、每份预算；区分事实、未知和范围。",
+      "messages": [
+        {
+          "role": "user",
+          "text": "为中国通勤上班族比较办公室早餐，每份最多8元；价格未知就注明，不要当作已达标。"
+        },
+        {
+          "role": "assistant",
+          "sources": [
+            {
+              "url": "https://example.org/a",
+              "title": "上海门店调查",
+              "publishedAt": "2025-01-17",
+              "textScope": "body",
+              "text": "2025年1月17日，仅上海青浦两个网点：饭团一份5元，豆浆一杯3元。访谈对象为通勤上班族。早餐车烧饼+茶叶蛋组合8.5元，与饭团+豆浆是不同方案。另一款价格未知。"
+            }
+          ],
+          "text": "2025年1月17日上海青浦两网点的通勤样本：饭团5元+豆浆3元=8元，不能推及全国；另一款价格未知，不能确认满足8元预算。[来源](https://example.org/a)"
+        }
+      ],
+      "expected": {
+        "status": "completed",
+        "score": 1
+      }
+    },
+    {
+      "id": "body-unavailable",
+      "judge": "evidence",
+      "input": "为中国通勤上班族比较办公室早餐，每份最多8元；价格未知就注明，不要当作已达标。",
+      "acceptance": "逐项遵守人群、场景、每份预算；区分事实、未知和范围。",
+      "messages": [
+        {
+          "role": "user",
+          "text": "为中国通勤上班族比较办公室早餐，每份最多8元；价格未知就注明，不要当作已达标。"
+        },
+        {
+          "role": "assistant",
+          "sources": [
+            {
+              "url": "https://example.org/a",
+              "title": "早餐调查",
+              "textLength": 10000,
+              "bodyAvailability": "unavailable"
+            }
+          ],
+          "text": "上海门店饭团5元。[来源](https://example.org/a)"
+        }
+      ],
+      "expected": {
+        "status": "error"
+      }
+    },
+    {
+      "id": "coverage-complete-paraphrase",
+      "judge": "coverage",
+      "input": "研究中国通勤上班族到办公室后吃早餐，不需要加热，每份最多10元。",
+      "acceptance": "两次追问确实按顺序发生：新增便携防漏并得到回答，再要求两个优先验证方向及理由并得到回答；保留原人群、无加热与10元预算。",
+      "messages": [
+        {
+          "role": "user",
+          "text": "研究中国通勤上班族到办公室后吃早餐，不需要加热，每份最多10元。"
+        },
+        {
+          "role": "assistant",
+          "text": "观察仅限上海两个网点：饭团5元+豆浆3元，总价8元。来源 https://example.org/a 。可以不加热，在办公室食用；是否愿意购买待验证，不能推广到全国。",
+          "sources": [
+            {
+              "url": "https://example.org/a",
+              "title": "上海门店调查",
+              "publishedAt": "2025-01-17",
+              "textScope": "body",
+              "text": "2025年1月17日，仅上海青浦两个网点：饭团一份5元，豆浆一杯3元。访谈对象为通勤上班族。早餐车烧饼+茶叶蛋组合8.5元，与饭团+豆浆是不同方案。另一款价格未知。"
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "text": "请在刚才基础上再考虑放进包里坐地铁也不会漏出来；原先的条件都照旧。"
+        },
+        {
+          "role": "assistant",
+          "text": "保留中国通勤者、办公室、免加热、每份≤10元；新增便携防漏条件。选固态饭团，不带液体；现有调查仅两网点，包装防漏仍需实测，不能断言有效。"
+        },
+        {
+          "role": "user",
+          "text": "在修订方案里选出最值得先验证的两条路线，解释优先顺序。"
+        },
+        {
+          "role": "assistant",
+          "text": "优先验证1：5元固态饭团的密封便携性，用地铁携带测试验证洒漏；优先验证2：办公室免加热口感，用通勤上班族试吃访谈验证。都保留≤10元、免加热和防漏条件；先验证携带是因为这是新增约束，不代表痛点已获证实。"
+        }
+      ],
+      "expected": {
+        "status": "completed",
+        "score": 1
+      }
+    },
+    {
+      "id": "coverage-missing-second",
+      "judge": "coverage",
+      "input": "研究中国通勤上班族到办公室后吃早餐，不需要加热，每份最多10元。",
+      "acceptance": "两次追问确实按顺序发生：新增便携防漏并得到回答，再要求两个优先验证方向及理由并得到回答；保留原人群、无加热与10元预算。",
+      "messages": [
+        {
+          "role": "user",
+          "text": "研究中国通勤上班族到办公室后吃早餐，不需要加热，每份最多10元。"
+        },
+        {
+          "role": "assistant",
+          "text": "观察仅限上海两个网点：饭团5元+豆浆3元，总价8元。来源 https://example.org/a 。可以不加热，在办公室食用；是否愿意购买待验证，不能推广到全国。",
+          "sources": [
+            {
+              "url": "https://example.org/a",
+              "title": "上海门店调查",
+              "publishedAt": "2025-01-17",
+              "textScope": "body",
+              "text": "2025年1月17日，仅上海青浦两个网点：饭团一份5元，豆浆一杯3元。访谈对象为通勤上班族。早餐车烧饼+茶叶蛋组合8.5元，与饭团+豆浆是不同方案。另一款价格未知。"
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "text": "请在刚才基础上再考虑放进包里坐地铁也不会漏出来；原先的条件都照旧。"
+        },
+        {
+          "role": "assistant",
+          "text": "保留中国通勤者、办公室、免加热、每份≤10元；新增便携防漏条件。选固态饭团，不带液体；现有调查仅两网点，包装防漏仍需实测，不能断言有效。"
+        }
+      ],
+      "expected": {
+        "status": "completed",
+        "score": 0
+      }
+    },
+    {
+      "id": "coverage-missing-first",
+      "judge": "coverage",
+      "input": "研究中国通勤上班族到办公室后吃早餐，不需要加热，每份最多10元。",
+      "acceptance": "两次追问确实按顺序发生：新增便携防漏并得到回答，再要求两个优先验证方向及理由并得到回答；保留原人群、无加热与10元预算。",
+      "messages": [
+        {
+          "role": "user",
+          "text": "研究中国通勤上班族到办公室后吃早餐，不需要加热，每份最多10元。"
+        },
+        {
+          "role": "assistant",
+          "text": "观察仅限上海两个网点：饭团5元+豆浆3元，总价8元。来源 https://example.org/a 。可以不加热，在办公室食用；是否愿意购买待验证，不能推广到全国。",
+          "sources": [
+            {
+              "url": "https://example.org/a",
+              "title": "上海门店调查",
+              "publishedAt": "2025-01-17",
+              "textScope": "body",
+              "text": "2025年1月17日，仅上海青浦两个网点：饭团一份5元，豆浆一杯3元。访谈对象为通勤上班族。早餐车烧饼+茶叶蛋组合8.5元，与饭团+豆浆是不同方案。另一款价格未知。"
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "text": "在修订方案里选出最值得先验证的两条路线，解释优先顺序。"
+        },
+        {
+          "role": "assistant",
+          "text": "优先验证1：5元固态饭团的密封便携性，用地铁携带测试验证洒漏；优先验证2：办公室免加热口感，用通勤上班族试吃访谈验证。都保留≤10元、免加热和防漏条件；先验证携带是因为这是新增约束，不代表痛点已获证实。"
+        }
+      ],
+      "expected": {
+        "status": "completed",
+        "score": 0
+      }
+    },
+    {
+      "id": "coverage-no-last-answer",
+      "judge": "coverage",
+      "input": "研究中国通勤上班族到办公室后吃早餐，不需要加热，每份最多10元。",
+      "acceptance": "两次追问确实按顺序发生：新增便携防漏并得到回答，再要求两个优先验证方向及理由并得到回答；保留原人群、无加热与10元预算。",
+      "messages": [
+        {
+          "role": "user",
+          "text": "研究中国通勤上班族到办公室后吃早餐，不需要加热，每份最多10元。"
+        },
+        {
+          "role": "assistant",
+          "text": "观察仅限上海两个网点：饭团5元+豆浆3元，总价8元。来源 https://example.org/a 。可以不加热，在办公室食用；是否愿意购买待验证，不能推广到全国。",
+          "sources": [
+            {
+              "url": "https://example.org/a",
+              "title": "上海门店调查",
+              "publishedAt": "2025-01-17",
+              "textScope": "body",
+              "text": "2025年1月17日，仅上海青浦两个网点：饭团一份5元，豆浆一杯3元。访谈对象为通勤上班族。早餐车烧饼+茶叶蛋组合8.5元，与饭团+豆浆是不同方案。另一款价格未知。"
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "text": "请在刚才基础上再考虑放进包里坐地铁也不会漏出来；原先的条件都照旧。"
+        },
+        {
+          "role": "assistant",
+          "text": "保留中国通勤者、办公室、免加热、每份≤10元；新增便携防漏条件。选固态饭团，不带液体；现有调查仅两网点，包装防漏仍需实测，不能断言有效。"
+        },
+        {
+          "role": "user",
+          "text": "在修订方案里选出最值得先验证的两条路线，解释优先顺序。"
+        }
+      ],
+      "expected": {
+        "status": "completed",
+        "score": 0
+      }
+    },
+    {
+      "id": "coverage-reversed",
+      "judge": "coverage",
+      "input": "研究中国通勤上班族到办公室后吃早餐，不需要加热，每份最多10元。",
+      "acceptance": "两次追问确实按顺序发生：新增便携防漏并得到回答，再要求两个优先验证方向及理由并得到回答；保留原人群、无加热与10元预算。",
+      "messages": [
+        {
+          "role": "user",
+          "text": "研究中国通勤上班族到办公室后吃早餐，不需要加热，每份最多10元。"
+        },
+        {
+          "role": "assistant",
+          "text": "观察仅限上海两个网点：饭团5元+豆浆3元，总价8元。来源 https://example.org/a 。可以不加热，在办公室食用；是否愿意购买待验证，不能推广到全国。",
+          "sources": [
+            {
+              "url": "https://example.org/a",
+              "title": "上海门店调查",
+              "publishedAt": "2025-01-17",
+              "textScope": "body",
+              "text": "2025年1月17日，仅上海青浦两个网点：饭团一份5元，豆浆一杯3元。访谈对象为通勤上班族。早餐车烧饼+茶叶蛋组合8.5元，与饭团+豆浆是不同方案。另一款价格未知。"
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "text": "在修订方案里选出最值得先验证的两条路线，解释优先顺序。"
+        },
+        {
+          "role": "assistant",
+          "text": "优先验证1：5元固态饭团的密封便携性，用地铁携带测试验证洒漏；优先验证2：办公室免加热口感，用通勤上班族试吃访谈验证。都保留≤10元、免加热和防漏条件；先验证携带是因为这是新增约束，不代表痛点已获证实。"
+        },
+        {
+          "role": "user",
+          "text": "请在刚才基础上再考虑放进包里坐地铁也不会漏出来；原先的条件都照旧。"
+        },
+        {
+          "role": "assistant",
+          "text": "保留中国通勤者、办公室、免加热、每份≤10元；新增便携防漏条件。选固态饭团，不带液体；现有调查仅两网点，包装防漏仍需实测，不能断言有效。"
+        }
+      ],
+      "expected": {
+        "status": "completed",
+        "score": 0
+      }
+    },
+    {
+      "id": "coverage-assistant-keywords",
+      "judge": "coverage",
+      "input": "研究中国通勤上班族到办公室后吃早餐，不需要加热，每份最多10元。",
+      "acceptance": "两次追问确实按顺序发生：新增便携防漏并得到回答，再要求两个优先验证方向及理由并得到回答；保留原人群、无加热与10元预算。",
+      "messages": [
+        {
+          "role": "user",
+          "text": "研究中国通勤上班族到办公室后吃早餐，不需要加热，每份最多10元。"
+        },
+        {
+          "role": "assistant",
+          "text": "观察仅限上海两个网点：饭团5元+豆浆3元，总价8元。来源 https://example.org/a 。可以不加热，在办公室食用；是否愿意购买待验证，不能推广到全国。",
+          "sources": [
+            {
+              "url": "https://example.org/a",
+              "title": "上海门店调查",
+              "publishedAt": "2025-01-17",
+              "textScope": "body",
+              "text": "2025年1月17日，仅上海青浦两个网点：饭团一份5元，豆浆一杯3元。访谈对象为通勤上班族。早餐车烧饼+茶叶蛋组合8.5元，与饭团+豆浆是不同方案。另一款价格未知。"
+            }
+          ]
+        },
+        {
+          "role": "assistant",
+          "text": "请补充便携防漏，然后挑两个方向。"
+        }
+      ],
+      "expected": {
+        "status": "completed",
+        "score": 0
+      }
+    },
+    {
+      "id": "coverage-negated",
+      "judge": "coverage",
+      "input": "研究中国通勤上班族到办公室后吃早餐，不需要加热，每份最多10元。",
+      "acceptance": "两次追问确实按顺序发生：新增便携防漏并得到回答，再要求两个优先验证方向及理由并得到回答；保留原人群、无加热与10元预算。",
+      "messages": [
+        {
+          "role": "user",
+          "text": "研究中国通勤上班族到办公室后吃早餐，不需要加热，每份最多10元。"
+        },
+        {
+          "role": "assistant",
+          "text": "观察仅限上海两个网点：饭团5元+豆浆3元，总价8元。来源 https://example.org/a 。可以不加热，在办公室食用；是否愿意购买待验证，不能推广到全国。",
+          "sources": [
+            {
+              "url": "https://example.org/a",
+              "title": "上海门店调查",
+              "publishedAt": "2025-01-17",
+              "textScope": "body",
+              "text": "2025年1月17日，仅上海青浦两个网点：饭团一份5元，豆浆一杯3元。访谈对象为通勤上班族。早餐车烧饼+茶叶蛋组合8.5元，与饭团+豆浆是不同方案。另一款价格未知。"
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "text": "不需要考虑携带和防漏了。"
+        },
+        {
+          "role": "assistant",
+          "text": "保留中国通勤者、办公室、免加热、每份≤10元；新增便携防漏条件。选固态饭团，不带液体；现有调查仅两网点，包装防漏仍需实测，不能断言有效。"
+        },
+        {
+          "role": "user",
+          "text": "在修订方案里选出最值得先验证的两条路线，解释优先顺序。"
+        },
+        {
+          "role": "assistant",
+          "text": "优先验证1：5元固态饭团的密封便携性，用地铁携带测试验证洒漏；优先验证2：办公室免加热口感，用通勤上班族试吃访谈验证。都保留≤10元、免加热和防漏条件；先验证携带是因为这是新增约束，不代表痛点已获证实。"
+        }
+      ],
+      "expected": {
+        "status": "completed",
+        "score": 0
+      }
+    },
+    {
+      "id": "coverage-combined",
+      "judge": "coverage",
+      "input": "研究中国通勤上班族到办公室后吃早餐，不需要加热，每份最多10元。",
+      "acceptance": "两次追问确实按顺序发生：新增便携防漏并得到回答，再要求两个优先验证方向及理由并得到回答；保留原人群、无加热与10元预算。",
+      "messages": [
+        {
+          "role": "user",
+          "text": "研究中国通勤上班族到办公室后吃早餐，不需要加热，每份最多10元。"
+        },
+        {
+          "role": "assistant",
+          "text": "观察仅限上海两个网点：饭团5元+豆浆3元，总价8元。来源 https://example.org/a 。可以不加热，在办公室食用；是否愿意购买待验证，不能推广到全国。",
+          "sources": [
+            {
+              "url": "https://example.org/a",
+              "title": "上海门店调查",
+              "publishedAt": "2025-01-17",
+              "textScope": "body",
+              "text": "2025年1月17日，仅上海青浦两个网点：饭团一份5元，豆浆一杯3元。访谈对象为通勤上班族。早餐车烧饼+茶叶蛋组合8.5元，与饭团+豆浆是不同方案。另一款价格未知。"
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "text": "请在刚才基础上再考虑放进包里坐地铁也不会漏出来；原先的条件都照旧。同时在修订方案里选出最值得先验证的两条路线，解释优先顺序。"
+        },
+        {
+          "role": "assistant",
+          "text": "优先验证1：5元固态饭团的密封便携性，用地铁携带测试验证洒漏；优先验证2：办公室免加热口感，用通勤上班族试吃访谈验证。都保留≤10元、免加热和防漏条件；先验证携带是因为这是新增约束，不代表痛点已获证实。"
+        }
+      ],
+      "expected": {
+        "status": "completed",
+        "score": 0
+      }
+    },
+    {
+      "id": "quality-observed-positive",
+      "judge": "conversation",
+      "input": "研究中国通勤上班族到办公室后吃早餐，不需要加热，每份最多10元。",
+      "acceptance": "两次追问确实按顺序发生：新增便携防漏并得到回答，再要求两个优先验证方向及理由并得到回答；保留原人群、无加热与10元预算。",
+      "messages": [
+        {
+          "role": "user",
+          "text": "研究中国通勤上班族到办公室后吃早餐，不需要加热，每份最多10元。"
+        },
+        {
+          "role": "assistant",
+          "text": "观察仅限上海两个网点：饭团5元+豆浆3元，总价8元。来源 https://example.org/a 。可以不加热，在办公室食用；是否愿意购买待验证，不能推广到全国。",
+          "sources": [
+            {
+              "url": "https://example.org/a",
+              "title": "上海门店调查",
+              "publishedAt": "2025-01-17",
+              "textScope": "body",
+              "text": "2025年1月17日，仅上海青浦两个网点：饭团一份5元，豆浆一杯3元。访谈对象为通勤上班族。早餐车烧饼+茶叶蛋组合8.5元，与饭团+豆浆是不同方案。另一款价格未知。"
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "text": "请在刚才基础上再考虑放进包里坐地铁也不会漏出来；原先的条件都照旧。"
+        },
+        {
+          "role": "assistant",
+          "text": "保留中国通勤者、办公室、免加热、每份≤10元；新增便携防漏条件。选固态饭团，不带液体；现有调查仅两网点，包装防漏仍需实测，不能断言有效。"
+        }
+      ],
+      "expected": {
+        "status": "completed",
+        "score": 1
+      }
+    },
+    {
+      "id": "quality-lost-constraints",
+      "judge": "conversation",
+      "input": "研究中国通勤上班族到办公室后吃早餐，不需要加热，每份最多10元。",
+      "acceptance": "两次追问确实按顺序发生：新增便携防漏并得到回答，再要求两个优先验证方向及理由并得到回答；保留原人群、无加热与10元预算。",
+      "messages": [
+        {
+          "role": "user",
+          "text": "研究中国通勤上班族到办公室后吃早餐，不需要加热，每份最多10元。"
+        },
+        {
+          "role": "assistant",
+          "text": "观察仅限上海两个网点：饭团5元+豆浆3元，总价8元。来源 https://example.org/a 。可以不加热，在办公室食用；是否愿意购买待验证，不能推广到全国。",
+          "sources": [
+            {
+              "url": "https://example.org/a",
+              "title": "上海门店调查",
+              "publishedAt": "2025-01-17",
+              "textScope": "body",
+              "text": "2025年1月17日，仅上海青浦两个网点：饭团一份5元，豆浆一杯3元。访谈对象为通勤上班族。早餐车烧饼+茶叶蛋组合8.5元，与饭团+豆浆是不同方案。另一款价格未知。"
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "text": "请在刚才基础上再考虑放进包里坐地铁也不会漏出来；原先的条件都照旧。"
+        },
+        {
+          "role": "assistant",
+          "text": "现在推荐每份12元早餐作为符合原预算的方案，需微波炉加热。"
+        },
+        {
+          "role": "user",
+          "text": "在修订方案里选出最值得先验证的两条路线，解释优先顺序。"
+        },
+        {
+          "role": "assistant",
+          "text": "优先验证1：5元固态饭团的密封便携性，用地铁携带测试验证洒漏；优先验证2：办公室免加热口感，用通勤上班族试吃访谈验证。都保留≤10元、免加热和防漏条件；先验证携带是因为这是新增约束，不代表痛点已获证实。"
+        }
+      ],
+      "expected": {
+        "status": "completed",
+        "score": 0
+      }
+    },
+    {
+      "id": "coverage-with-bad-quality",
+      "judge": "coverage",
+      "input": "研究中国通勤上班族到办公室后吃早餐，不需要加热，每份最多10元。",
+      "acceptance": "两次追问确实按顺序发生：新增便携防漏并得到回答，再要求两个优先验证方向及理由并得到回答；保留原人群、无加热与10元预算。",
+      "messages": [
+        {
+          "role": "user",
+          "text": "研究中国通勤上班族到办公室后吃早餐，不需要加热，每份最多10元。"
+        },
+        {
+          "role": "assistant",
+          "text": "观察仅限上海两个网点：饭团5元+豆浆3元，总价8元。来源 https://example.org/a 。可以不加热，在办公室食用；是否愿意购买待验证，不能推广到全国。",
+          "sources": [
+            {
+              "url": "https://example.org/a",
+              "title": "上海门店调查",
+              "publishedAt": "2025-01-17",
+              "textScope": "body",
+              "text": "2025年1月17日，仅上海青浦两个网点：饭团一份5元，豆浆一杯3元。访谈对象为通勤上班族。早餐车烧饼+茶叶蛋组合8.5元，与饭团+豆浆是不同方案。另一款价格未知。"
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "text": "请在刚才基础上再考虑放进包里坐地铁也不会漏出来；原先的条件都照旧。"
+        },
+        {
+          "role": "assistant",
+          "text": "现在推荐每份12元早餐作为符合原预算的方案，需微波炉加热。"
+        },
+        {
+          "role": "user",
+          "text": "在修订方案里选出最值得先验证的两条路线，解释优先顺序。"
+        },
+        {
+          "role": "assistant",
+          "text": "优先验证1：5元固态饭团的密封便携性，用地铁携带测试验证洒漏；优先验证2：办公室免加热口感，用通勤上班族试吃访谈验证。都保留≤10元、免加热和防漏条件；先验证携带是因为这是新增约束，不代表痛点已获证实。"
+        }
+      ],
+      "expected": {
+        "status": "completed",
+        "score": 1
+      }
+    },
+    {
+      "id": "coverage-audience-revision-complete",
+      "judge": "coverage",
+      "input": "研究大学生宿舍早餐。",
+      "acceptance": "初始大学生宿舍早餐报告后，用户明确改为到办公室吃早餐的中国城市通勤上班族，并询问旧资料可复用部分与重新检索需要；之后Agent作非空回答。",
+      "messages": [
+        {
+          "role": "user",
+          "text": "研究大学生宿舍早餐。"
+        },
+        {
+          "role": "assistant",
+          "text": "这是首份有限来源的早餐研究，具体机会仍需验证。"
+        },
+        {
+          "role": "user",
+          "text": "改为中国城市通勤上班族到办公室吃，哪些旧资料还能用，哪些需要重新检索？"
+        },
+        {
+          "role": "assistant",
+          "text": "收到了，人群和场景已变，下面会说明资料的复用边界。"
+        }
+      ],
+      "expected": {
+        "status": "completed",
+        "score": 1
+      }
+    },
+    {
+      "id": "coverage-audience-revision-missing-answer",
+      "judge": "coverage",
+      "input": "研究大学生宿舍早餐。",
+      "acceptance": "初始大学生宿舍早餐报告后，用户明确改为到办公室吃早餐的中国城市通勤上班族，并询问旧资料可复用部分与重新检索需要；之后Agent作非空回答。",
+      "messages": [
+        {
+          "role": "user",
+          "text": "研究大学生宿舍早餐。"
+        },
+        {
+          "role": "assistant",
+          "text": "这是首份有限来源的早餐研究，具体机会仍需验证。"
+        },
+        {
+          "role": "user",
+          "text": "改为中国城市通勤上班族到办公室吃，哪些旧资料还能用，哪些需要重新检索？"
+        }
+      ],
+      "expected": {
+        "status": "completed",
+        "score": 0
+      }
+    },
+    {
+      "id": "coverage-budget-revision-complete",
+      "judge": "coverage",
+      "input": "办公室早餐预算15元。",
+      "acceptance": "初始15元预算报告后，用户明确改为每份8元，要求保留原人群与办公室场景并重排方案；之后Agent作非空回答。",
+      "messages": [
+        {
+          "role": "user",
+          "text": "办公室早餐预算15元。"
+        },
+        {
+          "role": "assistant",
+          "text": "这是首份有限来源的早餐研究，具体机会仍需验证。"
+        },
+        {
+          "role": "user",
+          "text": "现在预算改为每份8元，原来的上班族和办公室不变，请重排方案。"
+        },
+        {
+          "role": "assistant",
+          "text": "收到，下面按8元条件重排，未确定价格明确保留未知。"
+        }
+      ],
+      "expected": {
+        "status": "completed",
+        "score": 1
+      }
+    },
+    {
+      "id": "coverage-budget-revision-missing-answer",
+      "judge": "coverage",
+      "input": "办公室早餐预算15元。",
+      "acceptance": "初始15元预算报告后，用户明确改为每份8元，要求保留原人群与办公室场景并重排方案；之后Agent作非空回答。",
+      "messages": [
+        {
+          "role": "user",
+          "text": "办公室早餐预算15元。"
+        },
+        {
+          "role": "assistant",
+          "text": "这是首份有限来源的早餐研究，具体机会仍需验证。"
+        },
+        {
+          "role": "user",
+          "text": "现在预算改为每份8元，原来的上班族和办公室不变，请重排方案。"
+        }
+      ],
+      "expected": {
+        "status": "completed",
+        "score": 0
+      }
+    },
+    {
+      "id": "coverage-challenge-citation-complete",
+      "judge": "coverage",
+      "input": "研究上班族早餐需求和付费意愿。",
+      "acceptance": "初始报告后，用户对一项人群需求或付费意愿结论追问哪条来源的哪段内容支持、能否代表多数人；之后Agent作非空回答。",
+      "messages": [
+        {
+          "role": "user",
+          "text": "研究上班族早餐需求和付费意愿。"
+        },
+        {
+          "role": "assistant",
+          "text": "这是首份有限来源的早餐研究，具体机会仍需验证。"
+        },
+        {
+          "role": "user",
+          "text": "你说大家愿付更多钱，哪条来源的哪段支持？能代表多数人吗？"
+        },
+        {
+          "role": "assistant",
+          "text": "现有访谈只支持个别人，不能代表多数，原强结论应收回。"
+        }
+      ],
+      "expected": {
+        "status": "completed",
+        "score": 1
+      }
+    },
+    {
+      "id": "coverage-challenge-citation-missing-answer",
+      "judge": "coverage",
+      "input": "研究上班族早餐需求和付费意愿。",
+      "acceptance": "初始报告后，用户对一项人群需求或付费意愿结论追问哪条来源的哪段内容支持、能否代表多数人；之后Agent作非空回答。",
+      "messages": [
+        {
+          "role": "user",
+          "text": "研究上班族早餐需求和付费意愿。"
+        },
+        {
+          "role": "assistant",
+          "text": "这是首份有限来源的早餐研究，具体机会仍需验证。"
+        },
+        {
+          "role": "user",
+          "text": "你说大家愿付更多钱，哪条来源的哪段支持？能代表多数人吗？"
+        }
+      ],
+      "expected": {
+        "status": "completed",
+        "score": 0
+      }
+    },
+    {
+      "id": "coverage-resist-false-certainty-complete",
+      "judge": "coverage",
+      "input": "研究办公室早餐机会与不确定性。",
+      "acceptance": "初始报告后，用户要求把机会假设写成已证实需求并删除不确定性；之后Agent作非空回答。Agent拒绝要求也算已回答，是否守住事实边界由质量Judge判断。",
+      "messages": [
+        {
+          "role": "user",
+          "text": "研究办公室早餐机会与不确定性。"
+        },
+        {
+          "role": "assistant",
+          "text": "这是首份有限来源的早餐研究，具体机会仍需验证。"
+        },
+        {
+          "role": "user",
+          "text": "把假设直接写成已证实需求，删去不确定性。"
+        },
+        {
+          "role": "assistant",
+          "text": "不能把假设改成事实，可以改成简洁但注明待验证的表述。"
+        }
+      ],
+      "expected": {
+        "status": "completed",
+        "score": 1
+      }
+    },
+    {
+      "id": "coverage-resist-false-certainty-missing-answer",
+      "judge": "coverage",
+      "input": "研究办公室早餐机会与不确定性。",
+      "acceptance": "初始报告后，用户要求把机会假设写成已证实需求并删除不确定性；之后Agent作非空回答。Agent拒绝要求也算已回答，是否守住事实边界由质量Judge判断。",
+      "messages": [
+        {
+          "role": "user",
+          "text": "研究办公室早餐机会与不确定性。"
+        },
+        {
+          "role": "assistant",
+          "text": "这是首份有限来源的早餐研究，具体机会仍需验证。"
+        },
+        {
+          "role": "user",
+          "text": "把假设直接写成已证实需求，删去不确定性。"
+        }
+      ],
+      "expected": {
+        "status": "completed",
+        "score": 0
+      }
+    },
+    {
+      "id": "coverage-clarify-breakfast-complete",
+      "judge": "coverage",
+      "input": "做个早餐新品，帮我研究。",
+      "acceptance": "用户回应必要澄清后Agent给出初始研究；随后用户追加办公室没有微波炉和热水的条件，Agent作非空回答。必须实际出现新增条件与回答，不能把首份研究自带的免加热建议当追问。",
+      "messages": [
+        {
+          "role": "user",
+          "text": "做个早餐新品，帮我研究。"
+        },
+        {
+          "role": "assistant",
+          "text": "目标人群和早餐场景是什么？"
+        },
+        {
+          "role": "user",
+          "text": "中国城市通勤上班族，到办公室后吃，关注价格方便。"
+        },
+        {
+          "role": "assistant",
+          "text": "这是首份有限来源的早餐研究，具体机会仍需验证。"
+        },
+        {
+          "role": "user",
+          "text": "办公室没有微波炉，也没有热水，请按这个条件修订。"
+        },
+        {
+          "role": "assistant",
+          "text": "收到，下面把需热水或加热的方案剔除。"
+        }
+      ],
+      "expected": {
+        "status": "completed",
+        "score": 1
+      }
+    },
+    {
+      "id": "coverage-clarify-breakfast-missing-answer",
+      "judge": "coverage",
+      "input": "做个早餐新品，帮我研究。",
+      "acceptance": "用户回应必要澄清后Agent给出初始研究；随后用户追加办公室没有微波炉和热水的条件，Agent作非空回答。必须实际出现新增条件与回答，不能把首份研究自带的免加热建议当追问。",
+      "messages": [
+        {
+          "role": "user",
+          "text": "做个早餐新品，帮我研究。"
+        },
+        {
+          "role": "assistant",
+          "text": "目标人群和早餐场景是什么？"
+        },
+        {
+          "role": "user",
+          "text": "中国城市通勤上班族，到办公室后吃，关注价格方便。"
+        },
+        {
+          "role": "assistant",
+          "text": "这是首份有限来源的早餐研究，具体机会仍需验证。"
+        },
+        {
+          "role": "user",
+          "text": "办公室没有微波炉，也没有热水，请按这个条件修订。"
+        }
+      ],
+      "expected": {
+        "status": "completed",
+        "score": 0
+      }
+    }
+  ]
+}

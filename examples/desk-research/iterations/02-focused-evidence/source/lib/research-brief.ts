@@ -1,0 +1,245 @@
+import { z } from "zod";
+import {
+  sourceIdInput,
+  type CapturedReference,
+  type ResearchInput,
+} from "./research.ts";
+
+// Facts have no free-form paraphrase field. Interpretation is attached to one
+// cited case; broader opportunities have a separate, explicitly tentative form.
+export const briefInput = z.strictObject({
+  title: z.string().trim().min(1).max(200),
+  scope: z
+    .string()
+    .trim()
+    .min(1)
+    .max(400)
+    .describe("本轮用户明确的人群、场景及限制；不是市场结论。"),
+  status: z.enum(["researching", "complete"]),
+  observations: z
+    .array(
+      z.strictObject({
+        sourceId: sourceIdInput,
+        subject: z
+          .string()
+          .trim()
+          .min(1)
+          .max(120)
+          .describe(
+            "本条判断涉及的具体产品、组合、行为或样本；同页有多个对象时分别记录，不把整页当成一种方案。",
+          ),
+        quoteId: z
+          .string()
+          .regex(/^p_[a-f0-9]{16}$/u)
+          .describe(
+            "选择该sourceId返回的passageId，系统取回原文，不手抄摘录。",
+          ),
+        constraint: z
+          .string()
+          .trim()
+          .min(1)
+          .max(300)
+          .describe("本题待对照的具体用户条件。"),
+        fit: z.enum(["match", "mismatch", "unknown"]),
+        constraintEvidenceId: z
+          .string()
+          .regex(/^p_[a-f0-9]{16}$/u)
+          .nullable()
+          .describe(
+            "直接支持fit的同源passageId；只有价格、销量或商品名不能推导使用条件。来源没有涉及用户条件时填null且fit=unknown。",
+          ),
+      }),
+    )
+    .max(4)
+    .describe(
+      "短简报最多4条关键观察；按用户问题选择来源，不逐条收录全部搜索结果。",
+    ),
+  hypotheses: z
+    .array(
+      z.strictObject({
+        question: z
+          .string()
+          .trim()
+          .min(1)
+          .max(180)
+          .describe("待验证的机会问题；前提也不能预设未被证明的市场事实。"),
+        basedOn: z
+          .array(z.number().int().min(1).max(4))
+          .max(4)
+          .describe(
+            "引用本次observations的序号（从1开始），不是sourceId；无来源启发时填空数组。",
+          ),
+        test: z
+          .string()
+          .trim()
+          .min(1)
+          .max(250)
+          .describe("具体对象与验证动作。"),
+        measure: z.string().trim().min(1).max(180),
+        abandonIf: z
+          .string()
+          .trim()
+          .min(1)
+          .max(180)
+          .describe(
+            "会推翻假设的实际反证或实验结果；没有搜到资料只能说明缺证，不能证明不存在或不喜欢。",
+          ),
+      }),
+    )
+    .max(2),
+  gaps: z
+    .array(z.string().trim().min(1).max(180))
+    .max(4)
+    .describe("本次证据尚未回答的问题，不把没有查到改写成市场不存在。"),
+});
+export type ResearchBrief = z.infer<typeof briefInput>;
+
+const line = (text: string) =>
+  text.replace(/\s+/gu, " ").replace(/[\\`*_[\]<>#|]/gu, "\\$&");
+export function compileBrief(
+  brief: ResearchBrief,
+  catalog: Map<string, CapturedReference>,
+):
+  | { ok: true; record: ResearchInput }
+  | { ok: false; error: string; sourceId?: string } {
+  // Only model-authored text is checked. Captured passages and canonical URLs
+  // enter the report below through source/quote identities, never through text.
+  const authoredText = [
+    brief.title,
+    brief.scope,
+    ...brief.observations.flatMap(({ subject, constraint }) => [
+      subject,
+      constraint,
+    ]),
+    ...brief.hypotheses.flatMap(({ question, test, measure, abandonIf }) => [
+      question,
+      test,
+      measure,
+      abandonIf,
+    ]),
+    ...brief.gaps,
+  ];
+  if (authoredText.some((text) => /https?:\/\//iu.test(text)))
+    return {
+      ok: false,
+      error:
+        "Use sourceId/quoteId and basedOn citations, not typed URLs in brief text",
+    };
+  const sources: ResearchInput["sources"] = [];
+  const observations: string[] = [];
+  for (const observation of brief.observations) {
+    const source = catalog.get(observation.sourceId);
+    if (!source)
+      return {
+        ok: false,
+        error: "Uncaptured source identity",
+        sourceId: observation.sourceId,
+      };
+    const quote = source.passageEntries?.find(
+      (passage) => passage.passageId === observation.quoteId,
+    )?.text;
+    if (!quote)
+      return {
+        ok: false,
+        error: "Uncaptured passage identity for this source",
+        sourceId: observation.sourceId,
+      };
+    if (observation.fit !== "unknown" && !observation.constraintEvidenceId)
+      return {
+        ok: false,
+        error: "Fit verdict requires a constraint evidence passage",
+        sourceId: observation.sourceId,
+      };
+    const constraintEvidence = observation.constraintEvidenceId
+      ? source.passageEntries?.find(
+          (passage) => passage.passageId === observation.constraintEvidenceId,
+        )?.text
+      : null;
+    if (observation.constraintEvidenceId && !constraintEvidence)
+      return {
+        ok: false,
+        error: "Uncaptured constraint evidence passage for this source",
+        sourceId: observation.sourceId,
+      };
+    sources.push({
+      sourceId: source.sourceId,
+      title: source.title || "Untitled source",
+      url: source.url,
+      excerpt: quote,
+      quoteId: observation.quoteId,
+      constraintEvidenceId: observation.constraintEvidenceId,
+    });
+    const fit = { match: "匹配", mismatch: "不匹配", unknown: "未知" }[
+      observation.fit
+    ];
+    observations.push(
+      [
+        `### 来源记录 ${observations.length + 1}：${line(source.title || "Untitled source")}`,
+        `具体案例：${line(observation.subject)}`,
+        `来源：${source.url}；检索元数据日期（未核验）：${line(source.publishedAt || "未知")}`,
+        "原文摘录：",
+        quote
+          .split(/\r?\n/u)
+          .map((text) => `> ${text}`)
+          .join("\n"),
+        constraintEvidence &&
+        observation.constraintEvidenceId === observation.quoteId
+          ? "条件依据：同上原文。"
+          : constraintEvidence
+            ? `条件依据（同源原文）：\n${constraintEvidence
+                .split(/\r?\n/u)
+                .map((text) => `> ${text}`)
+                .join("\n")}`
+            : "条件依据：本来源未提供可引用的直接依据，适配性未知。",
+        `仅对该来源案例的适配推断：针对“${line(observation.constraint)}”，${fit}。`,
+      ].join("\n\n"),
+    );
+  }
+  const hypotheses: string[] = [];
+  for (const hypothesis of brief.hypotheses) {
+    const references: string[] = [];
+    for (const observationIndex of hypothesis.basedOn) {
+      const source = sources[observationIndex - 1];
+      if (!source)
+        return {
+          ok: false,
+          error: `Hypothesis refers to missing observation ${observationIndex}`,
+        };
+      references.push(`来源记录 ${observationIndex}`);
+    }
+    hypotheses.push(
+      [
+        `### 待验证问题 ${hypotheses.length + 1}：${line(hypothesis.question)}`,
+        ...(references.length
+          ? [`启发记录（不证明问题成立）：${references.join("、")}`]
+          : []),
+        `验证对象与动作：${line(hypothesis.test)}`,
+        `观察指标：${line(hypothesis.measure)}`,
+        `放弃条件：${line(hypothesis.abandonIf)}`,
+      ].join("\n\n"),
+    );
+  }
+  return {
+    ok: true,
+    record: {
+      title: brief.title,
+      scope: brief.scope,
+      status: brief.status,
+      sources,
+      report: [
+        `# ${line(brief.title)}`,
+        `研究范围与用户条件：${line(brief.scope)}`,
+        "证据边界：摘录仅代表该来源的表述；适配判断只对具体案例和所列条件成立，其他条件未知。检索元数据日期不等于已核验的正文发布日期或价格日期。",
+        "## 逐来源记录与案例适配",
+        ...observations,
+        ...(observations.length
+          ? []
+          : ["没有取得可逐字核对的证据，不能形成事实发现。"]),
+        "## 待验证机会",
+        ...hypotheses,
+        "## 本次证据缺口",
+        ...brief.gaps.map((gap) => `- ${line(gap)}`),
+      ].join("\n\n"),
+    },
+  };
+}

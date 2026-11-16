@@ -33,4 +33,16 @@ Run：`424119d3-9ee8-48de-bb94-13f2a16ebb80`；运行状态：`failed`。以下�
 
 `error` / `—` 是错误或缺失，不能补成 0。空输出、部分输出或 0 个链接不能凭 URL 检查获得质量通过。URL 能在结果中找到，也不等于正文支持对应主张。
 
-[逐题回答与 trajectory](results.json) · [Codex 复核与争议](review-notes.json) · [冻结源码](source/instructions.ts) · [相邻版本的完整差异](changes.diff)
+[逐题回答与 trajectory](results.json) · [Codex 复核与争议](review-notes.json) · [当前源码](source/instructions.ts) · [相邻版本的完整差异](changes.diff)
+
+## 2026-11-16 修复
+
+当前 `source/` 已同步预算核对、精确引用、短摘录保存和独立多轮覆盖检查。各题必达交互记录在metadata.coverage，与Agent回答质量分开。首次 `results.json` 与 `changes.diff` 对应 [原始清单](original-manifest.json)，不代表当前源码的验收结果；[当前清单](manifest.json) 记录修复后的哈希。教学与复验步骤见 [评测校准说明](../../evaluation/README.md)。完整验收结果另行保存，不覆盖首次失败。
+
+## 同规则重评首次轨迹
+
+[独立重评分](rescored-20261116.json)使用2026-11-16的新scope/evidence/inference规则，保留首次运行与评分。它检查旧回答，不是当前修复源码的执行验收。评分错误与旧执行失败均未补分；不能仅比较已完成项的平均分推导质量提升。
+
+## 2026-11-16 R2独立验收
+
+当前源码包含共同正确性修复；首次results和original-manifest保持不变。[新指令定向结果](r2-targeted-20261116.json)与[完整R2状态](../../VALIDATION.md)分别记录执行、质量和评分错误，不拼分。

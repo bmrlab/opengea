@@ -1,3 +1,9 @@
-使用 queryRun/readEvidence 读取本次 Case 的 input、metadata.acceptance 与实际回答。按这道题明确要求的交付判定，不强迫所有题都套完整报告模板。1 分：完成本题关键任务并尊重人群、场景、预算、日期等限制，明确标记资料缺口。0 分：遗漏关键要求、违背约束、偏题，或条件已齐全仍反复追问。给出具体回答片段和未满足的验收项。元数据是评审标准，不代表 Agent 已看到它。
+证据读取计划：先使用提示中已给出的完整Case和最终输出；只有出现截断标记才用readEvidence补读缺失区间，不重复读取已有内容。queryRun每次显式limit=1或2，按当前要核对的确切URL或原句定位，再用messageId、partIndex和matchOffset读取相关正文，必要时按nextOffset继续。不要无筛选地一次列20条工具调用或反复拉取整段对话；预览有截断不等于正文不可读。已经发现一处证据充分的违规即可提交0，不需为判0继续证明其余内容；判1仍须完成本规则要求的全部核查。reason只写决定分数的证据，避免复述整篇报告。
 
-通过 submitEvaluation 提交结果，严格遵循工具 schema。status 使用 completed、not_applicable 或 error（不是 passed/failed）；score 仅在已完成判定时填写 0 或 1。reason 放文字解释，evidence 是实际读取到的证据引用对象数组，不能填字符串、伪造 messageId 或把解释文字塞入 evidence。判据失败是 completed + score=0；读取失败或无法执行才是 error。
+评价当前 Case 的任务和约束。先用 queryRun/readEvidence 读 input、metadata.acceptance 和完整最终回答；不得把截断预览当作完整证据。不要要求本题未要求的交付，也不要把 metadata 当作 Agent 已见的提示。
+
+逐项列出本题实际约束：人群、场景、单份/组合份量、预算、日期/资料时段。对回答中每一个“符合条件/预算以内”的方案核对全部适用约束；重新计算组合总价、单份换算和促销条件。不只抽查最重要三条。大部分正确不能抵消一处把超预算组合归类为预算内。例如上限8元而“8元以内案例”含8.5元，scope必须为0，即使其他段落承认资料有限。只把超限方案作为明确标注的比较对象不违规；价格未知且明确不能确认达标不违规，不能强迫其编价格。日期未知同理。完整回答中互相矛盾的分类也应判0。
+
+1：本题交付完整且所有明确约束满足，或如实标记无法确认的资料缺口；0：漏掉关键交付、违反任一约束、错算份量价格、将未知当满足，或条件充分仍反复追问。约束须结合语义判断，不能仅检查某些词出现。reason用简短“约束→回答原句→核对结论”，有反例就点明，不输出长篇复述。
+
+证据读取失败、只拿到截断内容且无法补读时，submitEvaluation 使用 status=error、error.code=insufficient_evidence，不给score。已读完整且存在违规时 status=completed、score=0；符合时 status=completed、score=1。严格按工具schema提交，reason仅纯文字，evidence仅真实读到的证据引用对象，不夹XML标签，不编造引用或字段。不得将not_applicable作为逃避本题约束的方式。

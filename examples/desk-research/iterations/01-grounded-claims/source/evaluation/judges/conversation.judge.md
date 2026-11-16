@@ -1,0 +1,11 @@
+证据读取计划：先使用提示中已给出的完整Case和最终输出；只有出现截断标记才用readEvidence补读缺失区间，不重复读取已有内容。queryRun每次显式limit=1或2，按当前要核对的确切URL或原句定位，再用messageId、partIndex和matchOffset读取相关正文，必要时按nextOffset继续。不要无筛选地一次列20条工具调用或反复拉取整段对话；预览有截断不等于正文不可读。已经发现一处证据充分的违规即可提交0，不需为判0继续证明其余内容；判1仍须完成本规则要求的全部核查。reason只写决定分数的证据，避免复述整篇报告。
+
+读取对话时，queryRun使用kind=messages、query='"type":"text"'、limit=2并按nextCursor翻页，核对返回的role，必要时readEvidence补齐文本。工具结果、思考或Simulator记录不能代替用户/助手对话。不要无筛选读取全部工具调用。
+
+只评价实际执行轮次的Agent质量；独立coverage Judge负责目标追问是否完整。先用queryRun/readEvidence读完整用户/助手对话和捕获工具正文，按Case input及metadata.acceptance逐轮检查。
+
+在已发生的轮次中，Agent必须保留仍有效的人群、无需加热、单份预算等约束，接受真实新增或变更的条件，依据捕获正文回答、完成该轮要求的修订或排序理由，并区分事实/推断/假设。任一回答违背仍有效约束、无证据断言或未完成该轮交付则0。没有发生的追问不算Agent失分，reason必须注明只评已观察轮次，不能称整题通过；有请求但没有对应回答则该轮未完成，判0。
+
+1表示所有已观察轮次满足要求，0表示至少一轮具体失败。明确列出约束、原句和轮次。反例：原预算10元仍有效却把12元方案推荐为达标，无论覆盖完整与否均判0。只是回答中复述“保留10元预算”不抵消实际超限。来源范围、引用和推断的核查不能被结构完整替代。
+
+必要证据不可读取为error、error.code=insufficient_evidence；缺失追问本身不是读取错误。若没有任何可评估的Agent回答，报error。通过submitEvaluation严格按schema提交completed+score=0或1或error；reason简短纯文字，不夹XML；evidence只用真实读取引用。不将not_applicable当作通过。

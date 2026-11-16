@@ -1,20 +1,29 @@
 import { defineTool } from "@gea-ai/agent-sdk";
 import { z } from "zod";
 import search from "../connectors/search";
-import { webUrl, parseContentsResponse } from "../lib/evidence";
+import { webUrl, parseContentsResponse, sourceWindow } from "../lib/evidence";
+import { captureSourceUrls } from "../lib/research";
 export default defineTool({
   name: "read_source",
   description:
-    "通过 Exa 读取 search_sources 已返回的关键来源，核对上下文、营销性质和反向信息。最多返回 12000 字符，不保证完整页面；失败时保留资料缺口。",
-  input: z.object({ url: webUrl.pipe(z.string().max(2048)) }),
+    "按完整URL读取该来源的真实正文片段，每次最多2000字符（工作台版本为带passageId的passages）。可用query定位原文短语及邻近上下文，或用offset/nextOffset继续读；每次最多提取页面前12000字符，不保证全文。queryFound=false只表示本次提取未找到该短语；不得补写正文或把它解释为页面不存在。",
+  input: z.object({
+    url: webUrl.pipe(z.string().max(2048)),
+    query: z.string().min(2).max(120).optional(),
+    offset: z.number().int().nonnegative().max(12000).optional(),
+  }),
   connectors: { search },
-  execute: async ({ url }, context) =>
-    parseContentsResponse(
+  execute: async ({ url, query, offset }, context) => {
+    const result = parseContentsResponse(
       await context.connectors.search.invoke("request", {
         method: "POST",
         path: "/contents",
         body: { urls: [url], text: { maxCharacters: 12000 } },
       }),
       url,
-    ),
+    );
+    const window = sourceWindow(result, { query, offset });
+    const [source] = await captureSourceUrls([window.source], context);
+    return { ...window, source };
+  },
 });

@@ -2,13 +2,23 @@ import { createHash } from "node:crypto";
 import { readFile, mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 
-const [directory, destination] = process.argv.slice(2);
+const [directory, destination, evaluationDirectory] = process.argv.slice(2);
 if (!directory || !destination)
   throw new Error(
-    "Usage: node iterations/analyze-eval.mjs <result-directory> <new-report.json>",
+    "Usage: node iterations/analyze-eval.mjs <result-directory> <new-report.json> [evaluation-directory]",
   );
 const root = path.resolve(directory);
 const meta = JSON.parse(await readFile(path.join(root, "run.json"), "utf8"));
+const evaluationRoot = evaluationDirectory
+  ? path.resolve(evaluationDirectory)
+  : null;
+const evaluation = evaluationRoot
+  ? JSON.parse(
+      await readFile(path.join(evaluationRoot, "evaluation.json"), "utf8"),
+    )
+  : null;
+if (evaluation && evaluation.runId !== meta.runId)
+  throw new Error("Evaluation belongs to a different Run");
 const hash = (value) => createHash("sha256").update(value).digest("hex");
 const optional = async (file) => {
   try {
@@ -34,10 +44,35 @@ const sourceInfo = (source) => ({
   url: cleanUrl(source.url),
   title: source.title,
   publishedAt: source.publishedAt,
-  textLength: source.text?.length ?? 0,
+  textLength: source.textLength ?? source.text?.length ?? 0,
   textScope: source.textScope,
   truncated: source.truncated,
 });
+const publicConversation = (conversation) =>
+  conversation
+    ? {
+        schemaVersion: conversation.schemaVersion,
+        baselineEligible: conversation.baselineEligible,
+        intervened: conversation.intervened,
+        stopReason: conversation.stopReason,
+        turns: (conversation.turns ?? []).map((turn) => ({
+          turn: turn.turn,
+          input: turn.input,
+          inputMessageId: turn.inputMessageId,
+          inputSource: turn.inputSource,
+          target: turn.target
+            ? {
+                runId: turn.target.runId,
+                status: turn.target.status,
+                messageIds: turn.target.messageIds,
+              }
+            : undefined,
+          simulator: turn.simulator
+            ? { runId: turn.simulator.runId, status: turn.simulator.status }
+            : undefined,
+        })),
+      }
+    : undefined;
 const canonicalCitation = (value) => {
   try {
     const url = new URL(value);
@@ -90,17 +125,34 @@ const citationAudit = (output, messages) => {
 };
 const cases = [];
 for (const agent of meta.agents) {
+  const selectedCases = evaluation
+    ? agent.cases.filter((c) =>
+        evaluation.cases.some(
+          (e) => e.agentKey === agent.key && e.caseId === c.id,
+        ),
+      )
+    : agent.cases;
+  if (!selectedCases.length) continue;
   const benchmark = JSON.parse(
-    await readFile(path.join(root, agent.benchmarkArtifact), "utf8"),
+    await readFile(
+      path.join(evaluationRoot ?? root, agent.benchmarkArtifact),
+      "utf8",
+    ),
   );
-  for (const testCase of agent.cases) {
+  for (const testCase of selectedCases) {
+    const evaluationCase = evaluation?.cases.find(
+      (e) => e.agentKey === agent.key && e.caseId === testCase.id,
+    );
     const scored = await optional(
-      path.join(root, "cases", agent.key, `${testCase.id}.json`),
+      evaluationCase
+        ? path.join(evaluationRoot, evaluationCase.result)
+        : path.join(root, "cases", agent.key, `${testCase.id}.json`),
     );
     const execution = await optional(
       path.join(root, "executions", agent.key, `${testCase.id}.json`),
     );
-    const raw = scored ?? execution;
+    // An unfinished selected evaluation must never inherit a prior passing grade.
+    const raw = evaluation ? scored : (scored ?? execution);
     if (!raw) {
       cases.push({ id: testCase.id, status: "missing" });
       continue;
@@ -202,7 +254,9 @@ for (const agent of meta.agents) {
         errors: judges.filter((j) => j.status === "error").length,
       },
       output: run.output,
-      conversation: artifact.conversation ?? run.conversation,
+      conversation: publicConversation(
+        artifact.conversation ?? run.conversation,
+      ),
       trajectory,
       citationAudit: citationAudit(run.output, run.messages),
       rawArtifactSha256: hash(raw),
@@ -217,6 +271,19 @@ const report = {
   completedAt: meta.completedAt,
   judgeModel: meta.judgeModel,
   runtime: meta.runtime,
+  evaluation: evaluation
+    ? {
+        evaluationId: evaluation.evaluationId,
+        status: evaluation.status,
+        judgeSource: evaluation.judgeSource,
+        judgeModel: evaluation.judgeModel,
+        judgeRuntimeHash: evaluation.judgeRuntimeHash,
+        maxSteps: evaluation.maxSteps,
+        timeoutMs: evaluation.timeoutMs,
+        startedAt: evaluation.startedAt,
+        completedAt: evaluation.completedAt,
+      }
+    : undefined,
   targets: meta.agents.map((a) => ({
     key: a.key,
     agentSnapshotHash: a.agentSnapshotHash,

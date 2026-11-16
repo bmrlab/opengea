@@ -34,9 +34,9 @@
 
 The current Exa development subset is breakfast-scope, budget-ceiling, counter-evidence and validation-plan. The other 8 single-turn Cases and 6 multi-turn Cases are regression coverage, reported separately. Earlier social-search subsets and results are retained in [history](iterations/history/README.md); they are not the current baseline. See the [fixed protocol and actual iterations](iterations/README.md).
 
-Each single-turn Case requires scope, evidence and inference to pass. Multi-turn grading checks whether the intended follow-up actually occurred and whether remaining constraints survived. Simulator done is not a quality pass.
+Each single-turn Case requires scope, evidence and inference to pass. Multi-turn Cases require both coverage and conversation. Each Case's metadata.coverage names its required user events and responses; coverage checks their actual occurrence and order. Conversation grades the Agent's observed answers. Missing coverage prevents a full pass while preserving observed answer quality. Simulator done is not a quality pass.
 
-Case acceptance criteria guide the Judge; they are not shown to the Agent. Changing Cases or Judges requires a fresh old-Agent baseline. Search results can drift, so one improved run does not establish a durable improvement.
+Case acceptance criteria guide the Judge; they are not shown to the Agent. After changing Judges, rescore saved evidence consistently before comparing versions. Changed inputs or Agent behavior require fresh executions. Search results can drift, so one improved run does not establish a durable improvement.
 
 ## 从业务风险设计分数
 
@@ -60,6 +60,7 @@ Exa baseline 的 `counter-evidence` 首次结果：evidence 为 **1**，inferenc
 
 要修订 Judge，应先用同一批已保存轨迹对照人工制定的判例，明确新旧分歧，再统一重评所有版本并保留独立评分记录。不能修改 Judge 后只重评新 Agent，或只重试失败的题直到出高分。真实运行、逐题分数和复核依据见 [iterations](iterations/README.md)。
 
+固定的32个合成正反例与真实Judge校准命令见 [evaluation](evaluation/README.md)。合成证据用于验证裁判；完整12单轮+6多轮真实执行用于检验Agent，两者分别报告。
 ## 真实评分的预算与失败保留
 
 Desk Research 的来源核对会执行多次模型与证据读取。Agent 的执行预算、Judge 的总请求预算和模型空闲预算分别计时。独立 `gea eval judge` 默认总预算为 120 秒；持续有输出也可能达到这个期限，不能把它解释为证据错误或 Exa 卡住。

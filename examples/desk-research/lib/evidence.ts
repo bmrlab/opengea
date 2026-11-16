@@ -44,11 +44,13 @@ function source(value: z.infer<typeof item>, limit: number, textScope: string) {
 }
 const limitations =
   "仅使用服务实际返回的网页文本；提取有长度上限，不能保证全文、图片、评论或视频已读取。检索时间不是来源发表时间，公开资料不是代表性抽样。";
+export const SEARCH_RESULT_LIMIT = 3;
+export const SEARCH_TEXT_LIMIT = 600;
 export function parseSearchResponse(value: unknown) {
   const result = readResponse(value);
   const sources = result.results
-    .slice(0, 5)
-    .map((value) => source(value, 6000, "search-text"));
+    .slice(0, SEARCH_RESULT_LIMIT)
+    .map((value) => source(value, SEARCH_TEXT_LIMIT, "search-text"));
   return {
     retrievedAt: new Date().toISOString(),
     sourceIndex: sources.map(({ title, url, publishedAt }) => ({
@@ -56,9 +58,40 @@ export function parseSearchResponse(value: unknown) {
       url,
       publishedAt,
     })),
-    sourceLimit: 5,
+    sourceLimit: SEARCH_RESULT_LIMIT,
     limitations,
     sources,
+  };
+}
+
+// Keep each requested passage next to its source identity. Search previews are
+// for choosing pages; this reader exposes exact captured text without forcing
+// the model to retrieve repeated, whole multi-source tool payloads.
+export function sourceWindow(
+  result: ReturnType<typeof parseContentsResponse>,
+  input: { offset?: number; query?: string },
+) {
+  const text = result.source.text;
+  const match = input.query ? text.indexOf(input.query) : -1;
+  const offset =
+    input.query && match >= 0 ? Math.max(0, match - 200) : (input.offset ?? 0);
+  if (offset > text.length)
+    throw new Error("Requested offset is outside the captured text.");
+  const end = Math.min(text.length, offset + 2000);
+  return {
+    ...result,
+    ...(input.query ? { queryFound: match >= 0 } : {}),
+    source: {
+      ...result.source,
+      text: text.slice(offset, end),
+      textOffset: offset,
+      nextOffset: end < text.length ? end : null,
+      extractedCharacters: text.length,
+      extractionLimit: result.source.textLimit,
+      extractionTruncated: result.source.truncated,
+      textLimit: 2000,
+      truncated: result.source.truncated || offset > 0 || end < text.length,
+    },
   };
 }
 export function parseContentsResponse(value: unknown, requestedUrl: string) {

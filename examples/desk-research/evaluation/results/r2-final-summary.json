@@ -1,0 +1,1089 @@
+{
+  "terminal": "OPENGEA-DESK-RESEARCH-R2-BLOCKED",
+  "policy": "Each native run/evaluation remains independent. No old score is backfilled; execution errors retain native Judge skipping.",
+  "agent": {
+    "model": "gea-pro",
+    "maxSteps": 16,
+    "timeoutMs": 240000
+  },
+  "judge": {
+    "model": "gea-pro",
+    "maxSteps": 12,
+    "timeoutMs": 300000
+  },
+  "coverageCalibration": {
+    "fixtureCount": 19,
+    "passed": true,
+    "notApplicable": 0,
+    "evaluationId": "95f16dde-c610-4bbf-9729-638cda91eb19"
+  },
+  "batches": [
+    {
+      "batch": "r2-quality-four",
+      "label": "03 已失败四题",
+      "sourceCommit": "60f9e1c",
+      "sdkCommit": "5bd4093e",
+      "runId": "34a851fd-5ce9-4744-b854-450561b3856f",
+      "evaluation": {
+        "evaluationId": "8426969b-926e-434a-ab40-6b0081dce945",
+        "status": "completed",
+        "judgeSource": "snapshot",
+        "judgeModel": "gea-pro",
+        "judgeRuntimeHash": "sha256:7b3289f03b6af30290da63f766908087ac49f02ca5a3d0e08baa8662da950303",
+        "maxSteps": 12,
+        "timeoutMs": 300000,
+        "startedAt": "2026-11-16T06:47:16.494Z",
+        "completedAt": "2026-11-16T06:55:07.503Z"
+      },
+      "counts": {
+        "passed": 4,
+        "failed": 0,
+        "incomplete": 0,
+        "execution_error": 0,
+        "unscored": 0,
+        "missing": 0
+      },
+      "publicResult": "evaluation/results/r2-quality-four-share.json",
+      "cases": [
+        {
+          "id": "alternatives-not-products",
+          "status": "passed",
+          "judges": [
+            {
+              "id": "evidence",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "inference",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "scope",
+              "status": "completed",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "id": "audience-transfer",
+          "status": "passed",
+          "judges": [
+            {
+              "id": "evidence",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "inference",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "scope",
+              "status": "completed",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "id": "counter-evidence",
+          "status": "passed",
+          "judges": [
+            {
+              "id": "evidence",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "inference",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "scope",
+              "status": "completed",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "id": "validation-plan",
+          "status": "passed",
+          "judges": [
+            {
+              "id": "evidence",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "inference",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "scope",
+              "status": "completed",
+              "score": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "batch": "r2-remaining-single",
+      "label": "03 其余八单轮",
+      "sourceCommit": "60f9e1c",
+      "sdkCommit": "5bd4093e",
+      "runId": "e3f6af00-3150-4550-afce-2a24d3fa2712",
+      "evaluation": {
+        "evaluationId": "e4324b4f-c10a-4eaf-9899-4f6e00e6a946",
+        "status": "completed",
+        "judgeSource": "snapshot",
+        "judgeModel": "gea-pro",
+        "judgeRuntimeHash": "sha256:7b3289f03b6af30290da63f766908087ac49f02ca5a3d0e08baa8662da950303",
+        "maxSteps": 12,
+        "timeoutMs": 300000,
+        "startedAt": "2026-11-16T07:05:36.937Z",
+        "completedAt": "2026-11-16T07:20:01.215Z"
+      },
+      "counts": {
+        "passed": 6,
+        "failed": 1,
+        "incomplete": 1,
+        "execution_error": 0,
+        "unscored": 0,
+        "missing": 0
+      },
+      "publicResult": "iterations/03-scoped-inference/r2-remaining-single-20261116.json",
+      "cases": [
+        {
+          "id": "breakfast-scope",
+          "status": "incomplete",
+          "judges": [
+            {
+              "id": "evidence",
+              "status": "error",
+              "error": {
+                "code": "evidence_unavailable",
+                "message": "Artifact is outside this Case's evidence capability.",
+                "reason": "read_failed"
+              }
+            },
+            {
+              "id": "inference",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "scope",
+              "status": "completed",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "id": "budget-ceiling",
+          "status": "passed",
+          "judges": [
+            {
+              "id": "evidence",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "inference",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "scope",
+              "status": "completed",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "id": "conflicting-findings",
+          "status": "passed",
+          "judges": [
+            {
+              "id": "evidence",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "inference",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "scope",
+              "status": "completed",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "id": "freshness-limits",
+          "status": "passed",
+          "judges": [
+            {
+              "id": "evidence",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "inference",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "scope",
+              "status": "completed",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "id": "marketing-vs-users",
+          "status": "passed",
+          "judges": [
+            {
+              "id": "evidence",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "inference",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "scope",
+              "status": "completed",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "id": "no-microwave",
+          "status": "failed",
+          "judges": [
+            {
+              "id": "evidence",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "inference",
+              "status": "completed",
+              "score": 0
+            },
+            {
+              "id": "scope",
+              "status": "completed",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "id": "weak-market-size",
+          "status": "passed",
+          "judges": [
+            {
+              "id": "evidence",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "inference",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "scope",
+              "status": "completed",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "id": "willingness-to-pay",
+          "status": "passed",
+          "judges": [
+            {
+              "id": "evidence",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "inference",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "scope",
+              "status": "completed",
+              "score": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "batch": "r2-multi",
+      "label": "03 六多轮",
+      "sourceCommit": "60f9e1c",
+      "sdkCommit": "5bd4093e",
+      "runId": "2e047a19-5e19-4d1e-ae56-5e3e03999938",
+      "evaluation": {
+        "evaluationId": "25250228-50bb-4737-bf8d-d243ddecc7db",
+        "status": "completed",
+        "judgeSource": "snapshot",
+        "judgeModel": "gea-pro",
+        "judgeRuntimeHash": "sha256:d657bd4eba657daa70c724745beb87e4e5b48477eb9ed12e97ad82de50dc68e9",
+        "maxSteps": 12,
+        "timeoutMs": 300000,
+        "startedAt": "2026-11-16T07:10:35.903Z",
+        "completedAt": "2026-11-16T07:14:37.861Z"
+      },
+      "counts": {
+        "passed": 6,
+        "failed": 0,
+        "incomplete": 0,
+        "execution_error": 0,
+        "unscored": 0,
+        "missing": 0
+      },
+      "publicResult": "iterations/03-scoped-inference/r2-multi-20261116.json",
+      "cases": [
+        {
+          "id": "audience-revision",
+          "status": "passed",
+          "judges": [
+            {
+              "id": "conversation",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "coverage",
+              "status": "completed",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "id": "budget-revision",
+          "status": "passed",
+          "judges": [
+            {
+              "id": "conversation",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "coverage",
+              "status": "completed",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "id": "challenge-citation",
+          "status": "passed",
+          "judges": [
+            {
+              "id": "conversation",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "coverage",
+              "status": "completed",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "id": "clarify-breakfast",
+          "status": "passed",
+          "judges": [
+            {
+              "id": "conversation",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "coverage",
+              "status": "completed",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "id": "resist-false-certainty",
+          "status": "passed",
+          "judges": [
+            {
+              "id": "conversation",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "coverage",
+              "status": "completed",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "id": "retain-constraints",
+          "status": "passed",
+          "judges": [
+            {
+              "id": "conversation",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "coverage",
+              "status": "completed",
+              "score": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "batch": "r2-00",
+      "label": "00 四开发题",
+      "sourceCommit": "60f9e1c",
+      "sdkCommit": "5bd4093e",
+      "runId": "861ee390-72a2-41f6-991e-a1c9a86271cf",
+      "evaluation": {
+        "evaluationId": "39424cf6-8309-4e97-8049-0017a26742ce",
+        "status": "completed",
+        "judgeSource": "snapshot",
+        "judgeModel": "gea-pro",
+        "judgeRuntimeHash": "sha256:7b3289f03b6af30290da63f766908087ac49f02ca5a3d0e08baa8662da950303",
+        "maxSteps": 12,
+        "timeoutMs": 300000,
+        "startedAt": "2026-11-16T07:19:24.242Z",
+        "completedAt": "2026-11-16T07:29:53.427Z"
+      },
+      "counts": {
+        "passed": 3,
+        "failed": 0,
+        "incomplete": 1,
+        "execution_error": 0,
+        "unscored": 0,
+        "missing": 0
+      },
+      "publicResult": "iterations/00-exa-baseline/r2-results-20261116.json",
+      "cases": [
+        {
+          "id": "breakfast-scope",
+          "status": "incomplete",
+          "judges": [
+            {
+              "id": "evidence",
+              "status": "error",
+              "error": {
+                "code": "judge_failed",
+                "message": "response stream: error decoding response body"
+              }
+            },
+            {
+              "id": "inference",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "scope",
+              "status": "completed",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "id": "budget-ceiling",
+          "status": "passed",
+          "judges": [
+            {
+              "id": "evidence",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "inference",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "scope",
+              "status": "completed",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "id": "counter-evidence",
+          "status": "passed",
+          "judges": [
+            {
+              "id": "evidence",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "inference",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "scope",
+              "status": "completed",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "id": "validation-plan",
+          "status": "passed",
+          "judges": [
+            {
+              "id": "evidence",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "inference",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "scope",
+              "status": "completed",
+              "score": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "batch": "r2-01",
+      "label": "01 四开发题",
+      "sourceCommit": "60f9e1c",
+      "sdkCommit": "5bd4093e",
+      "runId": "f31d511f-c2a4-4017-a0f0-d1c7c6005ddd",
+      "evaluation": {
+        "evaluationId": "79ad2b8c-1341-4750-b6c7-9e6c157829d0",
+        "status": "completed",
+        "judgeSource": "snapshot",
+        "judgeModel": "gea-pro",
+        "judgeRuntimeHash": "sha256:7b3289f03b6af30290da63f766908087ac49f02ca5a3d0e08baa8662da950303",
+        "maxSteps": 12,
+        "timeoutMs": 300000,
+        "startedAt": "2026-11-16T07:25:19.265Z",
+        "completedAt": "2026-11-16T07:35:00.564Z"
+      },
+      "counts": {
+        "passed": 3,
+        "failed": 1,
+        "incomplete": 0,
+        "execution_error": 0,
+        "unscored": 0,
+        "missing": 0
+      },
+      "publicResult": "iterations/01-grounded-claims/r2-results-20261116.json",
+      "cases": [
+        {
+          "id": "breakfast-scope",
+          "status": "failed",
+          "judges": [
+            {
+              "id": "evidence",
+              "status": "completed",
+              "score": 0
+            },
+            {
+              "id": "inference",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "scope",
+              "status": "completed",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "id": "budget-ceiling",
+          "status": "passed",
+          "judges": [
+            {
+              "id": "evidence",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "inference",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "scope",
+              "status": "completed",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "id": "counter-evidence",
+          "status": "passed",
+          "judges": [
+            {
+              "id": "evidence",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "inference",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "scope",
+              "status": "completed",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "id": "validation-plan",
+          "status": "passed",
+          "judges": [
+            {
+              "id": "evidence",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "inference",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "scope",
+              "status": "completed",
+              "score": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "batch": "r2-02",
+      "label": "02 四开发题",
+      "sourceCommit": "60f9e1c",
+      "sdkCommit": "5bd4093e",
+      "runId": "ff07e9b3-5b91-432b-88a5-327620569f2f",
+      "evaluation": {
+        "evaluationId": "2e07cbad-dbed-4bee-816e-23ea838b00e6",
+        "status": "completed",
+        "judgeSource": "snapshot",
+        "judgeModel": "gea-pro",
+        "judgeRuntimeHash": "sha256:7b3289f03b6af30290da63f766908087ac49f02ca5a3d0e08baa8662da950303",
+        "maxSteps": 12,
+        "timeoutMs": 300000,
+        "startedAt": "2026-11-16T07:35:05.028Z",
+        "completedAt": "2026-11-16T07:42:18.784Z"
+      },
+      "counts": {
+        "passed": 1,
+        "failed": 0,
+        "incomplete": 3,
+        "execution_error": 0,
+        "unscored": 0,
+        "missing": 0
+      },
+      "publicResult": "iterations/02-focused-evidence/r2-results-20261116.json",
+      "cases": [
+        {
+          "id": "breakfast-scope",
+          "status": "incomplete",
+          "judges": [
+            {
+              "id": "evidence",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "inference",
+              "status": "error",
+              "error": {
+                "code": "judge_failed",
+                "message": "Agent execution failed (timeout). Diagnostic ID: e8606d17-1694-4e4f-a5d5-9dcf777040ba"
+              }
+            },
+            {
+              "id": "scope",
+              "status": "completed",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "id": "budget-ceiling",
+          "status": "incomplete",
+          "judges": [
+            {
+              "id": "evidence",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "inference",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "scope",
+              "status": "error",
+              "error": {
+                "code": "judge_failed",
+                "message": "Agent execution failed (timeout). Diagnostic ID: 6847b06d-d3fe-425e-8ada-9f98d360fc37"
+              }
+            }
+          ]
+        },
+        {
+          "id": "counter-evidence",
+          "status": "incomplete",
+          "judges": [
+            {
+              "id": "evidence",
+              "status": "error",
+              "error": {
+                "code": "judge_failed",
+                "message": "Agent execution failed (timeout). Diagnostic ID: bd2dfe21-84a8-4c3c-b10c-f768f7b18a38"
+              }
+            },
+            {
+              "id": "inference",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "scope",
+              "status": "completed",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "id": "validation-plan",
+          "status": "passed",
+          "judges": [
+            {
+              "id": "evidence",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "inference",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "scope",
+              "status": "completed",
+              "score": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "batch": "r2-judge-capability-check",
+      "label": "原03 breakfast证据独立重评分",
+      "sourceCommit": "60f9e1c",
+      "sdkCommit": "f92f4f5357",
+      "runId": "e3f6af00-3150-4550-afce-2a24d3fa2712",
+      "evaluation": {
+        "evaluationId": "ce282ee9-3cd3-449f-9379-0fba6bd7e305",
+        "status": "completed",
+        "judgeSource": "snapshot",
+        "judgeModel": "gea-pro",
+        "judgeRuntimeHash": "sha256:ff7c4261ce6d893a60136febf5ee45472d831169f0bc9fabb740b14064d6a1cd",
+        "maxSteps": 12,
+        "timeoutMs": 300000,
+        "startedAt": "2026-11-16T07:35:17.160Z",
+        "completedAt": "2026-11-16T07:38:37.481Z"
+      },
+      "counts": {
+        "passed": 0,
+        "failed": 1,
+        "incomplete": 0,
+        "execution_error": 0,
+        "unscored": 0,
+        "missing": 0
+      },
+      "publicResult": "iterations/03-scoped-inference/r2-sdk-regrade-20261116.json",
+      "cases": [
+        {
+          "id": "breakfast-scope",
+          "status": "failed",
+          "judges": [
+            {
+              "id": "evidence",
+              "status": "completed",
+              "score": 0
+            },
+            {
+              "id": "inference",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "scope",
+              "status": "completed",
+              "score": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "batch": "r2-limits-00",
+      "label": "00 新指令定向题",
+      "sourceCommit": "d14bdb3",
+      "sdkCommit": "f92f4f5357",
+      "runId": "01d129dd-f9b0-4836-99cf-29710a98eb0d",
+      "evaluation": {
+        "evaluationId": "df5116be-dbd3-4cc2-bd71-57a862fb471d",
+        "status": "completed",
+        "judgeSource": "snapshot",
+        "judgeModel": null,
+        "judgeRuntimeHash": "sha256:ff7c4261ce6d893a60136febf5ee45472d831169f0bc9fabb740b14064d6a1cd",
+        "maxSteps": 12,
+        "timeoutMs": 300000,
+        "startedAt": "2026-11-16T07:43:10.844Z",
+        "completedAt": "2026-11-16T07:43:11.502Z"
+      },
+      "counts": {
+        "passed": 0,
+        "failed": 0,
+        "incomplete": 0,
+        "execution_error": 1,
+        "unscored": 0,
+        "missing": 0
+      },
+      "publicResult": "iterations/00-exa-baseline/r2-targeted-20261116.json",
+      "cases": [
+        {
+          "id": "no-microwave",
+          "status": "execution_error",
+          "judges": []
+        }
+      ]
+    },
+    {
+      "batch": "r2-limits-01",
+      "label": "01 新指令定向题",
+      "sourceCommit": "d14bdb3",
+      "sdkCommit": "f92f4f5357",
+      "runId": "677e16b3-c502-4f8a-b6b5-44843d170ce3",
+      "evaluation": {
+        "evaluationId": "19429d92-a98c-4fc2-b3e7-29ad54576bf4",
+        "status": "completed",
+        "judgeSource": "snapshot",
+        "judgeModel": "gea-pro",
+        "judgeRuntimeHash": "sha256:ff7c4261ce6d893a60136febf5ee45472d831169f0bc9fabb740b14064d6a1cd",
+        "maxSteps": 12,
+        "timeoutMs": 300000,
+        "startedAt": "2026-11-16T07:43:28.848Z",
+        "completedAt": "2026-11-16T07:50:31.253Z"
+      },
+      "counts": {
+        "passed": 2,
+        "failed": 0,
+        "incomplete": 0,
+        "execution_error": 0,
+        "unscored": 0,
+        "missing": 0
+      },
+      "publicResult": "iterations/01-grounded-claims/r2-targeted-20261116.json",
+      "cases": [
+        {
+          "id": "breakfast-scope",
+          "status": "passed",
+          "judges": [
+            {
+              "id": "evidence",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "inference",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "scope",
+              "status": "completed",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "id": "no-microwave",
+          "status": "passed",
+          "judges": [
+            {
+              "id": "evidence",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "inference",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "scope",
+              "status": "completed",
+              "score": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "batch": "r2-limits-02",
+      "label": "02 新指令定向题",
+      "sourceCommit": "d14bdb3",
+      "sdkCommit": "f92f4f5357",
+      "runId": "ed04fa4e-4a0e-4333-b06b-3e1b685ba485",
+      "evaluation": {
+        "evaluationId": "01423739-909f-4d76-a75b-ba530075158d",
+        "status": "completed",
+        "judgeSource": "snapshot",
+        "judgeModel": "gea-pro",
+        "judgeRuntimeHash": "sha256:ff7c4261ce6d893a60136febf5ee45472d831169f0bc9fabb740b14064d6a1cd",
+        "maxSteps": 12,
+        "timeoutMs": 300000,
+        "startedAt": "2026-11-16T07:45:56.754Z",
+        "completedAt": "2026-11-16T07:48:51.947Z"
+      },
+      "counts": {
+        "passed": 1,
+        "failed": 0,
+        "incomplete": 0,
+        "execution_error": 0,
+        "unscored": 0,
+        "missing": 0
+      },
+      "publicResult": "iterations/02-focused-evidence/r2-targeted-20261116.json",
+      "cases": [
+        {
+          "id": "no-microwave",
+          "status": "passed",
+          "judges": [
+            {
+              "id": "evidence",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "inference",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "scope",
+              "status": "completed",
+              "score": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "batch": "r2-limits-03",
+      "label": "03 新指令定向题",
+      "sourceCommit": "d14bdb3",
+      "sdkCommit": "f92f4f5357",
+      "runId": "f3297782-2c05-493f-b866-78aa53b1fbb8",
+      "evaluation": {
+        "evaluationId": "fddd8d31-b12c-41a1-905f-0fe519d6d625",
+        "status": "completed",
+        "judgeSource": "snapshot",
+        "judgeModel": "gea-pro",
+        "judgeRuntimeHash": "sha256:ff7c4261ce6d893a60136febf5ee45472d831169f0bc9fabb740b14064d6a1cd",
+        "maxSteps": 12,
+        "timeoutMs": 300000,
+        "startedAt": "2026-11-16T07:53:12.063Z",
+        "completedAt": "2026-11-16T08:00:29.164Z"
+      },
+      "counts": {
+        "passed": 1,
+        "failed": 1,
+        "incomplete": 0,
+        "execution_error": 0,
+        "unscored": 0,
+        "missing": 0
+      },
+      "publicResult": "iterations/03-scoped-inference/r2-targeted-20261116.json",
+      "cases": [
+        {
+          "id": "breakfast-scope",
+          "status": "passed",
+          "judges": [
+            {
+              "id": "evidence",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "inference",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "scope",
+              "status": "completed",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "id": "no-microwave",
+          "status": "failed",
+          "judges": [
+            {
+              "id": "evidence",
+              "status": "completed",
+              "score": 1
+            },
+            {
+              "id": "inference",
+              "status": "completed",
+              "score": 0
+            },
+            {
+              "id": "scope",
+              "status": "completed",
+              "score": 1
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "firstBatchSourceNote": "First four-case runtime, Cases and Judges match 60f9e1c. Its evaluation/README.md predates the documentation-only addition; all other 76 captured files match."
+}

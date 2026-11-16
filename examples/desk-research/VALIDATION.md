@@ -2,6 +2,36 @@
 
 源码、实际运行、自动质量评分和仓库发布状态分别记录。
 
+## 2026-11-16 R2续修终态：BLOCKED
+
+已交付来源短预览/原文窗口、逐案例局限、逐来源引文组织和Judge能力声明修复；仍不能宣称00–03全绿或公开分发验收完成。03最新no-microwave仍把单一产品条件泛化成品类结论，inference=0；00最新定向题连续误写同一个长URL，保存守卫两次正确拒绝后Agent执行失败；旧矩阵中另有00的响应体流解码错误和02三次约15秒启动超时。原失败与后续结果分别保留。
+
+| 批次 | 代码 / SDK | 通过 | 质量失败 | 评分不完整 | 执行失败 |
+| --- | --- | ---: | ---: | ---: | ---: |
+| [03 已失败四题](evaluation/results/r2-quality-four-share.json) | 60f9e1c / 5bd4093e | 4 | 0 | 0 | 0 |
+| [03 其余八单轮](iterations/03-scoped-inference/r2-remaining-single-20261116.json) | 60f9e1c / 5bd4093e | 6 | 1 | 1 | 0 |
+| [03 六多轮](iterations/03-scoped-inference/r2-multi-20261116.json) | 60f9e1c / 5bd4093e | 6 | 0 | 0 | 0 |
+| [00 四开发题](iterations/00-exa-baseline/r2-results-20261116.json) | 60f9e1c / 5bd4093e | 3 | 0 | 1 | 0 |
+| [01 四开发题](iterations/01-grounded-claims/r2-results-20261116.json) | 60f9e1c / 5bd4093e | 3 | 1 | 0 | 0 |
+| [02 四开发题](iterations/02-focused-evidence/r2-results-20261116.json) | 60f9e1c / 5bd4093e | 1 | 0 | 3 | 0 |
+| [原03 breakfast证据独立重评分](iterations/03-scoped-inference/r2-sdk-regrade-20261116.json) | 60f9e1c / f92f4f5357 | 0 | 1 | 0 | 0 |
+| [00 新指令定向题](iterations/00-exa-baseline/r2-targeted-20261116.json) | d14bdb3 / f92f4f5357 | 0 | 0 | 0 | 1 |
+| [01 新指令定向题](iterations/01-grounded-claims/r2-targeted-20261116.json) | d14bdb3 / f92f4f5357 | 2 | 0 | 0 | 0 |
+| [02 新指令定向题](iterations/02-focused-evidence/r2-targeted-20261116.json) | d14bdb3 / f92f4f5357 | 1 | 0 | 0 | 0 |
+| [03 新指令定向题](iterations/03-scoped-inference/r2-targeted-20261116.json) | d14bdb3 / f92f4f5357 | 1 | 1 | 0 | 0 |
+
+03首轮12单轮合计10通过、1质量失败、1评分不完整，六多轮全部通过。新的定向题使用改过的Agent指令，并独立执行和评分；SDK重评分仅改变评测运行时，使用原回答。不能混成同一次全量实验，也不从旧evaluation补分。[机器可读摘要](evaluation/results/r2-final-summary.json)。本轮用已知失败开发修复，不声称盲测或独立泛化效果。
+
+coverage规则、六个Case及固定夹具从126203c至d14bdb3逐文件一致。19个coverage固定正反例全部匹配，not_applicable=0、error=0；[原生校准摘要](evaluation/results/r2-coverage-summary.json)。合成对话校准与六道真实多轮验收分开记录。
+
+gea #1362（f92f4f5357）仅在无Artifact时收紧模型可见readEvidence来源和指引，保留所有权/摘要验证和失败读取处理。真实重评分三项均正常完成，evidence仍严格判0并揭示旧回答引用错配，没有制造质量通过。原生执行错误仍跳过Judge。
+
+工具链：候选CLI gea #1355 / 4015a5665，SHA-256 a2874ae7f24404b6cd0802cd4fbab17c1961f7d0bfdff11b57090e521b55d357；SDK/contract为5bd4093e本地包，定向批次SDK改用f92f4f5357且contract不变。本轮未执行发包、合并或部署，不能视为公开npm版本通过。收尾核对发现gea #1355已合并（非本会话操作）；尚未核验该修复的正式CLI分发，合并不等于发布验收。模型、16步/240秒Agent预算及12步/300秒Judge预算保持不变。
+
+本地验证：主示例与00–03各22项测试、三个生成阶段14/20/20项测试及类型检查通过；SDK57项测试、定向lint和全仓类型检查通过。新增SDK行为测试先红后绿。最早四题项目只有evaluation/README.md早于60f9e1c的文档补充，全部运行代码、Case和Judge一致；其余旧矩阵项目逐文件匹配60f9e1c，四个新定向项目逐文件匹配d14bdb3。
+
+以下章节保留历史时点的事实，“仍未完成”列表属于原验收记录；当前R2以本节和新增独立结果为准。
+
 ## 2026-11-15 Exa 质量迭代
 
 当前示例对应 [03：限制推断范围](iterations/03-scoped-inference/README.md)。新主线 00–03 从 Exa 开始，只修改研究 instructions；Cases/Judges、模型、Connector、工具、DO 和前端保持一致。旧的 00–05 在 history 中保留原始源码与哈希，不混入新分数。
