@@ -46,7 +46,7 @@ export default defineToolSet([
   defineTool({
     name: "save_research",
     description:
-      "保存本对话的结构化研究简报。observations最多4条，选关键来源而非罗列全部搜索结果；每条用subject点名讨论的具体产品/行为/样本，同页不同产品不可共用一个适配结论；逐个选择已捕获sourceId及该来源返回的quoteId（passageId）；系统取回原文并生成逐来源事实栏。fit仅判断此来源案例对用户条件的适配；事实直接保留在原文，不另写事实复述，匹配/不匹配必须给constraintEvidenceId；跨案例机会放hypotheses（最多2个），basedOn引用observations序号（1开始），写验证和放弃条件。系统生成完整URL和report，最终答复使用返回的report。更新前先read_research；不保存凭据或隐私。",
+      "保存本对话的结构化研究简报。observations最多4条，选关键来源而非罗列全部搜索结果；每条用subject点名讨论的具体产品/行为/样本，同页不同产品不可共用一个适配结论；逐个选择已捕获sourceId及该来源返回的quoteId（passageId）；系统取回原文并生成逐来源事实栏。fit仅判断此来源案例对用户条件的适配；事实直接保留在原文，不另写事实复述，匹配/不匹配必须给constraintEvidenceId；跨案例机会放hypotheses（最多2个），basedOn引用observations序号（1开始），写验证和放弃条件。自由文本字段不填写URL；引用只用sourceId/quoteId和basedOn，系统生成完整URL和report，最终答复使用返回的report。更新前先read_research；不保存凭据或隐私。",
     input: briefInput,
     toModelOutput: ({ output }) => ({
       type: "text",
@@ -85,7 +85,7 @@ export default defineToolSet([
           urls: rejection.urls ?? [],
           availableUrls: rejection.availableUrls ?? [],
           instruction:
-            "记录尚未保存。核对sourceId和该来源返回的正文，quoteId/constraintEvidenceId须是该sourceId返回的passageId，不手抄摘录。正文缺失时read_source补读，仍无证据就保留缺口。不要猜原文、扩大范围或宣称保存成功。",
+            "记录尚未保存。核对sourceId和该来源返回的正文，quoteId/constraintEvidenceId须是该sourceId返回的passageId，不手抄摘录；自由文本中的URL须移除，引用改用结构化身份或序号。正文缺失时read_source补读，仍无证据就保留缺口。不要猜原文、扩大范围或宣称保存成功。",
         };
       }
       if (!response.ok) throw new Error("Research save failed.");

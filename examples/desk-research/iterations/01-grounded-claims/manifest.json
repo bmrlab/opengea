@@ -5,7 +5,7 @@
   "cli": "0.2.261114-alpha.0",
   "npm": "12.2.2",
   "packageManager": "pnpm@12.8.1",
-  "sourceSha256": "5c2c416e9f5e03dc9d1036b4162151ab899f26af609464a0b69b1e54435b1469",
+  "sourceSha256": "9950a236f15ec89fc11ff7edb23fa0f79c270a94368e42a360b34e13a143d290",
   "benchmarkSha256": "ea19def6137a1a46b6a76089935ef7c789942f657fc4e51aa25efd3e9599c7bc",
   "files": [
     {
@@ -146,7 +146,7 @@
     },
     {
       "path": "durable-objects/research-store.ts",
-      "sha256": "01f7b82ac41cda01372374e5361d17f4a77538b844c49608e961a057878bb86b"
+      "sha256": "39c1205f92fd188c01c5b46eff9e6ab41d5d22f815505488f3681c2804ce4cb5"
     },
     {
       "path": "evaluation/evaluation.test.mjs",
@@ -218,7 +218,7 @@
     },
     {
       "path": "lib/research-brief.ts",
-      "sha256": "d375a62a6fd17f4172ae03a5b9bcc602bf8e4edaaa299558736bd973475b6aeb"
+      "sha256": "189b6e120bb6539369432c5a40ee021fa8a93c728cb4021baa837b23f152ad90"
     },
     {
       "path": "lib/research.ts",
@@ -298,7 +298,7 @@
     },
     {
       "path": "tests/structured-save.test.mjs",
-      "sha256": "b1da9af567bdb0b7f243d957db6d02d4714092ab6a175e08db65e53ba012d2b0"
+      "sha256": "3741756b3b0626886d21bb0cfe66429b18ddc29ab12a03354d281e4e2b90dbfd"
     },
     {
       "path": "tools/read-source.ts",
@@ -306,7 +306,7 @@
     },
     {
       "path": "tools/research-record.ts",
-      "sha256": "88ab0162d899598ac7844ec5477efb4f91e7c9af280882e9c1b916394d38177a"
+      "sha256": "85eef096def7912c9621a8a2398240616e3870b01421a70b6f76368661dc8f04"
     },
     {
       "path": "tools/search-sources.ts",

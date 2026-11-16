@@ -102,6 +102,29 @@ export function compileBrief(
 ):
   | { ok: true; record: ResearchInput }
   | { ok: false; error: string; sourceId?: string } {
+  // Only model-authored text is checked. Captured passages and canonical URLs
+  // enter the report below through source/quote identities, never through text.
+  const authoredText = [
+    brief.title,
+    brief.scope,
+    ...brief.observations.flatMap(({ subject, constraint }) => [
+      subject,
+      constraint,
+    ]),
+    ...brief.hypotheses.flatMap(({ question, test, measure, abandonIf }) => [
+      question,
+      test,
+      measure,
+      abandonIf,
+    ]),
+    ...brief.gaps,
+  ];
+  if (authoredText.some((text) => /https?:\/\//iu.test(text)))
+    return {
+      ok: false,
+      error:
+        "Use sourceId/quoteId and basedOn citations, not typed URLs in brief text",
+    };
   const sources: ResearchInput["sources"] = [];
   const observations: string[] = [];
   for (const observation of brief.observations) {

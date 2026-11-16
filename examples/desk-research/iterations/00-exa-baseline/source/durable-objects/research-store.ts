@@ -200,8 +200,8 @@ export class ResearchStore extends DurableObject {
       const urls = [
         ...new Set([
           ...parsed.data.sources.map((source) => source.url),
-          // Structured routes already resolve their explicit source identities.
-          // Quoted links are source text, not additional evidence references.
+          // Structured routes reject typed citations before resolving identities.
+          // Do not rescan their captured quotations or generated canonical URLs.
           ...(url.pathname === "/record" ? reportUrls(parsed.data.report) : []),
         ]),
       ];
