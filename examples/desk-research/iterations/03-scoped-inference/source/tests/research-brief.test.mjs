@@ -27,7 +27,7 @@ const brief = {
       constraint: "无热水",
       fit: "mismatch",
       constraintEvidenceId: passageId,
-      reasoning: "该产品的冲泡条件与本题不匹配。",
+
     },
   ],
   hypotheses: [
@@ -88,6 +88,7 @@ test("free factual reports, paraphrases and hand-transcribed quotes are rejected
   );
   for (const extra of [
     { summary: "市场通常都如此" },
+    { reasoning: "把54%的早餐购买者改写成54%的早餐和零食购买者" },
     { quote: "所有免煮早餐均需热水" },
   ])
     assert.equal(
@@ -134,7 +135,7 @@ test("a captured fact alone cannot support a fit verdict without a constraint ev
           ...brief.observations[0],
           fit: "unknown",
           constraintEvidenceId: null,
-          reasoning: "该来源未给出本题所需的条件依据。",
+
         },
       ],
     },

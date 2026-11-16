@@ -40,14 +40,7 @@ export const briefInput = z.strictObject({
           .describe(
             "直接支持fit的同源passageId；只有价格、销量或商品名不能推导使用条件。来源没有涉及用户条件时填null且fit=unknown。",
           ),
-        reasoning: z
-          .string()
-          .trim()
-          .min(1)
-          .max(160)
-          .describe(
-            "仅解释条件依据与用户限制的直接对应或缺口。供给/设施不证明实际行为或偏好，价格不证明使用条件；不追加体验优劣、心理或市场判断。",
-          ),
+
       }),
     )
     .max(4)
@@ -167,7 +160,7 @@ export function compileBrief(
                 .map((text) => `> ${text}`)
                 .join("\n")}`
             : "条件依据：本来源未提供可引用的直接依据，适配性未知。",
-        `仅对该来源案例的适配推断：针对“${line(observation.constraint)}”，${fit}。${line(observation.reasoning)}`,
+        `仅对该来源案例的适配推断：针对“${line(observation.constraint)}”，${fit}。该判断仅指所引来源案例，未说明的其他条件仍未知。`,
       ].join("\n\n"),
     );
   }
