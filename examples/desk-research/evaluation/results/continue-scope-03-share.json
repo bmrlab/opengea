@@ -1,0 +1,405 @@
+{
+  "schemaVersion": "opengea.iteration-report.v1",
+  "runId": "d27579b5-2cea-4070-a692-9e3fd03aa7b0",
+  "status": "failed",
+  "startedAt": "2026-11-16T09:54:22.796Z",
+  "completedAt": "2026-11-16T09:58:24.039Z",
+  "judgeModel": "gea-pro",
+  "runtime": {
+    "defaultComputerBackend": "virtual",
+    "location": "local",
+    "nodeVersion": "v24.3.0",
+    "os": "darwin"
+  },
+  "evaluation": {
+    "evaluationId": "122dfdca-fe12-4005-96d3-f224b6fdccb7",
+    "status": "completed",
+    "judgeSource": "snapshot",
+    "judgeModel": null,
+    "judgeRuntimeHash": "sha256:ff7c4261ce6d893a60136febf5ee45472d831169f0bc9fabb740b14064d6a1cd",
+    "maxSteps": 12,
+    "timeoutMs": 300000,
+    "startedAt": "2026-11-16T09:58:26.483Z",
+    "completedAt": "2026-11-16T09:58:26.912Z"
+  },
+  "targets": [
+    {
+      "key": "product-research",
+      "agentSnapshotHash": "sha256:131c9dad9328e9290d2a09e94cb22fb31f2581549c5c3e1a012b5c98d1a3694a",
+      "applicationContentHash": "sha256:2a1192678642253f1269e6d3db0068557ea4dd28573d408f0634157a04e3b545",
+      "selectedCaseIds": [
+        "no-microwave"
+      ]
+    }
+  ],
+  "counts": {
+    "passed": 0,
+    "failed": 0,
+    "incomplete": 0,
+    "execution_error": 1,
+    "unscored": 0,
+    "missing": 0
+  },
+  "judging": {
+    "required": 3,
+    "completedRequired": 0,
+    "errors": 0
+  },
+  "sharing": "Tool payloads are reduced to queries and source metadata; raw evidence stays local. Review generated answer/Judge text before sharing.",
+  "cases": [
+    {
+      "id": "no-microwave",
+      "agentKey": "product-research",
+      "status": "execution_error",
+      "error": {
+        "code": "agent_execution_failed",
+        "message": "Agent Run ended with status \"error\""
+      },
+      "runId": "4f3d50ca-378a-47c0-a87a-72c8d9257f8f",
+      "benchmarkHash": "sha256:7a472be75d2d7bb5d3d29798c09a344262ac9e645285db8a13eb63e39f0a44c2",
+      "input": {
+        "message": "研究中国城市通勤者到办公室后吃早餐的机会。办公室没有微波炉、厨房或热水，产品必须能直接食用。请给出有来源的现有方案、局限和待验证机会，不要追问。"
+      },
+      "acceptance": "尊重无加热、无热水条件；不把依赖加热的产品作为可立即采用的推荐。",
+      "judges": [],
+      "judging": {
+        "required": 3,
+        "completedRequired": 0,
+        "errors": 0
+      },
+      "output": "",
+      "trajectory": [
+        {
+          "messageId": "4f3d50ca-378a-47c0-a87a-72c8d9257f8f-input",
+          "role": "user",
+          "type": "text",
+          "text": "研究中国城市通勤者到办公室后吃早餐的机会。办公室没有微波炉、厨房或热水，产品必须能直接食用。请给出有来源的现有方案、局限和待验证机会，不要追问。"
+        },
+        {
+          "messageId": "a28fb274-1804-4421-b80a-c1e936c9485a",
+          "role": "assistant",
+          "type": "tool",
+          "name": "read_research",
+          "state": "output-available"
+        },
+        {
+          "messageId": "a28fb274-1804-4421-b80a-c1e936c9485a",
+          "role": "assistant",
+          "type": "tool",
+          "name": "search_sources",
+          "state": "output-available",
+          "input": {
+            "query": "上班族 办公室 早餐 即食 不用加热 常温"
+          },
+          "sources": [
+            {
+              "url": "https://world.taobao.com/lang/zh-tw/shopping-guide/2034798277039226880.htm",
+              "title": "常溫高蛋白飲品搭配高纖穀物棒：都市上班族零準備健康早餐解決方案",
+              "publishedAt": "2026-09-10T00:00:00.000Z",
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            },
+            {
+              "url": "https://remetw.com/pxmart-carrefour-readytoeat-chicken-breast/",
+              "title": "全聯、家樂福即食雞胸肉推薦！軟嫩多汁不乾柴，增肌減脂必備蛋白質",
+              "publishedAt": "2026-05-29T09:09:54.000Z",
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            },
+            {
+              "url": "https://pcdetail.taobao.com/OXl1bm96L1hxZzhmNHJnUTRuU2tRQT09.html",
+              "title": "50枚/桶】山母碱水小球面包0添蔗糖营养代餐健康饱腹小零食品5枚-淘宝网",
+              "publishedAt": null,
+              "textLength": 412,
+              "textScope": "search-text",
+              "truncated": false
+            }
+          ],
+          "retrievedAt": "2026-11-16T09:54:34.422Z"
+        },
+        {
+          "messageId": "a28fb274-1804-4421-b80a-c1e936c9485a",
+          "role": "assistant",
+          "type": "tool",
+          "name": "search_sources",
+          "state": "output-available",
+          "input": {
+            "query": "便利店 早餐 通勤族 购买 数据 报告"
+          },
+          "sources": [
+            {
+              "url": "https://www.iimedia.cn/c1061/85561.html",
+              "title": "零售消费行业数据：超五成消费者购买便利店现制食品当休闲零食和早餐-艾媒网",
+              "publishedAt": "2022-05-13T06:57:04.000Z",
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            },
+            {
+              "url": "https://m.21jingji.com/article/20201126/herald/da35cf54904f5a92d6d14e4fd45b48cb.html",
+              "title": "便利店里的早餐：仅5成白领每天吃早餐，两成深圳男性从不吃早餐 - 21财经",
+              "publishedAt": "2020-11-26T00:00:00.000Z",
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            },
+            {
+              "url": "https://www.jiemian.com/article/912100.html",
+              "title": "中国城市一半人早餐在路边摊解决 早餐市场机会在哪里？|界面新闻",
+              "publishedAt": "2016-10-20T00:00:00.000Z",
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            }
+          ],
+          "retrievedAt": "2026-11-16T09:54:34.430Z"
+        },
+        {
+          "messageId": "a28fb274-1804-4421-b80a-c1e936c9485a",
+          "role": "assistant",
+          "type": "tool",
+          "name": "search_sources",
+          "state": "output-available",
+          "input": {
+            "query": "办公室没有微波炉 早餐 知乎 怎么解决"
+          },
+          "sources": [
+            {
+              "url": "https://m.xiachufang.com/recipe/106449481/",
+              "title": "【步骤图】公司没冰箱微波炉也能轻松带饭，健康低卡通勤便当，持续更新的做法_公司没冰箱微波炉也能轻松带饭，健康低卡通勤便当，持续更新的做法步骤_便当_下厨房",
+              "publishedAt": "2021-06-16T00:08:31.000Z",
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            },
+            {
+              "url": "https://zhuanlan.zhihu.com/p/439592401",
+              "title": "方便又营养的早餐选择 - 知乎",
+              "publishedAt": "2021-11-30T09:15:35.000Z",
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            },
+            {
+              "url": "https://www.zhihu.com/tardis/jm/ans/2066269304186725610",
+              "title": "除了热剩菜，微波炉还有什么让你惊艳的隐藏使用技巧？ - 知乎",
+              "publishedAt": null,
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            }
+          ],
+          "retrievedAt": "2026-11-16T09:54:44.171Z"
+        },
+        {
+          "messageId": "a28fb274-1804-4421-b80a-c1e936c9485a",
+          "role": "assistant",
+          "type": "tool",
+          "name": "search_sources",
+          "state": "output-available",
+          "input": {
+            "query": "即食 常温 早餐 产品 自热 替代 微波炉 办公室 推荐"
+          },
+          "sources": [
+            {
+              "url": "https://www.chinawys.com/archives/32413",
+              "title": "办公室适合囤什么预制菜 – 无忧舍-食间旅行者",
+              "publishedAt": "2026-09-19T13:52:46.000Z",
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            },
+            {
+              "url": "https://www.marniekitchen.com.tw/category/%E5%B8%B8%E6%BA%AB%E5%8D%B3%E9%A3%9F%E5%8C%85",
+              "title": "常溫即食包 ｜曼妮ê灶咖",
+              "publishedAt": null,
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            },
+            {
+              "url": "https://pcdetail.taobao.com/b1VDVUpkNmFwbHNqY1ZEWWlrZW5uZz09.html",
+              "title": "莫小仙自热米饭多口味咖喱牛肉广式香肠梅菜扣肉煲仔饭夜宵速食-淘宝网",
+              "publishedAt": null,
+              "textLength": 494,
+              "textScope": "search-text",
+              "truncated": false
+            }
+          ],
+          "retrievedAt": "2026-11-16T09:54:44.501Z"
+        },
+        {
+          "messageId": "a28fb274-1804-4421-b80a-c1e936c9485a",
+          "role": "assistant",
+          "type": "tool",
+          "name": "search_sources",
+          "state": "output-available",
+          "input": {
+            "query": "外卖 早餐 送到公司 到点吃 数据报告"
+          },
+          "sources": [
+            {
+              "url": "https://13115299.s21i.faiusr.com/61/1/ABUIABA9GAAgq9_fjgYozI3FzgM.pdf",
+              "title": "PowerPoint 演示文稿",
+              "publishedAt": null,
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            },
+            {
+              "url": "https://epaper.lnd.com.cn/lswbepaper/pad/con/202308/17/content_202500.html",
+              "title": "数字化驱动“早经济”崛起 沈停车场、地铁站现早餐新业态",
+              "publishedAt": "2023-08-17T00:00:00.000Z",
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            },
+            {
+              "url": "https://www.thepaper.cn/newsDetail_forward_10518032",
+              "title": "数字化助力上海早餐工程，“晚订早送”已成白领普遍需求_浦江头条_澎湃新闻-The Paper",
+              "publishedAt": "2020-12-24T05:39:06.000Z",
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            }
+          ],
+          "retrievedAt": "2026-11-16T09:54:59.170Z"
+        },
+        {
+          "messageId": "a28fb274-1804-4421-b80a-c1e936c9485a",
+          "role": "assistant",
+          "type": "tool",
+          "name": "search_sources",
+          "state": "output-available",
+          "input": {
+            "query": "即食 免煮 冷水 燕麦片 酸奶 全麦面包 三明治 冷食 办公室"
+          },
+          "sources": [
+            {
+              "url": "https://events.carrefour.com.tw/easybreakfast/index.html",
+              "title": "不用煮的簡易早餐有哪些？3種早點組合讓你享受活力早晨！ | 家樂福線上購物網",
+              "publishedAt": null,
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            },
+            {
+              "url": "https://www.sohu.com/a/1040480711_122572149",
+              "title": "一个人的夏日早餐：不开火，十分钟，吃得比外卖好_燕麦_酸奶_水果",
+              "publishedAt": "2026-06-23T08:37:09.000Z",
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            },
+            {
+              "url": "https://baike.baidu.com/item/%E5%86%B7%E6%B3%A1%E7%87%95%E9%BA%A6/17125512",
+              "title": "冷泡燕麦",
+              "publishedAt": null,
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            }
+          ],
+          "retrievedAt": "2026-11-16T09:54:59.750Z"
+        },
+        {
+          "messageId": "a28fb274-1804-4421-b80a-c1e936c9485a",
+          "role": "assistant",
+          "type": "tool",
+          "name": "search_sources",
+          "state": "output-available",
+          "input": {
+            "query": "代餐奶昔 即饮 蛋白棒 早餐 便利店 销量 白领"
+          },
+          "sources": [
+            {
+              "url": "https://www.cbndata.com/information/222404",
+              "title": "年轻人的身材焦虑，养活了多少蛋白棒商家？",
+              "publishedAt": "2021-12-01T00:00:00.000Z",
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            },
+            {
+              "url": "https://www.foodaily.com/articles/40023",
+              "title": "外卖大战不肯休止，打工人却“戒饭”了 | Foodaily每日食品",
+              "publishedAt": "2025-07-06T00:00:00.000Z",
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            },
+            {
+              "url": "http://epaper.chinadaily.com.cn/a/202103/23/WS60592e67a31099a234354dbc.html",
+              "title": "Office workers digging into snack market - Chinadaily.com.cn",
+              "publishedAt": "2021-03-22T16:00:00.000Z",
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            }
+          ],
+          "retrievedAt": "2026-11-16T09:55:20.999Z"
+        },
+        {
+          "messageId": "a28fb274-1804-4421-b80a-c1e936c9485a",
+          "role": "assistant",
+          "type": "tool",
+          "name": "search_sources",
+          "state": "output-available",
+          "input": {
+            "query": "办公室 无人货架 自动售货机 早餐 零食 供应"
+          },
+          "sources": [
+            {
+              "url": "https://www.feng1.com/zh-CN/join",
+              "title": "丰e足食智能柜免费安装|办公室零食柜申请|无人零售货柜投放合作",
+              "publishedAt": null,
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            },
+            {
+              "url": "https://www.36kr.com/p/1603292421573122",
+              "title": "36氪独家 | 无人零售品牌「丰e足食」完成3亿元A轮融资，加速规模化发展-36氪",
+              "publishedAt": "2026-08-21T19:23:42.000Z",
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            },
+            {
+              "url": "https://miaowu-tech.com/solutions/office/",
+              "title": "办公室无人零食柜解决方案｜补货、结算与运营｜秒物智能",
+              "publishedAt": null,
+              "textLength": 420,
+              "textScope": "search-text",
+              "truncated": false
+            }
+          ],
+          "retrievedAt": "2026-11-16T09:55:28.455Z"
+        },
+        {
+          "messageId": "a28fb274-1804-4421-b80a-c1e936c9485a",
+          "role": "assistant",
+          "type": "tool",
+          "name": "save_research",
+          "state": "output-available"
+        }
+      ],
+      "citationAudit": {
+        "method": "Compare Markdown and plain HTTP(S) citation URLs in run.output with URLs actually returned by search_sources/read_source. Ignore fragments only. This checks source identity, not whether a claim is supported.",
+        "toolCalls": {
+          "read_research": 1,
+          "search_sources": 8,
+          "save_research": 1
+        },
+        "outputCharacters": 0,
+        "capturedSourceCount": 24,
+        "citationCount": 0,
+        "unmatched": [],
+        "invalid": []
+      },
+      "rawArtifactSha256": "f2cd13cec08193bc7bdfe6a145cfab6a24e953cd03564d8dac80bacc72ede975"
+    }
+  ]
+}
