@@ -60,7 +60,7 @@ export const briefInput = z.strictObject({
           .min(1)
           .max(500)
           .describe("待验证的机会问题；前提也不能预设未被证明的市场事实。"),
-        basedOn: z.array(sourceIdInput).max(8),
+        basedOn: z.array(sourceIdInput).max(8).describe("只引用本次observations已列出的sourceId；没有来源启发时用空数组，不填仅检索过的其他来源。"),
         test: z
           .string()
           .trim()
