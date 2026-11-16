@@ -5,7 +5,7 @@
   "cli": "0.2.261114-alpha.0",
   "npm": "12.2.2",
   "packageManager": "pnpm@12.8.1",
-  "sourceSha256": "f556745920ea62446f27315962acf7cc009f1e0e9bffb15c1bc40027e2731a54",
+  "sourceSha256": "e2605b7294137a729c8f50be5248442fb5aecbb502b17ed984153fd03a664bf3",
   "benchmarkSha256": "ea19def6137a1a46b6a76089935ef7c789942f657fc4e51aa25efd3e9599c7bc",
   "files": [
     {
@@ -146,7 +146,7 @@
     },
     {
       "path": "durable-objects/research-store.ts",
-      "sha256": "0550c5f8718d6bad419709f3683906d0a25905e64328f68009c4f27bfcd44875"
+      "sha256": "01f7b82ac41cda01372374e5361d17f4a77538b844c49608e961a057878bb86b"
     },
     {
       "path": "evaluation/evaluation.test.mjs",
@@ -222,7 +222,7 @@
     },
     {
       "path": "lib/research.ts",
-      "sha256": "752726c3e746c9661b9911fd24dbdffe581c6e6ba9d543a95081ffb513ec303f"
+      "sha256": "2ed28861183446da17aeb6fb92a686582a4f9c1722d702f7b5a973e95501c104"
     },
     {
       "path": "lib/source-passages.ts",
@@ -250,7 +250,7 @@
     },
     {
       "path": "scripts/materialize.mjs",
-      "sha256": "f940c9af02ea627bf98e5af08d6cd6ae3c6da6f4fc01b4faefc5e215fd49ef98"
+      "sha256": "955f76f0ac39b0cc7322d86607398b7c12a02c3c86704c705d9e4eedfa419b76"
     },
     {
       "path": "scripts/prepare-local.mjs",
@@ -258,7 +258,7 @@
     },
     {
       "path": "scripts/snapshot-iteration.mjs",
-      "sha256": "fa992b95a8a06f445b8b79303ab093e1709367641a29b56f00a9392186d047a9"
+      "sha256": "2f03301402d57b28527f3959ce2ead35074fd9ac9f9ae38f581d501044d1f69d"
     },
     {
       "path": "tests/app.test.mjs",
@@ -277,6 +277,10 @@
       "sha256": "ca7d3ac03f70b26f1bb9b7504100ea5ee811976ba0ba95ce51453b1b33be934c"
     },
     {
+      "path": "tests/snapshot.test.mjs",
+      "sha256": "97ecc125645fa5f95b704c0322c499b0f8b1aa7f9e4fa28ae62f9a047397c99f"
+    },
+    {
       "path": "tests/source-content.test.mjs",
       "sha256": "248c17e2e92b434c27db0011c70aa3f676be2fb3756a0d5dd9f56bf8578512a4"
     },
@@ -291,6 +295,10 @@
     {
       "path": "tests/store.test.mjs",
       "sha256": "3478d133cebffddbf315ab89d855de8ec94d39a417e7888bd667d4af408a15e8"
+    },
+    {
+      "path": "tests/structured-save.test.mjs",
+      "sha256": "b1da9af567bdb0b7f243d957db6d02d4714092ab6a175e08db65e53ba012d2b0"
     },
     {
       "path": "tools/read-source.ts",

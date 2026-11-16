@@ -1,6 +1,7 @@
 import { DurableObject } from "cloudflare:workers";
 import {
   researchInput,
+  sourceTitleInput,
   referencedResearchInput,
   type CapturedReference,
   capturedSourceKey,
@@ -43,7 +44,7 @@ export class ResearchStore extends DurableObject {
             .array(
               z.object({
                 url: webUrl,
-                title: z.string().max(2000).optional(),
+                title: sourceTitleInput.optional(),
                 text: z.string().max(2000).optional(),
                 publishedAt: z.string().nullable().optional(),
               }),
@@ -199,7 +200,9 @@ export class ResearchStore extends DurableObject {
       const urls = [
         ...new Set([
           ...parsed.data.sources.map((source) => source.url),
-          ...reportUrls(parsed.data.report),
+          // Structured routes already resolve their explicit source identities.
+          // Quoted links are source text, not additional evidence references.
+          ...(url.pathname === "/record" ? reportUrls(parsed.data.report) : []),
         ]),
       ];
       const uncaptured: string[] = [];

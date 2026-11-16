@@ -6,6 +6,8 @@ import type {
 import { webUrl } from "./evidence.ts";
 import type { SourcePassage } from "./source-passages.ts";
 
+export const sourceTitleInput = z.string().min(1).max(2000);
+
 export const researchInput = z.object({
   title: z.string().trim().min(1).max(200),
   scope: z.string().trim().min(1).max(4000),
@@ -14,7 +16,7 @@ export const researchInput = z.object({
   sources: z
     .array(
       z.object({
-        title: z.string().min(1).max(500),
+        title: sourceTitleInput,
         url: webUrl,
         sourceId: z
           .string()
@@ -48,7 +50,7 @@ export const referencedResearchInput = researchInput.extend({
     .array(
       z.object({
         sourceId: sourceIdInput,
-        title: z.string().min(1).max(500),
+        title: sourceTitleInput,
         excerpt: z.string().max(6000),
         quoteId: z
           .string()

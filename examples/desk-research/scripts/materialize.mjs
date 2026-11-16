@@ -44,6 +44,7 @@ const full = [
   "app",
   "tests/app.test.mjs",
   "tests/store.test.mjs",
+  "tests/structured-save.test.mjs",
   "tests/save-feedback.test.mjs",
   "tests/research-brief.test.mjs",
   "scripts/prepare-local.mjs",
