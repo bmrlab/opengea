@@ -5,7 +5,7 @@
   "cli": "0.2.261114-alpha.0",
   "npm": "12.2.2",
   "packageManager": "pnpm@12.8.1",
-  "sourceSha256": "e6ac06a157ed46ff5591e1b1f671db3b86a01e499599c7171d6ffe5fdc922b7c",
+  "sourceSha256": "90a890b2ba919bb1cdd1ce76be9ec006def4bbec708d065db94305b9153acdc9",
   "benchmarkSha256": "ea19def6137a1a46b6a76089935ef7c789942f657fc4e51aa25efd3e9599c7bc",
   "files": [
     {
@@ -218,7 +218,7 @@
     },
     {
       "path": "lib/research-brief.ts",
-      "sha256": "15333e0d3d6d1ea4770e0e09bcba0f0eb99b351f6f05603db42a5a31a1e91b9e"
+      "sha256": "21a41a8b7bda93703204e0fdea70b5d519f30732625d668e0fc83a9f54c7362c"
     },
     {
       "path": "lib/research.ts",

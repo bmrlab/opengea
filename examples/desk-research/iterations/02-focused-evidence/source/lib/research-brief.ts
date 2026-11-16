@@ -46,7 +46,7 @@ export const briefInput = z.strictObject({
           .min(1)
           .max(600)
           .describe(
-            "仅说明此来源中的具体案例如何匹配/不匹配本题条件，或缺什么信息；不得改成品类、市场或人群的普遍判断。",
+            "仅解释条件依据与用户限制的直接对应或缺口。供给/设施不证明实际行为或偏好，价格不证明使用条件；不追加体验优劣、心理或市场判断。",
           ),
       }),
     )
@@ -68,7 +68,14 @@ export const briefInput = z.strictObject({
           .max(700)
           .describe("具体对象与验证动作。"),
         measure: z.string().trim().min(1).max(500),
-        abandonIf: z.string().trim().min(1).max(500),
+        abandonIf: z
+          .string()
+          .trim()
+          .min(1)
+          .max(500)
+          .describe(
+            "会推翻假设的实际反证或实验结果；没有搜到资料只能说明缺证，不能证明不存在或不喜欢。",
+          ),
       }),
     )
     .max(4),
