@@ -5,7 +5,7 @@
   "cli": "0.2.261114-alpha.0",
   "npm": "12.2.2",
   "packageManager": "pnpm@12.8.1",
-  "sourceSha256": "7eb38b481b21b7e65f2f859d76d84b8d45449edcede16ec4916adb3430ef4ede",
+  "sourceSha256": "a36706ac9fdd26281559083fddf4b1bced6808923f04b0a05485071cbfed49f4",
   "benchmarkSha256": "ea19def6137a1a46b6a76089935ef7c789942f657fc4e51aa25efd3e9599c7bc",
   "files": [
     {
@@ -218,7 +218,7 @@
     },
     {
       "path": "lib/research-brief.ts",
-      "sha256": "4132ccbc4a8bc80555dca2a11f88ad607b683c7f8a082639e215a26bafb4f30a"
+      "sha256": "d375a62a6fd17f4172ae03a5b9bcc602bf8e4edaaa299558736bd973475b6aeb"
     },
     {
       "path": "lib/research.ts",
@@ -270,7 +270,7 @@
     },
     {
       "path": "tests/research-brief.test.mjs",
-      "sha256": "56bf868d65a3fa67eccee93d3cbb235b3d9dc0fa92256f9e6d6ae4cfb2573d9d"
+      "sha256": "4fbd33f4fcc6e7094f50aac9fae37ac0f447ac72ecf2072e03994195f48dca26"
     },
     {
       "path": "tests/save-feedback.test.mjs",

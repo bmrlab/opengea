@@ -145,7 +145,7 @@ test("a captured fact alone cannot support a fit verdict without a constraint ev
   assert.match(unknown.record.report, /条件依据：本来源未提供可引用的直接依据/);
 });
 
-test("hypothesis observation numbers resolve to that observation's captured URL", () => {
+test("hypothesis observation numbers identify a source record without repeating URLs", () => {
   const secondId = "src_ffffffffffffffff";
   const references = new Map(catalog);
   references.set(secondId, {
@@ -166,8 +166,13 @@ test("hypothesis observation numbers resolve to that observation's captured URL"
   );
   assert.equal(result.ok, true);
   const hypotheses = result.record.report.split("## 待验证机会")[1];
-  assert.match(hypotheses, /https:\/\/example\.org\/second/);
-  assert.doesNotMatch(hypotheses, /https:\/\/example\.org\/product/);
+  assert.match(hypotheses, /启发记录（不证明问题成立）：来源记录 2/);
+  assert.doesNotMatch(hypotheses, /https:\/\//);
+  assert.equal(
+    result.record.report.match(/https:\/\/example\.org\/second/g).length,
+    1,
+  );
+  assert.equal(result.record.sources[1].url, "https://example.org/second");
 });
 
 test("different products on one page retain their own fit verdicts", () => {

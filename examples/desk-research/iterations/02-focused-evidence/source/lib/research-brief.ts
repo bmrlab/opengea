@@ -153,28 +153,28 @@ export function compileBrief(
       [
         `### 来源记录 ${observations.length + 1}：${line(source.title || "Untitled source")}`,
         `具体案例：${line(observation.subject)}`,
-        `检索元数据日期（未核验，不能据此确认正文发布日期）：${line(source.publishedAt || "未知")}；来源：${source.url}`,
-        "原文摘录（该来源的表述，不等于独立核验或代表性结论）：",
+        `来源：${source.url}；检索元数据日期（未核验）：${line(source.publishedAt || "未知")}`,
+        "原文摘录：",
         quote
           .split(/\r?\n/u)
           .map((text) => `> ${text}`)
           .join("\n"),
         constraintEvidence &&
         observation.constraintEvidenceId === observation.quoteId
-          ? "条件依据：同上原文（只支持本案例）。"
+          ? "条件依据：同上原文。"
           : constraintEvidence
             ? `条件依据（同源原文）：\n${constraintEvidence
                 .split(/\r?\n/u)
                 .map((text) => `> ${text}`)
                 .join("\n")}`
             : "条件依据：本来源未提供可引用的直接依据，适配性未知。",
-        `仅对该来源案例的适配推断：针对“${line(observation.constraint)}”，${fit}。该判断仅指所引来源案例，未说明的其他条件仍未知。`,
+        `仅对该来源案例的适配推断：针对“${line(observation.constraint)}”，${fit}。`,
       ].join("\n\n"),
     );
   }
   const hypotheses: string[] = [];
   for (const hypothesis of brief.hypotheses) {
-    const links: string[] = [];
+    const references: string[] = [];
     for (const observationIndex of hypothesis.basedOn) {
       const source = sources[observationIndex - 1];
       if (!source)
@@ -182,13 +182,13 @@ export function compileBrief(
           ok: false,
           error: `Hypothesis refers to missing observation ${observationIndex}`,
         };
-      links.push(source.url);
+      references.push(`来源记录 ${observationIndex}`);
     }
     hypotheses.push(
       [
         `### 待验证问题 ${hypotheses.length + 1}：${line(hypothesis.question)}`,
-        ...(links.length
-          ? [`启发来源（不证明问题成立）：${links.join("  ")}`]
+        ...(references.length
+          ? [`启发记录（不证明问题成立）：${references.join("、")}`]
           : []),
         `验证对象与动作：${line(hypothesis.test)}`,
         `观察指标：${line(hypothesis.measure)}`,
@@ -206,6 +206,7 @@ export function compileBrief(
       report: [
         `# ${line(brief.title)}`,
         `研究范围与用户条件：${line(brief.scope)}`,
+        "证据边界：摘录仅代表该来源的表述；适配判断只对具体案例和所列条件成立，其他条件未知。检索元数据日期不等于已核验的正文发布日期或价格日期。",
         "## 逐来源记录与案例适配",
         ...observations,
         ...(observations.length
