@@ -27,7 +27,6 @@ const brief = {
       constraint: "无热水",
       fit: "mismatch",
       constraintEvidenceId: passageId,
-
     },
   ],
   hypotheses: [
@@ -135,7 +134,6 @@ test("a captured fact alone cannot support a fit verdict without a constraint ev
           ...brief.observations[0],
           fit: "unknown",
           constraintEvidenceId: null,
-
         },
       ],
     },

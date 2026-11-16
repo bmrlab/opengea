@@ -271,7 +271,6 @@ test("structured saves validate quotes against this conversation's captured pass
         constraint: "无热水",
         fit: "mismatch",
         constraintEvidenceId: captured.sources[0].passageEntries[0].passageId,
-
       },
     ],
     hypotheses: [],

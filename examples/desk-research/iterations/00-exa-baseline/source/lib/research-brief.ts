@@ -40,7 +40,6 @@ export const briefInput = z.strictObject({
           .describe(
             "直接支持fit的同源passageId；只有价格、销量或商品名不能推导使用条件。来源没有涉及用户条件时填null且fit=unknown。",
           ),
-
       }),
     )
     .max(4)

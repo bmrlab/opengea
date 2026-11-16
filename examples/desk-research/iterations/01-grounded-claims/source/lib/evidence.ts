@@ -48,13 +48,19 @@ export const SEARCH_RESULT_LIMIT = 3;
 export const SEARCH_TEXT_LIMIT = 600;
 export function parseSearchResponse(value: unknown) {
   const result = readResponse(value);
+  const sources = result.results
+    .slice(0, SEARCH_RESULT_LIMIT)
+    .map((value) => source(value, SEARCH_TEXT_LIMIT, "search-text"));
   return {
     retrievedAt: new Date().toISOString(),
+    sourceIndex: sources.map(({ title, url, publishedAt }) => ({
+      title,
+      url,
+      publishedAt,
+    })),
     sourceLimit: SEARCH_RESULT_LIMIT,
     limitations,
-    sources: result.results
-      .slice(0, SEARCH_RESULT_LIMIT)
-      .map((value) => source(value, SEARCH_TEXT_LIMIT, "search-text")),
+    sources,
   };
 }
 
