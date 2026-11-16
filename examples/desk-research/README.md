@@ -35,6 +35,8 @@ pnpm dev
 
 搜索使用 Exa，Connector key 为 `research-search`。通过本机授权流程配置 API key；单独设置环境变量不会创建 Connection。返回有长度上限的网页文本，缺失和截断会明确标记。新的质量迭代从 Exa baseline 开始；早期 social-search 与功能接入记录放在 `iterations/history/`，不参与新分数比较。
 
+搜索每次最多返回3页、每页600字符预览，供选择来源。`read_source` 按完整URL读取最多12000字符的提取文本，每次展示2000字符；可用`query`定位原句或按`nextOffset`继续。`queryFound:false`只表示当前提取未找到，`nextOffset:null`也不保证网页全文已读完；仍须检查`extractionTruncated`。原文窗口始终保留对应URL和范围，不能把其他页面的事实配到这个链接。
+
 第二个终端进入此目录，将 dev 输出的两个 origin 和 key 文件路径交给配置脚本：
 
 ```bash
@@ -56,7 +58,7 @@ gea agent eval --json '{"cwd":".","benchmarkPath":"benchmarks/single-turn","mode
 gea agent eval --json '{"cwd":".","benchmarkPath":"benchmarks/multi-turn","modelSource":"hosted","judgeModel":"gea-pro","concurrency":1}'
 ```
 
-第一条是 12 Case × 3 Markdown Judge，第二条是 6 个 Simulator Case × 1 个对话 Judge。每题的 `maxTurns` 包含首条用户消息；Simulator done 不是 Judge 通过。
+第一条是 12 Case × 3 Markdown Judge，第二条是 6 个 Simulator Case × 2 个 Judge（coverage 与 conversation）。每题的 `maxTurns` 包含首条用户消息；Simulator done 不是 Judge 通过。
 
 两套 Benchmark 保持分开。单轮结果可以按教程推到 Studio 做 Trace Annotation；当前基线明确拒绝发布 Simulator Benchmark 与上传多轮结果，不通过删字段绕过。
 

@@ -5,7 +5,7 @@
   "cli": "0.2.261114-alpha.0",
   "npm": "12.2.2",
   "packageManager": "pnpm@12.8.1",
-  "sourceSha256": "0c15fb6d32fc1842cd55bc366c1b18e128623d86f0d76a28e32d80644e44391e",
+  "sourceSha256": "9e390e04e6d29e2c1fc472ebf4b8f72ee2d531f474a6063f45fbf59626793376",
   "benchmarkSha256": "ea19def6137a1a46b6a76089935ef7c789942f657fc4e51aa25efd3e9599c7bc",
   "files": [
     {
@@ -178,7 +178,7 @@
     },
     {
       "path": "evaluation/README.md",
-      "sha256": "805bfdb923d51b5e248a18c9bac9b9b7116079b5cf1de66f358fac8e56747af2"
+      "sha256": "a4ba02bb5c5ff9a99f4da8576a24aba51d4aa1a663a1355e216a80a008a44855"
     },
     {
       "path": "evaluation/retain-constraints.case.json",
@@ -194,7 +194,7 @@
     },
     {
       "path": "instructions.ts",
-      "sha256": "b6ef626d39a927c54f6e48150738394dd2b926d8a230e67bb74bbf3d55eca673"
+      "sha256": "f73dba8d6a93251f453e2fc4ae047e27e7caed23f1e28b57a99355e795cbf8fe"
     },
     {
       "path": "iterations/analyze-eval.mjs",
@@ -206,7 +206,7 @@
     },
     {
       "path": "lib/evidence.ts",
-      "sha256": "50d50282b4c38e3507d2a77b37c6ac8f5957e107e85df4d143cf23cfd6c6df10"
+      "sha256": "2d104ff86d914798fef47008b188f3ca07601af4d058536f622319628c69d6f7"
     },
     {
       "path": "lib/research.ts",
@@ -250,7 +250,7 @@
     },
     {
       "path": "tests/evidence.test.mjs",
-      "sha256": "6ad90874e74c87e43118000d82e1c8a6a77aced625479b53758b5a49ae156d40"
+      "sha256": "566ac65b1dda393fe8c47449defaeda8095754084a6f4592df88426e626b870b"
     },
     {
       "path": "tests/save-feedback.test.mjs",
@@ -258,7 +258,7 @@
     },
     {
       "path": "tests/source-content.test.mjs",
-      "sha256": "2645ac2c17134b0f3eb882db951bc975b3dd13938715844131513da367eee323"
+      "sha256": "248c17e2e92b434c27db0011c70aa3f676be2fb3756a0d5dd9f56bf8578512a4"
     },
     {
       "path": "tests/stages.test.mjs",
@@ -270,7 +270,7 @@
     },
     {
       "path": "tools/read-source.ts",
-      "sha256": "148830898db1bfbde1acb793af768024d7355e8ebcb6b3014dad3eb9d217cf03"
+      "sha256": "e6ee4ac2c5e09c4c99fb006b4cbb3efca9c257fb5c1947fe8ee33abd37fb49e9"
     },
     {
       "path": "tools/research-record.ts",
@@ -278,7 +278,7 @@
     },
     {
       "path": "tools/search-sources.ts",
-      "sha256": "4bb62b5c9f755504df0f096abd095619a076d4fac44a5a7c392c0ead4d985bda"
+      "sha256": "1911f65a0ba0d4f276a324496ab6cbea29ace7456ea3879376381b914b16b049"
     },
     {
       "path": "tsconfig.json",
@@ -298,7 +298,7 @@
     },
     {
       "path": "versions/v1-research/instructions.ts",
-      "sha256": "7b2ee7608695575a2645c7408b95f74411c687ef0b57fa53df95bbda8518189b"
+      "sha256": "f00f16ea1b0024526ee39b9c905b7712805405e94466a869541a0084d036ab6a"
     },
     {
       "path": "versions/v1-research/worker.ts",

@@ -33,7 +33,7 @@ test("missing text and bounded extraction remain explicit evidence gaps", () => 
     ]),
   );
   assert.equal(value.sources[0].text, "");
-  assert.equal(value.sources[1].text.length, 6000);
+  assert.equal(value.sources[1].text.length, 600);
   assert.equal(value.sources[1].truncated, true);
-  assert.equal(value.sources[1].textLimit, 6000);
+  assert.equal(value.sources[1].textLimit, 600);
 });
