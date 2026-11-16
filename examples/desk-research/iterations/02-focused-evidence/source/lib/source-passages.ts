@@ -8,7 +8,7 @@ export async function sourcePassages(
 ): Promise<SourcePassage[]> {
   const passages: SourcePassage[] = [];
   for (let start = 0; start < text.length;) {
-    let end = Math.min(start + 400, text.length);
+    let end = Math.min(start + 220, text.length);
     if (end < text.length) {
       const window = text.slice(start, end);
       const boundary = Math.max(
@@ -16,7 +16,7 @@ export async function sourcePassages(
         window.lastIndexOf("。"),
         window.lastIndexOf("；"),
       );
-      if (boundary >= 160) end = start + boundary + 1;
+      if (boundary >= 80) end = start + boundary + 1;
     }
     const value = text.slice(start, end).trim();
     if (value) {

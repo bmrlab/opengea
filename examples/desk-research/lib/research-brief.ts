@@ -13,7 +13,7 @@ export const briefInput = z.strictObject({
     .string()
     .trim()
     .min(1)
-    .max(1500)
+    .max(400)
     .describe("本轮用户明确的人群、场景及限制；不是市场结论。"),
   status: z.enum(["researching", "complete"]),
   observations: z
@@ -44,7 +44,7 @@ export const briefInput = z.strictObject({
           .string()
           .trim()
           .min(1)
-          .max(600)
+          .max(160)
           .describe(
             "仅解释条件依据与用户限制的直接对应或缺口。供给/设施不证明实际行为或偏好，价格不证明使用条件；不追加体验优劣、心理或市场判断。",
           ),
@@ -61,7 +61,7 @@ export const briefInput = z.strictObject({
           .string()
           .trim()
           .min(1)
-          .max(500)
+          .max(180)
           .describe("待验证的机会问题；前提也不能预设未被证明的市场事实。"),
         basedOn: z
           .array(z.number().int().min(1).max(4))
@@ -73,14 +73,14 @@ export const briefInput = z.strictObject({
           .string()
           .trim()
           .min(1)
-          .max(700)
+          .max(250)
           .describe("具体对象与验证动作。"),
-        measure: z.string().trim().min(1).max(500),
+        measure: z.string().trim().min(1).max(180),
         abandonIf: z
           .string()
           .trim()
           .min(1)
-          .max(500)
+          .max(180)
           .describe(
             "会推翻假设的实际反证或实验结果；没有搜到资料只能说明缺证，不能证明不存在或不喜欢。",
           ),
@@ -88,8 +88,8 @@ export const briefInput = z.strictObject({
     )
     .max(2),
   gaps: z
-    .array(z.string().trim().min(1).max(500))
-    .max(8)
+    .array(z.string().trim().min(1).max(180))
+    .max(4)
     .describe("本次证据尚未回答的问题，不把没有查到改写成市场不存在。"),
 });
 export type ResearchBrief = z.infer<typeof briefInput>;
