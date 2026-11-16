@@ -23,6 +23,13 @@ export default defineToolSet([
     description:
       "保存本对话的结构化研究简报。observations逐个选择已捕获sourceId及其连续原文quote；系统核验摘录并生成逐来源事实栏。fit/reasoning仅判断此来源案例对用户条件的适配；跨案例机会放hypotheses，写验证和放弃条件。系统生成完整URL和report，最终答复使用返回的report。更新前先read_research；不保存凭据或隐私。",
     input: briefInput,
+    toModelOutput: ({ output }) => ({
+      type: "text",
+      value:
+        typeof output === "object" && output !== null && "report" in output && typeof output.report === "string"
+          ? `记录已保存。以下为最终交付的完整简报，请原样交付，不新增概括或依据。\n\n${output.report}`
+          : JSON.stringify(output),
+    }),
     execute: async (input, context) => {
       const response = await context.durableObjects.RESEARCH.getByName(
         RESEARCH_OBJECT,
@@ -45,7 +52,7 @@ export default defineToolSet([
         };
         return {
           saved: false,
-          sourceId: rejection.sourceId,
+          ...(rejection.sourceId ? { sourceId: rejection.sourceId } : {}),
           error: rejection.error,
           urls: rejection.urls ?? [],
           availableUrls: rejection.availableUrls ?? [],

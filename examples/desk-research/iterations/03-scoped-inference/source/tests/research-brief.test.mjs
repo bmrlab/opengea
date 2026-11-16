@@ -25,6 +25,7 @@ const brief = {
       quote: "本款燕麦条需用60—80℃热水冲泡",
       constraint: "无热水",
       fit: "mismatch",
+      constraintEvidence: "本款燕麦条需用60—80℃热水冲泡",
       reasoning: "该产品的冲泡条件与本题不匹配。",
     },
   ],
@@ -97,4 +98,48 @@ test("free factual report fields are not accepted alongside the structured brief
     }).success,
     false,
   );
+});
+
+test("a captured fact alone cannot support a fit verdict without quoted constraint evidence", () => {
+  const missing = compileBrief(
+    {
+      ...brief,
+      observations: [{ ...brief.observations[0], constraintEvidence: null }],
+    },
+    catalog,
+  );
+  assert.equal(missing.ok, false);
+  assert.equal(
+    missing.error,
+    "Fit verdict requires quoted constraint evidence",
+  );
+  const unsupported = compileBrief(
+    {
+      ...brief,
+      observations: [
+        {
+          ...brief.observations[0],
+          constraintEvidence: "所有同类产品都有这一使用条件",
+        },
+      ],
+    },
+    catalog,
+  );
+  assert.equal(unsupported.ok, false);
+  const unknown = compileBrief(
+    {
+      ...brief,
+      observations: [
+        {
+          ...brief.observations[0],
+          fit: "unknown",
+          constraintEvidence: null,
+          reasoning: "该来源未给出本题所需的条件依据。",
+        },
+      ],
+    },
+    catalog,
+  );
+  assert.equal(unknown.ok, true);
+  assert.match(unknown.record.report, /条件依据：本来源未提供可引用的直接依据/);
 });

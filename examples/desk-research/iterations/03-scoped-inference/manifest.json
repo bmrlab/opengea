@@ -5,7 +5,7 @@
   "cli": "0.2.261114-alpha.0",
   "npm": "12.2.2",
   "packageManager": "pnpm@12.8.1",
-  "sourceSha256": "8de1b47b51c1fe2477999561278a1586fe3728522cc416a7ed5f5b8d234284c8",
+  "sourceSha256": "e3cbfcd92183581bdf317ffea513e5f5c7e803d4030681a28ab6f4ed5ee4a112",
   "benchmarkSha256": "ea19def6137a1a46b6a76089935ef7c789942f657fc4e51aa25efd3e9599c7bc",
   "files": [
     {
@@ -202,7 +202,7 @@
     },
     {
       "path": "instructions.ts",
-      "sha256": "eca0fa92b3113e087c51b52c5e0c246e841b63af682ce5eb1e6ea3ea2a160957"
+      "sha256": "23100e37fe6f4f35a92276b76a43d3cd69a720ae579f72cb36da6efb34163f80"
     },
     {
       "path": "iterations/analyze-eval.mjs",
@@ -218,7 +218,7 @@
     },
     {
       "path": "lib/research-brief.ts",
-      "sha256": "13b955e98f6228dec94c4cd9d13592f26465e1396c60150b72b1f6a6ef0e64b5"
+      "sha256": "025d588379211ea67ea9629a367dd6337027ba99c70f41362369074d318ff468"
     },
     {
       "path": "lib/research.ts",
@@ -266,11 +266,11 @@
     },
     {
       "path": "tests/research-brief.test.mjs",
-      "sha256": "700a43d6b957c127ad7c3106ea51a897aef30ad0220b2c96cb8edd032e958a4d"
+      "sha256": "d8e32074e509e5ad5011d4747b1370bcd8e3421532a7eb1a7cec6ed30b87eb0a"
     },
     {
       "path": "tests/save-feedback.test.mjs",
-      "sha256": "926853d2813508c9519de76cead9c3672f4a9c61536cbf3b4d5c08dcdc2915b8"
+      "sha256": "ca7d3ac03f70b26f1bb9b7504100ea5ee811976ba0ba95ce51453b1b33be934c"
     },
     {
       "path": "tests/source-content.test.mjs",
@@ -282,7 +282,7 @@
     },
     {
       "path": "tests/store.test.mjs",
-      "sha256": "9f064ad4f282970c7700f5bc19565030801f8db1d0d61edc9cb38cfc058212f1"
+      "sha256": "6ee74d9cf08d4a1de0202ccaf4b261881bc2b8baf074c1a2dfe01b22fa7a4e65"
     },
     {
       "path": "tools/read-source.ts",
@@ -290,7 +290,7 @@
     },
     {
       "path": "tools/research-record.ts",
-      "sha256": "0c1af89868923f26ce1158e1d72ec0473a2af4cf379036e08f500b75f6db947e"
+      "sha256": "9c11eb8849049c0c2a6b88e88d5ec6db4782ad60370cf63d8909f6e26a8f5fc3"
     },
     {
       "path": "tools/search-sources.ts",

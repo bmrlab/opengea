@@ -52,3 +52,28 @@ test("save validation returns actionable feedback and never claims success", asy
     { message: "Research save failed." },
   );
 });
+
+test("model-facing save output carries the complete compiled report without duplicating source payloads", () => {
+  const report = "# 简报\n\n逐来源限定与完整链接：https://example.org/captured";
+  const output = {
+    id: "chat-a",
+    report,
+    sources: [{ excerpt: "long duplicate source excerpt" }],
+  };
+  const model = save.toModelOutput({ toolCallId: "save-1", input: {}, output });
+  assert.equal(model.type, "text");
+  assert.equal(model.value.endsWith(report), true);
+  assert.equal(model.value.includes("long duplicate source excerpt"), false);
+  const rejected = {
+    saved: false,
+    error: "Quote is not present in captured text",
+    sourceId: "src_0123456789abcdef",
+  };
+  assert.deepEqual(
+    JSON.parse(
+      save.toModelOutput({ toolCallId: "save-2", input: {}, output: rejected })
+        .value,
+    ),
+    rejected,
+  );
+});

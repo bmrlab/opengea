@@ -256,6 +256,7 @@ test("structured saves validate quotes against this conversation's captured pass
         quote: "本产品食用前需要加入热水冲泡",
         constraint: "无热水",
         fit: "mismatch",
+        constraintEvidence: "本产品食用前需要加入热水冲泡",
         reasoning: "该产品不匹配。",
       },
     ],

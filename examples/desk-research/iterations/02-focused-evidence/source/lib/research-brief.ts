@@ -35,6 +35,15 @@ export const briefInput = z.strictObject({
           .max(300)
           .describe("本题待对照的具体用户条件。"),
         fit: z.enum(["match", "mismatch", "unknown"]),
+        constraintEvidence: z
+          .string()
+          .trim()
+          .min(8)
+          .max(400)
+          .nullable()
+          .describe(
+            "能直接支持fit的同源连续原文。只知道价格、销量或商品名称不能推导使用条件；没有涉及用户条件的直接依据，填null且fit=unknown，不靠常识补齐。",
+          ),
         reasoning: z
           .string()
           .trim()
@@ -98,6 +107,23 @@ export function compileBrief(
         error: "Quote is not present in captured text",
         sourceId: observation.sourceId,
       };
+    if (observation.fit !== "unknown" && !observation.constraintEvidence)
+      return {
+        ok: false,
+        error: "Fit verdict requires quoted constraint evidence",
+        sourceId: observation.sourceId,
+      };
+    if (
+      observation.constraintEvidence &&
+      !source.passages?.some((text) =>
+        text.includes(observation.constraintEvidence!),
+      )
+    )
+      return {
+        ok: false,
+        error: "Constraint evidence is not present in captured text",
+        sourceId: observation.sourceId,
+      };
     sources.push({
       sourceId: source.sourceId,
       title: source.title || "Untitled source",
@@ -116,6 +142,12 @@ export function compileBrief(
           .split(/\r?\n/u)
           .map((text) => `> ${text}`)
           .join("\n"),
+        observation.constraintEvidence
+          ? `条件依据（同源原文）：\n${observation.constraintEvidence
+              .split(/\r?\n/u)
+              .map((text) => `> ${text}`)
+              .join("\n")}`
+          : "条件依据：本来源未提供可引用的直接依据，适配性未知。",
         `仅对该来源案例的适配推断：针对“${line(observation.constraint)}”，${fit}。${line(observation.reasoning)}`,
       ].join("\n\n"),
     );
