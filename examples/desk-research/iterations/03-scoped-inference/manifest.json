@@ -5,7 +5,7 @@
   "cli": "0.2.261114-alpha.0",
   "npm": "12.2.2",
   "packageManager": "pnpm@12.8.1",
-  "sourceSha256": "fb7a98857e6dc1271ae293cf9f1271497378a5a3a2ce46da51bea3c3ef1bcd55",
+  "sourceSha256": "abe1224b9788fc7a465faf4611d4c36b563c285e02bfbb183c586b89862772fa",
   "benchmarkSha256": "ea19def6137a1a46b6a76089935ef7c789942f657fc4e51aa25efd3e9599c7bc",
   "files": [
     {
@@ -146,7 +146,7 @@
     },
     {
       "path": "durable-objects/research-store.ts",
-      "sha256": "d18945456c3254e23257279cf2bf1a24032e2e3fabe3a7f7fb86e264c9fa654a"
+      "sha256": "e8349371d8f2c20fdaf9cfa0ab874785206f869e5830e8a9a7d7835c76a14ed7"
     },
     {
       "path": "gea.worker.json",
@@ -154,7 +154,7 @@
     },
     {
       "path": "instructions.ts",
-      "sha256": "b84ba4b8f01efb77f0385fbf5c4ca448ee22b1d313df2b885e370be7f44d777f"
+      "sha256": "16728ffcb86faa4081662fd3b8372ef3df363bbe8399362b41d113f1e5077a4b"
     },
     {
       "path": "lib/evidence.ts",
@@ -162,7 +162,7 @@
     },
     {
       "path": "lib/research.ts",
-      "sha256": "da0c52d005a8d60d101c2be56a5f84f370929f48c42e3a4245d376fed35696ed"
+      "sha256": "222cdaa1cc39d9de104a1f50966f135d72fec43ef1a1a99ea3dc1a676823c2c1"
     },
     {
       "path": "package.json",
@@ -214,19 +214,19 @@
     },
     {
       "path": "tests/store.test.mjs",
-      "sha256": "c8cc2932f2114413cd0b24c20a0e4a5e2326c3394d0743ac80c0689790b54b25"
+      "sha256": "55fea331d4169a1e575fb75ffcc41ad0569fb17de2113ce79fd51a5dea0c5341"
     },
     {
       "path": "tools/read-source.ts",
-      "sha256": "e1e6e9f6d51c937196756e1d68ecb7beae9114e8398d54cb2e162d5bba09d315"
+      "sha256": "148830898db1bfbde1acb793af768024d7355e8ebcb6b3014dad3eb9d217cf03"
     },
     {
       "path": "tools/research-record.ts",
-      "sha256": "b59e0a085ea2f50bd1b4bc6cfb17021a7c0f5d5c4493daa5511ce19e77716900"
+      "sha256": "b6fca4760f3d46d27a2020a6f24f126478c88c6d397c136b2bd30f26f4701385"
     },
     {
       "path": "tools/search-sources.ts",
-      "sha256": "85ee475b32a5afe181bd56843423ceeef7e9afc97f94ae4df98e59aa47d879f7"
+      "sha256": "4bb62b5c9f755504df0f096abd095619a076d4fac44a5a7c392c0ead4d985bda"
     },
     {
       "path": "tsconfig.json",
@@ -246,7 +246,7 @@
     },
     {
       "path": "versions/v1-research/instructions.ts",
-      "sha256": "bbcbd57bf287d1d04568a1f3473715e5a5c4590020d9a81a2174a0bb31edbee7"
+      "sha256": "73e35136a2a5ae39057233427893278339c465868fbf5947db2e34274e32c8e6"
     },
     {
       "path": "versions/v1-research/worker.ts",

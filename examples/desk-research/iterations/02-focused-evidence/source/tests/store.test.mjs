@@ -82,3 +82,59 @@ test("research survives object recreation and updates only the selected session"
     );
   }
 });
+
+test("saved citations must belong to sources captured in the same conversation", async () => {
+  const values = new Map();
+  const context = {
+    storage: {
+      async get(key) {
+        return structuredClone(values.get(key));
+      },
+      async put(key, value) {
+        values.set(key, structuredClone(value));
+      },
+    },
+  };
+  let store = new ResearchStore(context);
+  const source = "https://example.org/article/12324";
+  const capture = (id, urls) =>
+    store.fetch(
+      new Request(`https://research.internal/sources?id=${id}`, {
+        method: "POST",
+        body: JSON.stringify({ urls }),
+      }),
+    );
+  assert.equal((await capture("a", [source])).status, 200);
+  store = new ResearchStore(context);
+  const save = (id, url, report = `[研究](${url})`) =>
+    store.fetch(
+      new Request(`https://research.internal/record?id=${id}`, {
+        method: "PUT",
+        body: JSON.stringify({
+          title: "研究",
+          scope: "早餐",
+          status: "complete",
+          report,
+          sources: [{ title: "原文", url, excerpt: "价格仍未知。" }],
+        }),
+      }),
+    );
+  assert.equal((await save("a", source)).status, 200);
+  const typo = await save("a", "https://example.org/article/12624");
+  assert.equal(typo.status, 400);
+  assert.equal((await typo.json()).error, "Uncaptured source URLs");
+  assert.equal(
+    (await save("a", source, "[引用](https://example.org/wrong)")).status,
+    400,
+  );
+  assert.equal((await save("b", source)).status, 400);
+  assert.equal(
+    (await save("a", source, `[引用](${source}#section)`)).status,
+    200,
+  );
+  const record = await (
+    await store.fetch(new Request("https://research.internal/record?id=a"))
+  ).json();
+  assert.equal(record.sources[0].url, source);
+  assert.equal((await capture("a", ["file:///private"])).status, 400);
+});

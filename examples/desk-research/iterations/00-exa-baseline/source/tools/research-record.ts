@@ -24,7 +24,7 @@ export default defineToolSet([
   defineTool({
     name: "save_research",
     description:
-      "保存当前对话的完整研究记录。更新前先读取并保留仍有效的来源；不要保存凭据或个人隐私。",
+      "保存当前对话的完整研究记录。正文引用和sources链接必须直接复制本对话实际检索到的URL，否则拒绝保存；拒绝后核对工具返回值并纠正，不猜链接。更新前先读取并保留仍有效来源；不要保存凭据或个人隐私。",
     input: researchInput,
     execute: async (input, context) => {
       const response = await context.durableObjects.RESEARCH.getByName(
@@ -37,7 +37,8 @@ export default defineToolSet([
           body: JSON.stringify(input),
         },
       );
-      if (!response.ok) throw new Error("Research save failed.");
+      if (!response.ok)
+        throw new Error(`Research save rejected: ${await response.text()}`);
       return (await response.json()) as ResearchRecord;
     },
   }),
