@@ -37,3 +37,26 @@ test("missing text and bounded extraction remain explicit evidence gaps", () => 
   assert.equal(value.sources[1].truncated, true);
   assert.equal(value.sources[1].textLimit, 6000);
 });
+
+test("large search bodies retain a compact index of every exact source URL", () => {
+  const results = Array.from({ length: 5 }, (_, index) => ({
+    url: `https://example.org/articles/${index}?edition=full`,
+    title: `Article ${index}`,
+    text: "Body".repeat(1500),
+    publishedDate: "2026-01-01",
+  }));
+  const value = parseSearchResponse(response(results));
+  assert.deepEqual(
+    value.sourceIndex,
+    results.map(({ url, title, publishedDate }) => ({
+      url,
+      title,
+      publishedAt: publishedDate,
+    })),
+  );
+  assert.ok(JSON.stringify(value.sourceIndex).length < 2000);
+  assert.deepEqual(
+    value.sources.map(({ text }) => text),
+    results.map(({ text }) => text),
+  );
+});

@@ -46,13 +46,19 @@ const limitations =
   "仅使用服务实际返回的网页文本；提取有长度上限，不能保证全文、图片、评论或视频已读取。检索时间不是来源发表时间，公开资料不是代表性抽样。";
 export function parseSearchResponse(value: unknown) {
   const result = readResponse(value);
+  const sources = result.results
+    .slice(0, 5)
+    .map((value) => source(value, 6000, "search-text"));
   return {
     retrievedAt: new Date().toISOString(),
+    sourceIndex: sources.map(({ title, url, publishedAt }) => ({
+      title,
+      url,
+      publishedAt,
+    })),
     sourceLimit: 5,
     limitations,
-    sources: result.results
-      .slice(0, 5)
-      .map((value) => source(value, 6000, "search-text")),
+    sources,
   };
 }
 export function parseContentsResponse(value: unknown, requestedUrl: string) {
