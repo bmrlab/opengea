@@ -8,6 +8,31 @@ export default defineToolSet([
     name: "read_research",
     description: "读取当前对话的研究记录。新对话返回 null，不读取其他对话。",
     input: z.object({}),
+    toModelOutput: ({ output }) => {
+      // execute returns the store's ResearchRecord; omit excerpts already in report.
+      const record = output as ResearchRecord | null;
+      return {
+        type: "json",
+        value: record
+          ? {
+              id: record.id,
+              title: record.title,
+              scope: record.scope,
+              status: record.status,
+              report: record.report,
+              sources: record.sources.map(
+                ({ sourceId, quoteId, constraintEvidenceId, title, url }) => ({
+                  sourceId,
+                  quoteId,
+                  constraintEvidenceId,
+                  title,
+                  url,
+                }),
+              ),
+            }
+          : null,
+      };
+    },
     execute: async (_input, context) => {
       const response = await context.durableObjects.RESEARCH.getByName(
         RESEARCH_OBJECT,
@@ -21,7 +46,7 @@ export default defineToolSet([
   defineTool({
     name: "save_research",
     description:
-      "保存本对话的结构化研究简报。observations逐个选择已捕获sourceId及该来源返回的quoteId（passageId）；系统取回原文并生成逐来源事实栏。fit/reasoning仅判断此来源案例对用户条件的适配，匹配/不匹配必须给constraintEvidenceId；跨案例机会放hypotheses，写验证和放弃条件。系统生成完整URL和report，最终答复使用返回的report。更新前先read_research；不保存凭据或隐私。",
+      "保存本对话的结构化研究简报。observations最多4条，选关键来源而非罗列全部搜索结果；逐个选择已捕获sourceId及该来源返回的quoteId（passageId）；系统取回原文并生成逐来源事实栏。fit/reasoning仅判断此来源案例对用户条件的适配，匹配/不匹配必须给constraintEvidenceId；跨案例机会放hypotheses（最多2个），basedOn引用observations序号（1开始），写验证和放弃条件。系统生成完整URL和report，最终答复使用返回的report。更新前先read_research；不保存凭据或隐私。",
     input: briefInput,
     toModelOutput: ({ output }) => ({
       type: "text",

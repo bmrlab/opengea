@@ -5,7 +5,7 @@
   "cli": "0.2.261114-alpha.0",
   "npm": "12.2.2",
   "packageManager": "pnpm@12.8.1",
-  "sourceSha256": "94462443b9b796d84cff46b5dca195c44f20764b68ecf5e5ee3b01c5eaf84967",
+  "sourceSha256": "cb64323be30ffc1141df89cd39273311a18b0a57bc039e441bffad52013dc314",
   "benchmarkSha256": "ea19def6137a1a46b6a76089935ef7c789942f657fc4e51aa25efd3e9599c7bc",
   "files": [
     {
@@ -218,7 +218,7 @@
     },
     {
       "path": "lib/research-brief.ts",
-      "sha256": "85c98396db1bd9b2fde50975c8386a2e667421f45c39ece6b4dacc9f21a826bc"
+      "sha256": "a21a4a08a2a84f4e072027bfbb3160349bc9e0076abce75b12d19f89f48db63e"
     },
     {
       "path": "lib/research.ts",
@@ -270,7 +270,7 @@
     },
     {
       "path": "tests/research-brief.test.mjs",
-      "sha256": "94feb70c313f1215e8512555d7980b2510a00af6ca452478ca88178c42016d12"
+      "sha256": "268a51d40535646b8766412d9619e64d88cb1adce985c78f4df6f948a32f6145"
     },
     {
       "path": "tests/save-feedback.test.mjs",
@@ -298,7 +298,7 @@
     },
     {
       "path": "tools/research-record.ts",
-      "sha256": "1cfb624670e30f32a601986e38947d04a223bff60486acb814992feae4f20402"
+      "sha256": "b21d31d4ba2b78fdcf6f30088477286452fc2017a1b52f5d537a43b86a3b8f18"
     },
     {
       "path": "tools/search-sources.ts",

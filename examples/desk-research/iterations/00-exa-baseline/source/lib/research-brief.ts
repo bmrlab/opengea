@@ -50,7 +50,10 @@ export const briefInput = z.strictObject({
           ),
       }),
     )
-    .max(8),
+    .max(4)
+    .describe(
+      "短简报最多4条关键观察；按用户问题选择来源，不逐条收录全部搜索结果。",
+    ),
   hypotheses: z
     .array(
       z.strictObject({
@@ -60,7 +63,12 @@ export const briefInput = z.strictObject({
           .min(1)
           .max(500)
           .describe("待验证的机会问题；前提也不能预设未被证明的市场事实。"),
-        basedOn: z.array(sourceIdInput).max(8).describe("只引用本次observations已列出的sourceId；没有来源启发时用空数组，不填仅检索过的其他来源。"),
+        basedOn: z
+          .array(z.number().int().min(1).max(4))
+          .max(4)
+          .describe(
+            "引用本次observations的序号（从1开始），不是sourceId；无来源启发时填空数组。",
+          ),
         test: z
           .string()
           .trim()
@@ -78,7 +86,7 @@ export const briefInput = z.strictObject({
           ),
       }),
     )
-    .max(4),
+    .max(2),
   gaps: z
     .array(z.string().trim().min(1).max(500))
     .max(8)
@@ -93,7 +101,7 @@ export function compileBrief(
   catalog: Map<string, CapturedReference>,
 ):
   | { ok: true; record: ResearchInput }
-  | { ok: false; error: string; sourceId: string } {
+  | { ok: false; error: string; sourceId?: string } {
   const sources: ResearchInput["sources"] = [];
   const observations: string[] = [];
   for (const observation of brief.observations) {
@@ -166,14 +174,14 @@ export function compileBrief(
   const hypotheses: string[] = [];
   for (const hypothesis of brief.hypotheses) {
     const links: string[] = [];
-    for (const sourceId of hypothesis.basedOn) {
-      if (!sources.some((source) => source.sourceId === sourceId))
+    for (const observationIndex of hypothesis.basedOn) {
+      const source = sources[observationIndex - 1];
+      if (!source)
         return {
           ok: false,
-          error: "Hypothesis must refer to an observed source",
-          sourceId,
+          error: `Hypothesis refers to missing observation ${observationIndex}`,
         };
-      links.push(catalog.get(sourceId)!.url);
+      links.push(source.url);
     }
     hypotheses.push(
       [

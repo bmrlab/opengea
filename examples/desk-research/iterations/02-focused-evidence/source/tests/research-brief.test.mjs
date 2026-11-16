@@ -33,7 +33,7 @@ const brief = {
   hypotheses: [
     {
       question: "常温直接可食的组合能否改善目标办公室的早餐体验？",
-      basedOn: [sourceId],
+      basedOn: [1],
       test: "访问该办公室并对比现有早餐",
       measure: "记录携带、耗时与食用体验",
       abandonIf: "现有选择已满足使用者需求",
@@ -74,9 +74,7 @@ test("unknown and cross-source passage identities cannot become saved facts", ()
     compileBrief(
       {
         ...brief,
-        hypotheses: [
-          { ...brief.hypotheses[0], basedOn: ["src_ffffffffffffffff"] },
-        ],
+        hypotheses: [{ ...brief.hypotheses[0], basedOn: [2] }],
       },
       catalog,
     ).ok,
@@ -144,4 +142,29 @@ test("a captured fact alone cannot support a fit verdict without a constraint ev
   );
   assert.equal(unknown.ok, true);
   assert.match(unknown.record.report, /条件依据：本来源未提供可引用的直接依据/);
+});
+
+test("hypothesis observation numbers resolve to that observation's captured URL", () => {
+  const secondId = "src_ffffffffffffffff";
+  const references = new Map(catalog);
+  references.set(secondId, {
+    ...catalog.get(sourceId),
+    sourceId: secondId,
+    url: "https://example.org/second",
+  });
+  const result = compileBrief(
+    briefInput.parse({
+      ...brief,
+      observations: [
+        ...brief.observations,
+        { ...brief.observations[0], sourceId: secondId },
+      ],
+      hypotheses: [{ ...brief.hypotheses[0], basedOn: [2] }],
+    }),
+    references,
+  );
+  assert.equal(result.ok, true);
+  const hypotheses = result.record.report.split("## 待验证机会")[1];
+  assert.match(hypotheses, /https:\/\/example\.org\/second/);
+  assert.doesNotMatch(hypotheses, /https:\/\/example\.org\/product/);
 });
