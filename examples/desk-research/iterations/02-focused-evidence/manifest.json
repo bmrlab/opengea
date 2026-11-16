@@ -5,8 +5,8 @@
   "cli": "0.2.261114-alpha.0",
   "npm": "12.2.2",
   "packageManager": "pnpm@12.8.1",
-  "sourceSha256": "4013f994a52e0ab2093b5271a64ec707f2a680e49436c8cb594780550ea825b3",
-  "benchmarkSha256": "b450423b937c9ec33b5352dbed1309ea7eff35512781d25f275f48d5d1b38773",
+  "sourceSha256": "3307a6234d024da8f6f17fe0ddd0a9c34ba596e5d5001ebbd85482172dc41f04",
+  "benchmarkSha256": "ea19def6137a1a46b6a76089935ef7c789942f657fc4e51aa25efd3e9599c7bc",
   "files": [
     {
       "path": ".gitignore",
@@ -38,27 +38,27 @@
     },
     {
       "path": "benchmarks/multi-turn/cases/audience-revision/case.json",
-      "sha256": "03d03407558cc23b23ed6caeeb48ce21e6ac565c68824a50fc5bd1f2c9542ea0"
+      "sha256": "283ae7417697b5f3b8265004bacc0c47f3417e5589d8812f0df70e127cc4a136"
     },
     {
       "path": "benchmarks/multi-turn/cases/budget-revision/case.json",
-      "sha256": "b14ad4f37a771ede0f91e3aa3ce89c275ec2d06a8018fe3a9cc519a7e275a4f9"
+      "sha256": "49f15b9bf6c270eec31034e28b4b418c0aa95b24397d679fe4612544af1dc547"
     },
     {
       "path": "benchmarks/multi-turn/cases/challenge-citation/case.json",
-      "sha256": "e6ea1adb0a717f6871e92562f7d7ffe67a84fcb0de471112b62fbdac53601913"
+      "sha256": "dea4f23095b9d4145edc154359869844497c41ee9d3a117e7fc58786e5041e1d"
     },
     {
       "path": "benchmarks/multi-turn/cases/clarify-breakfast/case.json",
-      "sha256": "7ac3f7365d0381aa4d015814a4766c529ae2fcfa3a5e28c7f61cac42d27f660f"
+      "sha256": "f3b85f88100374b206568c3203a4fa305b537e8d6d48d4a9d5a4c9ac76ce18dd"
     },
     {
       "path": "benchmarks/multi-turn/cases/resist-false-certainty/case.json",
-      "sha256": "057b3472d606fbdc89deb566cc608520406be3edbae9d65f9a86d4e6d60f74ad"
+      "sha256": "bfb98b5eec4df3bb61b05a8922b7c6177eac1277d89b089e2801d4b87f547635"
     },
     {
       "path": "benchmarks/multi-turn/cases/retain-constraints/case.json",
-      "sha256": "7927efb3997eba47bf77d7df757f0d97ab58c03cda92a733312739545bdc4366"
+      "sha256": "f291791dd8759571fa3324b4df9bd1fa3f488d677b3f5f21f71efefd7190a970"
     },
     {
       "path": "benchmarks/multi-turn/documentation.json",
@@ -66,7 +66,11 @@
     },
     {
       "path": "benchmarks/multi-turn/judges/conversation.judge.md",
-      "sha256": "98cb35e3ae5122181c9db23465ccc3e39d475f63e8ca836eeef8235b1a78b208"
+      "sha256": "50dccbd8eb2fe0393c67e52cbe11537cad956d557e2af6ac705f55d1a56dff11"
+    },
+    {
+      "path": "benchmarks/multi-turn/judges/coverage.judge.md",
+      "sha256": "0d9b0cad15372f4d304bbd511ae7fb93dd8e47921a2a31a574515e8bf7bdac58"
     },
     {
       "path": "benchmarks/single-turn/cases/alternatives-not-products/case.json",
@@ -122,15 +126,15 @@
     },
     {
       "path": "benchmarks/single-turn/judges/evidence.judge.md",
-      "sha256": "549d0f0c348d200a500945435f126f5596643457a91012ab63a6cb20a2b3ec4a"
+      "sha256": "8be52cee42fc1f99235767400d873774ad0015301c8ea8d60c76ef35bc9f6549"
     },
     {
       "path": "benchmarks/single-turn/judges/inference.judge.md",
-      "sha256": "929499977b33526cc290cbb002e21f795824858928488305b65f70ade6c7c52e"
+      "sha256": "e7bc991c5fe7f5ffce638d66bb9d38ac7188283a76bbc133465956bbae9de4b2"
     },
     {
       "path": "benchmarks/single-turn/judges/scope.judge.md",
-      "sha256": "c449e6148c0ac5207fa53c1668d0a6298d97988c91a84fe68ff4e800e62cdf30"
+      "sha256": "1252968866182cadfe2b67157872d49760c47d4a92bc2f6beee5f79f7665b04d"
     },
     {
       "path": "bindings.d.ts",
@@ -150,7 +154,7 @@
     },
     {
       "path": "instructions.ts",
-      "sha256": "70887468ae3757529e288b49ce790dbf280004d4afd7e15068507e96359ea7ad"
+      "sha256": "9701d800e45f0bb098f5672c44a8275c96267d4906052b8bd01d3ca969c9ade8"
     },
     {
       "path": "lib/evidence.ts",
@@ -242,7 +246,7 @@
     },
     {
       "path": "versions/v1-research/instructions.ts",
-      "sha256": "eeaabf6c27b473ffd20569fd293851d714abac942f984e66fce946f44c7333b1"
+      "sha256": "b15e311a847dc5ff4cf07463b226a2433085e81efacc74ea6a88105c52155f7e"
     },
     {
       "path": "versions/v1-research/worker.ts",
@@ -260,5 +264,11 @@
       "path": "worker.ts",
       "sha256": "162b93925efbf2de8dcfb56a618d9a4740c3e466d29fd638f73e8b31f29c47dc"
     }
-  ]
+  ],
+  "repair": {
+    "date": "2026-11-16",
+    "originalManifest": "original-manifest.json",
+    "originalSourceSha256": "4013f994a52e0ab2093b5271a64ec707f2a680e49436c8cb594780550ea825b3",
+    "note": "Original results and changes.diff refer to the original snapshot. Current source includes shared correctness and benchmark repairs; new acceptance is separate."
+  }
 }

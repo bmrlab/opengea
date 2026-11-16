@@ -31,4 +31,8 @@ Run：`91e2f979-78a6-4a79-b13a-d52e4667b79b`；运行状态：`failed`。以下�
 
 `error` / `—` 是错误或缺失，不能补成 0。空输出、部分输出或 0 个链接不能凭 URL 检查获得质量通过。URL 能在结果中找到，也不等于正文支持对应主张。
 
-[逐题回答与 trajectory](results.json) · [Codex 复核与争议](review-notes.json) · [冻结源码](source/instructions.ts) · [相邻版本的完整差异](changes.diff)
+[逐题回答与 trajectory](results.json) · [Codex 复核与争议](review-notes.json) · [当前源码](source/instructions.ts) · [相邻版本的完整差异](changes.diff)
+
+## 2026-11-16 修复
+
+当前 `source/` 已同步预算核对、精确引用、短摘录保存和独立多轮覆盖检查。各题必达交互记录在metadata.coverage，与Agent回答质量分开。首次 `results.json` 与 `changes.diff` 对应 [原始清单](original-manifest.json)，不代表当前源码的验收结果；[当前清单](manifest.json) 记录修复后的哈希。教学与复验步骤见 [评测校准说明](../../evaluation/README.md)。完整验收结果另行保存，不覆盖首次失败。

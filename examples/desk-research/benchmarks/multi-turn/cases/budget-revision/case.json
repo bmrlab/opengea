@@ -3,13 +3,22 @@
     "message": "请研究中国城市上班族办公室早餐机会，预算每份 15 元，先给有来源的方案。"
   },
   "metadata": {
-    "tags": ["breakfast", "multi-turn", "budget-revision"],
-    "acceptance": "初始条件充分应直接研究；接受预算变化但不丢失原人群和场景，不把未知价格强称满足上限。"
+    "tags": [
+      "breakfast",
+      "multi-turn",
+      "budget-revision"
+    ],
+    "acceptance": "初始条件充分应直接研究；接受预算变化但不丢失原人群和场景，不把未知价格强称满足上限。",
+    "coverage": "初始15元预算报告后，用户明确改为每份8元，要求保留原人群与办公室场景并重排方案；之后Agent作非空回答。"
   },
   "judgeRules": {
     "conversation": {
       "minScore": 1,
       "required": true
+    },
+    "coverage": {
+      "required": true,
+      "minScore": 1
     }
   },
   "simulator": {

@@ -2,7 +2,7 @@
 
 这份 baseline 一开始就使用 Exa，具备搜索、读网页、研究记录读写和完整工作台。基本 instructions 已要求来源、事实与假设区分、约束保留和后续验证；没有故意删除能力来制造失败。
 
-本轮使用固定的 4 题开发集。代码快照、Benchmark 摘要见 manifest；模型、运行预算和运行器见 [protocol](../protocol.json)。执行 Run：`b39e1ec1-5b56-4f63-b553-5ddde880a7fe`。
+首次使用固定的 4 题开发集。首次代码与Benchmark摘要见 original-manifest；模型、运行预算和运行器见 [protocol](../protocol.json)。执行 Run：`b39e1ec1-5b56-4f63-b553-5ddde880a7fe`。
 
 ## 从回答回到 trajectory
 
@@ -27,4 +27,8 @@ Run：`b39e1ec1-5b56-4f63-b553-5ddde880a7fe`；运行状态：`completed`。以�
 
 `error` / `—` 是错误或缺失，不能补成 0。空输出、部分输出或 0 个链接不能凭 URL 检查获得质量通过。URL 能在结果中找到，也不等于正文支持对应主张。
 
-[逐题回答与 trajectory](results.json) · [Codex 复核与争议](review-notes.json) · [冻结源码](source/instructions.ts)
+[逐题回答与 trajectory](results.json) · [Codex 复核与争议](review-notes.json) · [当前源码](source/instructions.ts)
+
+## 2026-11-16 修复
+
+当前 `source/` 已同步预算核对、精确引用、短摘录保存和独立多轮覆盖检查。各题必达交互记录在metadata.coverage，与Agent回答质量分开。首次 `results.json` 与 `changes.diff` 对应 [原始清单](original-manifest.json)，不代表当前源码的验收结果；[当前清单](manifest.json) 记录修复后的哈希。教学与复验步骤见 [评测校准说明](../../evaluation/README.md)。完整验收结果另行保存，不覆盖首次失败。
