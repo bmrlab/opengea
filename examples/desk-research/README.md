@@ -9,7 +9,7 @@
 - [质量迭代记录](./iterations/README.md)：源码快照、固定题集、真实结果与改动说明。
 - [阶段版本与 coding agent 升级任务](./versions/README.md)：生成三个独立项目，用同一套 Benchmark 比较。
 
-当前源码对应 Exa 质量主线的 [03 版本](iterations/03-scoped-inference/README.md)。历史快照与实际结果用于展示从失败中迭代；研究结论由运行时检索产生。环境问题、未完成评分与已知质量缺陷在验收记录中单列。
+当前研究能力沿用 Exa 质量主线的 [03 版本](iterations/03-scoped-inference/README.md)，当前入口另将模型配置改为 CR key 直连。历史快照与实际结果用于展示从失败中迭代；研究结论由运行时检索产生。环境问题、未完成评分与已知质量缺陷在验收记录中单列。
 
 ## 从完整源码启动
 
@@ -24,7 +24,19 @@ pnpm test
 
 SDK 与 Feishu Extension 固定在 `0.2.261114-alpha.0`，锁文件独立于 GEA monorepo。CLI/本地 Runtime 需要另外安装匹配版本；不要将 SDK 已安装等同于 Simulator 可以在任意旧 CLI 运行。`VALIDATION.md` 记录本次实际工具链。
 
-按教程完成 GEA 登录与 Workspace 选择、确认 `gea-pro` 可用，授权 Exa 搜索 Connection：
+### 配置 CR API key
+
+当前 Agent、Judge 和 Simulator 统一使用 CR 模型 `creative-reasoning-1.5`；dev 和 Eval 显式选择 `modelSource: "local"`。在运行 CLI 的同一终端，通过本机凭据管理工具注入有该模型访问权限的 CR key。以下仅展示占位变量，真实 key 不要放进源码、提示词、终端历史或报告：
+
+```bash
+export CREATIVE_REASONING_API_KEY="<YOUR_CR_API_KEY>"
+```
+
+PowerShell 使用 `$env:CREATIVE_REASONING_API_KEY = "<YOUR_CR_API_KEY>"`。CLI 内置直连读取此变量，不读取 `CR_API_KEY` 别名；默认 CR 地址由 CLI 设置，不需要在 `gea.worker.json` 增加模型 key。这里不使用自定义 `LLM_MODEL_CATALOG_JSON`，它会优先于内置配置。完整说明见[模型选择与配置](https://musegea.com/developers/agent-models)。
+
+`local` 表示 Agent 在本机运行并直接请求远端 CR。GEA 登录用于 Project、上传结果等平台操作，Exa Connection 用于搜索；CR key、`GEA_API_KEY` 和 Exa key 各自独立。模型 key 不发给前端，不随 Agent 打包上传。缺 key、无模型权限或直连错误会报错；修正配置后重启 dev。
+
+按教程完成 GEA 登录与 Workspace 选择，再单独授权 Exa 搜索 Connection：
 
 ```bash
 gea agent connect --json '{"cwd":".","connectorKey":"research-search"}'
@@ -58,16 +70,20 @@ pnpm app
 
 ## 评测
 
+在已注入 `CREATIVE_REASONING_API_KEY` 的终端运行。模型和搜索服务会产生实际请求；`validate` / `pack` 通过不代表模型调用或研究质量已经验收。
+
 ```bash
-gea agent eval --json '{"cwd":".","benchmarkPath":"benchmarks/single-turn","modelSource":"hosted","judgeModel":"gea-pro","concurrency":1}'
-gea agent eval --json '{"cwd":".","benchmarkPath":"benchmarks/multi-turn","modelSource":"hosted","judgeModel":"gea-pro","concurrency":1}'
+gea agent eval --json '{"cwd":".","benchmarkPath":"benchmarks/single-turn","modelSource":"local","judgeModel":"creative-reasoning-1.5","concurrency":1}'
+gea agent eval --json '{"cwd":".","benchmarkPath":"benchmarks/multi-turn","modelSource":"local","judgeModel":"creative-reasoning-1.5","concurrency":1}'
 ```
 
 第一条是 12 Case × 3 Markdown Judge，第二条是 6 个 Simulator Case × 2 个 Judge（coverage 与 conversation）。每题的 `maxTurns` 包含首条用户消息；Simulator done 不是 Judge 通过。
 
 两套 Benchmark 保持分开。单轮结果可以按教程推到 Studio 做 Trace Annotation；当前基线明确拒绝发布 Simulator Benchmark 与上传多轮结果，不通过删字段绕过。
 
-修改模型时同时修改 `agent.ts`、多轮 Case 的 `simulator.model` 和命令里的 `judgeModel`。修改质量标准需要记录新的 Benchmark Snapshot，不能和仅修改 Agent 的回归混为一谈。
+修改模型时同时修改 `agent.ts`、阶段模板 `versions/*/agent.ts`、多轮 Case 的 `simulator.model` 和命令里的 `judgeModel`；Judge 校准入口见 [evaluation](evaluation/README.md)。修改质量标准需要记录新的 Benchmark Snapshot，不能和仅修改 Agent 的回归混为一谈。
+
+`iterations/` 的源码快照、协议与历史结果保留原来的 hosted / `gea-pro` 配置；`evaluation/results/` 也仍是原始模型的历史证据。本次配置变更不重写历史分数，不代表 CR 直连已经通过同一质量验收。对当前入口运行新基线，记录 CR 模型、路由与工具链，之后固定它们比较质量。
 
 ## 文件对应
 

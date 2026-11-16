@@ -72,12 +72,12 @@ Desk Research 的来源核对会执行多次模型与证据读取。Agent 的执
   "cwd": "/absolute/path/to/examples/desk-research",
   "run": "/absolute/path/to/saved-run",
   "judgeSource": "snapshot",
-  "judgeModel": "gea-pro",
-  "modelSource": "hosted",
+  "judgeModel": "creative-reasoning-1.5",
+  "modelSource": "local",
   "timeoutMs": 300000,
   "concurrency": 1,
   "trace": true
 }
 ```
 
-将配置保存为 JSON 后使用 `gea eval judge --json-file <文件>`。这为本示例每个 Judge 显式分配最多五分钟，不改变平台默认值、评分标准或模型空闲期限。已有失败必须保留；新评分是另一份 evaluation，不能覆盖原结论。`completed` 只表示结果已落盘，还要检查每项 Judge 的 status/score、gate 和 CLI 退出码。基础设施失败应修复运行链路；价格错算、引用错配应修复 Agent，而不是放宽 Judge。
+先按[启动说明](README.md#配置-cr-api-key)在同一终端注入 `CREATIVE_REASONING_API_KEY`。将配置保存为 JSON 后使用 `gea eval judge --json-file <文件>`。这为本示例每个 Judge 显式分配最多五分钟，不改变平台默认值、评分标准或模型空闲期限。已有失败必须保留；新评分是另一份 evaluation，不能覆盖原结论。`completed` 只表示结果已落盘，还要检查每项 Judge 的 status/score、gate 和 CLI 退出码。基础设施失败应修复运行链路；价格错算、引用错配应修复 Agent，而不是放宽 Judge。

@@ -24,7 +24,7 @@
   "simulator": {
     "persona": "同一食品项目的产品经理，起初预算 15 元，后来财务要求改为 8 元；没有其他已知数据。",
     "goal": "先等首份研究报告，再明确改为每份 8 元，要求保留原目标人群并重排方案。收到修订及未知价格的说明后结束。 不代替 Agent 搜索或写报告，不提供评分标准。",
-    "model": "gea-pro",
+    "model": "creative-reasoning-1.5",
     "maxTurns": 5,
     "stopWhen": "done"
   }

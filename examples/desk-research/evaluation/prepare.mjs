@@ -137,7 +137,7 @@ export async function fixtureRun(destination) {
     status: "completed",
     startedAt: now,
     completedAt: now,
-    judgeModel: "gea-pro",
+    judgeModel: "creative-reasoning-1.5",
     runtime: {
       defaultComputerBackend: "virtual",
       location: "local",

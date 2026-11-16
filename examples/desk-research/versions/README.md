@@ -30,7 +30,7 @@ gea agent validate --json '{"cwd":"."}'
 gea agent pack --json '{"cwd":"."}'
 ```
 
-生成器拒绝已有目标，避免覆盖 coding agent 的修改。它不复制登录、搜索授权、环境变量、运行结果或依赖。各项目按 Quick Start 配置登录和 Connection；v2/v3 先 `pnpm prepare:local` 再 `pnpm dev`。v3 还需按 [FEISHU.md](../FEISHU.md) 完成测试机器人配置。v1 没有工作台，用 Eval 或本地 Agents API 验证，不运行 v2 的 app 命令。
+生成器拒绝已有目标，避免覆盖 coding agent 的修改。它不复制登录、搜索授权、环境变量、运行结果或依赖。各项目按[根目录说明](../README.md#配置-cr-api-key)注入 `CREATIVE_REASONING_API_KEY`，按 Quick Start 配置登录和 Connection；生成项目的 Agent、Simulator 与 dev 使用相同的 CR 直连配置，Eval 显式使用 `modelSource: "local"` 和 `judgeModel: "creative-reasoning-1.5"`。v2/v3 先 `pnpm prepare:local` 再 `pnpm dev`。v3 还需按 [FEISHU.md](../FEISHU.md) 完成测试机器人配置。v1 没有工作台，用 Eval 或本地 Agents API 验证，不运行 v2 的 app 命令。
 
 ## 演示 coding agent 升级
 

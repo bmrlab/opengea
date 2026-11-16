@@ -1,5 +1,7 @@
 # 校准 Judge，再验收 Agent
 
+以下命令使用当前入口的 CR 直连配置：在同一终端注入 `CREATIVE_REASONING_API_KEY`，使用 `creative-reasoning-1.5` 和 `modelSource: "local"`，见[启动说明](../README.md#配置-cr-api-key)。历史结果仍保留原模型，不作为新配置的验收；更换 Judge 模型后先重新校准，再建立可比较的基线。
+
 先写清楚 Case 的输入和可观察验收条件，再选择独立的必过规则。单轮的 scope 检查限制条件、evidence 检查每条事实和确切来源、inference 检查推断边界。多轮另用 coverage 检查目标追问实际发生且得到回答，conversation 只评价已观察到的 Agent 质量。不能用一次追问后的高分代替完整场景，也不能把没有问过的能力判为 Agent 失败。
 
 `fixtures/calibration.json` 是人工编写的 32 个正反例，不是 Agent 实跑结果。预期标签与 Judge 输入分离，包含预算超限、组合错算、错链、时间/人群范围、缺正文，以及同义追问、缺阶段、倒序、合并和质量差但覆盖完整的对话。先用真实 Judge 验证规则能区分这些情况。遇到 Judge 错误保留 error，不人工补分。
@@ -10,7 +12,7 @@
 
 ```bash
 node evaluation/prepare.mjs fixtures /tmp/desk-calibration
-gea eval judge --json '{"run":"/tmp/desk-calibration","judgeSource":"snapshot","judgeModel":"gea-pro","modelSource":"hosted","concurrency":2,"maxSteps":12,"timeoutMs":300000}'
+gea eval judge --json '{"run":"/tmp/desk-calibration","judgeSource":"snapshot","judgeModel":"creative-reasoning-1.5","modelSource":"local","concurrency":2,"maxSteps":12,"timeoutMs":300000}'
 node evaluation/summarize.mjs calibration /tmp/desk-calibration/evaluations/<evaluation-id> /tmp/calibration-summary.json
 ```
 
@@ -23,7 +25,7 @@ node evaluation/summarize.mjs calibration /tmp/desk-calibration/evaluations/<eva
 ```bash
 node evaluation/prepare.mjs overlay iterations/00-exa-baseline/source /tmp/desk-rescore rescore
 # 在新目录安装锁定依赖，然后对复制的原生运行记录评分
-gea eval judge --json '{"cwd":"/tmp/desk-rescore","run":"/tmp/copied-native-run","judgeSource":"workspace","judgeModel":"gea-pro","modelSource":"hosted","concurrency":2,"maxSteps":12,"timeoutMs":300000}'
+gea eval judge --json '{"cwd":"/tmp/desk-rescore","run":"/tmp/copied-native-run","judgeSource":"workspace","judgeModel":"creative-reasoning-1.5","modelSource":"local","concurrency":2,"maxSteps":12,"timeoutMs":300000}'
 ```
 
 重评分回答“同一回答在新规则下得多少分”；它不等于修复后的 Agent 已执行。公开的 results.json 是脱敏分享格式，不能代替原生 Eval 输入。旧执行错误也不会被重评分变成正常完成。
@@ -36,17 +38,19 @@ node iterations/analyze-eval.mjs /tmp/copied-native-run /tmp/rescore-share.json 
 
 ## 完整示例验收
 
+这里执行当前示例根目录。`iterations/*/source` 是历史快照，overlay 不会迁移其 Agent 模型；若要用这些快照做新的 CR 直连执行，先在新工作副本统一 Agent、Simulator 和 Judge 的 CR 模型 ID，并记录新基线。
+
 在修复后的项目运行全部 12 道单轮题和 6 道多轮题，不传 caseIds 即全选：
 
 ```bash
-gea agent eval --json '{"benchmarkPath":"benchmarks/single-turn","modelSource":"hosted","executeOnly":true,"concurrency":2,"overrides":{"engine":{"maxSteps":16,"timeout":{"totalMs":240000}}}}'
-gea agent eval --json '{"benchmarkPath":"benchmarks/multi-turn","modelSource":"hosted","executeOnly":true,"concurrency":2,"overrides":{"engine":{"maxSteps":16,"timeout":{"totalMs":240000}}}}'
+gea agent eval --json '{"benchmarkPath":"benchmarks/single-turn","modelSource":"local","executeOnly":true,"concurrency":2,"overrides":{"engine":{"maxSteps":16,"timeout":{"totalMs":240000}}}}'
+gea agent eval --json '{"benchmarkPath":"benchmarks/multi-turn","modelSource":"local","executeOnly":true,"concurrency":2,"overrides":{"engine":{"maxSteps":16,"timeout":{"totalMs":240000}}}}'
 ```
 
 分别保存命令返回的resultDirectory。先检查执行错误和对话，再对每个目录评分：
 
 ```bash
-gea eval judge --json '{"run":"/path/from/resultDirectory","judgeSource":"snapshot","judgeModel":"gea-pro","modelSource":"hosted","concurrency":2,"maxSteps":12,"timeoutMs":300000}'
+gea eval judge --json '{"run":"/path/from/resultDirectory","judgeSource":"snapshot","judgeModel":"creative-reasoning-1.5","modelSource":"local","concurrency":2,"maxSteps":12,"timeoutMs":300000}'
 ```
 
 executeOnly退出成功仅证明执行完成；必须继续查看evaluation中的每项Judge结果。更新Judge后用judgeSource=workspace重评同一原生目录，保留旧evaluation；不要覆盖原始run.json。
