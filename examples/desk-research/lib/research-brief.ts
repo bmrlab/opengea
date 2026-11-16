@@ -152,7 +152,7 @@ export function compileBrief(
     observations.push(
       [
         `### 来源记录 ${observations.length + 1}：${line(source.title || "Untitled source")}`,
-        `来源日期：${line(source.publishedAt || "未知")}；来源：${source.url}`,
+        `检索元数据日期（未核验，不能据此确认正文发布日期）：${line(source.publishedAt || "未知")}；来源：${source.url}`,
         "原文摘录（该来源的表述，不等于独立核验或代表性结论）：",
         quote
           .split(/\r?\n/u)
