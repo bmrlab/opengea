@@ -1,0 +1,271 @@
+{
+  "schemaVersion": "opengea.iteration-report.v1",
+  "runId": "01d129dd-f9b0-4836-99cf-29710a98eb0d",
+  "status": "failed",
+  "startedAt": "2026-11-16T07:38:45.763Z",
+  "completedAt": "2026-11-16T07:42:48.712Z",
+  "judgeModel": "gea-pro",
+  "runtime": {
+    "defaultComputerBackend": "virtual",
+    "location": "local",
+    "nodeVersion": "v24.3.0",
+    "os": "darwin"
+  },
+  "evaluation": {
+    "evaluationId": "df5116be-dbd3-4cc2-bd71-57a862fb471d",
+    "status": "completed",
+    "judgeSource": "snapshot",
+    "judgeModel": null,
+    "judgeRuntimeHash": "sha256:ff7c4261ce6d893a60136febf5ee45472d831169f0bc9fabb740b14064d6a1cd",
+    "maxSteps": 12,
+    "timeoutMs": 300000,
+    "startedAt": "2026-11-16T07:43:10.844Z",
+    "completedAt": "2026-11-16T07:43:11.502Z"
+  },
+  "targets": [
+    {
+      "key": "product-research",
+      "agentSnapshotHash": "sha256:77f6ccf59c9e28d75c60481b24eac989cd825c2c46705725f58171a80ebe9973",
+      "applicationContentHash": "sha256:54ead6694c46a80fd55ef1bdf39d789850823ba97e9a8678ce8f729ef88b2bcf",
+      "selectedCaseIds": [
+        "no-microwave"
+      ]
+    }
+  ],
+  "counts": {
+    "passed": 0,
+    "failed": 0,
+    "incomplete": 0,
+    "execution_error": 1,
+    "unscored": 0,
+    "missing": 0
+  },
+  "judging": {
+    "required": 3,
+    "completedRequired": 0,
+    "errors": 0
+  },
+  "sharing": "Tool payloads are reduced to queries and source metadata; raw evidence stays local. Review generated answer/Judge text before sharing.",
+  "cases": [
+    {
+      "id": "no-microwave",
+      "agentKey": "product-research",
+      "status": "execution_error",
+      "error": {
+        "code": "agent_execution_failed",
+        "message": "Agent Run ended with status \"error\""
+      },
+      "runId": "75244513-0582-4c75-86c8-91ad7244da5f",
+      "benchmarkHash": "sha256:7a472be75d2d7bb5d3d29798c09a344262ac9e645285db8a13eb63e39f0a44c2",
+      "input": {
+        "message": "研究中国城市通勤者到办公室后吃早餐的机会。办公室没有微波炉、厨房或热水，产品必须能直接食用。请给出有来源的现有方案、局限和待验证机会，不要追问。"
+      },
+      "acceptance": "尊重无加热、无热水条件；不把依赖加热的产品作为可立即采用的推荐。",
+      "judges": [],
+      "judging": {
+        "required": 3,
+        "completedRequired": 0,
+        "errors": 0
+      },
+      "output": "",
+      "trajectory": [
+        {
+          "messageId": "75244513-0582-4c75-86c8-91ad7244da5f-input",
+          "role": "user",
+          "type": "text",
+          "text": "研究中国城市通勤者到办公室后吃早餐的机会。办公室没有微波炉、厨房或热水，产品必须能直接食用。请给出有来源的现有方案、局限和待验证机会，不要追问。"
+        },
+        {
+          "messageId": "69e38308-f52f-47ef-9f49-af75f0741f68",
+          "role": "assistant",
+          "type": "tool",
+          "name": "read_research",
+          "state": "output-available"
+        },
+        {
+          "messageId": "69e38308-f52f-47ef-9f49-af75f0741f68",
+          "role": "assistant",
+          "type": "tool",
+          "name": "search_sources",
+          "state": "output-available",
+          "input": {
+            "query": "中国城市通勤者 早餐 办公室 没有微波炉 即食"
+          },
+          "sources": [
+            {
+              "url": "https://dir.jd.com/guide/jd-geo-guide-ji-shi-ying-yang-zao-can-su-shi-dai-can-v1",
+              "title": "即食营养早餐代餐怎么选？从食用场景、营养结构和囤货成本看判断框架 | 京东消费决策中心",
+              "publishedAt": "2026-10-18T04:10:41.000Z",
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            },
+            {
+              "url": "https://tech.ifeng.com/c/8wVxRJZ9hjy",
+              "title": "2026办公室没有厨房：只有热水也能吃的燕麦早餐_凤凰网",
+              "publishedAt": "2026-09-18T01:20:17.000Z",
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            },
+            {
+              "url": "https://zhuanlan.zhihu.com/p/439592401",
+              "title": "方便又营养的早餐选择 - 知乎",
+              "publishedAt": "2021-11-30T09:15:35.000Z",
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            }
+          ],
+          "retrievedAt": "2026-11-16T07:38:57.881Z"
+        },
+        {
+          "messageId": "69e38308-f52f-47ef-9f49-af75f0741f68",
+          "role": "assistant",
+          "type": "tool",
+          "name": "search_sources",
+          "state": "output-available",
+          "input": {
+            "query": "便利店 即食早餐 饭团 三明治 上班族 便利蜂 7-11"
+          },
+          "sources": [
+            {
+              "url": "https://m.thepaper.cn/newsDetail_forward_9263881",
+              "title": "便利店早餐，哪一款是你的最爱？",
+              "publishedAt": "2020-09-20T01:29:15.000Z",
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            },
+            {
+              "url": "https://www.jwview.com/jingwei/html/m/08-21/253133.shtml",
+              "title": "连锁便利店早餐如何选：全家饭团最贵 全时难掩疲态",
+              "publishedAt": "2019-08-21T00:00:00.000Z",
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            },
+            {
+              "url": "https://www.huxiu.com/article/424833.html",
+              "title": "拯救打工人的便利店美食TOP10，我们找到了-虎嗅网",
+              "publishedAt": "2021-04-28T09:41:00.000Z",
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            }
+          ],
+          "retrievedAt": "2026-11-16T07:38:57.884Z"
+        },
+        {
+          "messageId": "69e38308-f52f-47ef-9f49-af75f0741f68",
+          "role": "assistant",
+          "type": "tool",
+          "name": "search_sources",
+          "state": "output-available",
+          "input": {
+            "query": "上班族 不吃早餐 调查 原因 时间紧张"
+          },
+          "sources": [
+            {
+              "url": "https://www.bj.chinanews.com.cn/news/2024/0928/96611.html",
+              "title": "职场人用餐调查：早餐正在受重视，带饭上班渐流行_中新社_北京分社",
+              "publishedAt": "2024-09-28T00:00:00.000Z",
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            },
+            {
+              "url": "http://zqb.cyol.com/html/2018-02/27/nw.D110000zgqnb_20180227_2-07.htm",
+              "title": "过半单身青年经常不吃早餐",
+              "publishedAt": "2018-02-27T06:33:49.000Z",
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            },
+            {
+              "url": "http://zqb.cyol.com/html/2017-06/20/nw.D110000zgqnb_20170620_4-07.htm",
+              "title": "仅49.5％受访者每天吃早餐",
+              "publishedAt": "2017-06-20T05:34:57.000Z",
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            }
+          ],
+          "retrievedAt": "2026-11-16T07:39:05.916Z"
+        },
+        {
+          "messageId": "69e38308-f52f-47ef-9f49-af75f0741f68",
+          "role": "assistant",
+          "type": "tool",
+          "name": "search_sources",
+          "state": "output-available",
+          "input": {
+            "query": "开袋即食 常温 全麦面包 蛋白棒 办公室早餐 无需冲泡"
+          },
+          "sources": [
+            {
+              "url": "https://m.tytxuan.com/c/2024394841",
+              "title": "七年五季全麦经典芝麻面包600g/箱，真全麦高膳食纤维高饱腹优选面粉新鲜好面包 全麦面包 芝麻面包 经典面包",
+              "publishedAt": null,
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            },
+            {
+              "url": "https://pcdetail.taobao.com/MHJNb1hlRkQrZ0N5UU0zQ0xPdTFrUT09.html",
+              "title": "盒马代购 低GI核桃全麦欧包480g营养健康早餐开袋即食小零食饱腹-淘宝网",
+              "publishedAt": null,
+              "textLength": 585,
+              "textScope": "search-text",
+              "truncated": false
+            },
+            {
+              "url": "https://pcdetail.taobao.com/bUJPZWxCL200SmpmUnBVdThFSlUrZz09.html",
+              "title": "豪士低GI全麦吐司面包营养早餐办公室休闲小吃解饿零食下午茶充饥-淘宝网",
+              "publishedAt": null,
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            }
+          ],
+          "retrievedAt": "2026-11-16T07:39:05.965Z"
+        },
+        {
+          "messageId": "69e38308-f52f-47ef-9f49-af75f0741f68",
+          "role": "assistant",
+          "type": "tool",
+          "name": "save_research",
+          "state": "output-available"
+        },
+        {
+          "messageId": "69e38308-f52f-47ef-9f49-af75f0741f68",
+          "role": "assistant",
+          "type": "tool",
+          "name": "save_research",
+          "state": "output-available"
+        },
+        {
+          "messageId": "69e38308-f52f-47ef-9f49-af75f0741f68",
+          "role": "assistant",
+          "type": "tool",
+          "name": "save_research",
+          "state": "input-streaming"
+        }
+      ],
+      "citationAudit": {
+        "method": "Compare Markdown and plain HTTP(S) citation URLs in run.output with URLs actually returned by search_sources/read_source. Ignore fragments only. This checks source identity, not whether a claim is supported.",
+        "toolCalls": {
+          "read_research": 1,
+          "search_sources": 4,
+          "save_research": 3
+        },
+        "outputCharacters": 0,
+        "capturedSourceCount": 12,
+        "citationCount": 0,
+        "unmatched": [],
+        "invalid": []
+      },
+      "rawArtifactSha256": "84d826fa02611de772706a7c630191429ff853067cdfa70de7cbb1729532eb96"
+    }
+  ]
+}

@@ -1,0 +1,1032 @@
+{
+  "schemaVersion": "opengea.iteration-report.v1",
+  "runId": "ff07e9b3-5b91-432b-88a5-327620569f2f",
+  "status": "completed",
+  "startedAt": "2026-11-16T07:30:06.481Z",
+  "completedAt": "2026-11-16T07:34:59.961Z",
+  "judgeModel": "gea-pro",
+  "runtime": {
+    "defaultComputerBackend": "virtual",
+    "location": "local",
+    "nodeVersion": "v24.3.0",
+    "os": "darwin"
+  },
+  "evaluation": {
+    "evaluationId": "2e07cbad-dbed-4bee-816e-23ea838b00e6",
+    "status": "completed",
+    "judgeSource": "snapshot",
+    "judgeModel": "gea-pro",
+    "judgeRuntimeHash": "sha256:7b3289f03b6af30290da63f766908087ac49f02ca5a3d0e08baa8662da950303",
+    "maxSteps": 12,
+    "timeoutMs": 300000,
+    "startedAt": "2026-11-16T07:35:05.028Z",
+    "completedAt": "2026-11-16T07:42:18.784Z"
+  },
+  "targets": [
+    {
+      "key": "product-research",
+      "agentSnapshotHash": "sha256:77f6ccf59c9e28d75c60481b24eac989cd825c2c46705725f58171a80ebe9973",
+      "applicationContentHash": "sha256:d8b7ae040a8414afc847964c878962e55b491d0256a56a0f7486698d26c9bd96",
+      "selectedCaseIds": [
+        "breakfast-scope",
+        "budget-ceiling",
+        "counter-evidence",
+        "validation-plan"
+      ]
+    }
+  ],
+  "counts": {
+    "passed": 1,
+    "failed": 0,
+    "incomplete": 3,
+    "execution_error": 0,
+    "unscored": 0,
+    "missing": 0
+  },
+  "judging": {
+    "required": 12,
+    "completedRequired": 9,
+    "errors": 3
+  },
+  "sharing": "Tool payloads are reduced to queries and source metadata; raw evidence stays local. Review generated answer/Judge text before sharing.",
+  "cases": [
+    {
+      "id": "breakfast-scope",
+      "agentKey": "product-research",
+      "status": "incomplete",
+      "runId": "fe1c4865-a600-4e7b-96ba-73fc2426a33c",
+      "benchmarkHash": "sha256:7a472be75d2d7bb5d3d29798c09a344262ac9e645285db8a13eb63e39f0a44c2",
+      "input": {
+        "message": "研究中国城市上班族到办公室后吃早餐的场景。检索公开用户讨论、现有产品和行业资料，形成带来源的机会简报。信息不足请注明，不需要再向我澄清。"
+      },
+      "acceptance": "覆盖人群、场景、现有方案、机会和待验证问题；条件充分时不反复追问。",
+      "judges": [
+        {
+          "id": "evidence",
+          "kind": "markdown",
+          "status": "completed",
+          "score": 1,
+          "reason": "核对最终报告四类实质性事实与工具调用实际抓取正文：豆瓣帖(2021-04-02)关于酸奶包子鸡蛋及两极评论、香港skypost(2021-03-26)关于歎早餐气味及金融公司煎炸整顿案例、搜狐(2019-08-14)关于螺蛳粉海鲜气味留言、V2EX(2018-12-05)关于办公室不通风抱怨，均与原文逐句对应，且报告正确标注这些为个人样本而非代表性调查。猩便利报道(2018-09-12)关于25分钟送达工位、工位即餐桌及白领痛点描述与原文一致，报告正确标注为企业宣传稿不能作为市场普遍验证。北大阿里报告摘要引用与read_source抓取内容逐句对应，报告明确声明仅获取摘要未读正文、无法引用市场规模数字，未冒用该报告做无依据定量结论。各引用URL与紧邻原句一一对应，未见渠道/商品/日期张冠李戴或组合价格错算。机会假设标注为待验证并附放弃条件，未将个案样本包装成普遍结论。报告覆盖人群、场景、现有方案、机会假设及证据缺口说明，满足验收要求，未发现事实与引用正文不符或过度推断之处。"
+        },
+        {
+          "id": "inference",
+          "kind": "markdown",
+          "status": "error",
+          "error": {
+            "code": "judge_failed",
+            "message": "Agent execution failed (timeout). Diagnostic ID: e8606d17-1694-4e4f-a5d5-9dcf777040ba"
+          }
+        },
+        {
+          "id": "scope",
+          "kind": "markdown",
+          "status": "completed",
+          "score": 1,
+          "reason": "任务要求：研究中国城市上班族到岗后吃早餐场景，覆盖人群/场景/现有方案/机会/待验证问题，资料不足需注明，且不得反复追问（用户已明确说明不需要澄清）。核对完整最终回答（messageId 444dc82a...，partIndex 17）：①人群场景明确限定为“到办公室后”吃早餐，与请求一致；②给出4条用户讨论样本+2个现有方案/行业报告，均附来源链接；③列出假设A/B两个机会，附验证动作、观察指标、放弃条件，满足“机会”与“待验证问题”交付；④“证据缺口说明”如实标注北大&阿里报告仅读摘要未读正文数据“不可引用”、猩便利现状不明、未检索到2023年后案例，并明确“缺口不等于市场空白”，未将未知当已确认，无伪造数字或过度断言；⑤全文未向用户提出澄清问题，与用户要求一致，体现条件不足时直接注明而非反复追问。未发现超限/误算/分类自相矛盾等违规（本案不涉及预算、份量等具体数值核算类约束，核查其适用的核心约束——人群、场景、交付结构、资料缺口标注——均满足）。综上，交付完整且无明确约束违反，应判1。"
+        }
+      ],
+      "judging": {
+        "required": 3,
+        "completedRequired": 2,
+        "errors": 1
+      },
+      "output": "# 中国城市上班族\"到办公室后吃早餐\"场景机会简报\n\n## 一、关键发现\n\n**1. 到岗后在工位吃早餐是常见行为，但\"气味外溢\"是反复出现的社交摩擦点**\n\n- 豆瓣讨论（2021-04-02）：一名用户因通勤远、怕迟到，习惯到办公室后吃\"酸奶+包子+鸡蛋\"，发帖询问同事是否反感；评论区两极分化——\"我们全公司都在办公室吃，大家还互相发就无所谓\" vs \"鸡蛋和包子都有很大味道……出去吃吧\"。来源：https://www.douban.com/group/topic/218709501/?_spm_id=MjE0NzYwMjcy\n- 香港媒体报道（2021-03-26）个案：同事\"几乎每日返到公司才歎早餐\"，气味扩散被投诉；另有金融公司因茶水间煎炸气味影响接待客户形象，最终被管理层收走煮食用具并发通告整顿。此为香港职场个案，非内地代表性调查。来源：https://skypost.hk/article/2916929/\n- 内地网友留言（搜狐转载，2019-08-14）：明确表示\"最讨厌有人在办公室吃螺蛳粉\"\"讨厌别人吃海鲜\"，并指出\"办公室又不通风，有味道真的很难散出去\"。来源：https://www.sohu.com/a/333578854_120266922\n- V2EX讨论（2018-12-05）：用户抱怨\"办公室很高，不能开窗，空气不怎么流通\"，同事早餐油烟味造成不适。来源：https://www.v2ex.com/t/514399\n\n以上均为论坛/媒体中的具体样本发言，**不构成代表性调查**，但\"气味+密闭空间\"反复出现，可作为设计约束参考，不宜夸大为普遍现象。\n\n**2. 已有企业级产品：早餐外卖+团餐送到工位（2018年上海案例）**\n\n中国产业经济信息网报道（2018-09-12）：\"猩便利\"推出早餐外卖，\"下单后25分钟内即可速达至办公室\"，并提供企业多日早餐预订服务，宣传\"工位即餐桌\"，配合上海\"早餐工程\"。文中称白领痛点为\"品牌早餐店面少不顺路；便利店排队时间长；街边小店品质不放心\"，因此早餐常简化为\"饼干+速溶咖啡\"。来源：https://www.cinic.org.cn/zgzz/qy/449486.html\n\n**该文是企业宣传稿，仅证明此模式2018年被尝试过，不能作为市场普遍验证；猩便利后续经营状况本次未核实。**\n\n**3. 宏观行业报告提及早餐外卖增长，但未细分\"到岗后堂食\"场景**\n\n北大&阿里《2021中国数字早经济发展研究报告》摘要：\"早餐时段外卖业务有较大发展潜力且发展迅速……消费者在周末更偏好外卖早餐\"\"中式早餐占比明显更多，西式早餐增长更为迅速\"。来源：http://m.hibor.net/wap_detail.aspx?id=1e1bafcd7083cdc3a771f214ff3f5c9c\n\n本次仅获取结论摘要，未读取正文具体数据，**无法引用市场规模等数字**，且该报告未单独拆分\"办公室到岗后吃早餐\"这一细分场景。\n\n## 二、机会假设（均为待验证）\n\n**假设A：低气味、可快速食用的\"工位友好型\"早餐存在需求缺口**\n- 验证动作：访谈/问卷调研到岗后吃早餐的白领，是否主动规避煎炸、螺蛳粉等重气味品类\n- 观察指标：主动提及\"怕影响同事\"的比例；低气味品类实际购买占比\n- 放弃条件：若调研显示多数人对气味问题无感，该痛点不足以支撑独立产品线\n\n**假设B：企业团餐/早餐配送到工位模式仍有迭代空间**\n- 验证动作：核实猩便利等2018年案例后续运营情况，检索2023-2025年是否有新玩家提供同类服务\n- 观察指标：现存服务的城市覆盖、企业客户数、复购率\n- 放弃条件：若该模式未见延续或规模化证据，应定位为\"历史尝试\"而非\"成熟方案\"\n\n## 三、证据缺口说明\n\n- **未找到**专门针对\"到办公室后吃早餐\"场景的量化调研（渗透率、客单价、频次等），现有资料以论坛个人发言和单一企业宣传稿为主，样本量小且非代表性。\n- 北大&阿里报告仅获取摘要，具体数据未验证，不可引用。\n- 未检索到2023年后的办公室早餐配送最新案例，猩便利案例（2018年）现状不明——**这一缺口不等于市场空白**，仅说明本次检索未覆盖到最新方案，建议下一步针对\"企业团餐 早餐 2024\"\"办公室零食/早餐福利\"等关键词补充检索。",
+      "trajectory": [
+        {
+          "messageId": "fe1c4865-a600-4e7b-96ba-73fc2426a33c-input",
+          "role": "user",
+          "type": "text",
+          "text": "研究中国城市上班族到办公室后吃早餐的场景。检索公开用户讨论、现有产品和行业资料，形成带来源的机会简报。信息不足请注明，不需要再向我澄清。"
+        },
+        {
+          "messageId": "444dc82a-1cd0-4540-aa1e-fc038db4a26a",
+          "role": "assistant",
+          "type": "tool",
+          "name": "read_research",
+          "state": "output-available"
+        },
+        {
+          "messageId": "444dc82a-1cd0-4540-aa1e-fc038db4a26a",
+          "role": "assistant",
+          "type": "tool",
+          "name": "search_sources",
+          "state": "output-available",
+          "input": {
+            "query": "上班族 办公室 早餐 到公司吃早餐 讨论"
+          },
+          "sources": [
+            {
+              "url": "https://www.douban.com/group/topic/218709501/",
+              "title": "大家会反感在办公室吃早饭的同事吗😢",
+              "publishedAt": "2021-04-02T00:00:00.000Z",
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            },
+            {
+              "url": "https://www.ptt.cc/bbs/WomenTalk/M.1676275306.A.A87.html",
+              "title": "[閒聊] 大家早餐都在家裡吃還是公司 - 看板 WomenTalk - 批踢踢實業坊",
+              "publishedAt": null,
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            },
+            {
+              "url": "https://www.v2ex.com/t/457549",
+              "title": "在办公室吃早餐是怎么一种体验？ - V2EX",
+              "publishedAt": "2018-05-24T11:26:34.000Z",
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            }
+          ],
+          "retrievedAt": "2026-11-16T07:30:18.541Z"
+        },
+        {
+          "messageId": "444dc82a-1cd0-4540-aa1e-fc038db4a26a",
+          "role": "assistant",
+          "type": "tool",
+          "name": "search_sources",
+          "state": "output-available",
+          "input": {
+            "query": "办公室早餐 外卖 早餐产品 便利店 行业报告"
+          },
+          "sources": [
+            {
+              "url": "https://assets.kpmg.com/content/dam/kpmgsites/cn/pdf/zh/2026/05/china-convenience-store-development-report-2026.pdf.coredownload.inline.pdf",
+              "title": "2026年中国便利店发展报告",
+              "publishedAt": null,
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            },
+            {
+              "url": "http://m.hibor.net/wap_detail.aspx",
+              "title": "北大&阿里-2021中国数字早经济发展研究报告-211227-研报-机构资讯-慧博投研资讯",
+              "publishedAt": "2021-12-27T00:00:00.000Z",
+              "textLength": 510,
+              "textScope": "search-text",
+              "truncated": false
+            },
+            {
+              "url": "https://www.cinic.org.cn/zgzz/qy/449486.html",
+              "title": "工位即“餐桌” 猩便利推出办公室早餐外卖+团餐 - 企业 - 中国产业经济信息网",
+              "publishedAt": "2018-09-12T00:00:00.000Z",
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            }
+          ],
+          "retrievedAt": "2026-11-16T07:30:18.510Z"
+        },
+        {
+          "messageId": "444dc82a-1cd0-4540-aa1e-fc038db4a26a",
+          "role": "assistant",
+          "type": "tool",
+          "name": "read_source",
+          "state": "output-available",
+          "input": {
+            "url": "http://m.hibor.net/wap_detail.aspx"
+          },
+          "source": {
+            "url": "http://m.hibor.net/wap_detail.aspx",
+            "title": "北大&阿里-2021中国数字早经济发展研究报告-211227-研报-机构资讯-慧博投研资讯",
+            "publishedAt": "2021-12-27T00:00:00.000Z",
+            "textLength": 510,
+            "textScope": "page-text",
+            "truncated": false
+          },
+          "retrievedAt": "2026-11-16T07:30:30.264Z"
+        },
+        {
+          "messageId": "444dc82a-1cd0-4540-aa1e-fc038db4a26a",
+          "role": "assistant",
+          "type": "tool",
+          "name": "read_source",
+          "state": "output-available",
+          "input": {
+            "url": "https://www.cinic.org.cn/zgzz/qy/449486.html"
+          },
+          "source": {
+            "url": "https://www.cinic.org.cn/zgzz/qy/449486.html",
+            "title": "工位即“餐桌” 猩便利推出办公室早餐外卖+团餐 - 企业 - 中国产业经济信息网",
+            "publishedAt": "2018-09-12T00:00:00.000Z",
+            "textLength": 1164,
+            "textScope": "page-text",
+            "truncated": false
+          },
+          "retrievedAt": "2026-11-16T07:30:30.262Z"
+        },
+        {
+          "messageId": "444dc82a-1cd0-4540-aa1e-fc038db4a26a",
+          "role": "assistant",
+          "type": "tool",
+          "name": "search_sources",
+          "state": "output-available",
+          "input": {
+            "query": "办公室 吃早餐 异味 同事 抱怨 投诉"
+          },
+          "sources": [
+            {
+              "url": "https://skypost.hk/article/2916929/%E5%90%8C%E4%BA%8B%E8%BE%A6%E5%85%AC%E5%AE%A4%E6%AD%8E%E6%97%A9%E9%A4%90-%E6%89%93%E5%B7%A5%E4%BB%94%E8%81%9E%E6%B0%A3%E5%91%B3%E6%84%9F%E6%BB%8B%E6%93%BE",
+              "title": "同事辦公室歎早餐 打工仔聞氣味感滋擾",
+              "publishedAt": "2021-03-26T13:41:57.000Z",
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            },
+            {
+              "url": "https://www.v2ex.com/t/514399",
+              "title": "诸位办公室里面有吃早餐，抽烟的人吗？ - V2EX",
+              "publishedAt": "2018-12-05T00:34:38.000Z",
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            },
+            {
+              "url": "https://www.sohu.com/a/333578854_120266922",
+              "title": "办公室吃东西，有没有考虑同事的感受！_工作",
+              "publishedAt": "2019-08-14T01:27:57.000Z",
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            }
+          ],
+          "retrievedAt": "2026-11-16T07:30:31.432Z"
+        },
+        {
+          "messageId": "444dc82a-1cd0-4540-aa1e-fc038db4a26a",
+          "role": "assistant",
+          "type": "tool",
+          "name": "save_research",
+          "state": "output-error",
+          "error": "Agent execution failed."
+        },
+        {
+          "messageId": "444dc82a-1cd0-4540-aa1e-fc038db4a26a",
+          "role": "assistant",
+          "type": "tool",
+          "name": "save_research",
+          "state": "output-available",
+          "sources": [
+            {
+              "url": "https://www.douban.com/group/topic/218709501/",
+              "title": "大家会反感在办公室吃早饭的同事吗😢 - 豆瓣小组",
+              "textLength": 0
+            },
+            {
+              "url": "https://skypost.hk/article/2916929/%E5%90%8C%E4%BA%8B%E8%BE%A6%E5%85%AC%E5%AE%A4%E6%AD%8E%E6%97%A9%E9%A4%90-%E6%89%93%E5%B7%A5%E4%BB%94%E8%81%9E%E6%B0%A3%E5%91%B3%E6%84%9F%E6%BB%8B%E6%93%BE",
+              "title": "同事辦公室歎早餐 打工仔聞氣味感滋擾",
+              "textLength": 0
+            },
+            {
+              "url": "https://www.sohu.com/a/333578854_120266922",
+              "title": "办公室吃东西，有没有考虑同事的感受！_工作",
+              "textLength": 0
+            },
+            {
+              "url": "https://www.v2ex.com/t/514399",
+              "title": "诸位办公室里面有吃早餐，抽烟的人吗？ - V2EX",
+              "textLength": 0
+            },
+            {
+              "url": "https://www.cinic.org.cn/zgzz/qy/449486.html",
+              "title": "工位即\"餐桌\" 猩便利推出办公室早餐外卖+团餐",
+              "textLength": 0
+            },
+            {
+              "url": "http://m.hibor.net/wap_detail.aspx",
+              "title": "北大&阿里-2021中国数字早经济发展研究报告",
+              "textLength": 0
+            }
+          ]
+        },
+        {
+          "messageId": "444dc82a-1cd0-4540-aa1e-fc038db4a26a",
+          "role": "assistant",
+          "type": "text",
+          "text": "# 中国城市上班族\"到办公室后吃早餐\"场景机会简报\n\n## 一、关键发现\n\n**1. 到岗后在工位吃早餐是常见行为，但\"气味外溢\"是反复出现的社交摩擦点**\n\n- 豆瓣讨论（2021-04-02）：一名用户因通勤远、怕迟到，习惯到办公室后吃\"酸奶+包子+鸡蛋\"，发帖询问同事是否反感；评论区两极分化——\"我们全公司都在办公室吃，大家还互相发就无所谓\" vs \"鸡蛋和包子都有很大味道……出去吃吧\"。来源：https://www.douban.com/group/topic/218709501/?_spm_id=MjE0NzYwMjcy\n- 香港媒体报道（2021-03-26）个案：同事\"几乎每日返到公司才歎早餐\"，气味扩散被投诉；另有金融公司因茶水间煎炸气味影响接待客户形象，最终被管理层收走煮食用具并发通告整顿。此为香港职场个案，非内地代表性调查。来源：https://skypost.hk/article/2916929/\n- 内地网友留言（搜狐转载，2019-08-14）：明确表示\"最讨厌有人在办公室吃螺蛳粉\"\"讨厌别人吃海鲜\"，并指出\"办公室又不通风，有味道真的很难散出去\"。来源：https://www.sohu.com/a/333578854_120266922\n- V2EX讨论（2018-12-05）：用户抱怨\"办公室很高，不能开窗，空气不怎么流通\"，同事早餐油烟味造成不适。来源：https://www.v2ex.com/t/514399\n\n以上均为论坛/媒体中的具体样本发言，**不构成代表性调查**，但\"气味+密闭空间\"反复出现，可作为设计约束参考，不宜夸大为普遍现象。\n\n**2. 已有企业级产品：早餐外卖+团餐送到工位（2018年上海案例）**\n\n中国产业经济信息网报道（2018-09-12）：\"猩便利\"推出早餐外卖，\"下单后25分钟内即可速达至办公室\"，并提供企业多日早餐预订服务，宣传\"工位即餐桌\"，配合上海\"早餐工程\"。文中称白领痛点为\"品牌早餐店面少不顺路；便利店排队时间长；街边小店品质不放心\"，因此早餐常简化为\"饼干+速溶咖啡\"。来源：https://www.cinic.org.cn/zgzz/qy/449486.html\n\n**该文是企业宣传稿，仅证明此模式2018年被尝试过，不能作为市场普遍验证；猩便利后续经营状况本次未核实。**\n\n**3. 宏观行业报告提及早餐外卖增长，但未细分\"到岗后堂食\"场景**\n\n北大&阿里《2021中国数字早经济发展研究报告》摘要：\"早餐时段外卖业务有较大发展潜力且发展迅速……消费者在周末更偏好外卖早餐\"\"中式早餐占比明显更多，西式早餐增长更为迅速\"。来源：http://m.hibor.net/wap_detail.aspx?id=1e1bafcd7083cdc3a771f214ff3f5c9c\n\n本次仅获取结论摘要，未读取正文具体数据，**无法引用市场规模等数字**，且该报告未单独拆分\"办公室到岗后吃早餐\"这一细分场景。\n\n## 二、机会假设（均为待验证）\n\n**假设A：低气味、可快速食用的\"工位友好型\"早餐存在需求缺口**\n- 验证动作：访谈/问卷调研到岗后吃早餐的白领，是否主动规避煎炸、螺蛳粉等重气味品类\n- 观察指标：主动提及\"怕影响同事\"的比例；低气味品类实际购买占比\n- 放弃条件：若调研显示多数人对气味问题无感，该痛点不足以支撑独立产品线\n\n**假设B：企业团餐/早餐配送到工位模式仍有迭代空间**\n- 验证动作：核实猩便利等2018年案例后续运营情况，检索2023-2025年是否有新玩家提供同类服务\n- 观察指标：现存服务的城市覆盖、企业客户数、复购率\n- 放弃条件：若该模式未见延续或规模化证据，应定位为\"历史尝试\"而非\"成熟方案\"\n\n## 三、证据缺口说明\n\n- **未找到**专门针对\"到办公室后吃早餐\"场景的量化调研（渗透率、客单价、频次等），现有资料以论坛个人发言和单一企业宣传稿为主，样本量小且非代表性。\n- 北大&阿里报告仅获取摘要，具体数据未验证，不可引用。\n- 未检索到2023年后的办公室早餐配送最新案例，猩便利案例（2018年）现状不明——**这一缺口不等于市场空白**，仅说明本次检索未覆盖到最新方案，建议下一步针对\"企业团餐 早餐 2024\"\"办公室零食/早餐福利\"等关键词补充检索。"
+        }
+      ],
+      "citationAudit": {
+        "method": "Compare Markdown and plain HTTP(S) citation URLs in run.output with URLs actually returned by search_sources/read_source. Ignore fragments only. This checks source identity, not whether a claim is supported.",
+        "toolCalls": {
+          "read_research": 1,
+          "search_sources": 3,
+          "read_source": 2,
+          "save_research": 2
+        },
+        "outputCharacters": 1812,
+        "capturedSourceCount": 9,
+        "citationCount": 6,
+        "unmatched": [
+          "https://skypost.hk/article/2916929/"
+        ],
+        "invalid": []
+      },
+      "rawArtifactSha256": "dfeebf11f06c9884b38c10bee7ec8559aec2e95e06e419f3d756182bc6a0cb8e"
+    },
+    {
+      "id": "budget-ceiling",
+      "agentKey": "product-research",
+      "status": "incomplete",
+      "runId": "c0a330f3-8a67-4748-879a-372e9011fea0",
+      "benchmarkHash": "sha256:7a472be75d2d7bb5d3d29798c09a344262ac9e645285db8a13eb63e39f0a44c2",
+      "input": {
+        "message": "为中国城市通勤者研究工作日早餐，单次预算最多 8 元，通常在办公室食用。比较已有方案和可能机会；价格找不到就注明，别把未知价格当作满足预算。请直接检索。"
+      },
+      "acceptance": "价格要有来源并区分单份、组合和促销口径；未知价格不能声称已满足 8 元上限。",
+      "judges": [
+        {
+          "id": "evidence",
+          "kind": "markdown",
+          "status": "completed",
+          "score": 1,
+          "reason": "核对四条关键事实均与检索捕获的原文一致、URL与引用对应准确，样本范围标注无张冠李戴：\n1) 51job/前程无忧(2024-09-28)：原文“83%的受访者表示几乎每天都会吃早餐”“预算有限(23%)”“自有食堂(59%)”“餐费补贴(57%)”均逐字匹配read_source正文，报告正确指出该数据展开的是午餐场景、早餐无专属数字。\n2) 便利蜂《白领早餐报告》(2020-11-25，全国20城1600+门店)：原文“94.2%的受访者早餐费用控制在10元以内”“60.78%的白领选择便利店”“豆浆+油条+茶叶蛋”最受欢迎组合，均逐字匹配；报告正确区分“10元以内”≠“8元以内”，未将该区间当作达标证据。\n3) 北京日报CBD现场观察(2023-06-29)：原文“烧饼夹鸡蛋里脊7块钱，一杯豆浆3块钱，打包带走”“坐在工位上吃完5分钟”逐字匹配；报告正确算出7+3=10元超预算，且标注为单一案例非代表性样本。\n4) 上海逸小兔品牌发布(2020-08-18)：原文“肉包+烧麦+豆浆组合售价7.9元”逐字匹配；报告标注为≤8元但明确为2020年历史定价、品牌发布稿、当前价格及办公室占比未知，未将未知当作已满足条件。\n全文未出现将学生/营销样本冒充通勤者整体、未出现组合价算错或日期错配，且对“未知价格”均未声称满足8元上限，符合验收标准。"
+        },
+        {
+          "id": "inference",
+          "kind": "markdown",
+          "status": "completed",
+          "score": 1,
+          "reason": "简报全文已在提示中给出，无截断标记，无需补读。核查结果：\n1) 结构与内容均做了观察/推断/待验证区分，未将个体评论泛化为普遍结论。如“烧饼夹里脊+豆浆”案例明确标注“仅单一案例，非代表性样本”；“逸小兔7.9元套餐”明确标注“样本单一（2020年、一家品牌）”、“当前是否维持该价格…均未知”。\n2) 强结论均带有分母/样本范围且未夸大：如“83%的受访者表示几乎每天都会吃早餐”“94.2%的受访者早餐费用控制在10元以内”“60.78%的白领选择便利店”均注明调查主体和样本规模（如“全国20城1600余门店”），并未被当作普适结论，且文中特别指出“该区间无法证明8元内达标比例”“具体展开的是午餐场景数据，未给出早餐专属预算或福利数字”，未把营销/问卷数据当成已验证的用户需求。\n3) 未出现“接受度高”“真正/核心痛点是”“多数人/多数吐槽者”“覆盖不普遍”“未见成熟方案”等无支撑的绝对化表述；“主流渠道”一词有60.78%及来源支撑，不属无依据断言。\n4) 价格核算严格区分单份/组合/促销口径（见“预算核算对照表”），未知价格明确标注“未知，不计入达标”，未将10元区间或午餐福利数据当作满足8元早餐预算的证据，符合验收标准。\n5) “机会假设”部分每条均标注“均需验证”，并给出验证动作、观察指标、放弃条件，未把假设写成已证实需求。\n6) “资料缺口”部分进一步明确覆盖率、地区代表性、办公室占比等均缺失，保持了范围限定，不是结尾套话。\n综合以上，简报满足规则要求的区分和证据标准，未发现无支撑的强结论，应判1分。"
+        },
+        {
+          "id": "scope",
+          "kind": "markdown",
+          "status": "error",
+          "error": {
+            "code": "judge_failed",
+            "message": "Agent execution failed (timeout). Diagnostic ID: 6847b06d-d3fe-425e-8ada-9f98d360fc37"
+          }
+        }
+      ],
+      "judging": {
+        "required": 3,
+        "completedRequired": 2,
+        "errors": 1
+      },
+      "output": "## 中国城市通勤者工作日早餐研究简报（预算≤8元，办公室食用）\n\n### 研究范围\n人群：中国城市职场通勤者；场景：工作日早餐，通常在办公室/工位食用；预算上限：单次8元。要求：价格不明不计入达标判断。\n\n### 关键观察（均标注样本范围）\n\n**1. 早餐受重视度上升，但早餐预算无具体数字**\n2024年9月，前程无忧51job问卷调研（北京报道）：“83%的受访者表示几乎每天都会吃早餐”，工作日用餐最大困扰中“预算有限”占23%。企业用餐福利主要为“自有食堂(59%)”“餐费补贴(57%)”，但原文具体展开的是**午餐**场景数据，未给出早餐专属预算或福利数字。\n来源：https://www.bj.chinanews.com.cn/news/2024/0928/96611.html\n\n**2. 便利店是主流渠道之一，但\"10元以内\"≠\"8元以内\"**\n2020年11月，便利蜂《白领早餐报告》（全国20城1600余门店调查）：“94.2%的受访者早餐费用控制在10元以内”，“60.78%的白领选择便利店”，最受欢迎组合为“豆浆+油条+茶叶蛋”。**该区间无法证明8元内达标比例**，也未说明办公室食用占比。\n来源：https://finance.sina.com.cn/chanjing/cyxw/2020-11-25/doc-iiznctke3229684.shtml\n\n**3. 工位食用行为真实存在，但具体案例价格超预算**\n2023年6月，北京CBD国贸/大望路现场观察（北京日报记者报道）：“烧饼夹鸡蛋里脊7块钱，一杯豆浆3块钱，打包带走”，员工“坐在工位上吃完5分钟”。**该组合总价7+3=10元，超过8元预算，不达标**；但验证了\"购买后带到工位吃\"这一行为模式确实存在（仅单一案例，非代表性样本）。\n来源：https://xinwen.bjd.com.cn/content/s649d0c04e4b042ca9e8e6a19.html\n\n**4. 唯一确认的8元内组合，但为历史品牌发布信息**\n2020年8月，上海百联逸刻发布早餐品牌\"逸小兔\"：“肉包+烧麦+豆浆组合售价7.9元”，**在8元预算内**。但这是品牌发布稿定价，当前是否维持该价格、是否主要供办公室场景食用均未知。\n来源：https://www.jingan.gov.cn/rmtzx/003008/003008002/20200818/1574b389-4314-4257-85a4-50a5c4338a70.html\n\n### 预算核算对照表\n\n| 组合 | 来源/时间 | 单项价格 | 总价 | 是否≤8元 |\n|---|---|---|---|---|\n| 烧饼夹里脊+豆浆 | 2023年北京CBD案例 | 7元+3元 | 10元 | ❌ 不达标 |\n| 肉包+烧麦+豆浆 | 2020年上海逸小兔 | 套餐价 | 7.9元 | ✅ 达标（历史价，需核实现价） |\n| 便利蜂常见组合 | 2020年全国调查 | 未逐项列价 | \"10元以内\"区间 | 未知，不计入达标 |\n| 企业食堂/补贴早餐 | 2024年调研 | 未给出早餐专属数字 | 未知 | 未知 |\n\n### 已有方案小结\n- **便利店即食早餐**（包子/豆浆/油条/茶叶蛋）：多来源提及的主流渠道，可打包带走，但具体组合是否≤8元需逐笔核算，不能一概而论。\n- **早餐车/品牌化早餐网点**（如逸小兔）：曾有7.9元套餐案例在预算内，但样本单一（2020年、一家品牌）。\n- **企业食堂/餐费补贴**：福利存在，但资料集中在午餐场景，早餐专属福利数据缺失。\n- **自带早餐**：2024年调研提到\"带饭\"比例上升，但该数据针对午餐，早餐自带比例及成本未见资料。\n\n### 机会假设（均需验证）\n1. **假设A**：办公室场景中可能存在对\"稳定≤8元、可打包带工位、快速食用\"标准化早餐套餐的潜在需求。验证动作：实地走访多城市便利店/早餐车，逐笔记录可打包组合实际标价；观察指标：8元内套餐占比、工位食用占比；放弃条件：若8元内组合占比很低且顾客普遍需加购至10元以上。\n2. **假设B**：企业早餐福利相对午餐薄弱，可能存在\"低成本早餐福利/自助早餐角\"机会。验证动作：检索企业员工餐饮福利细则或访谈HR；观察指标：企业提供早餐专属福利的比例；放弃条件：若发现早餐福利已较普遍。\n\n### 资料缺口（需进一步验证）\n- 8元以内早餐组合的覆盖率、地区代表性数据缺失，现有证据均为单一案例或品牌宣传。\n- \"在办公室/工位食用\"的占比数据缺失，仅有个案观察支持该行为存在。\n- 2020年品牌定价（7.9元）当前是否仍适用需重新核实。\n- 企业早餐专属福利（相对午餐福利）缺乏直接数据。",
+      "trajectory": [
+        {
+          "messageId": "c0a330f3-8a67-4748-879a-372e9011fea0-input",
+          "role": "user",
+          "type": "text",
+          "text": "为中国城市通勤者研究工作日早餐，单次预算最多 8 元，通常在办公室食用。比较已有方案和可能机会；价格找不到就注明，别把未知价格当作满足预算。请直接检索。"
+        },
+        {
+          "messageId": "e9d40521-0dc1-403d-9855-0d5aae9ca989",
+          "role": "assistant",
+          "type": "tool",
+          "name": "read_research",
+          "state": "output-available"
+        },
+        {
+          "messageId": "e9d40521-0dc1-403d-9855-0d5aae9ca989",
+          "role": "assistant",
+          "type": "tool",
+          "name": "search_sources",
+          "state": "output-available",
+          "input": {
+            "query": "中国城市通勤者 早餐 办公室 吃 现状 调查"
+          },
+          "sources": [
+            {
+              "url": "https://www.bj.chinanews.com.cn/news/2024/0928/96611.html",
+              "title": "职场人用餐调查：早餐正在受重视，带饭上班渐流行_中新社_北京分社",
+              "publishedAt": "2024-09-28T00:00:00.000Z",
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            },
+            {
+              "url": "https://www.51ldb.com/shsldb/dc/content/0177e0dd17f9c00100005499e74cbcbc.html",
+              "title": "劳动报-沪上职工早餐现状微调查：过半职工选择在家用早餐",
+              "publishedAt": "2021-02-27T00:00:00.000Z",
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            },
+            {
+              "url": "https://finance.sina.com.cn/chanjing/cyxw/2020-11-25/doc-iiznctke3229684.shtml",
+              "title": "便利蜂发布《白领早餐报告》：仅5成白领每天吃早餐",
+              "publishedAt": "2020-11-25T09:10:54.000Z",
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            }
+          ],
+          "retrievedAt": "2026-11-16T07:30:21.867Z"
+        },
+        {
+          "messageId": "e9d40521-0dc1-403d-9855-0d5aae9ca989",
+          "role": "assistant",
+          "type": "tool",
+          "name": "search_sources",
+          "state": "output-available",
+          "input": {
+            "query": "便利店 早餐 套餐 价格 包子 豆浆 7元 8元"
+          },
+          "sources": [
+            {
+              "url": "https://xinwen.bjd.com.cn/content/s649d0c04e4b042ca9e8e6a19.html",
+              "title": "北京CBD白领早餐消费调查：10元以内最普遍，期待增加种类",
+              "publishedAt": "2023-06-29T00:00:00.000Z",
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            },
+            {
+              "url": "https://www.jingan.gov.cn/rmtzx/003008/003008002/20200818/1574b389-4314-4257-85a4-50a5c4338a70.html",
+              "title": "新零售业态发布早餐新品牌 “逸小兔”10家早餐网点今天上线",
+              "publishedAt": "2020-08-18T02:04:55.000Z",
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            },
+            {
+              "url": "https://post.55haitao.com/show/433504/",
+              "title": "简简单单吃个早餐吧，这是7块钱的早餐哈哈哈，海淘攻略-55海淘社区",
+              "publishedAt": null,
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            }
+          ],
+          "retrievedAt": "2026-11-16T07:30:21.582Z"
+        },
+        {
+          "messageId": "e9d40521-0dc1-403d-9855-0d5aae9ca989",
+          "role": "assistant",
+          "type": "tool",
+          "name": "read_source",
+          "state": "output-available",
+          "input": {
+            "url": "https://www.bj.chinanews.com.cn/news/2024/0928/96611.html"
+          },
+          "source": {
+            "url": "https://www.bj.chinanews.com.cn/news/2024/0928/96611.html",
+            "title": "职场人用餐调查：早餐正在受重视，带饭上班渐流行_中新社_北京分社",
+            "publishedAt": "2024-09-28T00:00:00.000Z",
+            "textLength": 1452,
+            "textScope": "page-text",
+            "truncated": false
+          },
+          "retrievedAt": "2026-11-16T07:30:31.714Z"
+        },
+        {
+          "messageId": "e9d40521-0dc1-403d-9855-0d5aae9ca989",
+          "role": "assistant",
+          "type": "tool",
+          "name": "read_source",
+          "state": "output-available",
+          "input": {
+            "url": "https://finance.sina.com.cn/chanjing/cyxw/2020-11-25/doc-iiznctke3229684.shtml"
+          },
+          "source": {
+            "url": "https://finance.sina.com.cn/chanjing/cyxw/2020-11-25/doc-iiznctke3229684.shtml",
+            "title": "便利蜂发布《白领早餐报告》：仅5成白领每天吃早餐",
+            "publishedAt": "2020-11-25T09:10:54.000Z",
+            "textLength": 2000,
+            "textScope": "page-text",
+            "truncated": true
+          },
+          "retrievedAt": "2026-11-16T07:30:32.028Z"
+        },
+        {
+          "messageId": "e9d40521-0dc1-403d-9855-0d5aae9ca989",
+          "role": "assistant",
+          "type": "tool",
+          "name": "save_research",
+          "state": "output-available",
+          "sources": [
+            {
+              "url": "https://www.bj.chinanews.com.cn/news/2024/0928/96611.html",
+              "title": "职场人用餐调查：早餐正在受重视，带饭上班渐流行_中新社_北京分社",
+              "textLength": 0
+            },
+            {
+              "url": "https://finance.sina.com.cn/chanjing/cyxw/2020-11-25/doc-iiznctke3229684.shtml",
+              "title": "便利蜂发布《白领早餐报告》：仅5成白领每天吃早餐",
+              "textLength": 0
+            },
+            {
+              "url": "https://xinwen.bjd.com.cn/content/s649d0c04e4b042ca9e8e6a19.html",
+              "title": "北京CBD白领早餐消费调查：10元以内最普遍，期待增加种类",
+              "textLength": 0
+            },
+            {
+              "url": "https://www.jingan.gov.cn/rmtzx/003008/003008002/20200818/1574b389-4314-4257-85a4-50a5c4338a70.html",
+              "title": "新零售业态发布早餐新品牌 “逸小兔”10家早餐网点今天上线",
+              "textLength": 0
+            }
+          ]
+        },
+        {
+          "messageId": "e9d40521-0dc1-403d-9855-0d5aae9ca989",
+          "role": "assistant",
+          "type": "text",
+          "text": "## 中国城市通勤者工作日早餐研究简报（预算≤8元，办公室食用）\n\n### 研究范围\n人群：中国城市职场通勤者；场景：工作日早餐，通常在办公室/工位食用；预算上限：单次8元。要求：价格不明不计入达标判断。\n\n### 关键观察（均标注样本范围）\n\n**1. 早餐受重视度上升，但早餐预算无具体数字**\n2024年9月，前程无忧51job问卷调研（北京报道）：“83%的受访者表示几乎每天都会吃早餐”，工作日用餐最大困扰中“预算有限”占23%。企业用餐福利主要为“自有食堂(59%)”“餐费补贴(57%)”，但原文具体展开的是**午餐**场景数据，未给出早餐专属预算或福利数字。\n来源：https://www.bj.chinanews.com.cn/news/2024/0928/96611.html\n\n**2. 便利店是主流渠道之一，但\"10元以内\"≠\"8元以内\"**\n2020年11月，便利蜂《白领早餐报告》（全国20城1600余门店调查）：“94.2%的受访者早餐费用控制在10元以内”，“60.78%的白领选择便利店”，最受欢迎组合为“豆浆+油条+茶叶蛋”。**该区间无法证明8元内达标比例**，也未说明办公室食用占比。\n来源：https://finance.sina.com.cn/chanjing/cyxw/2020-11-25/doc-iiznctke3229684.shtml\n\n**3. 工位食用行为真实存在，但具体案例价格超预算**\n2023年6月，北京CBD国贸/大望路现场观察（北京日报记者报道）：“烧饼夹鸡蛋里脊7块钱，一杯豆浆3块钱，打包带走”，员工“坐在工位上吃完5分钟”。**该组合总价7+3=10元，超过8元预算，不达标**；但验证了\"购买后带到工位吃\"这一行为模式确实存在（仅单一案例，非代表性样本）。\n来源：https://xinwen.bjd.com.cn/content/s649d0c04e4b042ca9e8e6a19.html\n\n**4. 唯一确认的8元内组合，但为历史品牌发布信息**\n2020年8月，上海百联逸刻发布早餐品牌\"逸小兔\"：“肉包+烧麦+豆浆组合售价7.9元”，**在8元预算内**。但这是品牌发布稿定价，当前是否维持该价格、是否主要供办公室场景食用均未知。\n来源：https://www.jingan.gov.cn/rmtzx/003008/003008002/20200818/1574b389-4314-4257-85a4-50a5c4338a70.html\n\n### 预算核算对照表\n\n| 组合 | 来源/时间 | 单项价格 | 总价 | 是否≤8元 |\n|---|---|---|---|---|\n| 烧饼夹里脊+豆浆 | 2023年北京CBD案例 | 7元+3元 | 10元 | ❌ 不达标 |\n| 肉包+烧麦+豆浆 | 2020年上海逸小兔 | 套餐价 | 7.9元 | ✅ 达标（历史价，需核实现价） |\n| 便利蜂常见组合 | 2020年全国调查 | 未逐项列价 | \"10元以内\"区间 | 未知，不计入达标 |\n| 企业食堂/补贴早餐 | 2024年调研 | 未给出早餐专属数字 | 未知 | 未知 |\n\n### 已有方案小结\n- **便利店即食早餐**（包子/豆浆/油条/茶叶蛋）：多来源提及的主流渠道，可打包带走，但具体组合是否≤8元需逐笔核算，不能一概而论。\n- **早餐车/品牌化早餐网点**（如逸小兔）：曾有7.9元套餐案例在预算内，但样本单一（2020年、一家品牌）。\n- **企业食堂/餐费补贴**：福利存在，但资料集中在午餐场景，早餐专属福利数据缺失。\n- **自带早餐**：2024年调研提到\"带饭\"比例上升，但该数据针对午餐，早餐自带比例及成本未见资料。\n\n### 机会假设（均需验证）\n1. **假设A**：办公室场景中可能存在对\"稳定≤8元、可打包带工位、快速食用\"标准化早餐套餐的潜在需求。验证动作：实地走访多城市便利店/早餐车，逐笔记录可打包组合实际标价；观察指标：8元内套餐占比、工位食用占比；放弃条件：若8元内组合占比很低且顾客普遍需加购至10元以上。\n2. **假设B**：企业早餐福利相对午餐薄弱，可能存在\"低成本早餐福利/自助早餐角\"机会。验证动作：检索企业员工餐饮福利细则或访谈HR；观察指标：企业提供早餐专属福利的比例；放弃条件：若发现早餐福利已较普遍。\n\n### 资料缺口（需进一步验证）\n- 8元以内早餐组合的覆盖率、地区代表性数据缺失，现有证据均为单一案例或品牌宣传。\n- \"在办公室/工位食用\"的占比数据缺失，仅有个案观察支持该行为存在。\n- 2020年品牌定价（7.9元）当前是否仍适用需重新核实。\n- 企业早餐专属福利（相对午餐福利）缺乏直接数据。"
+        }
+      ],
+      "citationAudit": {
+        "method": "Compare Markdown and plain HTTP(S) citation URLs in run.output with URLs actually returned by search_sources/read_source. Ignore fragments only. This checks source identity, not whether a claim is supported.",
+        "toolCalls": {
+          "read_research": 1,
+          "search_sources": 2,
+          "read_source": 2,
+          "save_research": 1
+        },
+        "outputCharacters": 1991,
+        "capturedSourceCount": 6,
+        "citationCount": 4,
+        "unmatched": [],
+        "invalid": []
+      },
+      "rawArtifactSha256": "a5e39b49c8066c1f8bfdefc9414fb9dfeda2d2e97e185924c7767197249adf88"
+    },
+    {
+      "id": "counter-evidence",
+      "agentKey": "product-research",
+      "status": "incomplete",
+      "runId": "f64e6ea0-a0c8-45a5-8a48-026578629dcc",
+      "benchmarkHash": "sha256:7a472be75d2d7bb5d3d29798c09a344262ac9e645285db8a13eb63e39f0a44c2",
+      "input": {
+        "message": "研究办公室即食早餐产品。请同时寻找便捷以外的顾虑与已有替代方案，区分资料中的观察、推断和待验证假设，不能只挑支持新品的资料。范围为中国城市通勤人群，不需要追问。"
+      },
+      "acceptance": "明确检索和呈现反向线索与替代方案；没有找到时说明缺口，不编造反对意见。",
+      "judges": [
+        {
+          "id": "evidence",
+          "kind": "markdown",
+          "status": "error",
+          "error": {
+            "code": "judge_failed",
+            "message": "Agent execution failed (timeout). Diagnostic ID: bd2dfe21-84a8-4c3c-b10c-f768f7b18a38"
+          }
+        },
+        {
+          "id": "inference",
+          "kind": "markdown",
+          "status": "completed",
+          "score": 1,
+          "reason": "核查三条最强表述及其证据支持情况：\n1）\"大多数白领表示会连续数天吃相同的早餐\"——直接引自便利蜂《白领早餐报告》原文，报告随即注明\"此为2020年便利蜂自有门店消费者样本，时效性和代表性待验证\"，未将单一门店样本结论泛化为普遍现象，范围限定清晰。\n2）\"配料表第一位实为小麦粉\"\"全谷物食品若长期替代正餐…摄入不足\"——均为记者走访3家网店及一位医生的具体陈述，报告明确标注\"此观察仅限该记者走访的3家网店及一位受访医生的意见，不能推广为行业普遍现象\"，未做行业级强结论。\n3）假设A/B（配料透明度溢价意愿、吃腻导致留存流失）被明确放在\"推断与待验证假设\"标题下，并各自给出验证动作、观察指标和放弃条件，未被当作已证实需求陈述。\n此外，报告在\"资料缺口\"部分明确说明未检索到专门针对办公室即食早餐品类的本土规模数据，早餐预算数据仅有2020年单一样本，不足之处均如实披露，未编造反对意见或替代方案（如引用新加坡博主的隔夜燕麦做法也标注\"非中国本土数据，仅供参考\"）。未发现\"接受度高\"\"核心痛点是\"\"覆盖不普遍\"\"未见成熟方案\"等缺乏分母/排序/覆盖率证据支撑的强结论表述。整体符合观察-推断-待验证假设的区分要求及反向证据呈现要求。"
+        },
+        {
+          "id": "scope",
+          "kind": "markdown",
+          "status": "completed",
+          "score": 1,
+          "reason": "约束核查：人群=中国城市通勤人群、场景=办公室即食早餐、任务=检索便捷性以外顾虑+已有替代方案+区分观察/推断/假设+不挑支持性资料+无需追问。\n\n逐条核对回答原句与工具检索到的原始资料（tool-search_sources/tool-read_source），均一致，无编造：\n- 北京晚报2025-09-30“配料表第一位是小麦粉，全麦粉才排第二”“添加小麦粉是为了提升口感”——与检索原文一致，回答已标注“仅限3家网店及一位医生意见，不能推广为行业普遍现象”。\n- 便利蜂《白领早餐报告》“快捷85.84%、卫生70.69%、营养48.53%”“大多数白领表示会连续数天吃相同的早餐”——与read_source原文逐字对应，回答标注2020年门店样本局限性。\n- 前程无忧/中新网报道“食品卫生不安全29%、预制菜泛滥24%、预算有限23%”“近九成企业提供用餐福利（食堂59%、餐费补贴57%）”——原文确未区分早/午餐，回答如实标注“该数据针对整体工作日用餐，不能单独归因为早餐”“未明确是否专项覆盖早餐”，未将未知当已知。\n- 新加坡博主分享（隔夜燕麦/三明治带饭）——回答明确标注“新加坡语境，非中国本土数据，仅供参考”，未冒充中国本土证据。\n- “推断与待验证假设”部分（假设A/B）单独列出并附验证动作/观察指标/放弃条件，未与观察混为结论。\n- “资料缺口”部分如实说明未找到专门办公室即食早餐品类的中国本土调研，未编造反对意见，也未因此反复追问（题目已声明不需追问，回答也未提问）。\n\n未发现把超出资料支持范围的内容包装成确定结论、未发现数值/比例篡改、未发现偏向性挑选支持新品证据而忽略反向线索的情况，各段落之间无自相矛盾的分类。满足验收标准“明确检索和呈现反向线索与替代方案；没有找到时说明缺口，不编造反对意见”。"
+        }
+      ],
+      "judging": {
+        "required": 3,
+        "completedRequired": 2,
+        "errors": 1
+      },
+      "output": "# 办公室即食早餐研究简报（中国城市通勤人群）\n\n## 一、便捷性以外的顾虑（观察）\n\n**1. 营养/信任顾虑——\"伪全麦\"\"隐藏添加\"**\n北京晚报2025年9月30日报道，记者以买家身份咨询3家电商代餐网店，发现一款月销超2万件的\"全麦欧包\"配料表第一位实为小麦粉、全麦粉排第二，客服承认\"添加小麦粉是为了提升口感\"；北京友谊医院减重与代谢外科主任指出全谷物食品若长期替代正餐，\"容易导致蛋白质、健康脂肪及部分维生素摄入不足\"。**此观察仅限该记者走访的3家网店及一位受访医生的意见，不能推广为行业普遍现象**。\n来源：https://bjrbdzb.bjd.com.cn/bjwb/mobile/2025/20250930/20250930_009/content_20250930_009_1.htm\n\n**2. 口味单一化/吃腻**\n便利蜂《白领早餐报告》（21财经2020年11月26日报道，覆盖全国20城1600余家门店调查）显示，白领选择便利店早餐的首要原因是\"快捷\"(85.84%)、\"卫生\"(70.69%)，\"营养\"仅排第三(48.53%)；报告同时指出\"大多数白领表示会连续数天吃相同的早餐\"。**此为2020年便利蜂自有门店消费者样本，时效性和代表性待验证**。\n来源：https://m.21jingji.com/article/20201126/herald/da35cf54904f5a92d6d14e4fd45b48cb.html\n\n**3. 整体工作日用餐的卫生/预算顾虑（非早餐专属）**\n中新网北京2024年9月28日报道前程无忧职场白领问卷调研：工作日用餐最大困扰包括\"食品卫生不安全\"(29%)、\"预制菜泛滥\"(24%)、\"预算有限\"(23%)。**该数据针对整体工作日用餐，原文未区分早/午餐，不能单独归因为早餐顾虑**。\n来源：https://www.bj.chinanews.com.cn/news/2024/0928/96611.html\n\n## 二、已有替代方案（行为与服务，非仅商品）\n\n- **便利店即食早餐**：包子、豆浆、面包牛奶咖啡等，为便利蜂门店调查中白领首选场所（60.78%选择）。\n- **电商购买代餐类产品**：全麦欧包、谷物棒，月销可达万件级（北京晚报2025年报道），但存在配料透明度争议。\n- **提前准备后带至公司吃**：有博主分享\"前一晚准备隔夜燕麦、三明治，抵达公司后吃\"的做法（此为新加坡语境分享，非中国本土数据，仅供参考）：https://miraclethrive.com/blog/no-time-for-breakfast\n- **企业用餐福利**：前程无忧调研显示近九成受访企业提供用餐福利（食堂59%、餐费补贴57%等），**但该数据针对整体工作日用餐福利，原文未明确是否专项覆盖早餐**，不能据此判断早餐福利的有无或覆盖率。\n\n## 三、推断与待验证假设\n\n**假设A**：对\"伪全麦/隐藏添加\"的不信任，可能使部分人群愿为\"配料透明、非代餐定位\"的早餐支付溢价。验证动作：问卷/访谈测试配料透明度对购买意愿的影响；观察指标：复购率、配料查阅行为；放弃条件：若受访者对配料表关注度显著低于预期。\n\n**假设B**：连续多日同质早餐导致的\"吃腻\"是影响长期复购的独立因素（非仅价格/便捷）。验证动作：小规模试吃+多周留存跟踪；观察指标：7/14/30天留存率及口味轮换需求；放弃条件：若流失主因仍集中在价格或便捷性。\n\n## 四、资料缺口\n\n未检索到专门针对\"办公室即食早餐\"品类（区别于减肥代餐）的中国本土市场调研或规模数据；早餐预算数据仅有2020年便利蜂一份门店样本（10元以内占94.2%），缺少近期专项数据。建议下一步检索\"企业早餐福利\"\"办公室早餐配送\"等更具体关键词补充验证。",
+      "trajectory": [
+        {
+          "messageId": "f64e6ea0-a0c8-45a5-8a48-026578629dcc-input",
+          "role": "user",
+          "type": "text",
+          "text": "研究办公室即食早餐产品。请同时寻找便捷以外的顾虑与已有替代方案，区分资料中的观察、推断和待验证假设，不能只挑支持新品的资料。范围为中国城市通勤人群，不需要追问。"
+        },
+        {
+          "messageId": "bc333094-73ba-4363-a622-b7000ce07089",
+          "role": "assistant",
+          "type": "tool",
+          "name": "read_research",
+          "state": "output-available"
+        },
+        {
+          "messageId": "bc333094-73ba-4363-a622-b7000ce07089",
+          "role": "assistant",
+          "type": "tool",
+          "name": "search_sources",
+          "state": "output-available",
+          "input": {
+            "query": "办公室 即食早餐 通勤 上班族 早餐习惯 顾虑"
+          },
+          "sources": [
+            {
+              "url": "https://orange.udn.com/orange/story/123284/9686788",
+              "title": "上班族最常吃這8 種早餐！第2 名超方便竟是健康地雷 - 橘世代",
+              "publishedAt": "2026-08-21T02:52:48.000Z",
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            },
+            {
+              "url": "https://www.bj.chinanews.com.cn/news/2024/0928/96611.html",
+              "title": "职场人用餐调查：早餐正在受重视，带饭上班渐流行_中新社_北京分社",
+              "publishedAt": "2024-09-28T00:00:00.000Z",
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            },
+            {
+              "url": "https://miraclethrive.com/blog/no-time-for-breakfast",
+              "title": "没时间吃早餐怎么办？新加坡上班族的12个快速方法｜奇迹成长社",
+              "publishedAt": "2026-08-26T15:19:22.000Z",
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            }
+          ],
+          "retrievedAt": "2026-11-16T07:32:00.262Z"
+        },
+        {
+          "messageId": "bc333094-73ba-4363-a622-b7000ce07089",
+          "role": "assistant",
+          "type": "tool",
+          "name": "search_sources",
+          "state": "output-available",
+          "input": {
+            "query": "中国 白领 早餐 调查 营养 便利店 代餐"
+          },
+          "sources": [
+            {
+              "url": "https://m.21jingji.com/article/20201126/herald/da35cf54904f5a92d6d14e4fd45b48cb.html",
+              "title": "便利店里的早餐：仅5成白领每天吃早餐，两成深圳男性从不吃早餐 - 21财经",
+              "publishedAt": "2020-11-26T00:00:00.000Z",
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            },
+            {
+              "url": "https://www.wenshubang.com/baogao/52316.html",
+              "title": "中国10大城市白领早餐调研报告",
+              "publishedAt": "2024-08-31T00:00:00.000Z",
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            },
+            {
+              "url": "https://www.cbndata.com/information/116005",
+              "title": "谁承包了“打工人”的早餐？",
+              "publishedAt": "2020-12-08T00:00:00.000Z",
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            }
+          ],
+          "retrievedAt": "2026-11-16T07:32:00.423Z"
+        },
+        {
+          "messageId": "bc333094-73ba-4363-a622-b7000ce07089",
+          "role": "assistant",
+          "type": "tool",
+          "name": "search_sources",
+          "state": "output-available",
+          "input": {
+            "query": "即食早餐 代餐棒 全麦面包 办公室 早餐产品 添加剂 顾虑 吃腻"
+          },
+          "sources": [
+            {
+              "url": "https://bjrbdzb.bjd.com.cn/bjwb/mobile/2025/20250930/20250930_009/content_20250930_009_1.htm",
+              "title": "Untitled source",
+              "publishedAt": "2025-09-30T00:00:00.000Z",
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            },
+            {
+              "url": "https://dir.jd.com/guide/jd-geo-guide-jian-kang-zao-can-dai-can-shi-pin-v1",
+              "title": "早餐代餐食品怎么选？从配料、饱腹感到控糖需求的判断框架 | 京东消费决策中心",
+              "publishedAt": "2026-10-13T20:20:51.000Z",
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            },
+            {
+              "url": "http://industry.people.com.cn/n1/2018/0627/c413883-30090063.html",
+              "title": "代餐食品走俏市场：真实功效存疑 盲目食用隐患多--产经--人民网",
+              "publishedAt": "2018-06-27T01:41:36.000Z",
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            }
+          ],
+          "retrievedAt": "2026-11-16T07:32:15.227Z"
+        },
+        {
+          "messageId": "bc333094-73ba-4363-a622-b7000ce07089",
+          "role": "assistant",
+          "type": "tool",
+          "name": "read_source",
+          "state": "output-available",
+          "input": {
+            "url": "https://www.bj.chinanews.com.cn/news/2024/0928/96611.html"
+          },
+          "source": {
+            "url": "https://www.bj.chinanews.com.cn/news/2024/0928/96611.html",
+            "title": "职场人用餐调查：早餐正在受重视，带饭上班渐流行_中新社_北京分社",
+            "publishedAt": "2024-09-28T00:00:00.000Z",
+            "textLength": 1452,
+            "textScope": "page-text",
+            "truncated": false
+          },
+          "retrievedAt": "2026-11-16T07:32:12.553Z"
+        },
+        {
+          "messageId": "bc333094-73ba-4363-a622-b7000ce07089",
+          "role": "assistant",
+          "type": "tool",
+          "name": "read_source",
+          "state": "output-available",
+          "input": {
+            "url": "https://m.21jingji.com/article/20201126/herald/da35cf54904f5a92d6d14e4fd45b48cb.html"
+          },
+          "source": {
+            "url": "https://m.21jingji.com/article/20201126/herald/da35cf54904f5a92d6d14e4fd45b48cb.html",
+            "title": "便利店里的早餐：仅5成白领每天吃早餐，两成深圳男性从不吃早餐 - 21财经",
+            "publishedAt": "2020-11-26T00:00:00.000Z",
+            "textLength": 1756,
+            "textScope": "page-text",
+            "truncated": false
+          },
+          "retrievedAt": "2026-11-16T07:32:21.669Z"
+        },
+        {
+          "messageId": "bc333094-73ba-4363-a622-b7000ce07089",
+          "role": "assistant",
+          "type": "tool",
+          "name": "save_research",
+          "state": "output-available",
+          "sources": [
+            {
+              "url": "https://m.21jingji.com/article/20201126/herald/da35cf54904f5a92d6d14e4fd45b48cb.html",
+              "title": "便利店里的早餐：仅5成白领每天吃早餐，两成深圳男性从不吃早餐 - 21财经",
+              "textLength": 0
+            },
+            {
+              "url": "https://www.bj.chinanews.com.cn/news/2024/0928/96611.html",
+              "title": "职场人用餐调查：早餐正在受重视，带饭上班渐流行_中新社_北京分社",
+              "textLength": 0
+            },
+            {
+              "url": "https://bjrbdzb.bjd.com.cn/bjwb/mobile/2025/20250930/20250930_009/content_20250930_009_1.htm",
+              "title": "有的标注0脂0蔗糖 有的宣称一杯管一顿代餐食品真能让人\"轻松瘦\"？",
+              "textLength": 0
+            },
+            {
+              "url": "https://miraclethrive.com/blog/no-time-for-breakfast",
+              "title": "没时间吃早餐怎么办？新加坡上班族的12个快速方法｜奇迹成长社",
+              "textLength": 0
+            }
+          ]
+        },
+        {
+          "messageId": "bc333094-73ba-4363-a622-b7000ce07089",
+          "role": "assistant",
+          "type": "text",
+          "text": "# 办公室即食早餐研究简报（中国城市通勤人群）\n\n## 一、便捷性以外的顾虑（观察）\n\n**1. 营养/信任顾虑——\"伪全麦\"\"隐藏添加\"**\n北京晚报2025年9月30日报道，记者以买家身份咨询3家电商代餐网店，发现一款月销超2万件的\"全麦欧包\"配料表第一位实为小麦粉、全麦粉排第二，客服承认\"添加小麦粉是为了提升口感\"；北京友谊医院减重与代谢外科主任指出全谷物食品若长期替代正餐，\"容易导致蛋白质、健康脂肪及部分维生素摄入不足\"。**此观察仅限该记者走访的3家网店及一位受访医生的意见，不能推广为行业普遍现象**。\n来源：https://bjrbdzb.bjd.com.cn/bjwb/mobile/2025/20250930/20250930_009/content_20250930_009_1.htm\n\n**2. 口味单一化/吃腻**\n便利蜂《白领早餐报告》（21财经2020年11月26日报道，覆盖全国20城1600余家门店调查）显示，白领选择便利店早餐的首要原因是\"快捷\"(85.84%)、\"卫生\"(70.69%)，\"营养\"仅排第三(48.53%)；报告同时指出\"大多数白领表示会连续数天吃相同的早餐\"。**此为2020年便利蜂自有门店消费者样本，时效性和代表性待验证**。\n来源：https://m.21jingji.com/article/20201126/herald/da35cf54904f5a92d6d14e4fd45b48cb.html\n\n**3. 整体工作日用餐的卫生/预算顾虑（非早餐专属）**\n中新网北京2024年9月28日报道前程无忧职场白领问卷调研：工作日用餐最大困扰包括\"食品卫生不安全\"(29%)、\"预制菜泛滥\"(24%)、\"预算有限\"(23%)。**该数据针对整体工作日用餐，原文未区分早/午餐，不能单独归因为早餐顾虑**。\n来源：https://www.bj.chinanews.com.cn/news/2024/0928/96611.html\n\n## 二、已有替代方案（行为与服务，非仅商品）\n\n- **便利店即食早餐**：包子、豆浆、面包牛奶咖啡等，为便利蜂门店调查中白领首选场所（60.78%选择）。\n- **电商购买代餐类产品**：全麦欧包、谷物棒，月销可达万件级（北京晚报2025年报道），但存在配料透明度争议。\n- **提前准备后带至公司吃**：有博主分享\"前一晚准备隔夜燕麦、三明治，抵达公司后吃\"的做法（此为新加坡语境分享，非中国本土数据，仅供参考）：https://miraclethrive.com/blog/no-time-for-breakfast\n- **企业用餐福利**：前程无忧调研显示近九成受访企业提供用餐福利（食堂59%、餐费补贴57%等），**但该数据针对整体工作日用餐福利，原文未明确是否专项覆盖早餐**，不能据此判断早餐福利的有无或覆盖率。\n\n## 三、推断与待验证假设\n\n**假设A**：对\"伪全麦/隐藏添加\"的不信任，可能使部分人群愿为\"配料透明、非代餐定位\"的早餐支付溢价。验证动作：问卷/访谈测试配料透明度对购买意愿的影响；观察指标：复购率、配料查阅行为；放弃条件：若受访者对配料表关注度显著低于预期。\n\n**假设B**：连续多日同质早餐导致的\"吃腻\"是影响长期复购的独立因素（非仅价格/便捷）。验证动作：小规模试吃+多周留存跟踪；观察指标：7/14/30天留存率及口味轮换需求；放弃条件：若流失主因仍集中在价格或便捷性。\n\n## 四、资料缺口\n\n未检索到专门针对\"办公室即食早餐\"品类（区别于减肥代餐）的中国本土市场调研或规模数据；早餐预算数据仅有2020年便利蜂一份门店样本（10元以内占94.2%），缺少近期专项数据。建议下一步检索\"企业早餐福利\"\"办公室早餐配送\"等更具体关键词补充验证。"
+        }
+      ],
+      "citationAudit": {
+        "method": "Compare Markdown and plain HTTP(S) citation URLs in run.output with URLs actually returned by search_sources/read_source. Ignore fragments only. This checks source identity, not whether a claim is supported.",
+        "toolCalls": {
+          "read_research": 1,
+          "search_sources": 3,
+          "read_source": 2,
+          "save_research": 1
+        },
+        "outputCharacters": 1595,
+        "capturedSourceCount": 9,
+        "citationCount": 4,
+        "unmatched": [],
+        "invalid": []
+      },
+      "rawArtifactSha256": "e713466ae412716f03bc1fda43002abc2f4cf21b55ac5fddb33bfa09e93f4e4a"
+    },
+    {
+      "id": "validation-plan",
+      "agentKey": "product-research",
+      "status": "passed",
+      "runId": "38709413-254c-4c18-9535-4f005d1f84ff",
+      "benchmarkHash": "sha256:7a472be75d2d7bb5d3d29798c09a344262ac9e645285db8a13eb63e39f0a44c2",
+      "input": {
+        "message": "围绕中国通勤者到办公室后吃早餐，先检索真实公开资料，再提出最多两个机会假设。每个假设附证据、反例或缺口、可执行的访谈或小实验，以及什么结果会推翻假设。"
+      },
+      "acceptance": "假设和验证计划对应实际资料；明确对象、动作、可观察结果和否定条件，避免把假设写成已确认需求。",
+      "judges": [
+        {
+          "id": "evidence",
+          "kind": "markdown",
+          "status": "completed",
+          "score": 1,
+          "reason": "逐条核对报告实质性事实与检索正文：(1) 知小道/51job文章实际正文含“32.5%…20.4%…29.5%…不吃早餐9.9%”，与报告引用逐字相符，且报告已明确标注发布日期异常（2026年）及样本年份存疑，未冒充已确认事实；(2) 北京日报2023-06-29现场报道正文含“排队、交钱、取餐5分钟，走到单位5分钟，坐在工位上吃完5分钟”“能坐下来吃早饭，对我来说，很奢侈”“94.2%的受访者早餐费用控制在10元以内”，均与报告引用及日期/样本范围（北京CBD商圈实地）一致；(3) 中新网2024-09-28转引51job问卷正文含“83%…2018年不到50%…56%/34%/28%”，与报告一致，且报告正确限定为“该次问卷”结论而非全国代表性；(4) 上海早餐工程、北京地铁智能售卖机两条“已有方案”引用（why.com.cn 2023-03-24、foodaily.com 2023-06-07）文字与报告摘录一致，日期、地点、设备数量（约10台、试运营）均对应；(5) 假设2中“95.3%公司无下午茶”“65.3%无饭贴”在知小道正文中确有对应小节标题和数据，报告也如实注明这些数据针对下午茶/饭贴而非早餐专项，未张冠李戴。未发现价格组合跨渠道拼接、样本偷换（如学生/营销样本冒充通勤者整体）或引用与正文冲突的情况；两个机会假设均附证据、反例/缺口、可执行验证动作和明确的推翻条件，未将假设表述为已确认需求。综合判断证据与引用均可追溯且相符，应判1。"
+        },
+        {
+          "id": "inference",
+          "kind": "markdown",
+          "status": "completed",
+          "score": 1,
+          "reason": "报告全文可见（part13即完整正文）。核查三项最强表述：(1)\"约三分之一职场人有'买了带到公司吃'的行为\"——明确标注\"仅在该次调研样本内\"、来源年份存疑、不可外推；(2)北京CBD\"坐在工位上吃完5分钟\"等现场观察——明确标注\"该观察仅代表2023年6月北京CBD这一特定商圈、特定摊贩人群样本，不代表全国情况\"；(3)\"83%几乎每天吃早餐\"——明确标注\"该结论仅代表前程无忧该次问卷的主张，样本量、城市覆盖未知，不构成全国代表性结论\"。两个机会假设均将\"未检索到专门产品/数据\"明确称为\"资料缺口/空白，不是已验证机会\"，而非坐实为已证实需求，并各附可执行验证动作（写字楼小测试+10-15人访谈；5-8家企业HR访谈+专项检索）与具体可观察的推翻条件（无额外付费意愿/被认为够好；HR访谈显示无诉求/成本模型不可行）。末尾局限说明再次整体声明\"不构成'早餐市场成熟''主力渠道'等全国性判断\"，保持了范围限定。全文未出现\"接受度高\"\"真正/核心痛点\"\"多数人/多数吐槽者\"\"覆盖不普遍\"\"未见成熟方案\"等无支撑的强结论表述，个体/局部观察与待验证假设均保留了明确的样本范围或空白标注，未将个体评论泛化或将待证假设写成已证实需求。符合评分细则的1分标准。"
+        },
+        {
+          "id": "scope",
+          "kind": "markdown",
+          "status": "completed",
+          "score": 1,
+          "reason": "约束：①先检索真实公开资料→②最多两个机会假设→③每假设含证据/反例或缺口/可执行访谈或小实验/推翻条件→④假设不可写成已确认需求，须对应实际检索资料。\n\n核查：queryRun显示Agent确实先执行多次search_sources/read_source（如\"中国 白领 通勤 到公司后 吃早餐 调查\"\"早餐经济 办公楼...\"），检索到的51job/知小道（32.5%/20.4%/29.5%/9.9%）、北京日报CBD实地调查（排队取餐15分钟、94.2%≤10元）、中新网51job问卷（83%吃早餐、56%/34%/28%不吃原因）、上海早餐工程、Foodaily售卖机报道等，均与最终报告中引用的原文逐字对应，无编造或篡改数字。\n\n最终输出恰好提出2个机会假设，每个均显式包含：证据（对应上述真实检索片段）、反例/缺口（如假设1指出现有便利店套餐已10元内压缩、未检索到专门产品数据；假设2明确说明该证据针对午餐/下午茶而非早餐专项，是资料缺口而非已证实机会）、可执行验证动作（写字楼货架小测试+10-15人访谈；5-8家中小企业HR访谈+补充检索）、以及明确的推翻条件（用户无额外付费意愿/现有方案已足够好；HR访谈显示无诉求或成本不可行）。两个假设均以\"机会假设\"措辞呈现，未把未验证内容写成已确认需求；局限说明部分如实标注资料的城市、时间、样本缺口，与实际检索结果（2023-2024年北京/上海为主，知小道文章发布日期异常2026年）完全吻合，未出现日期/数据被误判为全国性结论或确定事实的情况。未发现将超限/未知资料归类为已满足条件的矛盾。"
+        }
+      ],
+      "judging": {
+        "required": 3,
+        "completedRequired": 3,
+        "errors": 0
+      },
+      "output": "# 中国通勤者到办公室后吃早餐——研究简报\n\n## 关键观察（3条，均标注来源范围）\n\n**1. \"带到工位吃\"是真实存在但非主流的子行为**\n来源：知小道经验网转引51job调查（发布标注2026-04-23，具体调研年份/样本量未在正文中说明，需视为待核实的转载数据）\n原文：*\"在吃早餐的人群中，有32.5%的受访者选择把早餐买了带去公司吃，20.4%的受访者会在路上吃早餐……仍有29.5%的受访者坚持吃完早餐再出门。不吃早餐的受访者占比9.9%\"*\n→ 仅在该次调研样本内，约三分之一职场人有\"买了带到公司吃\"的行为；此数据来源年份存疑，不可外推。\nhttps://mip.zhixiaodao.com/article/c35dbcb0817c54c817fcbc4b.html\n\n**2. 北京CBD场景下，\"工位吃早餐\"是高度压缩、低预算的快速流程**\n来源：北京日报2023-06-29记者实地走访北京国贸、大望路SOHO现代城等CBD商圈\n原文：*\"排队、交钱、取餐5分钟，走到单位5分钟，坐在工位上吃完5分钟\"*，*\"能坐下来吃早饭，对我来说，很奢侈\"*，转引《白领早餐报告》*\"94.2%的受访者早餐费用控制在10元以内\"*\n→ 该观察仅代表2023年6月北京CBD这一特定商圈、特定摊贩人群样本，不代表全国情况。\nhttps://xinwen.bjd.com.cn/content/s649d0c04e4b042ca9e8e6a19.html\n\n**3. 吃早餐比例上升的主张来自特定问卷，不吃早餐主因是时间紧**\n来源：中新网北京分社2024-09-28转引前程无忧51job问卷调研\n原文：*\"83%的受访者表示几乎每天都会吃早餐\"*（对比\"2018年调研不到50%\"），不吃早餐主因\"工作日时间太紧张\"(56%)、\"懒得准备或嫌麻烦\"(34%)、\"起不来宁愿多睡会\"(28%)\n→ 该结论仅代表前程无忧该次问卷的主张，样本量、城市覆盖未知，不构成全国代表性结论。\nhttps://www.bj.chinanews.com.cn/news/2024/0928/96611.html\n\n## 已有方案观察\n- **上海**：便利店推出\"三明治+豆浆\"等早餐套餐（个案不到10元）；上海市商务委\"早餐工程\"示范点每天提供不超10元的特价套餐，并上线\"早餐地图\"小程序（2023-03-24报道）。http://www.why.com.cn/wx/article/2023/03/24/16796491161302718573.html\n- **北京**：地铁站智能售卖机，宣传语\"早上上班带走，在办公室加热即食\"，截至报道时在国贸等地铁站投放约10台，仍处试运营阶段，效果未知（2023-06-07报道）。https://www.foodaily.com/articles/32910\n- **北京CBD**：包子铺、煎饼摊、便利店套餐价格多在6.6-13元区间，是当下\"带到工位吃\"人群的主要供给来源（同上北京日报观察）。\n\n## 机会假设\n\n**假设1：工位友好型早餐（低气味、免清洗、1-2分钟可食用）**\n- 证据：约32.5%人群已有带餐到公司行为；北京CBD观察显示购买-到岗-吃完压缩至约15分钟，\"坐下吃\"被视为奢侈。\n- 反例/缺口：现有包子铺、便利店套餐已把价格压至10元以内且购买便捷；未检索到专门针对\"工位友好型早餐\"的产品或市场数据，是空白而非已验证机会。\n- 验证动作：在1-2个写字楼做一周货架/预订柜小测试，记录转化与复购；访谈10-15名周边白领了解\"路上吃\"与\"工位吃\"的决策因素。\n- 推翻条件：若用户对\"工位友好\"属性无额外付费意愿，或现有便利店套餐已被认为\"足够好\"。\n\n**假设2：面向中小企业的低成本早餐福利外包**\n- 证据：资料显示企业普遍缺乏下午茶/饭贴福利（知小道文章提及\"95.3%公司无下午茶\"、\"65.3%无饭贴\"，但这些数据针对午餐/下午茶，非早餐专项）。\n- 反例/缺口：**本次检索未找到任何专门针对\"企业早餐福利\"的调研或案例**——这是资料缺口，不能证明市场空白，也可能该需求本身很小。\n- 验证动作：访谈5-8家中小企业HR/行政了解意愿与顾虑；追加一次\"企业 早餐 福利\"专项检索确认是否有被忽略的现有案例。\n- 推翻条件：若HR访谈显示员工对\"公司统一早餐\"无明显诉求，或成本模型不可行。\n\n## 局限说明\n以上观察均来自特定时间（2023-2024年）、特定城市（主要是北京、上海）或未知规模的问卷样本，**不构成\"早餐市场成熟\"\"主力渠道\"等全国性判断**；知小道文章发布日期标注异常（2026年），其数据年份存疑，引用时需注明\"待核实\"。研究证据有限，建议以上述访谈/小实验作为下一步验证。",
+      "trajectory": [
+        {
+          "messageId": "38709413-254c-4c18-9535-4f005d1f84ff-input",
+          "role": "user",
+          "type": "text",
+          "text": "围绕中国通勤者到办公室后吃早餐，先检索真实公开资料，再提出最多两个机会假设。每个假设附证据、反例或缺口、可执行的访谈或小实验，以及什么结果会推翻假设。"
+        },
+        {
+          "messageId": "abe73dde-692c-4b26-84d4-e670d39a9956",
+          "role": "assistant",
+          "type": "tool",
+          "name": "read_research",
+          "state": "output-available"
+        },
+        {
+          "messageId": "abe73dde-692c-4b26-84d4-e670d39a9956",
+          "role": "assistant",
+          "type": "tool",
+          "name": "search_sources",
+          "state": "output-available",
+          "input": {
+            "query": "中国 白领 通勤 到公司后 吃早餐 调查"
+          },
+          "sources": [
+            {
+              "url": "https://www.bj.chinanews.com.cn/news/2024/0928/96611.html",
+              "title": "职场人用餐调查：早餐正在受重视，带饭上班渐流行_中新社_北京分社",
+              "publishedAt": "2024-09-28T00:00:00.000Z",
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            },
+            {
+              "url": "https://www.fxbaogao.com/detail/4435937",
+              "title": "[智联招聘]：2024职场人衣食住行调查报告 - 发现报告",
+              "publishedAt": "2024-08-02T00:00:00.000Z",
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            },
+            {
+              "url": "https://mip.zhixiaodao.com/article/c35dbcb0817c54c817fcbc4b.html",
+              "title": "职场人上班成本调查：上一天班到底需要开销多少？_知小道经验网",
+              "publishedAt": "2026-04-23T05:35:30.000Z",
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            }
+          ],
+          "retrievedAt": "2026-11-16T07:32:51.079Z"
+        },
+        {
+          "messageId": "abe73dde-692c-4b26-84d4-e670d39a9956",
+          "role": "assistant",
+          "type": "tool",
+          "name": "search_sources",
+          "state": "output-available",
+          "input": {
+            "query": "早餐经济 办公楼 外卖 便利店 中国 2023"
+          },
+          "sources": [
+            {
+              "url": "http://www.why.com.cn/wx/article/2023/03/24/16796491161302718573.html",
+              "title": "开新局 谱新篇｜从扫“盲点”到数字化赋能，上海早餐工程有温度",
+              "publishedAt": "2023-03-24T00:00:00.000Z",
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            },
+            {
+              "url": "https://xinwen.bjd.com.cn/content/s649d0c04e4b042ca9e8e6a19.html",
+              "title": "北京CBD白领早餐消费调查：10元以内最普遍，期待增加种类",
+              "publishedAt": "2023-06-29T00:00:00.000Z",
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            },
+            {
+              "url": "https://www.foodaily.com/articles/32910",
+              "title": "抢食便利店：早晚餐“卷入”售卖机 | Foodaily每日食品",
+              "publishedAt": "2023-06-07T00:00:00.000Z",
+              "textLength": 600,
+              "textScope": "search-text",
+              "truncated": true
+            }
+          ],
+          "retrievedAt": "2026-11-16T07:32:50.291Z"
+        },
+        {
+          "messageId": "abe73dde-692c-4b26-84d4-e670d39a9956",
+          "role": "assistant",
+          "type": "tool",
+          "name": "read_source",
+          "state": "output-available",
+          "input": {
+            "url": "https://mip.zhixiaodao.com/article/c35dbcb0817c54c817fcbc4b.html"
+          },
+          "source": {
+            "url": "https://mip.zhixiaodao.com/article/c35dbcb0817c54c817fcbc4b.html",
+            "title": "职场人上班成本调查：上一天班到底需要开销多少？_知小道经验网",
+            "publishedAt": "2026-04-23T05:35:30.000Z",
+            "textLength": 2000,
+            "textScope": "page-text",
+            "truncated": true
+          },
+          "retrievedAt": "2026-11-16T07:33:03.205Z"
+        },
+        {
+          "messageId": "abe73dde-692c-4b26-84d4-e670d39a9956",
+          "role": "assistant",
+          "type": "tool",
+          "name": "read_source",
+          "state": "output-available",
+          "input": {
+            "url": "https://xinwen.bjd.com.cn/content/s649d0c04e4b042ca9e8e6a19.html"
+          },
+          "source": {
+            "url": "https://xinwen.bjd.com.cn/content/s649d0c04e4b042ca9e8e6a19.html",
+            "title": "北京CBD白领早餐消费调查：10元以内最普遍，期待增加种类",
+            "publishedAt": "2023-06-29T00:00:00.000Z",
+            "textLength": 2000,
+            "textScope": "page-text",
+            "truncated": true
+          },
+          "retrievedAt": "2026-11-16T07:33:03.151Z"
+        },
+        {
+          "messageId": "abe73dde-692c-4b26-84d4-e670d39a9956",
+          "role": "assistant",
+          "type": "tool",
+          "name": "save_research",
+          "state": "output-available",
+          "sources": [
+            {
+              "url": "https://mip.zhixiaodao.com/article/c35dbcb0817c54c817fcbc4b.html",
+              "title": "职场人上班成本调查：上一天班到底需要开销多少？_知小道经验网",
+              "textLength": 0
+            },
+            {
+              "url": "https://xinwen.bjd.com.cn/content/s649d0c04e4b042ca9e8e6a19.html",
+              "title": "北京CBD白领早餐消费调查：10元以内最普遍，期待增加种类",
+              "textLength": 0
+            },
+            {
+              "url": "https://www.bj.chinanews.com.cn/news/2024/0928/96611.html",
+              "title": "职场人用餐调查：早餐正在受重视，带饭上班渐流行_中新社_北京分社",
+              "textLength": 0
+            },
+            {
+              "url": "http://www.why.com.cn/wx/article/2023/03/24/16796491161302718573.html",
+              "title": "开新局 谱新篇｜从扫“盲点”到数字化赋能，上海早餐工程有温度",
+              "textLength": 0
+            },
+            {
+              "url": "https://www.foodaily.com/articles/32910",
+              "title": "抢食便利店：早晚餐“卷入”售卖机 | Foodaily每日食品",
+              "textLength": 0
+            },
+            {
+              "url": "https://www.fxbaogao.com/detail/4435937",
+              "title": "[智联招聘]：2024职场人衣食住行调查报告 - 发现报告",
+              "textLength": 0
+            }
+          ]
+        },
+        {
+          "messageId": "abe73dde-692c-4b26-84d4-e670d39a9956",
+          "role": "assistant",
+          "type": "text",
+          "text": "# 中国通勤者到办公室后吃早餐——研究简报\n\n## 关键观察（3条，均标注来源范围）\n\n**1. \"带到工位吃\"是真实存在但非主流的子行为**\n来源：知小道经验网转引51job调查（发布标注2026-04-23，具体调研年份/样本量未在正文中说明，需视为待核实的转载数据）\n原文：*\"在吃早餐的人群中，有32.5%的受访者选择把早餐买了带去公司吃，20.4%的受访者会在路上吃早餐……仍有29.5%的受访者坚持吃完早餐再出门。不吃早餐的受访者占比9.9%\"*\n→ 仅在该次调研样本内，约三分之一职场人有\"买了带到公司吃\"的行为；此数据来源年份存疑，不可外推。\nhttps://mip.zhixiaodao.com/article/c35dbcb0817c54c817fcbc4b.html\n\n**2. 北京CBD场景下，\"工位吃早餐\"是高度压缩、低预算的快速流程**\n来源：北京日报2023-06-29记者实地走访北京国贸、大望路SOHO现代城等CBD商圈\n原文：*\"排队、交钱、取餐5分钟，走到单位5分钟，坐在工位上吃完5分钟\"*，*\"能坐下来吃早饭，对我来说，很奢侈\"*，转引《白领早餐报告》*\"94.2%的受访者早餐费用控制在10元以内\"*\n→ 该观察仅代表2023年6月北京CBD这一特定商圈、特定摊贩人群样本，不代表全国情况。\nhttps://xinwen.bjd.com.cn/content/s649d0c04e4b042ca9e8e6a19.html\n\n**3. 吃早餐比例上升的主张来自特定问卷，不吃早餐主因是时间紧**\n来源：中新网北京分社2024-09-28转引前程无忧51job问卷调研\n原文：*\"83%的受访者表示几乎每天都会吃早餐\"*（对比\"2018年调研不到50%\"），不吃早餐主因\"工作日时间太紧张\"(56%)、\"懒得准备或嫌麻烦\"(34%)、\"起不来宁愿多睡会\"(28%)\n→ 该结论仅代表前程无忧该次问卷的主张，样本量、城市覆盖未知，不构成全国代表性结论。\nhttps://www.bj.chinanews.com.cn/news/2024/0928/96611.html\n\n## 已有方案观察\n- **上海**：便利店推出\"三明治+豆浆\"等早餐套餐（个案不到10元）；上海市商务委\"早餐工程\"示范点每天提供不超10元的特价套餐，并上线\"早餐地图\"小程序（2023-03-24报道）。http://www.why.com.cn/wx/article/2023/03/24/16796491161302718573.html\n- **北京**：地铁站智能售卖机，宣传语\"早上上班带走，在办公室加热即食\"，截至报道时在国贸等地铁站投放约10台，仍处试运营阶段，效果未知（2023-06-07报道）。https://www.foodaily.com/articles/32910\n- **北京CBD**：包子铺、煎饼摊、便利店套餐价格多在6.6-13元区间，是当下\"带到工位吃\"人群的主要供给来源（同上北京日报观察）。\n\n## 机会假设\n\n**假设1：工位友好型早餐（低气味、免清洗、1-2分钟可食用）**\n- 证据：约32.5%人群已有带餐到公司行为；北京CBD观察显示购买-到岗-吃完压缩至约15分钟，\"坐下吃\"被视为奢侈。\n- 反例/缺口：现有包子铺、便利店套餐已把价格压至10元以内且购买便捷；未检索到专门针对\"工位友好型早餐\"的产品或市场数据，是空白而非已验证机会。\n- 验证动作：在1-2个写字楼做一周货架/预订柜小测试，记录转化与复购；访谈10-15名周边白领了解\"路上吃\"与\"工位吃\"的决策因素。\n- 推翻条件：若用户对\"工位友好\"属性无额外付费意愿，或现有便利店套餐已被认为\"足够好\"。\n\n**假设2：面向中小企业的低成本早餐福利外包**\n- 证据：资料显示企业普遍缺乏下午茶/饭贴福利（知小道文章提及\"95.3%公司无下午茶\"、\"65.3%无饭贴\"，但这些数据针对午餐/下午茶，非早餐专项）。\n- 反例/缺口：**本次检索未找到任何专门针对\"企业早餐福利\"的调研或案例**——这是资料缺口，不能证明市场空白，也可能该需求本身很小。\n- 验证动作：访谈5-8家中小企业HR/行政了解意愿与顾虑；追加一次\"企业 早餐 福利\"专项检索确认是否有被忽略的现有案例。\n- 推翻条件：若HR访谈显示员工对\"公司统一早餐\"无明显诉求，或成本模型不可行。\n\n## 局限说明\n以上观察均来自特定时间（2023-2024年）、特定城市（主要是北京、上海）或未知规模的问卷样本，**不构成\"早餐市场成熟\"\"主力渠道\"等全国性判断**；知小道文章发布日期标注异常（2026年），其数据年份存疑，引用时需注明\"待核实\"。研究证据有限，建议以上述访谈/小实验作为下一步验证。"
+        }
+      ],
+      "citationAudit": {
+        "method": "Compare Markdown and plain HTTP(S) citation URLs in run.output with URLs actually returned by search_sources/read_source. Ignore fragments only. This checks source identity, not whether a claim is supported.",
+        "toolCalls": {
+          "read_research": 1,
+          "search_sources": 2,
+          "read_source": 2,
+          "save_research": 1
+        },
+        "outputCharacters": 1998,
+        "capturedSourceCount": 6,
+        "citationCount": 5,
+        "unmatched": [],
+        "invalid": []
+      },
+      "rawArtifactSha256": "fe7a7fbabc40eaf94a89a5239846286abaf9bd3919529931f6a764517c4420c2"
+    }
+  ]
+}
