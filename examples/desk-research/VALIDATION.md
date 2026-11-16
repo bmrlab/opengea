@@ -2,6 +2,16 @@
 
 源码、实际运行、自动质量评分和仓库发布状态分别记录。
 
+## 2026-11-16 R2续修（正在完成00–02验收）
+
+已证实的四道质量失败在源码60f9e1c下全部通过真实复验，每题三项严格Judge均为1；[逐题证据](evaluation/results/r2-quality-four-share.json)。全部六道真实多轮亦通过，每题coverage/conversation均为1；[完整对话与评分](iterations/03-scoped-inference/r2-multi-20261116.json)。19个coverage固定正反例全部匹配、not_applicable=0；[校准摘要](evaluation/results/r2-coverage-summary.json)。
+
+03剩余单轮与00–02的固定一次复验继续进行；breakfast-scope/evidence已出现Judge虚构Artifact ID导致的越权读取错误，保留原error。gea #1362收紧无Artifact时的模型可见工具能力，真实复验单独记录，不回填原分数。历史模型初始化/HTTP发送/响应体中断仍缺具体故障根因，不宣称可靠性已关闭。
+
+本轮使用未发布候选CLI gea #1355和本地SDK/contract 5bd4093e；新SDK能力修复另用f92f4f5357独立验收。不能把候选包成功视为公开npm版本已通过。源码和00–03各22项本地测试、三个生成阶段14/20/20项测试与类型检查通过。
+
+以下章节保留各历史时点的事实，“仍未完成”列表属于原验收记录；当前R2以本节和新增独立结果为准。
+
 ## 2026-11-15 Exa 质量迭代
 
 当前示例对应 [03：限制推断范围](iterations/03-scoped-inference/README.md)。新主线 00–03 从 Exa 开始，只修改研究 instructions；Cases/Judges、模型、Connector、工具、DO 和前端保持一致。旧的 00–05 在 history 中保留原始源码与哈希，不混入新分数。
