@@ -59,3 +59,24 @@ Exa baseline 的 `counter-evidence` 首次结果：evidence 为 **1**，inferenc
 本例另外报告一个可重复的诊断值：最终简报中有多少个 引用 URL 未出现在本次搜索/读取结果里。它能定位错配链接，但不能证明事实有依据，也不统计存储记录里的链接；分母为本次报告中可提取的 Markdown 与纯文本 HTTP(S) 引用数。无链接的空报告不会因此自动通过 evidence。
 
 要修订 Judge，应先用同一批已保存轨迹对照人工制定的判例，明确新旧分歧，再统一重评所有版本并保留独立评分记录。不能修改 Judge 后只重评新 Agent，或只重试失败的题直到出高分。真实运行、逐题分数和复核依据见 [iterations](iterations/README.md)。
+
+## 真实评分的预算与失败保留
+
+Desk Research 的来源核对会执行多次模型与证据读取。Agent 的执行预算、Judge 的总请求预算和模型空闲预算分别计时。独立 `gea eval judge` 默认总预算为 120 秒；持续有输出也可能达到这个期限，不能把它解释为证据错误或 Exa 卡住。
+
+需要完整核对来源时，先 `gea agent eval` 使用 `executeOnly: true` 保存执行证据，再对该运行执行独立评分，例如：
+
+```json
+{
+  "cwd": "/absolute/path/to/examples/desk-research",
+  "run": "/absolute/path/to/saved-run",
+  "judgeSource": "snapshot",
+  "judgeModel": "gea-pro",
+  "modelSource": "hosted",
+  "timeoutMs": 300000,
+  "concurrency": 1,
+  "trace": true
+}
+```
+
+将配置保存为 JSON 后使用 `gea eval judge --json-file <文件>`。这为本示例每个 Judge 显式分配最多五分钟，不改变平台默认值、评分标准或模型空闲期限。已有失败必须保留；新评分是另一份 evaluation，不能覆盖原结论。`completed` 只表示结果已落盘，还要检查每项 Judge 的 status/score、gate 和 CLI 退出码。基础设施失败应修复运行链路；价格错算、引用错配应修复 Agent，而不是放宽 Judge。
