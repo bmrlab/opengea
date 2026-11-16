@@ -48,6 +48,31 @@ const sourceInfo = (source) => ({
   textScope: source.textScope,
   truncated: source.truncated,
 });
+const publicConversation = (conversation) =>
+  conversation
+    ? {
+        schemaVersion: conversation.schemaVersion,
+        baselineEligible: conversation.baselineEligible,
+        intervened: conversation.intervened,
+        stopReason: conversation.stopReason,
+        turns: (conversation.turns ?? []).map((turn) => ({
+          turn: turn.turn,
+          input: turn.input,
+          inputMessageId: turn.inputMessageId,
+          inputSource: turn.inputSource,
+          target: turn.target
+            ? {
+                runId: turn.target.runId,
+                status: turn.target.status,
+                messageIds: turn.target.messageIds,
+              }
+            : undefined,
+          simulator: turn.simulator
+            ? { runId: turn.simulator.runId, status: turn.simulator.status }
+            : undefined,
+        })),
+      }
+    : undefined;
 const canonicalCitation = (value) => {
   try {
     const url = new URL(value);
@@ -229,7 +254,9 @@ for (const agent of meta.agents) {
         errors: judges.filter((j) => j.status === "error").length,
       },
       output: run.output,
-      conversation: artifact.conversation ?? run.conversation,
+      conversation: publicConversation(
+        artifact.conversation ?? run.conversation,
+      ),
       trajectory,
       citationAudit: citationAudit(run.output, run.messages),
       rawArtifactSha256: hash(raw),

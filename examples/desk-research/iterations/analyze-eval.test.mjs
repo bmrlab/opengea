@@ -54,6 +54,28 @@ test("reports incomplete grading separately and checks actual citation identity"
             },
           ],
           run: {
+            conversation: {
+              stopReason: "simulator_completed",
+              turns: [
+                {
+                  turn: 1,
+                  input: "请保留预算限制",
+                  inputSource: "simulator",
+                  target: {
+                    runId: "target",
+                    status: "completed",
+                    messageIds: ["answer"],
+                    trace: "private-trace-path",
+                    modelCalls: [{ providerMetadata: "private-provider-data" }],
+                  },
+                  simulator: {
+                    runId: "simulator",
+                    status: "completed",
+                    artifact: "private-artifact-path",
+                  },
+                },
+              ],
+            },
             output:
               "[source](https://example.com/article#section) [wrong](https://example.com/) [broken](https://) https://example.com/article#other （https://example.com/article）正文",
             messages: [
@@ -79,6 +101,12 @@ test("reports incomplete grading separately and checks actual citation identity"
     execFileSync(process.execPath, [script, root, dest]);
     const report = JSON.parse(await readFile(dest, "utf8"));
     assert.equal(report.counts.passed, 1);
+    assert.equal(report.cases[0].conversation.turns[0].input, "请保留预算限制");
+    assert.equal(
+      report.cases[0].conversation.turns[0].target.status,
+      "completed",
+    );
+    assert.ok(!JSON.stringify(report).includes("private-"));
     assert.equal(report.counts.failed, 1);
     assert.equal(report.counts.incomplete, 1);
     assert.deepEqual(report.judging, {

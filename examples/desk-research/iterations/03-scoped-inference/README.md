@@ -36,3 +36,7 @@ Run：`91e2f979-78a6-4a79-b13a-d52e4667b79b`；运行状态：`failed`。以下�
 ## 2026-11-16 修复
 
 当前 `source/` 已同步预算核对、精确引用、短摘录保存和独立多轮覆盖检查。各题必达交互记录在metadata.coverage，与Agent回答质量分开。首次 `results.json` 与 `changes.diff` 对应 [原始清单](original-manifest.json)，不代表当前源码的验收结果；[当前清单](manifest.json) 记录修复后的哈希。教学与复验步骤见 [评测校准说明](../../evaluation/README.md)。完整验收结果另行保存，不覆盖首次失败。
+
+## 同规则重评首次轨迹
+
+[独立重评分](rescored-20261116.json)使用2026-11-16的新scope/evidence/inference规则，保留首次运行与评分。它检查旧回答，不是当前修复源码的执行验收。评分错误与旧执行失败均未补分；不能仅比较已完成项的平均分推导质量提升。
