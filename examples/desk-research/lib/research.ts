@@ -1,5 +1,8 @@
 import { z } from "zod";
-import type { AgentToolContext } from "@gea-ai/agent-sdk";
+import type {
+  AgentToolContext,
+  AgentDurableObjectNamespace,
+} from "@gea-ai/agent-sdk";
 import { webUrl } from "./evidence.ts";
 
 export const researchInput = z.object({
@@ -25,7 +28,10 @@ export const RESEARCH_OBJECT = "quick-start";
 // never URLs proposed by the model, before returning the search result.
 export async function captureSourceUrls(
   sources: Array<{ url: string }>,
-  context: Pick<AgentToolContext<{}>, "durableObjects" | "identity">,
+  context: {
+    durableObjects: Readonly<{ RESEARCH?: AgentDurableObjectNamespace }>;
+    identity: Pick<AgentToolContext<{}>["identity"], "chat">;
+  },
 ) {
   const namespace = context.durableObjects.RESEARCH;
   if (!namespace) return;

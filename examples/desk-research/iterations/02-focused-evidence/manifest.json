@@ -5,7 +5,7 @@
   "cli": "0.2.261114-alpha.0",
   "npm": "12.2.2",
   "packageManager": "pnpm@12.8.1",
-  "sourceSha256": "76b4d60458c100cc78fe594982449601abc226e87f686d27b89ff48f3463b9c1",
+  "sourceSha256": "5645dee53efdbaa7a115057eb85f8bf7f2d11257525f27b5dd8e0cc686e307cf",
   "benchmarkSha256": "ea19def6137a1a46b6a76089935ef7c789942f657fc4e51aa25efd3e9599c7bc",
   "files": [
     {
@@ -149,6 +149,46 @@
       "sha256": "e8349371d8f2c20fdaf9cfa0ab874785206f869e5830e8a9a7d7835c76a14ed7"
     },
     {
+      "path": "evaluation/evaluation.test.mjs",
+      "sha256": "320bf8b2bfe5309fa80ce6cb29767612ac76176763e40928df90b66063cb209c"
+    },
+    {
+      "path": "evaluation/fixtures/calibration.json",
+      "sha256": "5afa26548fed49af05301b3b59a016b0236468b5db35103dcca76de8c8c22f65"
+    },
+    {
+      "path": "evaluation/judges/conversation.judge.md",
+      "sha256": "50dccbd8eb2fe0393c67e52cbe11537cad956d557e2af6ac705f55d1a56dff11"
+    },
+    {
+      "path": "evaluation/judges/coverage.judge.md",
+      "sha256": "0d9b0cad15372f4d304bbd511ae7fb93dd8e47921a2a31a574515e8bf7bdac58"
+    },
+    {
+      "path": "evaluation/judges/evidence.judge.md",
+      "sha256": "8be52cee42fc1f99235767400d873774ad0015301c8ea8d60c76ef35bc9f6549"
+    },
+    {
+      "path": "evaluation/judges/scope.judge.md",
+      "sha256": "1252968866182cadfe2b67157872d49760c47d4a92bc2f6beee5f79f7665b04d"
+    },
+    {
+      "path": "evaluation/prepare.mjs",
+      "sha256": "4677839260ca0539ab887f3922daae095533816b56f3bd9661e6f017c3b1fe25"
+    },
+    {
+      "path": "evaluation/README.md",
+      "sha256": "805bfdb923d51b5e248a18c9bac9b9b7116079b5cf1de66f358fac8e56747af2"
+    },
+    {
+      "path": "evaluation/retain-constraints.case.json",
+      "sha256": "8841b73e49a18aa852a313e321dfbe7a8a8a629c0b21a9deca627c4fc8c5eef4"
+    },
+    {
+      "path": "evaluation/summarize.mjs",
+      "sha256": "3d7a2f81d6a8344efca96a9f1785665e316773f4d3fc2d284aff13e827adc28a"
+    },
+    {
       "path": "gea.worker.json",
       "sha256": "a87bd0b8a27d5498450c238fd67a75b288f94154a45c9d628815af5fb0e709c6"
     },
@@ -157,16 +197,24 @@
       "sha256": "ae2776f0c59fd73dfb65ed1fa952374e97abf5ab6d01aa3f91b8275a353c50c5"
     },
     {
+      "path": "iterations/analyze-eval.mjs",
+      "sha256": "5672a73bedd71f3219413f01f89abd2452df9b36b62b0b26f5f1dbf8f0ebc6da"
+    },
+    {
+      "path": "iterations/analyze-eval.test.mjs",
+      "sha256": "6e88ebd351e3769400cc5e20abbdd7a3c8c2733abbc69a81c4a305467d976e05"
+    },
+    {
       "path": "lib/evidence.ts",
       "sha256": "50d50282b4c38e3507d2a77b37c6ac8f5957e107e85df4d143cf23cfd6c6df10"
     },
     {
       "path": "lib/research.ts",
-      "sha256": "222cdaa1cc39d9de104a1f50966f135d72fec43ef1a1a99ea3dc1a676823c2c1"
+      "sha256": "b1ec023efbaaedd9336d7d5088d39d5571e5849734ab91f4cbc0cb5d55917d0a"
     },
     {
       "path": "package.json",
-      "sha256": "30e573788f6408a7dbf9bdecdb59aa6bb7ae22ceede345840ec177bd330bd0b8"
+      "sha256": "2a1dd9792fa58441fa7c68e2466b3b40ccd63d3a27aab230d54e37d9cbc101f5"
     },
     {
       "path": "pnpm-lock.yaml",
@@ -186,7 +234,7 @@
     },
     {
       "path": "scripts/materialize.mjs",
-      "sha256": "fb38809664b883fa2d91c498b4cc1c58520ea9c39a7ea813a9003e063bd256cf"
+      "sha256": "e62e0363c3c3a7b404b1b47a1fb14ef30194049585d9dec5c3413a63574e478b"
     },
     {
       "path": "scripts/prepare-local.mjs",

@@ -26,18 +26,22 @@ const common = [
   "tools/search-sources.ts",
   "tools/read-source.ts",
   "lib/evidence.ts",
+  "lib/research.ts",
   "benchmarks",
+  "evaluation",
+  "iterations/analyze-eval.mjs",
+  "iterations/analyze-eval.test.mjs",
   "tests/evidence.test.mjs",
   "tests/source-content.test.mjs",
 ];
 const full = [
   "bindings.d.ts",
   "durable-objects",
-  "lib/research.ts",
   "tools/research-record.ts",
   "app",
   "tests/app.test.mjs",
   "tests/store.test.mjs",
+  "tests/save-feedback.test.mjs",
   "scripts/prepare-local.mjs",
   "scripts/dev.mjs",
   "scripts/configure-app.mjs",
@@ -65,7 +69,7 @@ if (stage === "v1-research") {
   );
   pkg.scripts = {
     "type-check": "tsc --noEmit",
-    test: "node --test tests/*.test.mjs",
+    test: pkg.scripts.test,
     dev: `gea agent dev --json '{"cwd":".","modelSource":"hosted"}'`,
   };
   await writeFile(
