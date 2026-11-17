@@ -1,6 +1,6 @@
 # 三轮真实结果对照
 
-本表仅使用统一候选工具链批次的首次执行和对应评分；发布版首次失败另外完整保留，R4 与旧四轮分数不混入。执行失败不计为 0 分，缺少有效成对评分不计提升。
+本表仅使用修复前统一候选工具链批次的首次执行和对应评分；发布版首次失败另外完整保留，R4 与旧四轮分数不混入。执行失败不计为 0 分，缺少有效成对评分不计提升。
 
 | Case | Judge | 00 Baseline | 01 看结果 | 02 看 Trace |
 | --- | --- | --- | --- | --- |
@@ -36,3 +36,9 @@
 - 02-trace-focused / budget-ceiling / evidence：`仅单品能压到8元以内`。北京日报同一来源的search_sources与read_source均返回6.6元完整套餐，反驳该绝对断言。三项自动1分保留；这是正文读到、链接正确却漏掉反例的实质质量问题。
 
 这些争议阻止把自动高分当作业务验收通过；没有为了消除分歧修改Judge或重抽回答。
+
+## 预算题修复后的单题补跑（独立记录）
+
+02 现已加入套餐/单品与反例核对指令，只补跑 `budget-ceiling` 一次：scope=1、inference=1、evidence=error（`Model finish reason does not match its content`），整体 incomplete，非通过。新回答承认6.6元套餐满足预算，原排他断言未复现；但最终回答留下未渲染 sourceId、套餐B组成缩略且未逐一 read_source。详见 [补跑说明](02-trace-focused/README.md#2026-11-17-预算题定向修复与一次补跑) 与 [原始导出](02-trace-focused/budget-ceiling-follow-up-results.json)。
+
+上方比较表仍是修复前首次批次；02 对应 `pre-fix-manifest.json`。不把新单题与旧题混算为修复后4/4。00 深链接截断、01 转引报告误称“北京CBD样本”两项争议本次仅披露，未改 Agent 或补跑，仍未解决。

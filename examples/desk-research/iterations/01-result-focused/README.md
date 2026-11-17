@@ -39,3 +39,7 @@
 [单轮首次结果](results.json) · [多轮首次结果](multi-results.json) · [逐项复核](review-notes.json) · [Case × Judge 对照](../comparison.md)
 
 完整原始 Run 与 Trace 保留本地，公开 results 是裁剪后的分享版。执行失败、评分错误、有效 0 分和多轮未覆盖分别保留；不将历史分数挪来使用。该轮不代表全部 18 题验收。
+
+## 复审确认的质量问题（本次仅披露）
+
+`counter-evidence`：回答将北京报道转引的《白领早餐报告》误称为“北京CBD样本”；报道地点不能替代原调查样本范围，自动 evidence=1 未识别。本次保留原始回答与分数，不修改本轮 Agent、题目或 Judge，也不补跑；该争议仍未解决。

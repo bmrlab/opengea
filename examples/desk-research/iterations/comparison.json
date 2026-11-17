@@ -659,5 +659,33 @@
       "capturedEvidenceQuote": "店里在早餐时段售卖两款只需6.6元的超值套餐。",
       "toolEvidence": "Both search_sources and read_source(offset=0) contain the 6.6-yuan set meal in this exact run."
     }
-  ]
+  ],
+  "sourceIdentityBoundary": "Original comparison remains unchanged; 02 uses pre-fix-manifest.json. Budget-only follow-up is separate, not a new four-case aggregate.",
+  "budgetCeilingFollowUp": {
+    "round": "02-trace-focused",
+    "sourceSha256": "3f4601c9719c8d97b4d57294b77095e8e8f18ac6871c429e7b8bb1716705576a",
+    "results": "02-trace-focused/budget-ceiling-follow-up-results.json",
+    "receipt": "02-trace-focused/budget-ceiling-follow-up.json",
+    "counts": {
+      "passed": 0,
+      "failed": 0,
+      "incomplete": 1,
+      "execution_error": 0,
+      "unscored": 0,
+      "missing": 0
+    },
+    "judging": {
+      "required": 3,
+      "completedRequired": 2,
+      "errors": 1
+    },
+    "scores": {
+      "scope": 1,
+      "inference": 1,
+      "evidence": null
+    },
+    "evidenceStatus": "error",
+    "status": "incomplete",
+    "originalAggregateReplaced": false
+  }
 }

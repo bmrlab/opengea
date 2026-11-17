@@ -1,5 +1,5 @@
 {
-  "batch": "candidate",
+  "batch": "candidate-before-budget-fix",
   "interpretation": "Tool counts and exact-string diagnostics only. search_sources can return body text; zero read_source calls does not mean zero evidence. A canonical link does not prove semantic support. Extra answer text is not automatically a quality failure.",
   "cases": [
     {
@@ -216,5 +216,6 @@
       "answerExactlyEqualsLastSavedReport": false,
       "answerContainsLastSavedReport": false
     }
-  ]
+  ],
+  "followUp": "02-trace-focused/budget-ceiling-follow-up.json"
 }

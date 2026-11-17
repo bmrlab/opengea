@@ -1,9 +1,9 @@
 {
   "id": "02-trace-focused",
-  "createdAt": "2026-11-17T04:18:44.073Z",
+  "createdAt": "2026-11-17T05:52:32.651Z",
   "node": "v24.16.0",
   "cli": "0.2.261114-alpha.0",
-  "sourceSha256": "32a71585bfbf126c0e7af2e5d9076417e920e35efe4d2e570dfce6dbdebd0cfc",
+  "sourceSha256": "3f4601c9719c8d97b4d57294b77095e8e8f18ac6871c429e7b8bb1716705576a",
   "benchmarkSha256": "64fcbc74d423c24a62be441e0532849b39d36aa578669db90d7487d75e6f94b9",
   "files": [
     {
@@ -152,7 +152,7 @@
     },
     {
       "path": "instructions.ts",
-      "sha256": "202bdd953b34d3eff935c64f9224d8b6206543f5ad55b8e7b17eba1fe0ad801d"
+      "sha256": "ce6619469e8281cafa00003944f536001d90b9772bbc1e5e89c1b805f214f0a9"
     },
     {
       "path": "lib/evidence.ts",
@@ -252,7 +252,7 @@
     },
     {
       "path": "versions/v1-research/instructions.ts",
-      "sha256": "d5e43a5524f9446b5570a88c1fc6e485b82fb4d16b3b89d3df304303e766b5c9"
+      "sha256": "505b984751a9a6f2944686321a8cee858c9bea0c94fdd8633fe57b0083777fa4"
     },
     {
       "path": "versions/v1-research/worker.ts",

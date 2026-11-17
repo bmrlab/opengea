@@ -1,0 +1,145 @@
+{
+  "schemaVersion": "opengea.budget-ceiling-follow-up.v1",
+  "round": "02-trace-focused",
+  "caseId": "budget-ceiling",
+  "date": "2026-11-17",
+  "attempts": {
+    "execution": 1,
+    "judge": {
+      "evidence": 1,
+      "inference": 1,
+      "scope": 1
+    }
+  },
+  "previousSourceSha256": "32a71585bfbf126c0e7af2e5d9076417e920e35efe4d2e570dfce6dbdebd0cfc",
+  "sourceSha256": "3f4601c9719c8d97b4d57294b77095e8e8f18ac6871c429e7b8bb1716705576a",
+  "benchmarkSha256": "64fcbc74d423c24a62be441e0532849b39d36aa578669db90d7487d75e6f94b9",
+  "caseSnapshotUnchanged": true,
+  "judgeRuntimeHashUnchanged": "sha256:4130d40b5e5bee94b6eedeb83cd648878a108d2ce9a2acfbf9e93718fbe04cc5",
+  "runtime": "../runtime-candidate.json",
+  "runtimeCopyVerification": {
+    "cliSha256": "1fcd89e91aa7d0e6b87f47a6e4edc48cfa7d17bb8d9ca47901bbc551d4595d06",
+    "appServerSha256": "c0727ba187af35dcbec85e974af0f60aab9fb34961e1a3be9aa4b9002f2ed324",
+    "workerRuntimeSha256": "72dea76400d3869ec50d2bd0caceb71a4815c36505ea258d254d8a833c57cc80",
+    "catalogSha256": "2f47faa15c1fc567c0594f9c9c6e0f024e23a019d9fac81441ec7d7352b8f345",
+    "dependencyFilesMatched": 12082
+  },
+  "configuredModel": "creative-reasoning-1.5",
+  "modelSource": "local",
+  "execution": {
+    "round": "02-trace-focused",
+    "suite": "single-turn",
+    "stage": "execute",
+    "options": {
+      "cwd": "/Users/zhuo/gea-tasks/fix-opengea-42-r1-20261117/private/candidate-projects/02-trace-focused",
+      "benchmarkPath": "benchmarks/single-turn",
+      "caseIds": [
+        "budget-ceiling"
+      ],
+      "modelSource": "local",
+      "executeOnly": true,
+      "concurrency": 2,
+      "overrides": {
+        "engine": {
+          "maxSteps": 16,
+          "timeout": {
+            "totalMs": 240000
+          }
+        }
+      },
+      "outDir": "/Users/zhuo/gea-tasks/fix-opengea-42-r1-20261117/private/candidate-runs/02-trace-focused/single-turn"
+    },
+    "exitCode": 0,
+    "wallSeconds": 85.015,
+    "sourceSha256": "3f4601c9719c8d97b4d57294b77095e8e8f18ac6871c429e7b8bb1716705576a",
+    "credentialValuesPersisted": false,
+    "model": "creative-reasoning-1.5",
+    "modelSource": "local"
+  },
+  "grading": {
+    "round": "02-trace-focused",
+    "suite": "single-turn",
+    "stage": "judge",
+    "options": {
+      "cwd": "/Users/zhuo/gea-tasks/fix-opengea-42-r1-20261117/private/candidate-projects/02-trace-focused",
+      "run": "/Users/zhuo/gea-tasks/fix-opengea-42-r1-20261117/private/candidate-runs/02-trace-focused/single-turn/20261117T055249.944Z-205f72a6",
+      "judgeSource": "snapshot",
+      "judgeModel": "creative-reasoning-1.5",
+      "modelSource": "local",
+      "concurrency": 2,
+      "maxSteps": 12,
+      "timeoutMs": 300000,
+      "trace": true
+    },
+    "exitCode": 0,
+    "wallSeconds": 80.536,
+    "sourceSha256": "3f4601c9719c8d97b4d57294b77095e8e8f18ac6871c429e7b8bb1716705576a",
+    "credentialValuesPersisted": false,
+    "model": "creative-reasoning-1.5",
+    "modelSource": "local"
+  },
+  "runId": "205f72a6-faaa-4ea8-9d3d-c5a716b869e7",
+  "targetRunId": "3f79488d-6621-4bff-b6d3-f870c2429074",
+  "runStatus": "completed",
+  "evaluationId": "fd81f54f-b5b4-4fa7-a307-347c994ed91c",
+  "evaluationStatus": "completed",
+  "resultStatus": "incomplete",
+  "judges": [
+    {
+      "id": "evidence",
+      "kind": "markdown",
+      "status": "error",
+      "error": {
+        "code": "judge_failed",
+        "message": "Model finish reason does not match its content"
+      }
+    },
+    {
+      "id": "inference",
+      "kind": "markdown",
+      "status": "completed",
+      "score": 1,
+      "reason": "报告将强结论限定在明确样本范围内：对\"94.2%受访者10元以内\"明确指出口径不同于8元,不能作为依据;对CBD套餐与便利店单品价格均注明来源为特定报道/个人体验而非全国代表性抽样,并给出具体价格区间与适用范围(\"多数单独满足\"而非\"都满足\");机会假设部分提供了可操作的验证方法(观察门店早高峰、跟踪一周购买频次)及放弃标准;缺口部分明确区分\"资料缺口\"与\"市场空白\"，避免营销式泛化。未见把个体评论泛化为普遍结论，或把未验证机会写成已证实需求的情况，符合1分标准。"
+    },
+    {
+      "id": "scope",
+      "kind": "markdown",
+      "status": "completed",
+      "score": 1,
+      "reason": "约束：单份预算≤8元，办公室场景，价格需来源且区分单份/组合/促销，未知价格不可计入达标。回答中北京CBD套餐（10元、9元、9-13元等）均明确标注“超出8元限制”，仅6.6元套餐标注满足；便利店单品2.2-7.8元标注“多可满足”，并提醒两件搭配易超8元，未将组合价误判为达标；8元青椞鸡肉卷单品恰好等于上限，未违反“≤8元”。早餐工程政策无价格数据，明确列为资料缺口而非虚构数值。未发现把超预算方案归类为预算内或把未知价格当满足的情形，分类前后一致，未自相矛盾。满足交付要求。"
+    }
+  ],
+  "judging": {
+    "required": 3,
+    "completedRequired": 2,
+    "errors": 1
+  },
+  "nativeHashes": {
+    "run": "916438a129ee25ae50338596ffd03099c6e7892853572bb5d3d13c319c1460da",
+    "evaluation": "b375c127cab5d2a66a99f9357f24e1adb3ba1cc9475ac980fb87d36583795afd",
+    "gradedCase": "25c0125dd4d5e21f32d004215ffe95ed15735d43d95ebaf0502cb2eb4c525b79"
+  },
+  "localEvidence": "/Users/zhuo/gea-tasks/fix-opengea-42-r1-20261117/private/candidate-runs/02-trace-focused/single-turn/20261117T055249.944Z-205f72a6",
+  "results": "budget-ceiling-follow-up-results.json",
+  "originalResults": "results.json",
+  "originalManifest": "pre-fix-manifest.json",
+  "currentManifest": "manifest.json",
+  "manualReview": {
+    "originalFailure": "仅单品能压到8元以内",
+    "currentAnswerQuote": "CBD场景下的**套餐**多在9-13元，仅个别（6.6元）满足8元——不能笼统说\"套餐都超预算\"或\"单品都够用\"，需按具体商品判断；",
+    "sourceUrl": "https://xinwen.bjd.com.cn/content/s649d0c04e4b042ca9e8e6a19.html",
+    "sourceId": "src_9a9609c344f03384",
+    "passageId": "p_23a96e7dada5cfa7",
+    "sourceExcerpt": "便利店，9元套餐，包括一杯豆浆，一个鸡蛋，一根玉米。包子铺，一笼鲜肉包子10元，豆浆3元。快餐店，煎饼卷油条，一杯豆浆，一共11元。\n\n南侧还有一家武汉特色的小吃店，不但门脸窄小，而且要通过楼梯上到二楼。店里在早餐时段售卖两款只需6.6元的超值套餐。套餐A：3个武汉烧卖+1个卤蛋或小油条+1杯豆浆。套餐B：1个酱肉大包+1个香菇油菜大包+1个卤蛋+1杯豆浆。店里服务员说，店铺位置稍差，所以租金相对便宜，就用更低的价格吸引顾客。",
+    "finding": "本次检索再次返回同一6.6元套餐片段，回答已承认套餐满足预算，原排他性错误未复现；单次实跑不证明稳定修复。",
+    "remainingIssues": [
+      "最终回答保留 [[sourceId]] 而未交付保存工具已渲染的完整链接报告；citationCount=0 不是引用正确。",
+      "本次 read_source=0；search_sources 已返回正文，不能说没有证据，也不能宣称逐一读正文的过程要求得到遵守。",
+      "6.6元套餐B被缩略成大包+卤蛋+豆浆，没有完整转述两个大包的组成。"
+    ],
+    "savedStatus": "complete",
+    "savedReportEqualsFinal": false,
+    "businessAcceptance": false
+  },
+  "boundary": "Only this one case was rerun after changing Agent instructions. No resampling, regrading, manual scores, changed Cases/Judges or mixed four-case aggregate. evidence error is preserved."
+}

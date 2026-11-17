@@ -33,3 +33,7 @@
 [单轮首次结果](results.json) · [多轮首次结果](multi-results.json) · [逐项复核](review-notes.json) · [Case × Judge 对照](../comparison.md)
 
 完整原始 Run 与 Trace 保留本地，公开 results 是裁剪后的分享版。执行失败、评分错误、有效 0 分和多轮未覆盖分别保留；不将历史分数挪来使用。该轮不代表全部 18 题验收。
+
+## 复审确认的质量问题（本次仅披露）
+
+`validation-plan`：最终回答将已捕获的来源深链接截成日期目录；自动 evidence=1 未识别这一引用错误。本次保留原始回答与分数，不修改本轮 Agent、题目或 Judge，也不补跑；该争议仍未解决。

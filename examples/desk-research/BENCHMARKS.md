@@ -82,7 +82,7 @@ gea agent eval --json '{"benchmarkPath":"benchmarks/multi-turn","caseIds":["clar
 
 ## Evaluation scope
 
-The current Exa development subset is breakfast-scope, budget-ceiling, counter-evidence and validation-plan. The other 8 single-turn Cases and 6 multi-turn Cases are regression coverage, reported separately. Earlier social-search subsets and results are retained in [history](iterations/history/README.md); they are not the current baseline. See the [fixed protocol and actual iterations](iterations/README.md).
+The current Exa development subset is breakfast-scope, budget-ceiling, counter-evidence and validation-plan. The other 8 single-turn Cases and 6 multi-turn Cases are regression coverage, reported separately. The previous four Exa iterations remain in [history](iterations/history/README.md); they are not the current baseline. See the [fixed protocol and actual iterations](iterations/README.md).
 
 Each single-turn Case requires scope, evidence and inference to pass. Multi-turn Cases require both coverage and conversation. Each Case's metadata.coverage names its required user events and responses; coverage checks their actual occurrence and order. Conversation grades the Agent's observed answers. Missing coverage prevents a full pass while preserving observed answer quality. Simulator done is not a quality pass.
 

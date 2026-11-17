@@ -1,8 +1,8 @@
 # 产品创新 Desk Research：早餐产品机会
 
-这是可独立运行的完整 Desk Research 示例；Quick Start 则面向 coding agent，从空项目自行构建，两者不互相依赖。任务是研究上班族早餐的使用场景、困难与已有方案，输出带来源的机会简报，并区分观察、推断和待验证假设。
+这是可独立运行的完整 Desk Research 示例；Quick Start 面向 coding agent，提供五步迭代索引，并以当前 ProductResearch 为起点增加 DO。任务是研究上班族早餐的使用场景、困难与已有方案，输出带来源的机会简报，并区分观察、推断和待验证假设。
 
-- [Coding Agent Quick Start](./QUICKSTART.md)：从创建 Project 开始的官方 walkthrough。
+- [Coding Agent Quick Start](./QUICKSTART.md)：建题、跑分、定位失分、改 Agent、再跑分的五步索引与 DO 扩展任务。
 - [验收记录](./VALIDATION.md)：已执行的本地检查与尚未完成的真实验收。
 - [English tutorial](./QUICKSTART.en.md)。
 - [18 道题与验收标准](./BENCHMARKS.md)。
@@ -57,7 +57,7 @@ pnpm prepare:local
 pnpm dev
 ```
 
-搜索使用 Exa，Connector key 为 `research-search`。通过本机授权流程配置 API key；本地运行可在当前进程设置 `GEA_CONNECTOR_RESEARCH_SEARCH_API_KEY` 为已授权的 Exa key；它供 Connector 读取，不创建持久化 Connection。不要把 key 写进源码或命令参数。返回有长度上限的网页文本，缺失和截断会明确标记。新的质量迭代从 Exa baseline 开始；早期 social-search 与功能接入记录放在 `iterations/history/`，不参与新分数比较。
+搜索使用 Exa，Connector key 为 `research-search`。通过本机授权流程配置 API key；本地运行可在当前进程设置 `GEA_CONNECTOR_RESEARCH_SEARCH_API_KEY` 为已授权的 Exa key；它供 Connector 读取，不创建持久化 Connection。不要把 key 写进源码或命令参数。返回有长度上限的网页文本，缺失和截断会明确标记。当前三轮统一使用 Exa；旧 Exa 四轮记录位于 `iterations/history/`，不参与新分数比较。
 
 搜索每次最多返回3页、每页600字符预览，供选择来源。`read_source` 按完整URL读取最多12000字符的提取文本，每次展示2000字符；可用`query`定位原句或按`nextOffset`继续。`queryFound:false`只表示当前提取未找到，`nextOffset:null`也不保证网页全文已读完；仍须检查`extractionTruncated`。原文窗口始终保留对应URL和范围，不能把其他页面的事实配到这个链接。
 
@@ -122,3 +122,5 @@ gea eval judge --json '{"run":"/absolute/path/from/resultDirectory","judgeSource
 本仓库只依赖公开 npm 包，标准安装不需要 GEA 私有源码。版本生成器仅复制源码与固定题集，不复制 `.gea/`、凭据、构建产物或依赖；不会覆盖已有目录。
 
 后续只询问解释、取舍或引用核对时，直接回答所问部分，不重复生成整份报告。更新简报时复用同一会话的来源标识和片段；读取记录的模型视图不重复发送已经包含在report中的摘录，工作台保存的完整记录不变。
+
+2026-11-17 定向修复：02 预算题加入反例核对后仅补跑一次，新回答承认6.6元套餐；scope=1、inference=1、evidence Judge error，整体 incomplete。旧批次保留且不混分；[补跑记录](iterations/02-trace-focused/README.md#2026-11-17-预算题定向修复与一次补跑)列出原生证据与残余质量问题。

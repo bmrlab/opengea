@@ -14,7 +14,7 @@
 | 看结果 | 3 | 1 | conversation=1，coverage=1 | 14/14 | 1 |
 | 看 Trace | 4 | 0 | conversation=1，coverage=1 | 14/14 | 1 |
 
-这是同一候选条件下的首次结果；发布版首次 12 题执行错误及评分中断另存。自动分数不替代人工复核：第 2 轮预算题读到了 6.6 元套餐，却写“仅单品能压到8元以内”，三项 Judge 仍给 1。不能据此宣称整体质量提升或业务验收通过。[逐项对照](comparison.md) · [机器汇总](run-summary.json)。
+这是修复前同一候选条件下的首次结果；发布版首次 12 题执行错误及评分中断另存。自动分数不替代人工复核：第 2 轮预算题读到了 6.6 元套餐，却写“仅单品能压到8元以内”，三项 Judge 仍给 1。不能据此宣称整体质量提升或业务验收通过。[逐项对照](comparison.md) · [机器汇总](run-summary.json)。
 
 ## 1. 建题
 
@@ -24,7 +24,7 @@
 
 先前使用发布版 CLI/SDK 的三个四题批次均执行失败，随后评分未产出逐题结果，已中断并保留各轮 `published-execution-results.json` / `published-attempt.json`。收到 R4 交接后，三轮完整改用同一 [候选工具链](runtime-candidate.json)、显式 CR Catalog（总输出 4096 / 思考 1024）与本地 SDK/contract；这是新的运行条件批次，不是 Agent 提升。没有从两批挑选分数。
 
-当前 results.json / multi-results.json 对应候选批次。源码从各 manifest 原样复制进独立本地执行项目；包声明与锁文件仍保留公开版本，实际 SDK 构件以 runtime-candidate.json 的 SHA 和内容哈希为准。普通 npm 安装不能证明复现该候选结果，不能宣称正式发布版端到端通过。Judge 仍固定到 opengea main 4f4f51c，R4 未推的 inference 规则没有引入。
+当前 results.json / multi-results.json 对应候选批次。源码从当时的 manifest 原样复制进独立本地执行项目（02 首批对应 `pre-fix-manifest.json`，当前 `manifest.json` 对应预算题修复后的源码）；包声明与锁文件仍保留公开版本，实际 SDK 构件以 runtime-candidate.json 的 SHA 和内容哈希为准。普通 npm 安装不能证明复现该候选结果，不能宣称正式发布版端到端通过。Judge 仍固定到 opengea main 4f4f51c，R4 未推的 inference 规则没有引入。
 
 ## 2. 跑分
 
@@ -60,4 +60,10 @@ node scripts/snapshot-iteration.mjs verify 02-trace-focused
 
 ## 历史与继续改进
 
-旧 00–03 原文件原样迁入 [history](history/README.md)，更早的 social-search / 功能记录单独保留。旧分数不迁入新三轮。根目录的结构化观察、细化推断与追问处理是三轮之后的继续改进；[versions](../versions/README.md) 只讲功能扩展。
+旧 00–03 原文件原样迁入 [history](history/README.md)。旧分数不迁入新三轮。根目录的结构化观察、细化推断与追问处理是三轮之后的继续改进；[versions](../versions/README.md) 只讲功能扩展。
+
+## 预算题修复后的单题补跑（独立记录）
+
+02 现已加入套餐/单品与反例核对指令，只补跑 `budget-ceiling` 一次：scope=1、inference=1、evidence=error（`Model finish reason does not match its content`），整体 incomplete，非通过。新回答承认6.6元套餐满足预算，原排他断言未复现；但最终回答留下未渲染 sourceId、套餐B组成缩略且未逐一 read_source。详见 [补跑说明](02-trace-focused/README.md#2026-11-17-预算题定向修复与一次补跑) 与 [原始导出](02-trace-focused/budget-ceiling-follow-up-results.json)。
+
+上方比较表仍是修复前首次批次；02 对应 `pre-fix-manifest.json`。不把新单题与旧题混算为修复后4/4。00 深链接截断、01 转引报告误称“北京CBD样本”两项争议本次仅披露，未改 Agent 或补跑，仍未解决。

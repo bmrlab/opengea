@@ -90,7 +90,7 @@ node iterations/analyze-eval.mjs /tmp/copied-native-run /tmp/rescore-share.json 
 
 ## 完整示例验收
 
-这里执行当前示例根目录。`iterations/*/source` 是历史快照，overlay 不会迁移其 Agent 模型；若要用这些快照做新的 CR 直连执行，先在新工作副本统一 Agent、Simulator 和 Judge 的 CR 模型 ID，并记录新基线。
+这里执行当前示例根目录。新三轮 `iterations/00-baseline/source`、`01-result-focused/source`、`02-trace-focused/source` 已统一 CR。`iterations/history/*/source` 才是旧 Exa 四轮历史快照，overlay 不会迁移其 Agent 模型；若要用旧快照做新的 CR 直连执行，先在新工作副本统一 Agent、Simulator 和 Judge 的 CR 模型 ID，并记录新基线。
 
 在修复后的项目运行全部 12 道单轮题和 6 道多轮题，不传 caseIds 即全选：
 
@@ -124,3 +124,5 @@ Judge预算与Agent执行预算分开：这里为完整证据核对设300秒Judg
 coverage在126203c到60f9e1c期间规则和Case目标相同。本轮19个固定正反例全部匹配，覆盖六类场景，not_applicable=0、error=0。[原生评分摘要](results/r2-coverage-summary.json)。这些是合成对话的真实Judge校准，不是Agent多轮实跑。
 
 验收使用未发布的候选CLI（gea #1355，4015a5665，二进制SHA-256 a2874ae7f24404b6cd0802cd4fbab17c1961f7d0bfdff11b57090e521b55d357）和本地构建的SDK/contract（gea 5bd4093e）。公开npm版本本身尚未通过同一验收；未合并、发包或部署。
+
+2026-11-17 定向修复：02 预算题加入反例核对后仅补跑一次，新回答承认6.6元套餐；scope=1、inference=1、evidence Judge error，整体 incomplete。旧批次保留且不混分；[补跑记录](../iterations/02-trace-focused/README.md#2026-11-17-预算题定向修复与一次补跑)列出原生证据与残余质量问题。
