@@ -1,3 +1,5 @@
+import { agentCore } from "@gea-ai/agent-sdk/agent-core";
+import { researchStep } from "./lib/research-flow";
 import { defineAgent } from "@gea-ai/agent-sdk";
 import { instructions } from "./instructions";
 import searchSources from "./tools/search-sources";
@@ -12,6 +14,7 @@ export default defineAgent({
   model: "creative-reasoning-1.5",
   computer: { enabled: false },
   instructions,
+  engine: agentCore({ prepareStep: researchStep }),
   connectors: { search },
   tools: [searchSources, readSource, researchRecord],
 });

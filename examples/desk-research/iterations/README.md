@@ -24,7 +24,7 @@
 
 先前使用发布版 CLI/SDK 的三个四题批次均执行失败，随后评分未产出逐题结果，已中断并保留各轮 `published-execution-results.json` / `published-attempt.json`。收到 R4 交接后，三轮完整改用同一 [候选工具链](runtime-candidate.json)、显式 CR Catalog（总输出 4096 / 思考 1024）与本地 SDK/contract；这是新的运行条件批次，不是 Agent 提升。没有从两批挑选分数。
 
-当前 results.json / multi-results.json 对应候选批次。源码从当时的 manifest 原样复制进独立本地执行项目（02 首批对应 `pre-fix-manifest.json`，当前 `manifest.json` 对应预算题修复后的源码）；包声明与锁文件仍保留公开版本，实际 SDK 构件以 runtime-candidate.json 的 SHA 和内容哈希为准。普通 npm 安装不能证明复现该候选结果，不能宣称正式发布版端到端通过。Judge 仍固定到 opengea main 4f4f51c，R4 未推的 inference 规则没有引入。
+当前 results.json / multi-results.json 对应候选批次。源码从当时的 manifest 原样复制进独立本地执行项目（02 首批对应 `pre-fix-manifest.json`，r1 补跑对应 `r1-manifest.json`，当前 `manifest.json` 对应 r2 源码）；包声明与锁文件仍保留公开版本，实际 SDK 构件以 runtime-candidate.json 的 SHA 和内容哈希为准。普通 npm 安装不能证明复现该候选结果，不能宣称正式发布版端到端通过。Judge 仍固定到 opengea main 4f4f51c，R4 未推的 inference 规则没有引入。
 
 ## 2. 跑分
 
@@ -67,3 +67,7 @@ node scripts/snapshot-iteration.mjs verify 02-trace-focused
 02 现已加入套餐/单品与反例核对指令，只补跑 `budget-ceiling` 一次：scope=1、inference=1、evidence=error（`Model finish reason does not match its content`），整体 incomplete，非通过。新回答承认6.6元套餐满足预算，原排他断言未复现；但最终回答留下未渲染 sourceId、套餐B组成缩略且未逐一 read_source。详见 [补跑说明](02-trace-focused/README.md#2026-11-17-预算题定向修复与一次补跑) 与 [原始导出](02-trace-focused/budget-ceiling-follow-up-results.json)。
 
 上方比较表仍是修复前首次批次；02 对应 `pre-fix-manifest.json`。不把新单题与旧题混算为修复后4/4。00 深链接截断、01 转引报告误称“北京CBD样本”两项争议本次仅披露，未改 Agent 或补跑，仍未解决。
+
+## r2 最新单题结果
+
+02预算题含r1累计3/3次真实尝试，均保留。第2次自动三项1分仍有 read_source=0 和错配链接，继续修 Agent；第3次新增搜索后读取策略与精简的保存输出，scope=1、evidence=1、inference=1，判分3/3，整体passed。同次运行 read_source=3，最终无未渲染 sourceId；北京6.6元套餐及2个大包与正文、完整链接对应。仍有未知组合价推断、个案泛化、地铁出口位置表述和保存后重排等人工争议，不作业务验收通过。见[三次尝试汇总](02-trace-focused/budget-ceiling-r2-summary.json)和[详细说明](02-trace-focused/README.md#r2完整判分与正文读取引用交付修复)。旧三轮比较表不被该单题替换，00/01两条争议仍只披露。

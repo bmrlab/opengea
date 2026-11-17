@@ -17,5 +17,11 @@
     "previousSourceSha256": "32a71585bfbf126c0e7af2e5d9076417e920e35efe4d2e570dfce6dbdebd0cfc",
     "previousManifest": "pre-fix-manifest.json",
     "scope": "Only instructions.ts and versions/v1-research/instructions.ts: compare prices, package contents, conditions and counterexamples before exclusive conclusions. Cases and Judges unchanged."
+  },
+  "r2Changes": {
+    "parentHead": "089c252743678520305e045869aec1a7f0cf6b2d",
+    "previousManifest": "r1-manifest.json",
+    "scope": "Attempt 2 changed instructions only and did not meet read/citation requirements. Attempt 3 adds a search-to-read step policy shared by stage agents, search metadata-only output, compact rendered save output, and package/claim identity instructions; Cases/Judges/budgets remain unchanged.",
+    "intermediateManifest": "r2-attempt-2-manifest.json"
   }
 }

@@ -1,0 +1,283 @@
+{
+  "schemaVersion": "opengea.iteration-report.v1",
+  "runId": "54496343-c788-4aa0-aa47-1b0c3d301053",
+  "status": "completed",
+  "startedAt": "2026-11-17T06:11:23.567Z",
+  "completedAt": "2026-11-17T06:13:01.552Z",
+  "judgeModel": null,
+  "runtime": {
+    "defaultComputerBackend": "virtual",
+    "location": "local",
+    "nodeVersion": "v24.3.0",
+    "os": "darwin"
+  },
+  "evaluation": {
+    "evaluationId": "897f6103-32ee-4538-a182-720eb0882da3",
+    "status": "completed",
+    "judgeSource": "snapshot",
+    "judgeModel": "creative-reasoning-1.5",
+    "judgeRuntimeHash": "sha256:4130d40b5e5bee94b6eedeb83cd648878a108d2ce9a2acfbf9e93718fbe04cc5",
+    "maxSteps": 12,
+    "timeoutMs": 300000,
+    "startedAt": "2026-11-17T06:13:10.683Z",
+    "completedAt": "2026-11-17T06:14:42.883Z"
+  },
+  "targets": [
+    {
+      "key": "product-research",
+      "agentSnapshotHash": "sha256:caaa1dc31d87b58368bd098e24b52ace99d64a7e7d19dc310d176d9985dff97b",
+      "applicationContentHash": "sha256:41b8282b0b9b165fdcef07358a6575bb727c1c86f51ed49ef87587e70ea35fed",
+      "selectedCaseIds": [
+        "budget-ceiling"
+      ]
+    }
+  ],
+  "counts": {
+    "passed": 1,
+    "failed": 0,
+    "incomplete": 0,
+    "execution_error": 0,
+    "unscored": 0,
+    "missing": 0
+  },
+  "judging": {
+    "required": 3,
+    "completedRequired": 3,
+    "errors": 0
+  },
+  "sharing": "Tool payloads are reduced to queries and source metadata; raw evidence stays local. Review generated answer/Judge text before sharing.",
+  "cases": [
+    {
+      "id": "budget-ceiling",
+      "agentKey": "product-research",
+      "status": "passed",
+      "runId": "004c8c67-e3cc-4ac9-b327-b0443af1e475",
+      "benchmarkHash": "sha256:87ab0dd0a364070be62e2149a1283de96dbe37222ff080179e702483c9d0683d",
+      "input": {
+        "message": "为中国城市通勤者研究工作日早餐，单次预算最多 8 元，通常在办公室食用。比较已有方案和可能机会；价格找不到就注明，别把未知价格当作满足预算。请直接检索。"
+      },
+      "acceptance": "价格要有来源并区分单份、组合和促销口径；未知价格不能声称已满足 8 元上限。",
+      "judges": [
+        {
+          "id": "evidence",
+          "kind": "markdown",
+          "status": "completed",
+          "score": 1,
+          "reason": "三次 read_source 调用均 output-available 并返回可用正文（成都川观新闻、北京日报CBD调查、北京晚报便利店报道），满足证据可用性的必要条件。逐项核对报告中的价格引述：6.9元包子卤蛋豆浆套餐、6元包子+鸡蛋+豆浆、3元大米先生粥类自助、麦当劳6.6元/原8元套餐、成都自助三明治6元起/面包6-12元/饮料6元（均出自川观新闻原文，日期2024-12-05一致）；国贸烧饼夹鸡蛋里脊7元+豆浆3元、SOHO一笼鲜肉包子10元+豆浆3元、武汉小吃店6.6元套餐A/B、国贸桥8元青椒鸡肉卷、滑蛋叉烧三明治23元/美式30元/菠萝包29元（均出自北京日报2023-06-29原文）；许培两个包子不到8元、传统连锁早餐约15元（出自北京晚报2019-07-05原文）。以上引用与对应URL捕获正文逐一吻合，渠道、份量、价格未被混用或嫁接到另一方案，且对未知价格（便利店单品）明确标注未知而非默认达标，符合验收标准。未发现事实错配或张冠李戴。"
+        },
+        {
+          "id": "inference",
+          "kind": "markdown",
+          "status": "completed",
+          "score": 1,
+          "reason": "报告逐条标注价格来源(链接)，并明确区分单份/套餐/促销口径（如\"包子+鸡蛋+豆浆套讨论6元\"vs\"面包6-12元\"vs\"超预算案例\"），对未知价格明确标注\"文中未提及，不能默认满足预算\"。三个关键发现均附带范围限定语：\"均为记者在特定城市特定站点/店铺的个案观察，不能推断为全国普遍供应\"\"无法判断该场景下便利店早餐是否普遍落在8元以内\"\"这是该报道受访业内人士的判断，而非经过验证的行业普遍结论\"，未出现\"接受度高\"\"核心痛点是\"\"多数人\"等不可支撑的强泛化结论。机会假设A、B均附带可执行的验证方法（实地比价调查、门店对比）和放弃条件。证据缺口部分也坦诚列出数据不足之处。符合规则要求的观察/推断/待验证区分，强结论有对应范围限定或明确声明无法判断，机会假设有验证方法，满足1分标准。"
+        },
+        {
+          "id": "scope",
+          "kind": "markdown",
+          "status": "completed",
+          "score": 1,
+          "reason": "核对全文：所有标注为“符合8元预算”的方案均有价格来源，且凑单价格超预算的组合（如烧饼夹鸡蛋里脊7元+豆浆3元合计10元、包子10元+豆浆3元）均被明确标注为超出或在原句中注明“超预算”，未被误归为预算内；8元恰好等于上限的套餐（国贸桥8元鸡肉卷、麦当劳8元套餐）正确归入符合区间；价格未知项（便利店单品价格）被明确标注“未提及，不能默认满足预算”，未被当作已满足处理；未发现把超预算组合误判为预算内或把未知价格当满足的情形，分类内部无自相矛盾。满足验收标准（价格有来源、区分单份/组合/促销口径、未知价格不冒充达标）。"
+        }
+      ],
+      "judging": {
+        "required": 3,
+        "completedRequired": 3,
+        "errors": 0
+      },
+      "output": "已获得足够证据，保存研究记录。# 中国城市通勤者工作日早餐研究（预算≤8元，办公室食用）\n\n## 已有方案（按预算核对）\n\n**1. 符合8元预算的真实案例（有价格依据）**\n- 成都地铁站早餐铺\"包子卤蛋豆浆套餐\"6.9元；地铁商业自营早餐铺\"包子+鸡蛋+豆浆\"套餐统一6元；大米先生3元粥类自助（但包子馒头需额外加钱，若只喝粥则3元达标，若加主食则超出或接近8元上限）；麦当劳曾在地铁推车售卖最低8元早餐套餐（后已取消该点位）；高升桥麦当劳地铁站内最低套餐6.6元（[川观新闻，2024-12-05](https://cbgc.scol.com.cn/news/5710772)）。\n- 北京国贸烧饼夹鸡蛋里脊7元+豆浆3元（合计10元，单看烧饼夹鸡蛋里脊本身7元在预算内，但+豆浆则超8元）；SOHO南侧包子铺一笼鲜肉包子10元+豆浆3元（超预算）；武汉特色小吃店套餐A/B均为6.6元（3个烧卖+卤蛋/油条+豆浆，或2个大包+卤蛋+豆浆），符合8元预算；国贸桥早餐车8元一个青椒鸡肉卷（卡在预算上限）（[北京日报，2023-06-29](https://xinwen.bjd.com.cn/content/s649d0c04e4b042ca9e8e6a19.html)）。\n- 便利店案例：许培购买两个包子\"不到8元\"，符合预算；传统连锁餐饮早餐约15元，明显超出（[北京晚报，2019-07-05](https://www.jwview.com/jingwei/html/m/07-05/242688.shtml)）。\n- 成都地铁站自助三明治最低6元一份，面包6—12元（最低档在预算内，多数面包超8元），饮料（黑芝麻糊、红糖红豆沙等）均为6元（[川观新闻](https://cbgc.scol.com.cn/news/5710772)）。\n\n**2. 超出预算或价格未知**\n- 咖啡馆滑蛋叉烧三明治23元、美式咖啡30元、茶餐厅菠萝包29元，均远超预算（[北京日报](https://xinwen.bjd.com.cn/content/s649d0c04e4b042ca9e8e6a19.html)）。\n- 便利店具体早餐单品（面包、豆浆、关东煮）价格文中未提及，不能默认满足预算（[北京晚报](https://www.jwview.com/jingwei/html/m/07-05/242688.shtml)）。\n\n## 三个关键发现\n\n1. **低于8元的完整套餐确实存在但依赖特定渠道**：成都地铁站内的包子+鸡蛋+豆浆套餐（6元）、包子卤蛋豆浆套餐（6.9元）、北京某武汉小吃店6.6元套餐是目前有明确证据的符合预算且含主食+饮品的案例，但均为记者在特定城市特定站点/店铺的个案观察，不能推断为全国普遍供应（[川观新闻](https://cbgc.scol.com.cn/news/5710772)、[北京日报](https://xinwen.bjd.com.cn/content/s649d0c04e4b042ca9e8e6a19.html)）。\n\n2. **便利店早餐被白领选择的主因是\"省时间+可带回办公室+气味限制\"，而非价格最优**：北京晚报报道中的个案显示，有办公室要求员工只能吃\"没有气味\"的食品，促使员工选择面包牛奶类便利店早餐；\"去便利店吃，能多睡十分钟\"也是受访者提到的理由。但该报道未给出可量化的便利店早餐单品价格，无法判断该场景下便利店早餐是否普遍落在8元以内（[北京晚报](https://www.jwview.com/jingwei/html/m/07-05/242688.shtml)）。\n\n3. **成都地铁早餐铺自2022年起已达60余家，但3元自助早餐在成都\"未掀起真正低价潮\"**：该篇报道引用业内人士观点称成都早餐市场消费稳定、无价格战基础，这是该报道受访业内人士的判断，而非经过验证的行业普遍结论（[川观新闻](https://cbgc.scol.com.cn/news/5710772)）。\n\n## 机会假设（待验证，非预设成立）\n\n**假设A：** 办公室场景下，\"无异味、可常温存放、一手可持\"的冷食（如三明治、饭团）在8元以内的供给仍不充分，尤其是便利蜂/7-11之外的二三线城市办公楼周边。\n- 验证对象：二三线城市写字楼附近便利店及早餐摊\n- 动作：实地或线上比价调查50家门店的冷食早餐单品定价及是否≤8元\n- 放弃条件：若调查发现≤8元的无异味冷食早餐已广泛铺货，则该假设不成立\n\n**假设B：** 地铁站/通勤路径上的低价套餐（6—7元档）尚未大规模扩展到办公楼内部或周边写字楼早餐摊位，存在\"通勤途中有、办公楼附近少\"的供给缺口。\n- 验证对象：同一城市地铁站内早餐摊 vs. 临近写字楼楼下早餐摊的价格与套餐对比\n- 动作：选择3—5个城市的地铁出口至写字楼之间200米范围内早餐点，记录套餐价格和内容\n- 放弃条件：若写字楼周边同样存在6—8元完整套餐（主食+蛋白+饮品），则该缺口假设不成立\n\n## 证据缺口\n- 未搜集到针对\"办公室内食用\"这一特定场景的专项调查数据（现有资料多聚焦购买地点，非食用地点）\n- 便利店早餐具体单品价格数据不足，仅有\"两个包子不到8元\"一例个案，缺乏系统价格表\n- 缺少2024—2025年最新、覆盖多城市的早餐价格横向比较数据，现有北京数据为2023年个案式记者走访，非正式统计调查",
+      "trajectory": [
+        {
+          "messageId": "004c8c67-e3cc-4ac9-b327-b0443af1e475-input",
+          "role": "user",
+          "type": "text",
+          "text": "为中国城市通勤者研究工作日早餐，单次预算最多 8 元，通常在办公室食用。比较已有方案和可能机会；价格找不到就注明，别把未知价格当作满足预算。请直接检索。"
+        },
+        {
+          "messageId": "f49d41fa-cc59-4f73-b272-5a0212d326e7",
+          "role": "assistant",
+          "type": "tool",
+          "name": "read_research",
+          "state": "output-available"
+        },
+        {
+          "messageId": "f49d41fa-cc59-4f73-b272-5a0212d326e7",
+          "role": "assistant",
+          "type": "tool",
+          "name": "search_sources",
+          "state": "output-available",
+          "input": {
+            "query": "8元早餐 便利店 上班族 办公室 早餐解决方案"
+          },
+          "sources": [
+            {
+              "url": "https://www.jwview.com/jingwei/html/m/07-05/242688.shtml",
+              "title": "便利店争夺早餐市场 早上一口饭的“变与不便”",
+              "publishedAt": "2019-07-05T00:00:00.000Z",
+              "textLength": 0
+            },
+            {
+              "url": "https://www.shqp.gov.cn/shqp/shms/20250117/1224844.html",
+              "title": "更便捷、更丰富、更健康！青浦“早餐工程”持续升级→_社会民生_新闻中心_上海市青浦区人民政府",
+              "publishedAt": "2025-01-17T00:00:00.000Z",
+              "textLength": 0
+            },
+            {
+              "url": "http://www.cnr.cn/shanghai/tt/20200809/t20200809_525199162.shtml",
+              "title": "小小便利店，为“早餐工程”添柴加薪_央广网",
+              "publishedAt": "2020-08-09T14:07:09.000Z",
+              "textLength": 0
+            },
+            {
+              "url": "https://www.sohu.com/a/253446593_100037449",
+              "title": "工位即“餐桌” 猩便利推出办公室早餐外卖+团餐_服务",
+              "publishedAt": "2018-09-12T09:02:09.000Z",
+              "textLength": 0
+            },
+            {
+              "url": "https://www.chushihome.com/article/content-12494.html",
+              "title": "正餐品牌视为鸡肋的早餐 为何便利店能赚得盆满钵满？ - 创业学院 - 厨师之家",
+              "publishedAt": "2018-02-23T00:00:00.000Z",
+              "textLength": 0
+            }
+          ],
+          "retrievedAt": "2026-11-17T06:11:37.932Z"
+        },
+        {
+          "messageId": "f49d41fa-cc59-4f73-b272-5a0212d326e7",
+          "role": "assistant",
+          "type": "tool",
+          "name": "search_sources",
+          "state": "output-available",
+          "input": {
+            "query": "中国 城市通勤者 早餐 便利店 包子 三明治 价格"
+          },
+          "sources": [
+            {
+              "url": "https://www.shqp.gov.cn/shqp/shms/20250117/1224844.html",
+              "title": "更便捷、更丰富、更健康！青浦“早餐工程”持续升级→_社会民生_新闻中心_上海市青浦区人民政府",
+              "publishedAt": "2025-01-17T00:00:00.000Z",
+              "textLength": 0
+            },
+            {
+              "url": "http://www.nibaku.com/redian/59a97aee1216045a.html",
+              "title": "便利店上班族减脂餐食谱一日三餐：便利店早餐指南武汉上班族怎么吃",
+              "publishedAt": "2024-09-20T00:00:00.000Z",
+              "textLength": 0
+            },
+            {
+              "url": "https://xinwen.bjd.com.cn/content/s649d0c04e4b042ca9e8e6a19.html",
+              "title": "北京CBD白领早餐消费调查：10元以内最普遍，期待增加种类",
+              "publishedAt": "2023-06-29T00:00:00.000Z",
+              "textLength": 0
+            },
+            {
+              "url": "https://cbgc.scol.com.cn/news/5710772",
+              "title": "川观探市丨@上班族，你在地铁站买过早餐吗？|川观新闻",
+              "publishedAt": "2024-12-05T00:00:00.000Z",
+              "textLength": 0
+            },
+            {
+              "url": "https://health.huanqiu.com/article/9CaKrnKmlaG",
+              "title": "便利店早餐如何选 全家饭团最贵",
+              "publishedAt": null,
+              "textLength": 0
+            }
+          ],
+          "retrievedAt": "2026-11-17T06:11:38.119Z"
+        },
+        {
+          "messageId": "f49d41fa-cc59-4f73-b272-5a0212d326e7",
+          "role": "assistant",
+          "type": "tool",
+          "name": "read_source",
+          "state": "output-available",
+          "input": {
+            "url": "https://xinwen.bjd.com.cn/content/s649d0c04e4b042ca9e8e6a19.html"
+          },
+          "source": {
+            "url": "https://xinwen.bjd.com.cn/content/s649d0c04e4b042ca9e8e6a19.html",
+            "title": "北京CBD白领早餐消费调查：10元以内最普遍，期待增加种类",
+            "publishedAt": "2023-06-29T00:00:00.000Z",
+            "textLength": 2000,
+            "textScope": "page-text",
+            "truncated": true
+          },
+          "retrievedAt": "2026-11-17T06:11:46.097Z"
+        },
+        {
+          "messageId": "f49d41fa-cc59-4f73-b272-5a0212d326e7",
+          "role": "assistant",
+          "type": "tool",
+          "name": "read_source",
+          "state": "output-available",
+          "input": {
+            "url": "https://cbgc.scol.com.cn/news/5710772"
+          },
+          "source": {
+            "url": "https://cbgc.scol.com.cn/news/5710772",
+            "title": "川观探市丨@上班族，你在地铁站买过早餐吗？|川观新闻",
+            "publishedAt": "2024-12-05T00:00:00.000Z",
+            "textLength": 2000,
+            "textScope": "page-text",
+            "truncated": true
+          },
+          "retrievedAt": "2026-11-17T06:11:46.096Z"
+        },
+        {
+          "messageId": "f49d41fa-cc59-4f73-b272-5a0212d326e7",
+          "role": "assistant",
+          "type": "tool",
+          "name": "read_source",
+          "state": "output-available",
+          "input": {
+            "url": "https://www.jwview.com/jingwei/html/m/07-05/242688.shtml"
+          },
+          "source": {
+            "url": "https://www.jwview.com/jingwei/html/m/07-05/242688.shtml",
+            "title": "便利店争夺早餐市场 早上一口饭的“变与不便”",
+            "publishedAt": "2019-07-05T00:00:00.000Z",
+            "textLength": 2000,
+            "textScope": "page-text",
+            "truncated": true
+          },
+          "retrievedAt": "2026-11-17T06:11:46.096Z"
+        },
+        {
+          "messageId": "f49d41fa-cc59-4f73-b272-5a0212d326e7",
+          "role": "assistant",
+          "type": "text",
+          "text": "已获得足够证据，保存研究记录。"
+        },
+        {
+          "messageId": "f49d41fa-cc59-4f73-b272-5a0212d326e7",
+          "role": "assistant",
+          "type": "tool",
+          "name": "save_research",
+          "state": "output-available"
+        },
+        {
+          "messageId": "f49d41fa-cc59-4f73-b272-5a0212d326e7",
+          "role": "assistant",
+          "type": "text",
+          "text": "# 中国城市通勤者工作日早餐研究（预算≤8元，办公室食用）\n\n## 已有方案（按预算核对）\n\n**1. 符合8元预算的真实案例（有价格依据）**\n- 成都地铁站早餐铺\"包子卤蛋豆浆套餐\"6.9元；地铁商业自营早餐铺\"包子+鸡蛋+豆浆\"套餐统一6元；大米先生3元粥类自助（但包子馒头需额外加钱，若只喝粥则3元达标，若加主食则超出或接近8元上限）；麦当劳曾在地铁推车售卖最低8元早餐套餐（后已取消该点位）；高升桥麦当劳地铁站内最低套餐6.6元（[川观新闻，2024-12-05](https://cbgc.scol.com.cn/news/5710772)）。\n- 北京国贸烧饼夹鸡蛋里脊7元+豆浆3元（合计10元，单看烧饼夹鸡蛋里脊本身7元在预算内，但+豆浆则超8元）；SOHO南侧包子铺一笼鲜肉包子10元+豆浆3元（超预算）；武汉特色小吃店套餐A/B均为6.6元（3个烧卖+卤蛋/油条+豆浆，或2个大包+卤蛋+豆浆），符合8元预算；国贸桥早餐车8元一个青椒鸡肉卷（卡在预算上限）（[北京日报，2023-06-29](https://xinwen.bjd.com.cn/content/s649d0c04e4b042ca9e8e6a19.html)）。\n- 便利店案例：许培购买两个包子\"不到8元\"，符合预算；传统连锁餐饮早餐约15元，明显超出（[北京晚报，2019-07-05](https://www.jwview.com/jingwei/html/m/07-05/242688.shtml)）。\n- 成都地铁站自助三明治最低6元一份，面包6—12元（最低档在预算内，多数面包超8元），饮料（黑芝麻糊、红糖红豆沙等）均为6元（[川观新闻](https://cbgc.scol.com.cn/news/5710772)）。\n\n**2. 超出预算或价格未知**\n- 咖啡馆滑蛋叉烧三明治23元、美式咖啡30元、茶餐厅菠萝包29元，均远超预算（[北京日报](https://xinwen.bjd.com.cn/content/s649d0c04e4b042ca9e8e6a19.html)）。\n- 便利店具体早餐单品（面包、豆浆、关东煮）价格文中未提及，不能默认满足预算（[北京晚报](https://www.jwview.com/jingwei/html/m/07-05/242688.shtml)）。\n\n## 三个关键发现\n\n1. **低于8元的完整套餐确实存在但依赖特定渠道**：成都地铁站内的包子+鸡蛋+豆浆套餐（6元）、包子卤蛋豆浆套餐（6.9元）、北京某武汉小吃店6.6元套餐是目前有明确证据的符合预算且含主食+饮品的案例，但均为记者在特定城市特定站点/店铺的个案观察，不能推断为全国普遍供应（[川观新闻](https://cbgc.scol.com.cn/news/5710772)、[北京日报](https://xinwen.bjd.com.cn/content/s649d0c04e4b042ca9e8e6a19.html)）。\n\n2. **便利店早餐被白领选择的主因是\"省时间+可带回办公室+气味限制\"，而非价格最优**：北京晚报报道中的个案显示，有办公室要求员工只能吃\"没有气味\"的食品，促使员工选择面包牛奶类便利店早餐；\"去便利店吃，能多睡十分钟\"也是受访者提到的理由。但该报道未给出可量化的便利店早餐单品价格，无法判断该场景下便利店早餐是否普遍落在8元以内（[北京晚报](https://www.jwview.com/jingwei/html/m/07-05/242688.shtml)）。\n\n3. **成都地铁早餐铺自2022年起已达60余家，但3元自助早餐在成都\"未掀起真正低价潮\"**：该篇报道引用业内人士观点称成都早餐市场消费稳定、无价格战基础，这是该报道受访业内人士的判断，而非经过验证的行业普遍结论（[川观新闻](https://cbgc.scol.com.cn/news/5710772)）。\n\n## 机会假设（待验证，非预设成立）\n\n**假设A：** 办公室场景下，\"无异味、可常温存放、一手可持\"的冷食（如三明治、饭团）在8元以内的供给仍不充分，尤其是便利蜂/7-11之外的二三线城市办公楼周边。\n- 验证对象：二三线城市写字楼附近便利店及早餐摊\n- 动作：实地或线上比价调查50家门店的冷食早餐单品定价及是否≤8元\n- 放弃条件：若调查发现≤8元的无异味冷食早餐已广泛铺货，则该假设不成立\n\n**假设B：** 地铁站/通勤路径上的低价套餐（6—7元档）尚未大规模扩展到办公楼内部或周边写字楼早餐摊位，存在\"通勤途中有、办公楼附近少\"的供给缺口。\n- 验证对象：同一城市地铁站内早餐摊 vs. 临近写字楼楼下早餐摊的价格与套餐对比\n- 动作：选择3—5个城市的地铁出口至写字楼之间200米范围内早餐点，记录套餐价格和内容\n- 放弃条件：若写字楼周边同样存在6—8元完整套餐（主食+蛋白+饮品），则该缺口假设不成立\n\n## 证据缺口\n- 未搜集到针对\"办公室内食用\"这一特定场景的专项调查数据（现有资料多聚焦购买地点，非食用地点）\n- 便利店早餐具体单品价格数据不足，仅有\"两个包子不到8元\"一例个案，缺乏系统价格表\n- 缺少2024—2025年最新、覆盖多城市的早餐价格横向比较数据，现有北京数据为2023年个案式记者走访，非正式统计调查"
+        }
+      ],
+      "citationAudit": {
+        "method": "Compare Markdown and plain HTTP(S) citation URLs in run.output with URLs actually returned by search_sources/read_source. Ignore fragments only. This checks source identity, not whether a claim is supported.",
+        "toolCalls": {
+          "read_research": 1,
+          "search_sources": 2,
+          "read_source": 3,
+          "save_research": 1
+        },
+        "outputCharacters": 2254,
+        "capturedSourceCount": 9,
+        "citationCount": 3,
+        "unmatched": [],
+        "invalid": []
+      },
+      "rawArtifactSha256": "ca9929d809d06288874f0ed9b1e207be6ab1767ef13a8f9019114a3865215421"
+    }
+  ]
+}

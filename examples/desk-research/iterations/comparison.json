@@ -687,5 +687,26 @@
     "evidenceStatus": "error",
     "status": "incomplete",
     "originalAggregateReplaced": false
+  },
+  "r2BudgetCeiling": {
+    "summary": "02-trace-focused/budget-ceiling-r2-summary.json",
+    "attemptsIncludingR1": 3,
+    "latestAttempt": 3,
+    "latestSourceSha256": "df0561ed495d58fe2d1e82d29bc26651be2c16bb4cbaaf4d06eaf78c7ef93341",
+    "scores": {
+      "evidence": 1,
+      "inference": 1,
+      "scope": 1
+    },
+    "status": "passed",
+    "judging": {
+      "required": 3,
+      "completedRequired": 3,
+      "errors": 0
+    },
+    "readSourceCalls": 3,
+    "unrenderedMarkers": [],
+    "originalAggregateReplaced": false,
+    "businessAcceptance": false
   }
 }

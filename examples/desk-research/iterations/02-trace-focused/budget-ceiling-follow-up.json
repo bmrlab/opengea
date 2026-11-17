@@ -123,7 +123,7 @@
   "results": "budget-ceiling-follow-up-results.json",
   "originalResults": "results.json",
   "originalManifest": "pre-fix-manifest.json",
-  "currentManifest": "manifest.json",
+  "currentManifest": "r1-manifest.json",
   "manualReview": {
     "originalFailure": "仅单品能压到8元以内",
     "currentAnswerQuote": "CBD场景下的**套餐**多在9-13元，仅个别（6.6元）满足8元——不能笼统说\"套餐都超预算\"或\"单品都够用\"，需按具体商品判断；",
@@ -141,5 +141,6 @@
     "savedReportEqualsFinal": false,
     "businessAcceptance": false
   },
-  "boundary": "Only this one case was rerun after changing Agent instructions. No resampling, regrading, manual scores, changed Cases/Judges or mixed four-case aggregate. evidence error is preserved."
+  "boundary": "Only this one case was rerun after changing Agent instructions. No resampling, regrading, manual scores, changed Cases/Judges or mixed four-case aggregate. evidence error is preserved.",
+  "manifestReferenceNote": "This points to the r1 source used for this immutable result; r2 now has a separate current manifest."
 }

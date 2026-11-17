@@ -124,3 +124,5 @@ gea eval judge --json '{"run":"/absolute/path/from/resultDirectory","judgeSource
 后续只询问解释、取舍或引用核对时，直接回答所问部分，不重复生成整份报告。更新简报时复用同一会话的来源标识和片段；读取记录的模型视图不重复发送已经包含在report中的摘录，工作台保存的完整记录不变。
 
 2026-11-17 定向修复：02 预算题加入反例核对后仅补跑一次，新回答承认6.6元套餐；scope=1、inference=1、evidence Judge error，整体 incomplete。旧批次保留且不混分；[补跑记录](iterations/02-trace-focused/README.md#2026-11-17-预算题定向修复与一次补跑)列出原生证据与残余质量问题。
+
+r2 后续：预算题累计3次真实尝试全部保留；最新 scope=1、evidence=1、inference=1，判分3/3，read_source=3，最终无 sourceId 占位符。北京6.6元套餐及来源已对应，仍有其他人工争议，详见 [r2汇总](iterations/02-trace-focused/budget-ceiling-r2-summary.json)。

@@ -1,3 +1,5 @@
+import { agentCore } from "@gea-ai/agent-sdk/agent-core";
+import { researchStep } from "./lib/research-flow";
 import feishu from "@gea-ai/agent-extension-feishu";
 import { defineAgent } from "@gea-ai/agent-sdk";
 import { instructions } from "./instructions";
@@ -13,6 +15,7 @@ export default defineAgent({
   model: "creative-reasoning-1.5",
   computer: { enabled: false },
   instructions,
+  engine: agentCore({ prepareStep: researchStep }),
   connectors: { search },
   tools: [searchSources, readSource, researchRecord],
   extensions: [

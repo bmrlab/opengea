@@ -42,3 +42,7 @@
 02 现已加入套餐/单品与反例核对指令，只补跑 `budget-ceiling` 一次：scope=1、inference=1、evidence=error（`Model finish reason does not match its content`），整体 incomplete，非通过。新回答承认6.6元套餐满足预算，原排他断言未复现；但最终回答留下未渲染 sourceId、套餐B组成缩略且未逐一 read_source。详见 [补跑说明](02-trace-focused/README.md#2026-11-17-预算题定向修复与一次补跑) 与 [原始导出](02-trace-focused/budget-ceiling-follow-up-results.json)。
 
 上方比较表仍是修复前首次批次；02 对应 `pre-fix-manifest.json`。不把新单题与旧题混算为修复后4/4。00 深链接截断、01 转引报告误称“北京CBD样本”两项争议本次仅披露，未改 Agent 或补跑，仍未解决。
+
+## r2 最新单题结果
+
+02预算题含r1累计3/3次真实尝试，均保留。第2次自动三项1分仍有 read_source=0 和错配链接，继续修 Agent；第3次新增搜索后读取策略与精简的保存输出，scope=1、evidence=1、inference=1，判分3/3，整体passed。同次运行 read_source=3，最终无未渲染 sourceId；北京6.6元套餐及2个大包与正文、完整链接对应。仍有未知组合价推断、个案泛化、地铁出口位置表述和保存后重排等人工争议，不作业务验收通过。见[三次尝试汇总](02-trace-focused/budget-ceiling-r2-summary.json)和[详细说明](02-trace-focused/README.md#r2完整判分与正文读取引用交付修复)。旧三轮比较表不被该单题替换，00/01两条争议仍只披露。

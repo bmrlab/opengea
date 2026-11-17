@@ -39,7 +39,9 @@ export default defineToolSet([
       );
       if (response.status === 400) return { saved: false, ...(await response.json() as { error: string }) };
       if (!response.ok) throw new Error("Research save failed.");
-      return (await response.json()) as ResearchRecord;
+      const { report, status } = (await response.json()) as ResearchRecord;
+      // Give the model the rendered deliverable without a second copy of sources.
+      return { report, status };
     },
   }),
 ]);
