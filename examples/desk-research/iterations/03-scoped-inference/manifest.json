@@ -5,8 +5,8 @@
   "cli": "0.2.261114-alpha.0",
   "npm": "12.2.2",
   "packageManager": "pnpm@12.8.1",
-  "sourceSha256": "e2557e7a6de5db371fcbdbc02327219b592fa9c1db1439e987dbdff3db7e646c",
-  "benchmarkSha256": "ea19def6137a1a46b6a76089935ef7c789942f657fc4e51aa25efd3e9599c7bc",
+  "sourceSha256": "7f241b9e01fb7cfa54e04c692a542606a2afb93ff9ee0cf474b354077efa4314",
+  "benchmarkSha256": "c4f29e869b2ff6ca64f2560aff6e3730a11f8c48916c5c37ff967d19a9dbae8d",
   "files": [
     {
       "path": ".gitignore",
@@ -66,11 +66,11 @@
     },
     {
       "path": "benchmarks/multi-turn/judges/conversation.judge.md",
-      "sha256": "50dccbd8eb2fe0393c67e52cbe11537cad956d557e2af6ac705f55d1a56dff11"
+      "sha256": "6e5e016a904a78be483bec9f49dd16af1179725e7d1907d2db1c5edeadf18b2d"
     },
     {
       "path": "benchmarks/multi-turn/judges/coverage.judge.md",
-      "sha256": "0d9b0cad15372f4d304bbd511ae7fb93dd8e47921a2a31a574515e8bf7bdac58"
+      "sha256": "073f4fdc5227353080af8e5ebe08f6de58608e63886f83b91f72c1b81b9f09a1"
     },
     {
       "path": "benchmarks/single-turn/cases/alternatives-not-products/case.json",
@@ -126,7 +126,7 @@
     },
     {
       "path": "benchmarks/single-turn/judges/evidence.judge.md",
-      "sha256": "8be52cee42fc1f99235767400d873774ad0015301c8ea8d60c76ef35bc9f6549"
+      "sha256": "86f5893d0bb1c80cb0a479595c13c6e7c394211de0fd80593ac28a2ad91af1ac"
     },
     {
       "path": "benchmarks/single-turn/judges/inference.judge.md",
@@ -158,15 +158,15 @@
     },
     {
       "path": "evaluation/judges/conversation.judge.md",
-      "sha256": "50dccbd8eb2fe0393c67e52cbe11537cad956d557e2af6ac705f55d1a56dff11"
+      "sha256": "6e5e016a904a78be483bec9f49dd16af1179725e7d1907d2db1c5edeadf18b2d"
     },
     {
       "path": "evaluation/judges/coverage.judge.md",
-      "sha256": "0d9b0cad15372f4d304bbd511ae7fb93dd8e47921a2a31a574515e8bf7bdac58"
+      "sha256": "073f4fdc5227353080af8e5ebe08f6de58608e63886f83b91f72c1b81b9f09a1"
     },
     {
       "path": "evaluation/judges/evidence.judge.md",
-      "sha256": "8be52cee42fc1f99235767400d873774ad0015301c8ea8d60c76ef35bc9f6549"
+      "sha256": "86f5893d0bb1c80cb0a479595c13c6e7c394211de0fd80593ac28a2ad91af1ac"
     },
     {
       "path": "evaluation/judges/scope.judge.md",
@@ -350,7 +350,7 @@
     }
   ],
   "repair": {
-    "date": "2026-11-16",
+    "date": "2026-11-17",
     "originalManifest": "original-manifest.json",
     "originalSourceSha256": "aaf57b0999c96fccdcdeb2e7ba4b36bb9b480dbb2a978016e133dbdc0784c78d",
     "note": "Original results and changes.diff refer to the original snapshot. Current source includes shared correctness and benchmark repairs; new acceptance is separate."
