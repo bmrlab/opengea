@@ -67,7 +67,7 @@
       "attempt": 3,
       "results": "budget-ceiling-r2-attempt-3-results.json",
       "receipt": "budget-ceiling-r2-attempt-3.json",
-      "manifest": "manifest.json",
+      "manifest": "r2-attempt-3-manifest.json",
       "status": "passed",
       "scores": {
         "evidence": 1,

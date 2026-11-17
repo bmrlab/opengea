@@ -26,14 +26,17 @@ const common = [
   "tools/search-sources.ts",
   "tools/read-source.ts",
   "lib/evidence.ts",
+  "lib/research.ts",
+  "lib/research-flow.ts",
+  "lib/source-passages.ts",
   "benchmarks",
   "tests/evidence.test.mjs",
   "tests/source-content.test.mjs",
+  "tests/research-flow.test.mjs",
 ];
 const full = [
   "bindings.d.ts",
   "durable-objects",
-  "lib/research.ts",
   "tools/research-record.ts",
   "app",
   "tests/app.test.mjs",

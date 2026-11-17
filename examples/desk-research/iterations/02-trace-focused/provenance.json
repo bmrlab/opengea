@@ -23,5 +23,11 @@
     "previousManifest": "r1-manifest.json",
     "scope": "Attempt 2 changed instructions only and did not meet read/citation requirements. Attempt 3 adds a search-to-read step policy shared by stage agents, search metadata-only output, compact rendered save output, and package/claim identity instructions; Cases/Judges/budgets remain unchanged.",
     "intermediateManifest": "r2-attempt-2-manifest.json"
+  },
+  "r3Changes": {
+    "parentHead": "264038d43005146a5f5a3b167e9c8ea306ac231e",
+    "previousManifest": "r2-attempt-3-manifest.json",
+    "scope": "Fix materialize dependency closure and use completed tool results to distinguish discovery, source text and evidence gaps. Add behavior and generated-project type checks. Cases, Judges, instructions, model, budgets and package versions unchanged.",
+    "validation": "r3-validation.json"
   }
 }

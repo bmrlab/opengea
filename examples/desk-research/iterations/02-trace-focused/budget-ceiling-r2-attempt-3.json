@@ -354,7 +354,7 @@
   "localEvidence": "/Users/zhuo/gea-tasks/fix-opengea-42-r1-20261117/private/r2-attempt-3-runs/02-trace-focused/single-turn/20261117T061123.567Z-54496343",
   "results": "budget-ceiling-r2-attempt-3-results.json",
   "boundary": "Single authorized follow-up attempt. All previous outputs, failed Judge and scores are preserved; no aggregate replacement or manually assigned score.",
-  "manifest": "manifest.json",
+  "manifest": "r2-attempt-3-manifest.json",
   "manualReview": {
     "targetedGoalsMet": true,
     "originalBudgetFailureReproduced": false,

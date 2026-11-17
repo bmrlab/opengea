@@ -44,7 +44,7 @@ Trace 复核还要检查：保存后是否重写、引用是否由工具生成�
 
 仅修改 02 的两份 instructions，要求核对单品/套餐、价格与购买条件，并在排他结论前查找已捕获的反例；未写死价格或答案，未修改 Cases / Judges、工具实现或执行预算。
 
-原四题结果及争议保持原样，绑定 [修复前 manifest](pre-fix-manifest.json)；本段 r1 的源码绑定 [r1 manifest](r1-manifest.json)，当前 [manifest](manifest.json) 为后续 r2。仅 `budget-ceiling` 在相同 CR / Exa / 候选工具链下新执行一次，没有重跑其余题目或拼出新的 4/4。
+原四题结果及争议保持原样，绑定 [修复前 manifest](pre-fix-manifest.json)；本段 r1 的源码绑定 [r1 manifest](r1-manifest.json)，r2 第3次绑定 [r2 manifest](r2-attempt-3-manifest.json)，当前 [manifest](manifest.json) 为 r3 修复。仅 `budget-ceiling` 在相同 CR / Exa / 候选工具链下新执行一次，没有重跑其余题目或拼出新的 4/4。
 
 | Case | scope | evidence | inference | 整体 |
 | --- | --- | --- | --- | --- |
@@ -64,7 +64,7 @@ evidence Judge 的原始错误是 `Model finish reason does not match its conten
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | 1（r1） | r1-manifest.json | 1 | error | 1 | incomplete | 0 | 有 |
 | 2（r2 指令修复） | r2-attempt-2-manifest.json | 1 | 1 | 1 | passed | 0 | 无 |
-| 3（r2 流程修复） | manifest.json | 1 | 1 | 1 | passed | 3 | 无 |
+| 3（r2 流程修复） | r2-attempt-3-manifest.json | 1 | 1 | 1 | passed | 3 | 无 |
 
 第2次虽取得完整判分，但北京套餐段落错配上海来源，且仍未调用 read_source，所以没有按自动1分宣布目标完成。第3次继续修 Agent：搜索只向模型返回来源索引，新增工具调用顺序策略，在搜索后要求 read_source；读取后才可自行决定继续研究或保存。保存工具返回已渲染 report 与 status，避免同时携带冗余来源列表；两份指令区分输入占位符和输出完整链接，并核对套餐中各项数量。策略接入根 Agent 与 v1/v3 生成入口，不改 Cases/Judges 或发布包。
 
@@ -75,3 +75,15 @@ evidence Judge 的原始错误是 `Model finish reason does not match its conten
 批次 `54496343-c788-4aa0-aa47-1b0c3d301053`，target Run `004c8c67-e3cc-4ac9-b327-b0443af1e475`，evaluation `897f6103-32ee-4538-a182-720eb0882da3`。本次增量：最终源码类型检查、16/16测试（含搜索后读取策略）、manifest、执行源码与编译Case/Judge hash核对。尝试2的类型检查和15项测试单独保留。未整轮重测其他题目。
 
 [三次尝试汇总](budget-ceiling-r2-summary.json) · [第2次真实结果](budget-ceiling-r2-attempt-2-results.json) · [第2次条件及争议](budget-ceiling-r2-attempt-2.json) · [第3次真实结果](budget-ceiling-r2-attempt-3-results.json) · [第3次条件、正文与原生哈希](budget-ceiling-r2-attempt-3.json)
+
+## r3：生成依赖与结果驱动的读取策略
+
+修复 R2 的两项必须修：02 的 materialize 复制清单补齐 `research-flow.ts`、`research.ts`、`source-passages.ts`，三个生成阶段均携带策略行为测试。策略按 call ID 关联本次步骤与工具结果：成功且非空的搜索才要求读页；读取必须成功、URL 对应已发现且本次请求的来源，并返回非空 text（v1）或 passages（工作台）。调用名、元数据、空白正文、失败或拒绝均不代表读到证据。
+
+空搜索、搜索失败、正文为空或读取失败时，允许重新搜索、换来源读取或直接说明证据缺口；此时不开放保存工具，不强制重复读取。成功读到正文后恢复正常工具选择。没有增加重试、预算，或改动题目、Judge、模型和发布包。
+
+本轮新验：02 源码类型检查、26/26 测试（含8项策略行为测试和3项实际生成后类型检查）；另外实际生成 v1-research、v2-workbench、v3-feishu，各自按原锁文件安装，三者类型检查均通过，测试分别14/14、20/20、20/20，均无失败或跳过。
+
+已核对 r2 第3次原生 graded-case 哈希，逐个重放7个工具结果前缀，新旧策略决策7/7相同。更早记录未使用此策略，生成项目也不是已有跑分的执行项目。因此本轮没有受影响的已记录策略路径需重跑，模型/Exa/Judge 请求均为0；这是离线回放，不是新模型验收。r2 第3次分数继续绑定 [原源码 manifest](r2-attempt-3-manifest.json)，当前 manifest 只标识修复后的源码；旧分数、错误和上述人工争议原样保留，不宣称当前源码获得新4/4或业务验收。
+
+[本轮验证与策略回放](r3-validation.json)

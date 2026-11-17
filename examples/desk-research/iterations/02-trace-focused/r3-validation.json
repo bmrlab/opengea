@@ -1,0 +1,140 @@
+{
+  "revision": "r3",
+  "sourceSha256": "2924e1c4eb71201afda3abf74ee1d99980bd7c17fb9fc0e54ac8731d815d6462",
+  "previousSourceSha256": "df0561ed495d58fe2d1e82d29bc26651be2c16bb4cbaaf4d06eaf78c7ef93341",
+  "benchmarkSha256": "64fcbc74d423c24a62be441e0532849b39d36aa578669db90d7487d75e6f94b9",
+  "sourceTypecheck": {
+    "passed": true
+  },
+  "sourceTests": {
+    "passed": 26,
+    "failed": 0,
+    "skipped": 0,
+    "policyBehaviorTests": 8,
+    "generatedProjectTypecheckTests": 3
+  },
+  "generatedProjects": [
+    {
+      "stage": "v1-research",
+      "install": "pnpm install --frozen-lockfile",
+      "typecheck": "passed",
+      "tests": {
+        "passed": 14,
+        "failed": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "stage": "v2-workbench",
+      "install": "pnpm install --frozen-lockfile",
+      "typecheck": "passed",
+      "tests": {
+        "passed": 20,
+        "failed": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "stage": "v3-feishu",
+      "install": "pnpm install --frozen-lockfile",
+      "typecheck": "passed",
+      "tests": {
+        "passed": 20,
+        "failed": 0,
+        "skipped": 0
+      }
+    }
+  ],
+  "policyReplay": {
+    "kind": "offline-native-result-policy-replay",
+    "targetRunId": "004c8c67-e3cc-4ac9-b327-b0443af1e475",
+    "gradedCaseSha256": "ca9929d809d06288874f0ed9b1e207be6ab1767ef13a8f9019114a3865215421",
+    "previousHead": "264038d43005146a5f5a3b167e9c8ea306ac231e",
+    "decisions": [
+      {
+        "callId": "toolu_01MLG9gsZ59ojQWkSbDYVYdU",
+        "tool": "read_research",
+        "state": "output-available",
+        "previous": null,
+        "current": null,
+        "equal": true
+      },
+      {
+        "callId": "toolu_01D2udPcKT7Hng7dCHasxArH",
+        "tool": "search_sources",
+        "state": "output-available",
+        "previous": {
+          "toolChoice": {
+            "type": "tool",
+            "toolName": "read_source"
+          }
+        },
+        "current": {
+          "toolChoice": {
+            "type": "tool",
+            "toolName": "read_source"
+          }
+        },
+        "equal": true
+      },
+      {
+        "callId": "toolu_01LKwupDcNgPW36rBsu19wof",
+        "tool": "search_sources",
+        "state": "output-available",
+        "previous": {
+          "toolChoice": {
+            "type": "tool",
+            "toolName": "read_source"
+          }
+        },
+        "current": {
+          "toolChoice": {
+            "type": "tool",
+            "toolName": "read_source"
+          }
+        },
+        "equal": true
+      },
+      {
+        "callId": "toolu_019qLHLBoQ4h3qCEuUuap3nu",
+        "tool": "read_source",
+        "state": "output-available",
+        "previous": null,
+        "current": null,
+        "equal": true
+      },
+      {
+        "callId": "toolu_014wvE7K5KSBJAXAgYVoNwct",
+        "tool": "read_source",
+        "state": "output-available",
+        "previous": null,
+        "current": null,
+        "equal": true
+      },
+      {
+        "callId": "toolu_01Uimrq3CR4AJ8JFHzRvT66s",
+        "tool": "read_source",
+        "state": "output-available",
+        "previous": null,
+        "current": null,
+        "equal": true
+      },
+      {
+        "callId": "toolu_01XqE9QQR2B449d1T9pv2XXf",
+        "tool": "save_research",
+        "state": "output-available",
+        "previous": null,
+        "current": null,
+        "equal": true
+      }
+    ],
+    "allEqual": true,
+    "modelRequests": 0,
+    "exaRequests": 0,
+    "judgeRequests": 0,
+    "boundary": "Replays every tool-result prefix, including within parallel batches; no new model execution or score. Earlier runs predate this policy; existing scores stay bound to their original manifests."
+  },
+  "modelRerunRequired": false,
+  "rerunReason": "Only attempt 3 used the changed policy. All seven archived tool-result prefixes yield identical settings; earlier runs used older policy-free source, and generated stages were not scored. No archived score is relabelled as an r3 result.",
+  "knownQualityLimitations": "All existing manual disputes, failed executions and Judge errors remain in their original records."
+}

@@ -273,23 +273,56 @@
 +      textLimit: 2000,
 +      truncated: result.source.truncated || offset > 0 || end < text.length,
 +    },
---- /dev/null
+--- a/lib/research-flow.ts
 +++ b/lib/research-flow.ts
-@@ -0,0 +1,15 @@
+@@ -0,0 +1,48 @@
 +import type { AgentCorePolicyContext, AgentCoreStepSettings } from "@gea-ai/agent-sdk/agent-core";
++import { z } from "zod";
++import { webUrl } from "./evidence.ts";
 +
-+// Research has two distinct steps: discover a page, then read its evidence.
-+// A new search must be followed by a source read before saving or answering.
-+export function researchStep({ steps }: Pick<AgentCorePolicyContext, "steps">): AgentCoreStepSettings | undefined {
-+  let needsRead = false;
++const searchOutput = z.object({ sources: z.array(z.object({ url: webUrl })) });
++// v1 returns the text window; workbench stages return captured passages.
++const readOutput = z.object({ source: z.object({
++  url: webUrl,
++  text: z.string().optional(),
++  passages: z.array(z.object({ text: z.string() })).optional(),
++}) });
++
++// Only completed results establish discovery or evidence. On a gap, allow a
++// different search/read or a final explanation, without unlocking report saves.
++export function researchStep({ steps, messages }: Pick<AgentCorePolicyContext, "steps" | "messages">): AgentCoreStepSettings | undefined {
++  const results = new Map(messages.filter((message) => message.role === "tool")
++    .flatMap((message) => message.content)
++    .filter((part) => part.type === "tool_result")
++    .map((part) => [part.call_id, part]));
++  const discovered = new Set<string>();
++  let state: "free" | "read" | "gap" = "free";
 +  for (const step of steps) {
 +    for (const call of step.toolCalls) {
-+      if (call.name === "search_sources") needsRead = true;
-+      if (call.name === "read_source") needsRead = false;
++      const result = results.get(call.id);
++      if (!result) continue;
++      if (call.name === "search_sources") {
++        const output = searchOutput.safeParse(result.output);
++        if (!result.is_error && !result.denied && output.success && output.data.sources.length) {
++          for (const source of output.data.sources) discovered.add(source.url);
++          state = "read";
++        } else state = "gap";
++      }
++      if (call.name === "read_source") {
++        const output = readOutput.safeParse(result.output);
++        const source = output.success ? output.data.source : undefined;
++        const input = z.object({ url: webUrl }).safeParse(call.input);
++        const hasText = source?.text?.trim() || source?.passages?.some((part) => part.text.trim());
++        state = !result.is_error && !result.denied && source && input.success &&
++          source.url === input.data.url && discovered.has(source.url) && hasText
++          ? "free" : "gap";
++      }
 +    }
 +  }
-+  if (needsRead)
++  if (state === "read")
 +    return { toolChoice: { type: "tool", toolName: "read_source" } };
++  if (state === "gap")
++    return { activeTools: ["search_sources", "read_source"], toolChoice: "auto" };
 +}
 --- a/lib/research.ts
 +++ b/lib/research.ts
@@ -431,7 +464,7 @@
 +  );
 +  return `source:${id}:${Array.from(new Uint8Array(bytes), (b) => b.toString(16).padStart(2, "0")).join("")}`;
 +}
---- /dev/null
+--- a/lib/source-passages.ts
 +++ b/lib/source-passages.ts
 @@ -0,0 +1,35 @@
 +export type SourcePassage = { passageId: string; text: string };
@@ -469,21 +502,123 @@
 +  }
 +  return passages;
 +}
---- /dev/null
+--- a/scripts/materialize.mjs
++++ b/scripts/materialize.mjs
+@@ -28,0 +29,3 @@
++  "lib/research.ts",
++  "lib/research-flow.ts",
++  "lib/source-passages.ts",
+@@ -31,0 +35 @@
++  "tests/research-flow.test.mjs",
+@@ -36 +39,0 @@
+-  "lib/research.ts",
+--- a/tests/materialize.test.mjs
++++ b/tests/materialize.test.mjs
+@@ -0,0 +1,22 @@
++import assert from "node:assert/strict";
++import test from "node:test";
++import { execFileSync } from "node:child_process";
++import { mkdtemp, rm, symlink } from "node:fs/promises";
++import { tmpdir } from "node:os";
++import path from "node:path";
++import { fileURLToPath } from "node:url";
++
++const root = fileURLToPath(new URL("../", import.meta.url));
++for (const stage of ["v1-research", "v2-workbench", "v3-feishu"]) {
++  test(`materialized ${stage} type-checks with the locked dependencies`, async () => {
++    const temp = await mkdtemp(path.join(tmpdir(), "desk-research-materialize-"));
++    const target = path.join(temp, stage);
++    try {
++      execFileSync(process.execPath, ["scripts/materialize.mjs", stage, target], { cwd: root });
++      await symlink(path.join(root, "node_modules"), path.join(target, "node_modules"), "dir");
++      assert.equal(execFileSync(process.execPath, [path.join(root, "node_modules/typescript/bin/tsc"), "--noEmit"], { cwd: target, encoding: "utf8" }), "");
++    } finally {
++      await rm(temp, { recursive: true, force: true });
++    }
++  });
++}
+--- a/tests/research-flow.test.mjs
 +++ b/tests/research-flow.test.mjs
-@@ -0,0 +1,13 @@
+@@ -0,0 +1,80 @@
 +import assert from "node:assert/strict";
 +import test from "node:test";
 +import { researchStep } from "../lib/research-flow.ts";
++import { parseSearchResponse, parseContentsResponse, sourceWindow } from "../lib/evidence.ts";
++import { sourcePassages } from "../lib/source-passages.ts";
 +
-+const step = (...names) => ({ toolCalls: names.map((name) => ({ name })) });
++const url = "https://example.org/research";
++const other = "https://example.org/other";
++const envelope = (results) => ({ ok: true, status: 200, data: { results } });
++const search = (urls = [url]) => ({ name: "search_sources", input: { query: "research" },
++  output: parseSearchResponse(envelope(urls.map((url) => ({ url })))) });
++const readSource = (text = "真实正文", requested = url) => ({ name: "read_source", input: { url: requested },
++  output: sourceWindow(parseContentsResponse(envelope([{ url: requested, text }]), requested), {}) });
++const failed = (name, input = {}) => ({ name, input, output: { message: "Exa request failed (HTTP 503)." }, is_error: true });
++function context(...calls) {
++  return {
++    steps: calls.map((call, i) => ({ toolCalls: [{ id: `call-${i}`, name: call.name, input: call.input ?? {} }] })),
++    messages: calls.map((call, i) => ({ role: "tool", content: [{ type: "tool_result", call_id: `call-${i}`, output: call.output, is_error: call.is_error ?? false }] })),
++  };
++}
++const run = (...calls) => researchStep(context(...calls));
 +const read = { toolChoice: { type: "tool", toolName: "read_source" } };
-+test("discovery requires an actual source read, including after another search", () => {
-+  assert.equal(researchStep({ steps: [] }), undefined);
-+  assert.deepEqual(researchStep({ steps: [step("read_research"), step("search_sources")] }), read);
-+  assert.deepEqual(researchStep({ steps: [step("search_sources"), step("readToolOutput")] }), read);
-+  assert.equal(researchStep({ steps: [step("search_sources"), step("read_source")] }), undefined);
-+  assert.deepEqual(researchStep({ steps: [step("search_sources"), step("read_source"), step("search_sources")] }), read);
++const gap = { activeTools: ["search_sources", "read_source"], toolChoice: "auto" };
++
++test("discovery requires completed source text, and another discovery requires another read", () => {
++  assert.equal(run(), undefined);
++  assert.deepEqual(run(search()), read);
++  assert.deepEqual(run(search(), { name: "readToolOutput", output: "preview" }), read);
++  assert.equal(run(search(), readSource()), undefined);
++  assert.deepEqual(run(search(), readSource(), search()), read);
++});
++test("empty and failed searches allow further research or a gap answer, not a forced URL", () => {
++  assert.deepEqual(run(search([])), gap);
++  assert.deepEqual(run(failed("search_sources")), gap);
++  assert.deepEqual(run(search([]), search()), read);
++  assert.deepEqual(run(failed("search_sources"), search()), read);
++});
++test("failed or denied reads do not unlock saves and do not force an endless read retry", () => {
++  assert.deepEqual(run(search(), failed("read_source", { url })), gap);
++  const denied = context(search(), readSource());
++  denied.messages[1].content[0].is_error = false;
++  denied.messages[1].content[0].denied = true;
++  assert.deepEqual(researchStep(denied), gap);
++  assert.deepEqual(run(search(), failed("read_source", { url }), search([other])), read);
++  assert.equal(run(search([url, other]), failed("read_source", { url }), readSource("另一正文", other)), undefined);
++});
++test("successful empty or whitespace-only windows are still evidence gaps", () => {
++  for (const text of ["", " \n\t"]) assert.deepEqual(run(search(), readSource(text)), gap);
++  assert.deepEqual(run(search(), { name: "read_source", input: { url }, output: { source: { url, passages: [] } } }), gap);
++});
++test("workbench passage text counts as a read, metadata and empty passages do not", async () => {
++  const call = readSource();
++  delete call.output.source.text;
++  call.output.source.passages = await sourcePassages("src_0123456789abcdef", "真实正文");
++  assert.equal(run(search(), call), undefined);
++  call.output.source.passages = [{ passageId: "p_0123456789abcdef", text: "  " }];
++  call.output.source.textLength = 200;
++  assert.deepEqual(run(search(), call), gap);
++});
++test("reads must match a discovered URL and the requested URL", () => {
++  assert.deepEqual(run(search(), readSource("正文", other)), gap);
++  const mismatched = readSource();
++  mismatched.input.url = other;
++  assert.deepEqual(run(search([url, other]), mismatched), gap);
++  assert.equal(run(search(), search([other]), readSource()), undefined);
++});
++test("tool results are joined by call ID, not position or tool name alone", () => {
++  const value = context(search(), readSource());
++  value.messages.reverse();
++  assert.equal(researchStep(value), undefined);
++  value.messages[0].content[0].call_id = "unrelated-read";
++  assert.deepEqual(researchStep(value), read);
++  value.messages = [];
++  assert.equal(researchStep(value), undefined);
++});
++test("failure after a successful read remains a gap until actual text is read again", () => {
++  assert.deepEqual(run(search(), readSource(), search([])), gap);
++  assert.deepEqual(run(search(), readSource(), failed("read_source", { url })), gap);
++  assert.equal(run(search(), readSource(), search([]), readSource()), undefined);
 +});
 --- a/tests/source-content.test.mjs
 +++ b/tests/source-content.test.mjs
@@ -515,7 +650,7 @@
 +    () => sourceWindow(result, { offset: text.length + 1 }),
 +    /outside/,
 +  );
---- /dev/null
+--- a/tests/source-passages.test.mjs
 +++ b/tests/source-passages.test.mjs
 @@ -0,0 +1,17 @@
 +import assert from "node:assert/strict";
