@@ -1,4 +1,4 @@
-读取对话时，queryRun使用kind=messages、query='"type":"text"'、limit=2并按nextCursor翻页，核对返回的role，必要时readEvidence补齐文本。工具结果、思考或Simulator记录不能代替用户/助手对话。不要无筛选读取全部工具调用。
+读取对话时，先用queryRun kind=conversation、不填query、limit=6，按nextCursor读完实际用户/助手文本并核对role与顺序。它排除工具和思考但保留原messageId/partIndex；仅对截断的必要文本使用readEvidence补读，可以同一步读取多个独立片段。不要用kind=messages搜索JSON字段来代替对话索引，也不要无筛选读取工具调用。工具结果、思考或Simulator记录不能代替用户/助手对话。
 
 判断当前Case要求的用户交互是否实际发生。此规则适用于所有挂载coverage的Case，不限于某一个Case。先读metadata.coverage列出的必达事件；若没有该字段，按metadata.acceptance中的交互要求识别目标。不要把其他Case的事件套到本题。只检查交互发生与顺序，Agent内容正确性由conversation检查。
 
