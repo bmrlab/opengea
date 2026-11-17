@@ -1,0 +1,83 @@
+{
+  "totalAttempts": 3,
+  "limit": 3,
+  "noFurtherRequests": true,
+  "definition": "一次真实尝试指一次预算题执行及其对应Judge批次；三项Judge各独立请求，不是总HTTP调用数。",
+  "latestAttempt": 3,
+  "latestSourceSha256": "df0561ed495d58fe2d1e82d29bc26651be2c16bb4cbaaf4d06eaf78c7ef93341",
+  "latestResultStatus": "passed",
+  "latestScores": {
+    "evidence": 1,
+    "inference": 1,
+    "scope": 1
+  },
+  "completeJudging": true,
+  "targetedGoalsMet": true,
+  "latestChecks": {
+    "readSourceCalls": 3,
+    "successfulReadSourceCalls": 3,
+    "unrenderedSourceMarkers": [],
+    "finalEqualsSavedReport": false,
+    "citationAudit": {
+      "method": "Compare Markdown and plain HTTP(S) citation URLs in run.output with URLs actually returned by search_sources/read_source. Ignore fragments only. This checks source identity, not whether a claim is supported.",
+      "toolCalls": {
+        "read_research": 1,
+        "search_sources": 2,
+        "read_source": 3,
+        "save_research": 1
+      },
+      "outputCharacters": 2254,
+      "capturedSourceCount": 9,
+      "citationCount": 3,
+      "unmatched": [],
+      "invalid": []
+    }
+  },
+  "attempts": [
+    {
+      "attempt": 1,
+      "results": "budget-ceiling-follow-up-results.json",
+      "receipt": "budget-ceiling-follow-up.json",
+      "manifest": "budget-attempt-1-manifest.json",
+      "status": "incomplete",
+      "scores": {
+        "scope": 1,
+        "inference": 1,
+        "evidence": "error"
+      },
+      "readSourceCalls": 0,
+      "unrenderedMarkers": true
+    },
+    {
+      "attempt": 2,
+      "results": "budget-ceiling-attempt-2-results.json",
+      "receipt": "budget-ceiling-attempt-2.json",
+      "manifest": "budget-attempt-2-manifest.json",
+      "status": "passed",
+      "scores": {
+        "scope": 1,
+        "inference": 1,
+        "evidence": 1
+      },
+      "readSourceCalls": 0,
+      "unrenderedMarkers": false,
+      "manualAcceptance": false
+    },
+    {
+      "attempt": 3,
+      "results": "budget-ceiling-attempt-3-results.json",
+      "receipt": "budget-ceiling-attempt-3.json",
+      "manifest": "budget-attempt-3-manifest.json",
+      "status": "passed",
+      "scores": {
+        "evidence": 1,
+        "inference": 1,
+        "scope": 1
+      },
+      "readSourceCalls": 3,
+      "unrenderedMarkers": false,
+      "targetedGoalsMet": true
+    }
+  ],
+  "boundary": "所有尝试依次保留；自动判分、目标修复核对与整体业务验收分开。未将单题与旧题拼分；00和01未重跑。"
+}

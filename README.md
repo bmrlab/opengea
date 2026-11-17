@@ -5,7 +5,6 @@ Build, evaluate and improve an Agent with [GEA Agent Builder](https://musegea.co
 The repository focuses on one complete example: **[Desk Research](examples/desk-research/)**, a product innovation assistant researching breakfast opportunities for commuting office workers.
 
 - [Quick Start（中文）](examples/desk-research/QUICKSTART.md) / [English](examples/desk-research/QUICKSTART.en.md): follow the canonical developer walkthrough, from Project creation to evaluation-driven development.
-- [Runnable stages and upgrade tasks](examples/desk-research/versions/README.md): search → persistent research/workbench → Feishu, using the same evaluation criteria.
 - [Exa quality iterations](examples/desk-research/iterations/README.md): fixed tools and cases, actual trajectories, focused changes and regression results.
 - [Validation](examples/desk-research/VALIDATION.md): local checks and remaining live acceptance.
 

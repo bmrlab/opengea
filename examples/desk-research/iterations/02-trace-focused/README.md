@@ -1,89 +1,54 @@
-# 第二次迭代：看 Trace
+# 第二次迭代：专注 Trace
 
-相对 01 改过程与引用工具。原始版本保留搜索上限 5 页 / 6000 字符预览；r2 最后一次修复将模型可见搜索输出改为来源索引，通过工具策略在每次搜索后要求 read_source。2000 字符正文窗口与 passageId 来自现有工具，未引入结构化观察。
+第一次迭代改善了部分推断分数，却仍有证据失分。第二次沿工具调用检查搜索、读页、保存和最终引用，保留结果要求，再改变取证与引用过程：收敛证据集、逐一读取正文，用来源标识选择证据，由工具生成确切链接。
 
 ## 给 coding agent 的任务文本
 
 ```text
-先检查新 01 的工具调用与引用来源，记录搜索次数、read_source 次数和错链。
-若新 Trace 没复现历史问题，如实写，不伪造“只搜不读”的转折。
-保留第 1 轮输出要求；加入旧 02 的小证据集、逐一 read_source、只交一份简报。
-从 9df3b5a / 626db4a 拆出确切来源身份、sourceId、[[sourceId]] 引用、
-保存时拒绝手写 URL，以及 passageId 正文片段与读取窗口的相关实现。
-不加入结构化 observations / subject / fit / constraint 规则。
-验证确切链接生成、未知/跨会话 ID 拒绝、手写 URL 不写入、原文片段身份。
-按同条件重跑；失败、Judge 错误与未完成保留，不能改变题目或补分。
-共同边界：Cases/Judges 固定到 protocol 记录的 main；Agent、Simulator、Judge
-都用 creative-reasoning-1.5 / local；Agent 16 步/240 秒、Judge 12 步/300 秒。
-只使用授权凭据且不写进仓库。每次执行和评分都保留，不重抽、不挑绿、不手工补分。
+检查上一轮 Trace，记录搜索、正文读取、来源身份和最终引用。
+保留结果要求，使用小证据集逐一核对正文，只交付一份简报。
+用 sourceId 和 passageId 引用已捕获来源及原文，由工具生成链接；
+拒绝未知、跨会话标识和模型手写 URL。
+根据实际 Trace 修正过程，不预设每个失败都来自“只搜不读”。
+保持题目、Judge、模型和预算一致，保留全部执行、评分和人工争议。
 ```
 
-## R4 交接补充
+## 运行与结果
 
-Trace 复核还要检查：保存后是否重写、引用是否由工具生成、缺口来源是否被错误限制、等待发生在搜索还是模型阶段。这是仍需验证的问题清单，不能当作修复通过。对应历史证据、适用边界及不计作提升的运行问题见 [R4 归类](../R4-FINDINGS.md)。
+[source](source/) · [源码差异](changes.diff) · [运行条件](../REPRODUCING.md) · [逐项对照](../comparison.md)
 
-## 源码和比较条件
+按[默认命令](../../README.md#2-跑分)执行并评分。每轮相同四题与一道澄清题；其余题未覆盖。公开 CLI 首次四题全部执行错误，评分未产出逐题结果，见 [首次执行](published-execution-results.json)和[评分中断](published-attempt.json)。下述成绩来自三轮统一候选工具链的独立批次。
 
-[source](source/) · [manifest](manifest.json) · [来源记录](provenance.json) · [改动](changes.diff) · [统一比较条件](../protocol.json)
+首批四道单轮自动通过 4/4，判分完成 14/14；澄清题 conversation 与 coverage 均为 1。早餐范围题的 evidence 恢复为 1。
 
-进入 source 安装锁定依赖，按 [默认命令](../../README.md#2-跑分)运行和评分。快照校验只保证源码内容，执行器不读取 protocol。
+但预算题虽然读到了 6.6 元完整套餐，仍写出“仅单品能压到8元以内”，三项 Judge 都给了 1。这个反例说明：读到正文、链接正确，并不保证每句结论受证据支持。
 
-## 发布版首次失败
+首批结果对应 `pre-fix-manifest.json`，不是当前源码重新跑出的四题成绩。
 
-[首次四题执行](published-execution-results.json)全部执行错误；[评分中断记录](published-attempt.json)保留未产出逐题评分的原始身份和状态。收到 R4 工具链交接后，三轮完整换成同一候选运行条件重新执行；不选取部分成功样本，不与首次或 R4 分数拼接。
+[单轮结果](results.json) · [多轮结果](multi-results.json) · [人工核对](review-notes.json)
 
-## 修复前候选工具链真实结果
+分享版 Trace 已裁剪，自动评分和人工争议分别保留。这些结果不等于完整题集或业务验收通过。
 
-以下结果绑定 [修复前 manifest](pre-fix-manifest.json)，不代表当前源码已重跑四题。四道单轮自动通过 4/4，质量失分 0，执行/评分错误 0；clarify-breakfast 的 conversation 与 coverage 均为 1。必跑判分 14/14 已完成。保留 1 条人工争议，不将自动通过等同于业务验收。
+## 预算题后续尝试
 
-[单轮首次结果](results.json) · [多轮首次结果](multi-results.json) · [逐项复核](review-notes.json) · [Case × Judge 对照](../comparison.md)
+针对套餐与单品混淆、引用交付和正文读取问题，随后共执行了三次预算题，每次包含目标执行及对应 Judge 批次，结果全部保留。
 
-完整原始 Run 与 Trace 保留本地，公开 results 是裁剪后的分享版。执行失败、评分错误、有效 0 分和多轮未覆盖分别保留；不将历史分数挪来使用。该轮不代表全部 18 题验收。
+| 尝试 | 改动重点 | scope | evidence | inference | 状态 | read_source |
+| --- | --- | --- | --- | --- | --- | ---: |
+| [1](budget-ceiling-follow-up-results.json) | 核对套餐、价格条件及反例 | 1 | error | 1 | incomplete | 0 |
+| [2](budget-ceiling-attempt-2-results.json) | 明确引用交付要求 | 1 | 1 | 1 | passed | 0 |
+| [3](budget-ceiling-attempt-3-results.json) | 搜索返回来源索引，读取正文后再保存，精简保存输出 | 1 | 1 | 1 | passed | 3 |
 
-## 2026-11-17 预算题定向修复与一次补跑
+第一次 evidence Judge 报 `Model finish reason does not match its content`，不能补成通过；回答承认了 6.6 元套餐，但仍有未渲染来源标识和套餐组成缩略。第二次评分完整，仍把北京套餐配到上海来源且未调用正文读取。第三次三次正文读取成功，最终无未渲染标识，北京两款 6.6 元套餐的数量和完整链接得到对应。
 
-仅修改 02 的两份 instructions，要求核对单品/套餐、价格与购买条件，并在排他结论前查找已捕获的反例；未写死价格或答案，未修改 Cases / Judges、工具实现或执行预算。
+第三次仍有人工争议：未知组合总价被推断为接近或超过 8 元、价格区间被概括为“多数超8元”、购买原因存在个案泛化、地铁出口写成“站内”，以及保存后重新排列报告。这些争议与自动分数同时保留，不据此宣布业务验收通过。
 
-原四题结果及争议保持原样，绑定 [修复前 manifest](pre-fix-manifest.json)；本段 r1 的源码绑定 [r1 manifest](r1-manifest.json)，r2 第3次绑定 [r2 manifest](r2-attempt-3-manifest.json)，当前 [manifest](manifest.json) 为 r3 修复。仅 `budget-ceiling` 在相同 CR / Exa / 候选工具链下新执行一次，没有重跑其余题目或拼出新的 4/4。
+[三次尝试汇总](budget-ceiling-summary.json) · [尝试1条件及争议](budget-ceiling-follow-up.json) · [尝试2条件及争议](budget-ceiling-attempt-2.json) · [尝试3条件及争议](budget-ceiling-attempt-3.json)
 
-| Case | scope | evidence | inference | 整体 |
-| --- | --- | --- | --- | --- |
-| budget-ceiling（修复后） | 1 | error | 1 | incomplete |
+三次单题不替换首批四题结果，也不与其他旧题拼成新的 4/4。Baseline 和第一次迭代的争议没有补跑或修正。
 
-evidence Judge 的原始错误是 `Model finish reason does not match its content`，每项 Judge 都只有一次 attempt；不重评、不补分。Agent 正常执行，Run 与 evaluation 均 completed，但判分仅完成 2/3，不能记作自动通过。执行批次 `205f72a6-faaa-4ea8-9d3d-c5a716b869e7`，target Run `3f79488d-6621-4bff-b6d3-f870c2429074`，evaluation `fd81f54f-b5b4-4fa7-a307-347c994ed91c`。
+## 当前源码与已有成绩
 
-人工核对：本次搜索再次返回同一 `p_23a96e7dada5cfa7` 的 6.6 元套餐正文；回答明确列出套餐并承认其满足预算，原“仅单品能压到8元以内”错误未复现。仍有残余问题：最终回答未交付保存工具已渲染的链接报告，而带 `[[sourceId]]`；套餐B组成有缩略；`read_source=0`（搜索已带正文），过程要求未完全遵守。原自动分数、补跑错误和人工判断分开保留，不能宣称业务质量验收或稳定修复通过。
+当前快照进一步完善了空搜索、读取失败及成功正文的判断，并补齐生成项目依赖。已记录的离线验证包括类型检查、26 项源码测试、生成项目检查，以及第三次尝试七个工具结果前缀的策略回放；没有新增模型请求或分数。
 
-[真实补跑结果](budget-ceiling-follow-up-results.json) · [条件、原生证据哈希与人工复核](budget-ceiling-follow-up.json)
-
-## r2：完整判分与正文读取、引用交付修复
-
-含 r1 共使用 **3/3 次真实尝试**（每次为一次目标执行及对应 Judge 批次），已停止请求。每项 Judge 每批次只有一次 attempt，未更换题目、Judge、模型、执行预算或手工分数。所有中间结果保留，不挑选绿灯。
-
-| 尝试 | 源码 | scope | evidence | inference | 原生结果 | read_source | 最终占位符 |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| 1（r1） | r1-manifest.json | 1 | error | 1 | incomplete | 0 | 有 |
-| 2（r2 指令修复） | r2-attempt-2-manifest.json | 1 | 1 | 1 | passed | 0 | 无 |
-| 3（r2 流程修复） | r2-attempt-3-manifest.json | 1 | 1 | 1 | passed | 3 | 无 |
-
-第2次虽取得完整判分，但北京套餐段落错配上海来源，且仍未调用 read_source，所以没有按自动1分宣布目标完成。第3次继续修 Agent：搜索只向模型返回来源索引，新增工具调用顺序策略，在搜索后要求 read_source；读取后才可自行决定继续研究或保存。保存工具返回已渲染 report 与 status，避免同时携带冗余来源列表；两份指令区分输入占位符和输出完整链接，并核对套餐中各项数量。策略接入根 Agent 与 v1/v3 生成入口，不改 Cases/Judges 或发布包。
-
-第3次原生证据确认：3次正文读取成功，最终无未渲染 sourceId。原北京日报片段 p_23a96e7dada5cfa7 再次被 read_source 返回；回答承认6.6元完整套餐，套餐B写明2个大包，且与北京日报完整链接对应。判分完成 3/3，错误 0。这次是对目标项的核验，不代表整体业务质量验收。
-
-仍需保留的人工争议：最终报告被重排而非逐字交付，另有保存过程文字；3元粥加主食的总价未知却被推成接近或超8元；6–12元面包区间不能证明“多数超8元”；便利店选择主因存在个案泛化；成都麦当劳6.6元标牌位于地铁站出口处，报告“站内”表述不够精确。自动分数不覆盖这些问题，也不因此被手工改写。北京6.6元两款套餐与“仅单品”这项原错误已在本次对应正文、数量和链接核对中消失。
-
-批次 `54496343-c788-4aa0-aa47-1b0c3d301053`，target Run `004c8c67-e3cc-4ac9-b327-b0443af1e475`，evaluation `897f6103-32ee-4538-a182-720eb0882da3`。本次增量：最终源码类型检查、16/16测试（含搜索后读取策略）、manifest、执行源码与编译Case/Judge hash核对。尝试2的类型检查和15项测试单独保留。未整轮重测其他题目。
-
-[三次尝试汇总](budget-ceiling-r2-summary.json) · [第2次真实结果](budget-ceiling-r2-attempt-2-results.json) · [第2次条件及争议](budget-ceiling-r2-attempt-2.json) · [第3次真实结果](budget-ceiling-r2-attempt-3-results.json) · [第3次条件、正文与原生哈希](budget-ceiling-r2-attempt-3.json)
-
-## r3：生成依赖与结果驱动的读取策略
-
-修复 R2 的两项必须修：02 的 materialize 复制清单补齐 `research-flow.ts`、`research.ts`、`source-passages.ts`，三个生成阶段均携带策略行为测试。策略按 call ID 关联本次步骤与工具结果：成功且非空的搜索才要求读页；读取必须成功、URL 对应已发现且本次请求的来源，并返回非空 text（v1）或 passages（工作台）。调用名、元数据、空白正文、失败或拒绝均不代表读到证据。
-
-空搜索、搜索失败、正文为空或读取失败时，允许重新搜索、换来源读取或直接说明证据缺口；此时不开放保存工具，不强制重复读取。成功读到正文后恢复正常工具选择。没有增加重试、预算，或改动题目、Judge、模型和发布包。
-
-本轮新验：02 源码类型检查、26/26 测试（含8项策略行为测试和3项实际生成后类型检查）；另外实际生成 v1-research、v2-workbench、v3-feishu，各自按原锁文件安装，三者类型检查均通过，测试分别14/14、20/20、20/20，均无失败或跳过。
-
-已核对 r2 第3次原生 graded-case 哈希，逐个重放7个工具结果前缀，新旧策略决策7/7相同。更早记录未使用此策略，生成项目也不是已有跑分的执行项目。因此本轮没有受影响的已记录策略路径需重跑，模型/Exa/Judge 请求均为0；这是离线回放，不是新模型验收。r2 第3次分数继续绑定 [原源码 manifest](r2-attempt-3-manifest.json)，当前 manifest 只标识修复后的源码；旧分数、错误和上述人工争议原样保留，不宣称当前源码获得新4/4或业务验收。
-
-[本轮验证与策略回放](r3-validation.json)
+[源码验证记录](source-validation.json)记录这些检查。[复现说明](../REPRODUCING.md#源码与结果对应)列出每次执行的源码版本；旧成绩继续对应原版本，不代表当前源码已获得新的模型验收。

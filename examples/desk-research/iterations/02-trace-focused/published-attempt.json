@@ -7,7 +7,7 @@
   "nativeEvaluationStatusAtInterruption": "running",
   "outcome": "grading_interrupted_no_case_artifacts",
   "interruptedAt": "2026-11-17T04:30:17Z",
-  "reason": "Published CLI execution failed for all 12 cases; grading produced no case artifacts and no Worker process. Stop this task grading attempts; preserve original artifacts. Candidate full-batch comparison follows the R4 handoff.",
+  "reason": "Published CLI execution failed for all 12 cases; grading produced no case artifacts and no Worker process. Grading was interrupted and original artifacts retained. A separate full-batch comparison uses the candidate toolchain.",
   "caseGradingArtifacts": 0,
   "judgeProcessExitCode": null,
   "runSha256": "c45bf8a5a46f530f7325786f4fe3e7cf6dc186b3d81714a7998812a411bc2bf0",

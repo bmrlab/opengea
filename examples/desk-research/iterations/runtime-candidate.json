@@ -1,5 +1,5 @@
 {
-  "runner": "R4 handoff local candidate copied into this task; not a published CLI acceptance",
+  "runner": "Local candidate toolchain; not a published CLI acceptance",
   "cliSource": "cbbfffcbf2",
   "appServerSource": "cb24e7e3fb",
   "sdkSource": "d73861da7a6ef702407f8576e7cd6289a00713c2",

@@ -40,7 +40,7 @@
     "sourceDrift": "Exa is live search. Preserve actual query/source metadata; a single-run score change does not establish statistical significance. Model aliases may change upstream; no underlying model fingerprint is claimed.",
     "annotation": "Review notes are local analysis of actual trajectories, not hosted Builder Annotation exports.",
     "runner": {
-      "runner": "R4 handoff local candidate copied into this task; not a published CLI acceptance",
+      "runner": "Local candidate toolchain; not a published CLI acceptance",
       "cliSource": "cbbfffcbf2",
       "appServerSource": "cb24e7e3fb",
       "sdkSource": "d73861da7a6ef702407f8576e7cd6289a00713c2",
@@ -688,9 +688,9 @@
     "status": "incomplete",
     "originalAggregateReplaced": false
   },
-  "r2BudgetCeiling": {
-    "summary": "02-trace-focused/budget-ceiling-r2-summary.json",
-    "attemptsIncludingR1": 3,
+  "budgetCeilingAttempts": {
+    "summary": "02-trace-focused/budget-ceiling-summary.json",
+    "totalAttempts": 3,
     "latestAttempt": 3,
     "latestSourceSha256": "df0561ed495d58fe2d1e82d29bc26651be2c16bb4cbaaf4d06eaf78c7ef93341",
     "scores": {
