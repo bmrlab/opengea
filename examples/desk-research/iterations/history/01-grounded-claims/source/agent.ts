@@ -1,6 +1,7 @@
 import { defineAgent } from "@gea-ai/agent-sdk";
 import { instructions } from "./instructions";
 import searchSources from "./tools/search-sources";
+import readSource from "./tools/read-source";
 import researchRecord from "./tools/research-record";
 import search from "./connectors/search";
 
@@ -12,5 +13,5 @@ export default defineAgent({
   computer: { enabled: false },
   instructions,
   connectors: { search },
-  tools: [searchSources, researchRecord],
+  tools: [searchSources, readSource, researchRecord],
 });

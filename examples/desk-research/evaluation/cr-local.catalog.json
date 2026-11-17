@@ -1,0 +1,37 @@
+{
+  "version": 2,
+  "default": "creative-reasoning-1.5",
+  "models": [
+    {
+      "id": "creative-reasoning-1.5",
+      "target": "creative-reasoning/creative-reasoning-1.5"
+    }
+  ],
+  "providers": {
+    "creative-reasoning": {
+      "format": "anthropic-messages",
+      "auth": "bearer",
+      "apiKeyEnv": "CREATIVE_REASONING_API_KEY",
+      "baseURLEnv": "CREATIVE_REASONING_BASE_URL"
+    }
+  },
+  "targets": {
+    "creative-reasoning/creative-reasoning-1.5": {
+      "maxOutputTokens": 4096,
+      "requestBody": {
+        "thinking": {
+          "type": "enabled",
+          "budget_tokens": 1024
+        }
+      }
+    }
+  },
+  "pricing": {
+    "creative-reasoning/creative-reasoning-1.5": {
+      "providerRates": {
+        "inputMicrosPerMillion": 0,
+        "outputMicrosPerMillion": 0
+      }
+    }
+  }
+}

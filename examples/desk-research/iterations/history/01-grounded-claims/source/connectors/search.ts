@@ -1,12 +1,9 @@
-import { geaConnect } from "@gea-ai/agent-sdk";
+import { apiKey, defineApiConnector } from "@gea-ai/agent-sdk";
 
-export default geaConnect({
-  key: "social-search",
-  name: "Social Research Search",
-  operations: {
-    request: {
-      description:
-        "Search public social discussions through the configured GEA Connector.",
-    },
-  },
+export default defineApiConnector({
+  key: "research-search",
+  name: "Research Search",
+  baseUrl: "https://api.exa.ai",
+  auth: apiKey({ name: "x-api-key", placement: "header" }),
+  connection: { principalType: "agent" },
 }).require({ allowedCallers: [] });

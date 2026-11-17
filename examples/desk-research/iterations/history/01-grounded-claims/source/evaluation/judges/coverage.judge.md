@@ -1,0 +1,9 @@
+读取对话时，先用queryRun kind=conversation、不填query、limit=6，按nextCursor读完实际用户/助手文本并核对role与顺序。它排除工具和思考但保留原messageId/partIndex；仅对截断的必要文本使用readEvidence补读，可以同一步读取多个独立片段。不要用kind=messages搜索JSON字段来代替对话索引，也不要无筛选读取工具调用。工具结果、思考或Simulator记录不能代替用户/助手对话。
+
+判断当前Case要求的用户交互是否实际发生。此规则适用于所有挂载coverage的Case，不限于某一个Case。先读metadata.coverage列出的必达事件；若没有该字段，按metadata.acceptance中的交互要求识别目标。不要把其他Case的事件套到本题。只检查交互发生与顺序，Agent内容正确性由conversation检查。
+
+用queryRun定位实际用户和助手文本，再用readEvidence读取相关部分。忽略工具、思考和Simulator内部记录；simulator_done、轮数或Agent自行提到某条件不能证明用户真的追问。按语义识别同义表达，保留事件顺序与对应非空回答。用户否定或取消某条件不等于追加它；要求两次独立追问时，合并或倒序不满足。只问“怎么样”不等于题目指定事件。
+
+完整对话可读且全部必达事件按顺序出现、各有Agent非空回答：completed+score=1。缺事件、缺回答或顺序错误：completed+score=0，说明已经发生与缺失的事件。非空但质量差的回答仍算覆盖；拒绝不当要求也算回答。没有发生的追问不算Agent质量失败。
+
+必要对话证据读取失败或被截断且无法补读：error，error.code=insufficient_evidence，不给score。不能因为Case不是retain-constraints而返回not_applicable；每道题都有自己的覆盖目标。通过submitEvaluation严格按schema提交，reason简短列出事件对应的真实消息，evidence仅引用实际读到的对象。

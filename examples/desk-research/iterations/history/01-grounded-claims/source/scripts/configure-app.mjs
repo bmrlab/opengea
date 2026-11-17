@@ -28,19 +28,16 @@ const apiOrigin = localOrigin(values["api-origin"]);
 const workerOrigin = localOrigin(values["worker-origin"]);
 const apiKeyFile = resolve(values["api-key-file"]);
 const key = (await readFile(apiKeyFile, "utf8")).trim();
-const response = await fetch(
-  new URL("/api/v1/agents?environment=preview&limit=100", apiOrigin),
-  {
-    redirect: "error",
-    headers: { authorization: `Bearer ${key}` },
-    signal: AbortSignal.timeout(10000),
-  },
-);
+const response = await fetch(new URL("/api/v1/agents?limit=100", apiOrigin), {
+  redirect: "error",
+  headers: { authorization: `Bearer ${key}` },
+  signal: AbortSignal.timeout(10000),
+});
 if (!response.ok) throw new Error(`Agent directory HTTP ${response.status}`);
 const directory = z
-  .object({ data: z.array(z.object({ id: z.uuid(), name: z.string() })) })
+  .object({ items: z.array(z.object({ id: z.uuid(), name: z.string() })) })
   .parse(await response.json());
-const agents = directory.data.filter(
+const agents = directory.items.filter(
   (agent) => agent.name === "ProductResearch",
 );
 if (agents.length !== 1)

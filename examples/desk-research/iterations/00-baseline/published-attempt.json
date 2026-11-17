@@ -1,0 +1,17 @@
+{
+  "batch": "published-cli-first-attempt",
+  "runId": "9b1e892b-bf74-4f6d-af35-424e844ecdfd",
+  "executionStatus": "failed",
+  "executionErrors": 4,
+  "evaluationId": "aba2116b-8e08-4d97-8243-19431cfa150a",
+  "nativeEvaluationStatusAtInterruption": "running",
+  "outcome": "grading_interrupted_no_case_artifacts",
+  "interruptedAt": "2026-11-17T04:30:17Z",
+  "reason": "Published CLI execution failed for all 12 cases; grading produced no case artifacts and no Worker process. Stop this task grading attempts; preserve original artifacts. Candidate full-batch comparison follows the R4 handoff.",
+  "caseGradingArtifacts": 0,
+  "judgeProcessExitCode": null,
+  "runSha256": "9e2164bd4d66d12689305449e2701101a9c46252fec3832f14e8902d12a7ddb1",
+  "evaluationSha256": "11d79b97967be9e059e272dead022d8f958ba97276da0c55d6e0303042ca660f",
+  "publicExecution": "published-execution-results.json",
+  "comparisonBoundary": "Do not mix this batch with candidate results or call the runtime change an Agent improvement."
+}

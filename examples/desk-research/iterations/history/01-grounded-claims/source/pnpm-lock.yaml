@@ -167,11 +167,11 @@ importers:
   .:
     dependencies:
       '@gea-ai/agent-extension-feishu':
-        specifier: 0.2.261113-alpha.0
-        version: 0.2.261113-alpha.0(@gea-ai/agent-sdk@0.2.261113-alpha.0)
+        specifier: 0.2.261114-alpha.0
+        version: 0.2.261114-alpha.0(@gea-ai/agent-sdk@0.2.261114-alpha.0)
       '@gea-ai/agent-sdk':
-        specifier: 0.2.261113-alpha.0
-        version: 0.2.261113-alpha.0
+        specifier: 0.2.261114-alpha.0
+        version: 0.2.261114-alpha.0
       zod:
         specifier: 4.6.5
         version: 4.6.5
@@ -235,21 +235,21 @@ packages:
   '@cloudflare/workers-types@5.20261113.1':
     resolution: {integrity: sha512-FhF8hRtsQCr/BWZyUN7wm2x+jqAOkRIpLOW+2fJu5OQyIDOv+c3PxY8duEAkOYXuprLImxjW+PHTbvz9+Px5cw==}
 
-  '@gea-ai/agent-extension-feishu@0.2.261113-alpha.0':
-    resolution: {integrity: sha512-rxphmMUXuXs2rI6nJwncNOtJsMZrniGpgt1Invpk55gm05iro1MMqEoG9DYrgvJES2U9wY+Mwf7vZ14pMPIxZQ==}
+  '@gea-ai/agent-extension-feishu@0.2.261114-alpha.0':
+    resolution: {integrity: sha512-YPXNcl4gqbZjhNnDgCH1315JWexDJ1Jy/MzE25Fsxg6ryYpjx7fqLptsJzman8p5W6pTNGfbrhumDqWMKWLdAA==}
     peerDependencies:
-      '@gea-ai/agent-sdk': 0.2.261113-alpha.0
+      '@gea-ai/agent-sdk': 0.2.261114-alpha.0
 
-  '@gea-ai/agent-sdk@0.2.261113-alpha.0':
-    resolution: {integrity: sha512-xF+ocBRc8abA1k6Q3Ctb40IqW9Hzgx1VwpuSYocyXrNTvMnk6y8dz5o9JuuFLNFY6z/Ppp9cnzCIXRKhpFg63w==}
+  '@gea-ai/agent-sdk@0.2.261114-alpha.0':
+    resolution: {integrity: sha512-kCwPKRVvhu/nQizUBLsDmeKqqIMltduxnWasYuvutuGd7HuCOmxJjICqkAJxhAzq6+bcIbn4wKkiklclpLoQEA==}
     peerDependencies:
       esbuild: ^0.28.0
     peerDependenciesMeta:
       esbuild:
         optional: true
 
-  '@gea-ai/contract@0.2.261113-alpha.0':
-    resolution: {integrity: sha512-cCGAi5nZU1s6o5uJ4rGYzpm2lcw4PppB5zczv9w9jbvruypj6x3dkL/HrFujeaV21GoAmKw+Ibm1+abnmxH/9g==}
+  '@gea-ai/contract@0.2.261114-alpha.0':
+    resolution: {integrity: sha512-2Xh3cTPT1ASokTp8ToCxOz2OInDNgMeCewd+EGSHUptwSUMH11rE286B/Qo0mMrAcP92wofv/UUsF3e0Jsc7Vw==}
 
   '@jitl/quickjs-ffi-types@0.32.0':
     resolution: {integrity: sha512-v9T+GQpmk43VDJ7d72sf0Nexhk+ArvtUihW27dy7lqAl0zBObFKtSBBIm5RBjwIhE8VwsPPm9PNuvPvNqLWUEg==}
@@ -959,16 +959,16 @@ snapshots:
 
   '@cloudflare/workers-types@5.20261113.1': {}
 
-  '@gea-ai/agent-extension-feishu@0.2.261113-alpha.0(@gea-ai/agent-sdk@0.2.261113-alpha.0)':
+  '@gea-ai/agent-extension-feishu@0.2.261114-alpha.0(@gea-ai/agent-sdk@0.2.261114-alpha.0)':
     dependencies:
-      '@gea-ai/agent-sdk': 0.2.261113-alpha.0
-      '@gea-ai/contract': 0.2.261113-alpha.0
+      '@gea-ai/agent-sdk': 0.2.261114-alpha.0
+      '@gea-ai/contract': 0.2.261114-alpha.0
       better-result: 2.8.1
       long: 5.3.2
       protobufjs: 7.6.1
       zod: 4.6.5
 
-  '@gea-ai/agent-sdk@0.2.261113-alpha.0':
+  '@gea-ai/agent-sdk@0.2.261114-alpha.0':
     dependencies:
       '@ai-sdk/anthropic': 4.0.67(zod@4.6.5)
       '@ai-sdk/openai': 4.0.79(zod@4.6.5)
@@ -976,7 +976,7 @@ snapshots:
       '@ai-sdk/otel': 1.0.119(zod@4.6.5)
       '@ai-sdk/provider': 4.0.19
       '@ai-sdk/provider-utils': 5.0.50(zod@4.6.5)
-      '@gea-ai/contract': 0.2.261113-alpha.0
+      '@gea-ai/contract': 0.2.261114-alpha.0
       '@opentelemetry/api': 1.9.1
       '@opentelemetry/context-async-hooks': 2.10.0(@opentelemetry/api@1.9.1)
       '@opentelemetry/core': 2.10.0(@opentelemetry/api@1.9.1)
@@ -994,7 +994,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@gea-ai/contract@0.2.261113-alpha.0':
+  '@gea-ai/contract@0.2.261114-alpha.0':
     dependencies:
       '@bufbuild/protobuf': 2.13.0
       '@opentelemetry/api': 1.9.1

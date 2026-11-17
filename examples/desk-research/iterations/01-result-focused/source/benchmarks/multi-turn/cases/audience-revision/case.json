@@ -1,0 +1,31 @@
+{
+  "input": {
+    "message": "研究中国大学生在宿舍吃早餐的公开线索，给出带来源的机会假设。"
+  },
+  "metadata": {
+    "tags": [
+      "breakfast",
+      "multi-turn",
+      "audience-revision"
+    ],
+    "acceptance": "接受明确的人群变更；不照搬旧人群结论；标记可复用资料与迁移限制并补充研究。",
+    "coverage": "初始大学生宿舍早餐报告后，用户明确改为到办公室吃早餐的中国城市通勤上班族，并询问旧资料可复用部分与重新检索需要；之后Agent作非空回答。"
+  },
+  "judgeRules": {
+    "conversation": {
+      "minScore": 1,
+      "required": true
+    },
+    "coverage": {
+      "required": true,
+      "minScore": 1
+    }
+  },
+  "simulator": {
+    "persona": "负责探索新品的产品经理。第一份报告后决定把人群改为城市通勤上班族，仍关心早餐便利性。",
+    "goal": "等首份报告后要求将目标改为到办公室吃早餐的中国城市通勤上班族，并说明哪些旧资料还能用、哪些需要重新检索。收到修订后结束。 不代替 Agent 搜索或写报告，不提供评分标准。",
+    "model": "creative-reasoning-1.5",
+    "maxTurns": 5,
+    "stopWhen": "done"
+  }
+}

@@ -1,0 +1,220 @@
+{
+  "batch": "candidate",
+  "interpretation": "Tool counts and exact-string diagnostics only. search_sources can return body text; zero read_source calls does not mean zero evidence. A canonical link does not prove semantic support. Extra answer text is not automatically a quality failure.",
+  "cases": [
+    {
+      "round": "00-baseline",
+      "caseId": "breakfast-scope",
+      "runId": "704f2667-6f4a-4567-b9b2-61185a2be04b",
+      "toolCalls": {
+        "read_research": 1,
+        "search_sources": 4,
+        "readToolOutput": 2,
+        "save_research": 1
+      },
+      "capturedSourceCount": 20,
+      "citationCount": 3,
+      "unmatchedFinalCitations": [],
+      "saveRejections": [],
+      "answerExactlyEqualsLastSavedReport": false,
+      "answerContainsLastSavedReport": false
+    },
+    {
+      "round": "00-baseline",
+      "caseId": "budget-ceiling",
+      "runId": "dd16835e-2ed0-4d4a-bf79-cd95f63dfbe7",
+      "toolCalls": {
+        "read_research": 1,
+        "search_sources": 6,
+        "readToolOutput": 2,
+        "save_research": 2
+      },
+      "capturedSourceCount": 19,
+      "citationCount": 2,
+      "unmatchedFinalCitations": [],
+      "saveRejections": [],
+      "answerExactlyEqualsLastSavedReport": false,
+      "answerContainsLastSavedReport": false
+    },
+    {
+      "round": "00-baseline",
+      "caseId": "counter-evidence",
+      "runId": "11a3b150-0bd7-4f3c-8b55-6139bdfcd7ed",
+      "toolCalls": {
+        "read_research": 1,
+        "search_sources": 4,
+        "readToolOutput": 4,
+        "save_research": 2
+      },
+      "capturedSourceCount": 19,
+      "citationCount": 0,
+      "unmatchedFinalCitations": [],
+      "saveRejections": [],
+      "answerExactlyEqualsLastSavedReport": false,
+      "answerContainsLastSavedReport": false
+    },
+    {
+      "round": "00-baseline",
+      "caseId": "validation-plan",
+      "runId": "593a28f3-2089-48c9-9aad-968aa6eb072e",
+      "toolCalls": {
+        "read_research": 1,
+        "search_sources": 2,
+        "readToolOutput": 2,
+        "save_research": 1
+      },
+      "capturedSourceCount": 8,
+      "citationCount": 4,
+      "unmatchedFinalCitations": [
+        "https://zqb.cyol.com/html/2011-09/06"
+      ],
+      "saveRejections": [],
+      "answerExactlyEqualsLastSavedReport": false,
+      "answerContainsLastSavedReport": false
+    },
+    {
+      "round": "01-result-focused",
+      "caseId": "breakfast-scope",
+      "runId": "e5d89583-d6de-4d1b-bf08-90e3b6026721",
+      "toolCalls": {
+        "search_sources": 7,
+        "read_source": 1,
+        "readToolOutput": 1,
+        "save_research": 1
+      },
+      "capturedSourceCount": 20,
+      "citationCount": 2,
+      "unmatchedFinalCitations": [],
+      "saveRejections": [],
+      "answerExactlyEqualsLastSavedReport": false,
+      "answerContainsLastSavedReport": false
+    },
+    {
+      "round": "01-result-focused",
+      "caseId": "budget-ceiling",
+      "runId": "c5a1010d-1bde-4ce0-be03-c80c43a3c0b2",
+      "toolCalls": {
+        "read_research": 1,
+        "search_sources": 2,
+        "readToolOutput": 2,
+        "save_research": 1
+      },
+      "capturedSourceCount": 10,
+      "citationCount": 3,
+      "unmatchedFinalCitations": [],
+      "saveRejections": [],
+      "answerExactlyEqualsLastSavedReport": false,
+      "answerContainsLastSavedReport": false
+    },
+    {
+      "round": "01-result-focused",
+      "caseId": "counter-evidence",
+      "runId": "7ab70a80-b534-445d-bfd3-71bc029670f1",
+      "toolCalls": {
+        "read_research": 1,
+        "search_sources": 4,
+        "readToolOutput": 3,
+        "save_research": 1
+      },
+      "capturedSourceCount": 20,
+      "citationCount": 0,
+      "unmatchedFinalCitations": [],
+      "saveRejections": [],
+      "answerExactlyEqualsLastSavedReport": false,
+      "answerContainsLastSavedReport": false
+    },
+    {
+      "round": "01-result-focused",
+      "caseId": "validation-plan",
+      "runId": "266b2642-4d82-4ea6-8026-1060518143f2",
+      "toolCalls": {
+        "read_research": 1,
+        "search_sources": 2,
+        "readToolOutput": 2,
+        "read_source": 1,
+        "save_research": 1
+      },
+      "capturedSourceCount": 9,
+      "citationCount": 4,
+      "unmatchedFinalCitations": [],
+      "saveRejections": [],
+      "answerExactlyEqualsLastSavedReport": false,
+      "answerContainsLastSavedReport": false
+    },
+    {
+      "round": "02-trace-focused",
+      "caseId": "breakfast-scope",
+      "runId": "1d67c6ae-3177-4b5d-bc2f-4e58854f863f",
+      "toolCalls": {
+        "read_research": 1,
+        "search_sources": 4,
+        "read_source": 3,
+        "readToolOutput": 1,
+        "save_research": 2
+      },
+      "capturedSourceCount": 10,
+      "citationCount": 3,
+      "unmatchedFinalCitations": [],
+      "saveRejections": [
+        "Use [[sourceId]] citations, not typed URLs"
+      ],
+      "answerExactlyEqualsLastSavedReport": false,
+      "answerContainsLastSavedReport": false
+    },
+    {
+      "round": "02-trace-focused",
+      "caseId": "budget-ceiling",
+      "runId": "48e8c763-9904-4d41-9834-83f0b6e98d01",
+      "toolCalls": {
+        "read_research": 1,
+        "search_sources": 2,
+        "read_source": 2,
+        "save_research": 1
+      },
+      "capturedSourceCount": 10,
+      "citationCount": 2,
+      "unmatchedFinalCitations": [],
+      "saveRejections": [],
+      "answerExactlyEqualsLastSavedReport": false,
+      "answerContainsLastSavedReport": false
+    },
+    {
+      "round": "02-trace-focused",
+      "caseId": "counter-evidence",
+      "runId": "5f5108bc-cc6b-4248-92b6-d44d372f1920",
+      "toolCalls": {
+        "read_research": 1,
+        "search_sources": 2,
+        "readToolOutput": 3,
+        "save_research": 5
+      },
+      "capturedSourceCount": 10,
+      "citationCount": 1,
+      "unmatchedFinalCitations": [],
+      "saveRejections": [
+        "Uncaptured source identity",
+        "Uncaptured source identity",
+        "Every citation must select a captured source in sources",
+        "Uncaptured source identity"
+      ],
+      "answerExactlyEqualsLastSavedReport": false,
+      "answerContainsLastSavedReport": false
+    },
+    {
+      "round": "02-trace-focused",
+      "caseId": "validation-plan",
+      "runId": "2ea424b0-cf71-43fe-b7eb-e680d4f9ec18",
+      "toolCalls": {
+        "search_sources": 2,
+        "read_source": 3,
+        "save_research": 1
+      },
+      "capturedSourceCount": 10,
+      "citationCount": 3,
+      "unmatchedFinalCitations": [],
+      "saveRejections": [],
+      "answerExactlyEqualsLastSavedReport": false,
+      "answerContainsLastSavedReport": false
+    }
+  ]
+}

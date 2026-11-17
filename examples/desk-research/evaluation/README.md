@@ -1,4 +1,58 @@
-# 校准 Judge，再验收 Agent
+# 定位失分，再按同条件重跑
+
+## 五步入口
+
+[1 建题](../BENCHMARKS.md#1-建题从业务风险到-casejson) → [2 跑分](../README.md#2-跑分) → [3 定位失分](#3-定位失分) → [4 改 Agent](../iterations/README.md#4-改-agent) → [5 再跑分](../iterations/README.md#5-再跑分)。
+
+## 3. 定位失分
+
+| 观察 | 归类 | 下一步 |
+| --- | --- | --- |
+| execution 超时或 error | 执行失败 | 查该 Run 的执行错误与 Trace，不填 0 分 |
+| Judge 请求、证据读取或提交失败 | Judge 错误 | 保留 error，定位评测链路，不用它评价质量 |
+| Judge 完成且 score=0 | 有效质量失分 | 记录回答原句、规则理由和支持/反驳证据 |
+| 多轮目标追问未发生 | 场景未覆盖 | 查 Simulator 与 coverage，保留已观察质量 |
+| 自动 1 分但人工发现错链/错算 | 人工争议 | 保留自动分数和人工证据，不静默改分 |
+
+先读结果：最终回答哪些句子越过输入或证据边界，Judge 为什么给 0？再读 Trace：搜了什么、读了哪些正文、URL 和来源 ID 从哪里来？失败记录至少包含 Case、Run、原句、Judge 理由、工具证据、改动假设和无法确认的部分。
+
+历史定位例（不是新三轮结果）：旧 00 `counter-evidence` 把局部线索写成“核心顾虑”，inference 给 0；先沿原句找到对应来源，再核对 search_sources / read_source 的具体文本、人群和范围。来源存在只能证明抓取过，不能证明它代表全体通勤者。历史记录在 [旧 Exa 四轮](../iterations/history/EXA-ITERATIONS.md)；本次实际诊断与失败原句在各轮 review-notes.json。
+
+### 本次例子：从预算题原句走到工具证据
+
+第 2 轮候选批次 `budget-ceiling`，目标 Run `48e8c763-9904-4d41-9834-83f0b6e98d01`：
+
+1. **结果原句**：标题写“北京CBD个案：完整套餐常超8元，仅单品能压到8元以内”。三项 Judge 自动都是 1。
+2. **回到 Trace**：本题搜索 2 次、read_source 2 次、保存 1 次；北京日报来源是 `src_9a9609c344f03384`。
+3. **定位正文**：read_source(offset=0) 已返回片段 `p_23a96e7dada5cfa7`，其中明确说“店里在早餐时段售卖两款只需6.6元的超值套餐”。这是同一北京 CBD 来源中的组合套餐，反驳“仅单品”这一绝对断言。
+4. **记录分歧**：引用 URL 匹配、读取确实发生，但模型仍漏掉反例。保留自动 1 分，同时在人工复核记录证据矛盾；不能因采用 sourceId 就判定每句事实都正确。
+5. **下一步假设**：结果复核应检查绝对表述与同页反例；过程复核应检查已读取片段怎样进入简报。本次不为消除争议改 Judge 或重抽回答。
+
+[本题回答与原始自动判分](../iterations/02-trace-focused/results.json) · [逐项人工复核](../iterations/02-trace-focused/review-notes.json) · [工具调用观察](../iterations/trace-observations.json)。分享 Trace 裁剪了正文，以上片段定位来自保留在本地的完整原生证据。
+
+导出原生结果用于分享：
+
+```bash
+node iterations/analyze-eval.mjs /absolute/path/to/run /new/path/results.json /absolute/path/to/run/evaluations/EVALUATION_ID
+```
+
+导出拒绝覆盖旧文件。它裁剪工具输出和 Trace，完整正文只在本地原生目录；复核不能把裁剪造成的缺失当作运行未读取。先比较相同 Case × Judge，再看改善、退化、未完成与人工争议。
+
+## 本次真实比较的运行条件
+
+三轮候选批次使用 [runtime-candidate.json](../iterations/runtime-candidate.json) 中的 CLI / App Server / SDK / contract 构件，Agent 和 Judge 预算未提高。先在示例根目录设置同一非秘密模型配置，再进入各轮 source（或它的逐文件一致执行副本）：
+
+```bash
+export CREATIVE_REASONING_BASE_URL="https://api.creative-reasoning.com/v1"
+export LLM_MODEL_CATALOG_JSON="$(cat evaluation/cr-local.catalog.json)"
+```
+
+凭据仍只由本机授权环境注入，Catalog 只含变量名。总输出 4096、思考 1024，Simulator 自身 2048 上限仍优先。候选 SDK/contract 用隔离的本地安装覆盖执行副本依赖，三轮相同；不要在该覆盖目录运行会自动重装公开锁文件的 pnpm 命令。核对实际构件哈希后用该候选 `gea` 执行默认命令。源码 manifest 与运行器条件分别校验；普通公开 npm 安装对应已保留的失败首次批次，不是候选结果的复现证明。
+
+## 评测规则校准与完整验收
+
+
+以下命令使用当前入口的 CR 直连配置：在同一终端注入 `CREATIVE_REASONING_API_KEY`，使用 `creative-reasoning-1.5` 和 `modelSource: "local"`，见[启动说明](../README.md#配置-cr-api-key)。历史结果仍保留原模型，不作为新配置的验收；更换 Judge 模型后先重新校准，再建立可比较的基线。
 
 先写清楚 Case 的输入和可观察验收条件，再选择独立的必过规则。单轮的 scope 检查限制条件、evidence 检查每条事实和确切来源、inference 检查推断边界。多轮另用 coverage 检查目标追问实际发生且得到回答，conversation 只评价已观察到的 Agent 质量。不能用一次追问后的高分代替完整场景，也不能把没有问过的能力判为 Agent 失败。
 
@@ -10,7 +64,7 @@
 
 ```bash
 node evaluation/prepare.mjs fixtures /tmp/desk-calibration
-gea eval judge --json '{"run":"/tmp/desk-calibration","judgeSource":"snapshot","judgeModel":"gea-pro","modelSource":"hosted","concurrency":2,"maxSteps":12,"timeoutMs":300000}'
+gea eval judge --json '{"run":"/tmp/desk-calibration","judgeSource":"snapshot","judgeModel":"creative-reasoning-1.5","modelSource":"local","concurrency":2,"maxSteps":12,"timeoutMs":300000}'
 node evaluation/summarize.mjs calibration /tmp/desk-calibration/evaluations/<evaluation-id> /tmp/calibration-summary.json
 ```
 
@@ -21,9 +75,9 @@ node evaluation/summarize.mjs calibration /tmp/desk-calibration/evaluations/<eva
 改 Judge 后，复制原生 Eval 目录（包含 run.json、benchmarks 和 executions），保留首次结果。`overlay` 创建新工作目录：rescore 模式保持原输入、工具配置和 Simulator，只替换评分规则；scenario 模式另外应用修正的两阶段 Simulator，供未来真实执行。
 
 ```bash
-node evaluation/prepare.mjs overlay iterations/00-exa-baseline/source /tmp/desk-rescore rescore
+node evaluation/prepare.mjs overlay iterations/00-baseline/source /tmp/desk-rescore rescore
 # 在新目录安装锁定依赖，然后对复制的原生运行记录评分
-gea eval judge --json '{"cwd":"/tmp/desk-rescore","run":"/tmp/copied-native-run","judgeSource":"workspace","judgeModel":"gea-pro","modelSource":"hosted","concurrency":2,"maxSteps":12,"timeoutMs":300000}'
+gea eval judge --json '{"cwd":"/tmp/desk-rescore","run":"/tmp/copied-native-run","judgeSource":"workspace","judgeModel":"creative-reasoning-1.5","modelSource":"local","concurrency":2,"maxSteps":12,"timeoutMs":300000}'
 ```
 
 重评分回答“同一回答在新规则下得多少分”；它不等于修复后的 Agent 已执行。公开的 results.json 是脱敏分享格式，不能代替原生 Eval 输入。旧执行错误也不会被重评分变成正常完成。
@@ -36,17 +90,19 @@ node iterations/analyze-eval.mjs /tmp/copied-native-run /tmp/rescore-share.json 
 
 ## 完整示例验收
 
+这里执行当前示例根目录。`iterations/*/source` 是历史快照，overlay 不会迁移其 Agent 模型；若要用这些快照做新的 CR 直连执行，先在新工作副本统一 Agent、Simulator 和 Judge 的 CR 模型 ID，并记录新基线。
+
 在修复后的项目运行全部 12 道单轮题和 6 道多轮题，不传 caseIds 即全选：
 
 ```bash
-gea agent eval --json '{"benchmarkPath":"benchmarks/single-turn","modelSource":"hosted","executeOnly":true,"concurrency":2,"overrides":{"engine":{"maxSteps":16,"timeout":{"totalMs":240000}}}}'
-gea agent eval --json '{"benchmarkPath":"benchmarks/multi-turn","modelSource":"hosted","executeOnly":true,"concurrency":2,"overrides":{"engine":{"maxSteps":16,"timeout":{"totalMs":240000}}}}'
+gea agent eval --json '{"benchmarkPath":"benchmarks/single-turn","modelSource":"local","executeOnly":true,"concurrency":2,"overrides":{"engine":{"maxSteps":16,"timeout":{"totalMs":240000}}}}'
+gea agent eval --json '{"benchmarkPath":"benchmarks/multi-turn","modelSource":"local","executeOnly":true,"concurrency":2,"overrides":{"engine":{"maxSteps":16,"timeout":{"totalMs":240000}}}}'
 ```
 
 分别保存命令返回的resultDirectory。先检查执行错误和对话，再对每个目录评分：
 
 ```bash
-gea eval judge --json '{"run":"/path/from/resultDirectory","judgeSource":"snapshot","judgeModel":"gea-pro","modelSource":"hosted","concurrency":2,"maxSteps":12,"timeoutMs":300000}'
+gea eval judge --json '{"run":"/path/from/resultDirectory","judgeSource":"snapshot","judgeModel":"creative-reasoning-1.5","modelSource":"local","concurrency":2,"maxSteps":12,"timeoutMs":300000}'
 ```
 
 executeOnly退出成功仅证明执行完成；必须继续查看evaluation中的每项Judge结果。更新Judge后用judgeSource=workspace重评同一原生目录，保留旧evaluation；不要覆盖原始run.json。

@@ -3,13 +3,22 @@
     "message": "研究中国上班族高蛋白早餐机会，区分事实和假设，给出来源。"
   },
   "metadata": {
-    "tags": ["breakfast", "multi-turn", "challenge-citation"],
-    "acceptance": "追问确实发生；Agent 提供本次捕获的证据依据及边界，无法支持时收回或降级结论，不编造原文。"
+    "tags": [
+      "breakfast",
+      "multi-turn",
+      "challenge-citation"
+    ],
+    "acceptance": "追问确实发生；Agent 提供本次捕获的证据依据及边界，无法支持时收回或降级结论，不编造原文。",
+    "coverage": "初始报告后，用户对一项人群需求或付费意愿结论追问哪条来源的哪段内容支持、能否代表多数人；之后Agent作非空回答。"
   },
   "judgeRules": {
     "conversation": {
       "minScore": 1,
       "required": true
+    },
+    "coverage": {
+      "required": true,
+      "minScore": 1
     }
   },
   "simulator": {

@@ -1,11 +1,11 @@
 {
-  "schemaVersion": "opengea.iteration-protocol.v1",
+  "schemaVersion": "opengea.iteration-protocol.v2",
   "searchProvider": "Exa",
-  "model": "gea-pro",
-  "judgeModel": "gea-pro",
-  "modelSource": "hosted",
-  "cli": "0.2.261114-alpha.0",
-  "sdk": "0.2.261114-alpha.0",
+  "model": "creative-reasoning-1.5",
+  "judgeModel": "creative-reasoning-1.5",
+  "modelSource": "local",
+  "cli": "local candidate cbbfffcbf2",
+  "sdk": "local candidate d73861da7a6ef702407f8576e7cd6289a00713c2",
   "developmentCases": [
     "breakfast-scope",
     "budget-ceiling",
@@ -23,12 +23,7 @@
     "willingness-to-pay"
   ],
   "multiTurnCases": [
-    "audience-revision",
-    "budget-revision",
-    "challenge-citation",
-    "clarify-breakfast",
-    "resist-false-certainty",
-    "retain-constraints"
+    "clarify-breakfast"
   ],
   "concurrency": 2,
   "overrides": {
@@ -39,25 +34,59 @@
       }
     }
   },
-  "comparison": "Keep Cases, Judges, model aliases, tool implementations and run options fixed. Change only evidence-supported Agent behavior. Retain original attempts; separate rescoring and execution retries.",
+  "comparison": "Records agreed comparison conditions; the runner does not read this file. Keep Cases, Judges, model and execution options identical. Round 01 changes instructions only; round 02 changes the documented process and citation tools. Retain every attempt and error; do not select reruns.",
   "sourceDrift": "Exa is live search. Preserve actual query/source metadata; a single-run score change does not establish statistical significance. Model aliases may change upstream; no underlying model fingerprint is claimed.",
   "annotation": "Review notes are local analysis of actual trajectories, not hosted Builder Annotation exports.",
   "runner": {
-    "entry": "GEA CLI source through Node + jiti",
-    "geaCommit": "6cdc48bf3698c128ffc3f46842a68a3ff7e15712",
-    "node": "24.16.0",
-    "nativeBinaries": "published @gea-ai/cli-darwin-arm64@0.2.261114-alpha.0",
-    "reason": "Published Bun CLI stalls sending Exa POST requests in this environment; all formal quality rounds use the same unmodified source CLI with Node. This is not validation of the published CLI Exa path."
+    "runner": "R4 handoff local candidate copied into this task; not a published CLI acceptance",
+    "cliSource": "cbbfffcbf2",
+    "appServerSource": "cb24e7e3fb",
+    "sdkSource": "d73861da7a6ef702407f8576e7cd6289a00713c2",
+    "cliSha256": "1fcd89e91aa7d0e6b87f47a6e4edc48cfa7d17bb8d9ca47901bbc551d4595d06",
+    "appServerSha256": "c0727ba187af35dcbec85e974af0f60aab9fb34961e1a3be9aa4b9002f2ed324",
+    "workerRuntimeSha256": "72dea76400d3869ec50d2bd0caceb71a4815c36505ea258d254d8a833c57cc80",
+    "sdkTarSha256": "95d45871d88a06c28f0345a9df8d2e0e33cec55b74378e4dbd65503b424021ad",
+    "contractTarSha256": "1672a54139cb0d8de9923c9d4fe6de5571a7a1e95dc8452c020b61683a0cfc0f",
+    "catalogSha256": "2f47faa15c1fc567c0594f9c9c6e0f024e23a019d9fac81441ec7d7352b8f345",
+    "installedCopyVerification": {
+      "agent-sdk": {
+        "filesCompared": 387,
+        "mismatches": 0
+      },
+      "contract": {
+        "filesCompared": 438,
+        "mismatches": 0
+      }
+    },
+    "maxOutputTokens": 4096,
+    "thinkingBudgetTokens": 1024,
+    "simulatorMaxOutputTokens": 2048,
+    "agentMaxSteps": 16,
+    "agentTimeoutMs": 240000,
+    "judgeMaxSteps": 12,
+    "judgeTimeoutMs": 300000
   },
-  "selectedRegressionCases": {
-    "singleTurn": [
-      "audience-transfer",
-      "freshness-limits"
-    ],
-    "multiTurn": [
-      "challenge-citation",
-      "retain-constraints"
-    ]
+  "regressionScope": "All three rounds execute the same four development cases and clarify-breakfast. Other 8 single-turn and 5 multi-turn cases are not run in this comparison; this is not full-suite acceptance.",
+  "benchmarkCommit": "4f4f51cdeb765027baa2cdf2be55ce93a33c5f02",
+  "snapshotGuarantee": "Manifest verification checks this round source content only, excluding generated node_modules/.gea/dist. It does not enforce experiment conditions or verify outcomes.",
+  "trace": "Published traces are cropped sharing exports; complete native evidence stays local. Missing text in a sharing export does not establish absence in the native trace.",
+  "judgeOptions": {
+    "judgeSource": "snapshot",
+    "maxSteps": 12,
+    "timeoutMs": 300000,
+    "concurrency": 2
   },
-  "regressionScope": "Run these four cases on the final version only. They are regression checks, not a before/after improvement claim. The remaining ten cases in the 18-case suite are not executed in this iteration batch."
+  "declaredPackageVersion": "0.2.261114-alpha.0",
+  "modelConfiguration": {
+    "catalog": "../evaluation/cr-local.catalog.json",
+    "sha256": "2f47faa15c1fc567c0594f9c9c6e0f024e23a019d9fac81441ec7d7352b8f345",
+    "maxOutputTokens": 4096,
+    "thinkingBudgetTokens": 1024,
+    "simulatorMaxOutputTokens": 2048
+  },
+  "priorAttempt": {
+    "protocol": "published-attempt-protocol.json",
+    "scope": "All three original four-case executions retained; published CLI grading interrupted before any case grading artifacts. No comparison mixes these with the candidate batch."
+  },
+  "runtimeDependencyOverlay": "Source snapshots and lockfiles remain original. Candidate execution copies the exact manifest files and uses a separately installed local SDK/contract build, identical for all three rounds. Runtime hashes, not package version text alone, identify this batch."
 }

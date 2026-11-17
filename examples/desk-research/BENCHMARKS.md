@@ -2,6 +2,56 @@
 
 18 cases: 12 single-turn research tasks and 6 multi-turn conversations. Cases share one product-research scenario so changes can be compared consistently. RAG and multimodal specialist examples are separate release work.
 
+## 1. 建题：从业务风险到 case.json
+
+风险：把未知价格或组合总价超过 8 元的方案推荐为“满足预算”。用户输入写清中国城市通勤者、办公室、单次最多 8 元；验收标准再写明单份 / 组合 / 促销不能混算。实际文件是 [budget-ceiling/case.json](benchmarks/single-turn/cases/budget-ceiling/case.json)：
+
+```json
+{
+  "input": {
+    "message": "为中国城市通勤者研究工作日早餐，单次预算最多 8 元，通常在办公室食用。比较已有方案和可能机会；价格找不到就注明，别把未知价格当作满足预算。请直接检索。"
+  },
+  "metadata": {
+    "tags": ["breakfast", "single-turn", "budget-ceiling"],
+    "acceptance": "价格要有来源并区分单份、组合和促销口径；未知价格不能声称已满足 8 元上限。"
+  },
+  "judgeRules": {
+    "scope": {
+      "minScore": 1,
+      "required": true
+    },
+    "evidence": {
+      "minScore": 1,
+      "required": true
+    },
+    "inference": {
+      "minScore": 1,
+      "required": true
+    }
+  }
+}
+```
+
+`input.message` 发给被测 Agent；`metadata.acceptance` 进入 Judge 上下文，由 scope 等规则核对，不自动拼到 Agent 的用户消息。`judgeRules` 只声明每项 `minScore: 1, required: true` 的门槛。真正的判断由三份 Markdown Judge 实现：[scope](benchmarks/single-turn/judges/scope.judge.md)、[evidence](benchmarks/single-turn/judges/evidence.judge.md)、[inference](benchmarks/single-turn/judges/inference.judge.md)，各自按 rubric 判 0/1。
+
+只跑这一题（所选轮次的 source 目录内）：
+
+```bash
+gea agent eval --json '{"benchmarkPath":"benchmarks/single-turn","caseIds":["budget-ceiling"],"modelSource":"local","executeOnly":true,"concurrency":2,"overrides":{"engine":{"maxSteps":16,"timeout":{"totalMs":240000}}}}'
+```
+
+这是建题试运行命令；正式三轮按 [默认四题命令](README.md#2-跑分)运行并单独评分。三项有效 1 分才通过；执行失败与 Judge 错误分别记录。
+
+## 多轮：意图识别与追加条件
+
+[clarify-breakfast](benchmarks/multi-turn/cases/clarify-breakfast/case.json) 从“我们想做一个早餐新品，你先帮忙研究一下”开始。Agent 应必要澄清；模拟用户补充对象、形态、场景、预算后应开始研究；真正收到“办公室没有微波炉，也没有热水”后应修订并保留原条件。[conversation Judge](benchmarks/multi-turn/judges/conversation.judge.md)检查信息不足时必要澄清、条件充分时直接研究；[coverage Judge](benchmarks/multi-turn/judges/coverage.judge.md)检查目标追问是否发生并得到回答。未发生的追问不能算通过，也不能直接判作 Agent 能力失败。
+
+```bash
+gea agent eval --json '{"benchmarkPath":"benchmarks/multi-turn","caseIds":["clarify-breakfast"],"modelSource":"local","executeOnly":true,"concurrency":2,"overrides":{"engine":{"maxSteps":16,"timeout":{"totalMs":240000}}}}'
+```
+
+再用 [同一评分命令](README.md#2-跑分)评分返回目录。多轮改变的是产生对话和 Trace 的方式，建题 → 跑分 → 定位失分 → 改 Agent → 再跑分的方法相同。
+
 ## single-turn
 
 | Case | Task | Acceptance |
@@ -50,9 +100,9 @@ Case acceptance criteria guide the Judge; they are not shown to the Agent. After
 
 三个维度都必须通过，一题才通过。`[1,0,1]` 仍然失败，不能用平均分 0.67 把引用问题藏起来。执行超时不是 0 分；Judge 无法读取证据或提交格式错误也不是 0 分，分别记执行错误和评分不完整。
 
-## 用真实结果校准规则
+## 历史结果：为什么还要复核 Judge
 
-Exa baseline 的 `counter-evidence` 首次结果：evidence 为 **1**，inference 为 **0**，scope 为 **error**。搜索确实取得了反向线索，但报告把这些局部线索升格为整体“核心顾虑”，因此已知存在质量失败，同时仍有一项未完成评分。不能把这个结果描述为完整的三项评分。
+[旧四轮历史](iterations/history/EXA-ITERATIONS.md)中 Exa baseline 的 `counter-evidence` 首次结果：evidence 为 **1**，inference 为 **0**，scope 为 **error**。搜索确实取得了反向线索，但报告把这些局部线索升格为整体“核心顾虑”，因此已知存在质量失败，同时仍有一项未完成评分。不能把这个结果描述为完整的三项评分。
 
 01 的预算题则暴露了 Judge 自身的问题：evidence 给了 **1**，理由中却承认引用链接错配，并将其视为小瑕疵。这与 rubric 的来源对应要求冲突。逐项复核应保留这一分歧；不能为了演示漂亮而静默接受高分，也不能直接改写原始 Judge 结果。
 
@@ -72,12 +122,12 @@ Desk Research 的来源核对会执行多次模型与证据读取。Agent 的执
   "cwd": "/absolute/path/to/examples/desk-research",
   "run": "/absolute/path/to/saved-run",
   "judgeSource": "snapshot",
-  "judgeModel": "gea-pro",
-  "modelSource": "hosted",
+  "judgeModel": "creative-reasoning-1.5",
+  "modelSource": "local",
   "timeoutMs": 300000,
   "concurrency": 1,
   "trace": true
 }
 ```
 
-将配置保存为 JSON 后使用 `gea eval judge --json-file <文件>`。这为本示例每个 Judge 显式分配最多五分钟，不改变平台默认值、评分标准或模型空闲期限。已有失败必须保留；新评分是另一份 evaluation，不能覆盖原结论。`completed` 只表示结果已落盘，还要检查每项 Judge 的 status/score、gate 和 CLI 退出码。基础设施失败应修复运行链路；价格错算、引用错配应修复 Agent，而不是放宽 Judge。
+先按[启动说明](README.md#配置-cr-api-key)在同一终端注入 `CREATIVE_REASONING_API_KEY`。将配置保存为 JSON 后使用 `gea eval judge --json-file <文件>`。这为本示例每个 Judge 显式分配最多五分钟，不改变平台默认值、评分标准或模型空闲期限。已有失败必须保留；新评分是另一份 evaluation，不能覆盖原结论。`completed` 只表示结果已落盘，还要检查每项 Judge 的 status/score、gate 和 CLI 退出码。基础设施失败应修复运行链路；价格错算、引用错配应修复 Agent，而不是放宽 Judge。

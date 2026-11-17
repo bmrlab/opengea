@@ -1,0 +1,84 @@
+{
+  "batch": "candidate",
+  "casesPerRound": {
+    "singleTurn": 4,
+    "multiTurn": 1
+  },
+  "rounds": [
+    {
+      "round": "00-baseline",
+      "singleTurn": {
+        "passed": 2,
+        "failed": 2,
+        "incomplete": 0,
+        "execution_error": 0,
+        "unscored": 0,
+        "missing": 0
+      },
+      "multiTurn": {
+        "passed": 1,
+        "failed": 0,
+        "incomplete": 0,
+        "execution_error": 0,
+        "unscored": 0,
+        "missing": 0
+      },
+      "judgesCompleted": 14,
+      "judgesRequired": 14,
+      "manualDisputes": 1
+    },
+    {
+      "round": "01-result-focused",
+      "singleTurn": {
+        "passed": 3,
+        "failed": 1,
+        "incomplete": 0,
+        "execution_error": 0,
+        "unscored": 0,
+        "missing": 0
+      },
+      "multiTurn": {
+        "passed": 1,
+        "failed": 0,
+        "incomplete": 0,
+        "execution_error": 0,
+        "unscored": 0,
+        "missing": 0
+      },
+      "judgesCompleted": 14,
+      "judgesRequired": 14,
+      "manualDisputes": 1
+    },
+    {
+      "round": "02-trace-focused",
+      "singleTurn": {
+        "passed": 4,
+        "failed": 0,
+        "incomplete": 0,
+        "execution_error": 0,
+        "unscored": 0,
+        "missing": 0
+      },
+      "multiTurn": {
+        "passed": 1,
+        "failed": 0,
+        "incomplete": 0,
+        "execution_error": 0,
+        "unscored": 0,
+        "missing": 0
+      },
+      "judgesCompleted": 14,
+      "judgesRequired": 14,
+      "manualDisputes": 1
+    }
+  ],
+  "historicalPublishedAttempt": {
+    "singleExecutions": 12,
+    "executionErrors": 12,
+    "caseGradesProduced": 0,
+    "gradingInterrupted": true
+  },
+  "acceptance": "Automatic outcomes and manual disputes are separate. Not full 18-case acceptance or published-toolchain acceptance.",
+  "agentRuntimeSourcesUnchangedAcrossRuntimeBatches": true,
+  "nonRuntimeNormalization": "The final newline of the round 02 store test was normalized before the candidate manifest freeze; Agent runtime sources, Cases and Judges did not change."
+}

@@ -1,0 +1,14 @@
+{
+  "main": "worker.ts",
+  "compatibilityDate": "2026-11-13",
+  "durableObjectBindings": [
+    { "name": "RESEARCH", "className": "ResearchStore" }
+  ],
+  "environment": [
+    {
+      "name": "RESEARCH_VIEW_TOKEN",
+      "secret": true,
+      "description": "Server-only credential for the local research workbench"
+    }
+  ]
+}

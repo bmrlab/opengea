@@ -1,0 +1,209 @@
+--- a/agent.ts
++++ b/agent.ts
+@@ -12 +12 @@
+-  model: "gea-pro",
++  model: "creative-reasoning-1.5",
+--- a/benchmarks/multi-turn/cases/audience-revision/case.json
++++ b/benchmarks/multi-turn/cases/audience-revision/case.json
+@@ -6,2 +6,7 @@
+-    "tags": ["breakfast", "multi-turn", "audience-revision"],
+-    "acceptance": "接受明确的人群变更；不照搬旧人群结论；标记可复用资料与迁移限制并补充研究。"
++    "tags": [
++      "breakfast",
++      "multi-turn",
++      "audience-revision"
++    ],
++    "acceptance": "接受明确的人群变更；不照搬旧人群结论；标记可复用资料与迁移限制并补充研究。",
++    "coverage": "初始大学生宿舍早餐报告后，用户明确改为到办公室吃早餐的中国城市通勤上班族，并询问旧资料可复用部分与重新检索需要；之后Agent作非空回答。"
+@@ -12,0 +18,4 @@
++    },
++    "coverage": {
++      "required": true,
++      "minScore": 1
+@@ -18 +27 @@
+-    "model": "gea-pro",
++    "model": "creative-reasoning-1.5",
+--- a/benchmarks/multi-turn/cases/budget-revision/case.json
++++ b/benchmarks/multi-turn/cases/budget-revision/case.json
+@@ -6,2 +6,7 @@
+-    "tags": ["breakfast", "multi-turn", "budget-revision"],
+-    "acceptance": "初始条件充分应直接研究；接受预算变化但不丢失原人群和场景，不把未知价格强称满足上限。"
++    "tags": [
++      "breakfast",
++      "multi-turn",
++      "budget-revision"
++    ],
++    "acceptance": "初始条件充分应直接研究；接受预算变化但不丢失原人群和场景，不把未知价格强称满足上限。",
++    "coverage": "初始15元预算报告后，用户明确改为每份8元，要求保留原人群与办公室场景并重排方案；之后Agent作非空回答。"
+@@ -12,0 +18,4 @@
++    },
++    "coverage": {
++      "required": true,
++      "minScore": 1
+@@ -18 +27 @@
+-    "model": "gea-pro",
++    "model": "creative-reasoning-1.5",
+--- a/benchmarks/multi-turn/cases/challenge-citation/case.json
++++ b/benchmarks/multi-turn/cases/challenge-citation/case.json
+@@ -6,2 +6,7 @@
+-    "tags": ["breakfast", "multi-turn", "challenge-citation"],
+-    "acceptance": "追问确实发生；Agent 提供本次捕获的证据依据及边界，无法支持时收回或降级结论，不编造原文。"
++    "tags": [
++      "breakfast",
++      "multi-turn",
++      "challenge-citation"
++    ],
++    "acceptance": "追问确实发生；Agent 提供本次捕获的证据依据及边界，无法支持时收回或降级结论，不编造原文。",
++    "coverage": "初始报告后，用户对一项人群需求或付费意愿结论追问哪条来源的哪段内容支持、能否代表多数人；之后Agent作非空回答。"
+@@ -12,0 +18,4 @@
++    },
++    "coverage": {
++      "required": true,
++      "minScore": 1
+@@ -18 +27 @@
+-    "model": "gea-pro",
++    "model": "creative-reasoning-1.5",
+--- a/benchmarks/multi-turn/cases/clarify-breakfast/case.json
++++ b/benchmarks/multi-turn/cases/clarify-breakfast/case.json
+@@ -6,2 +6,7 @@
+-    "tags": ["breakfast", "multi-turn", "clarify-breakfast"],
+-    "acceptance": "必要澄清后开始研究；真正收到无加热约束后修订方案，保留其他条件。"
++    "tags": [
++      "breakfast",
++      "multi-turn",
++      "clarify-breakfast"
++    ],
++    "acceptance": "必要澄清后开始研究；真正收到无加热约束后修订方案，保留其他条件。",
++    "coverage": "用户回应必要澄清后Agent给出初始研究；随后用户追加办公室没有微波炉和热水的条件，Agent作非空回答。必须实际出现新增条件与回答，不能把首份研究自带的免加热建议当追问。"
+@@ -12,0 +18,4 @@
++    },
++    "coverage": {
++      "required": true,
++      "minScore": 1
+@@ -18 +27 @@
+-    "model": "gea-pro",
++    "model": "creative-reasoning-1.5",
+--- a/benchmarks/multi-turn/cases/resist-false-certainty/case.json
++++ b/benchmarks/multi-turn/cases/resist-false-certainty/case.json
+@@ -6,2 +6,7 @@
+-    "tags": ["breakfast", "multi-turn", "resist-false-certainty"],
+-    "acceptance": "收到删不确定性的要求后，不把无证据假设改成事实；能提供简洁但保留证据边界的替代表述。"
++    "tags": [
++      "breakfast",
++      "multi-turn",
++      "resist-false-certainty"
++    ],
++    "acceptance": "收到删不确定性的要求后，不把无证据假设改成事实；能提供简洁但保留证据边界的替代表述。",
++    "coverage": "初始报告后，用户要求把机会假设写成已证实需求并删除不确定性；之后Agent作非空回答。Agent拒绝要求也算已回答，是否守住事实边界由质量Judge判断。"
+@@ -12,0 +18,4 @@
++    },
++    "coverage": {
++      "required": true,
++      "minScore": 1
+@@ -18 +27 @@
+-    "model": "gea-pro",
++    "model": "creative-reasoning-1.5",
+--- a/benchmarks/multi-turn/cases/retain-constraints/case.json
++++ b/benchmarks/multi-turn/cases/retain-constraints/case.json
+@@ -6,2 +6,7 @@
+-    "tags": ["breakfast", "multi-turn", "retain-constraints"],
+-    "acceptance": "两次追问确实发生；始终保留原人群、无加热与预算限制；新增携带条件后排序与理由一致。"
++    "tags": [
++      "breakfast",
++      "multi-turn",
++      "retain-constraints"
++    ],
++    "acceptance": "两次追问确实发生；始终保留原人群、无加热与预算限制；新增携带条件后排序与理由一致。",
++    "coverage": "初始报告后，用户先在原人群、无需加热、每份≤10元仍有效的前提下增加通勤携带和防洒漏要求（A），Agent作非空回答；之后用户再要求两个优先验证方向及理由（B），Agent作非空回答。A、B必须是两次独立用户消息且按上述顺序，不能合并或倒序。"
+@@ -12,0 +18,4 @@
++    },
++    "coverage": {
++      "required": true,
++      "minScore": 1
+@@ -17,2 +26,2 @@
+-    "goal": "首份报告后增加“还要便于通勤携带，不易洒漏”，待修订后要求挑两个最值得验证的方向及理由；不要撤销初始条件。完成后结束。 不代替 Agent 搜索或写报告，不提供评分标准。",
+-    "model": "gea-pro",
++    "goal": "严格按实际用户对话完成两个阶段，每次只提出一个追问。阶段A：首份研究报告后，要求在原人群、无需加热、每份最多10元不变下增加便于通勤携带、不易洒漏；等待Agent回答。阶段B：只有你已经发出A且收到回答后，才要求从修订结果挑选两个最值得优先验证的方向并说明理由；等待Agent回答。在你实际发出B并收到对应回答前不要done，不要因为首份报告或A的回答看起来足够好而结束。不要把两个追问合在同一条消息；不要自行搜索、写报告或泄露评分标准。",
++    "model": "creative-reasoning-1.5",
+--- a/benchmarks/multi-turn/judges/conversation.judge.md
++++ b/benchmarks/multi-turn/judges/conversation.judge.md
+@@ -1,4 +1 @@
+-用 queryRun/readEvidence 检查 Case input、metadata.acceptance 及完整用户/助手对话和捕获的 Tool 结果。按本题验收要求判断，而非默认每题都必须澄清或提出无微波炉条件。
+-1 分：本题要求的用户追问实际出现；Agent 在信息不足时必要澄清，条件已充分时直接开展研究；保留仍有效约束、接受明确变更，用有效检索证据支持回答，并完成对应修订或证据解释；观察、推断和假设边界准确。
+-0 分：遗漏关键行为、违背仍有效的限制、没有可靠证据却断言、或未完成任务。若 Simulator 未实际提出目标追问，不得假定已覆盖；在 reason 明确标记“Simulator 未覆盖”，与 Agent 错误区分。证据无法读取或超限记 error，不能猜测通过。
+-引用导致判断的轮次、具体约束和证据。Simulator done、Run 完成与质量通过不同；不要评价 Simulator 内部推理。
++证据读取计划：先使用提示中已给出的完整Case和最终输出；只有出现截断标记才用readEvidence补读缺失区间，不重复读取已有内容。查来源工具时queryRun显式limit=1或2，按当前要核对的确切URL或原句定位，再用messageId、partIndex和matchOffset读取相关正文，必要时按nextOffset继续。不要无筛选地一次列20条工具调用或反复拉取整段对话；预览有截断不等于正文不可读。已经发现一处证据充分的违规即可提交0，不需为判0继续证明其余内容；判1仍须完成本规则要求的全部核查。reason只写决定分数的证据，避免复述整篇报告。
+@@ -6 +3,9 @@
+-通过 submitEvaluation 提交结果，严格遵循工具 schema。status 使用 completed、not_applicable 或 error（不是 passed/failed）；score 仅在已完成判定时填写 0 或 1。reason 放文字解释，evidence 是实际读取到的证据引用对象数组，不能填字符串、伪造 messageId 或把解释文字塞入 evidence。判据失败是 completed + score=0；读取失败或无法执行才是 error。
++读取对话时，先用queryRun kind=conversation、不填query、limit=6，按nextCursor读完实际用户/助手文本并核对role与顺序。它排除工具和思考但保留原messageId/partIndex；仅对截断的必要文本使用readEvidence补读，可以同一步读取多个独立片段。不要用kind=messages搜索JSON字段来代替对话索引，也不要无筛选读取工具调用。工具结果、思考或Simulator记录不能代替用户/助手对话。
++
++只评价实际执行轮次的Agent质量；独立coverage Judge负责目标追问是否完整。先用queryRun/readEvidence读完整用户/助手对话和捕获工具正文，按Case input及metadata.acceptance逐轮检查。
++
++在已发生的轮次中，Agent必须保留仍有效的人群、无需加热、单份预算等约束，接受真实新增或变更的条件，依据捕获正文回答、完成该轮要求的修订或排序理由，并区分事实/推断/假设。任一回答违背仍有效约束、无证据断言或未完成该轮交付则0。没有发生的追问不算Agent失分，reason必须注明只评已观察轮次，不能称整题通过；有请求但没有对应回答则该轮未完成，判0。
++
++1表示所有已观察轮次满足要求，0表示至少一轮具体失败。明确列出约束、原句和轮次。反例：原预算10元仍有效却把12元方案推荐为达标，无论覆盖完整与否均判0。只是回答中复述“保留10元预算”不抵消实际超限。来源范围、引用和推断的核查不能被结构完整替代。
++
++必要证据不可读取为error、error.code=insufficient_evidence；缺失追问本身不是读取错误。若没有任何可评估的Agent回答，报error。通过submitEvaluation严格按schema提交completed+score=0或1或error；reason简短纯文字，不夹XML；evidence只用真实读取引用。不将not_applicable当作通过。
+--- a/benchmarks/multi-turn/judges/coverage.judge.md
++++ b/benchmarks/multi-turn/judges/coverage.judge.md
+@@ -0,0 +1,9 @@
++读取对话时，先用queryRun kind=conversation、不填query、limit=6，按nextCursor读完实际用户/助手文本并核对role与顺序。它排除工具和思考但保留原messageId/partIndex；仅对截断的必要文本使用readEvidence补读，可以同一步读取多个独立片段。不要用kind=messages搜索JSON字段来代替对话索引，也不要无筛选读取工具调用。工具结果、思考或Simulator记录不能代替用户/助手对话。
++
++判断当前Case要求的用户交互是否实际发生。此规则适用于所有挂载coverage的Case，不限于某一个Case。先读metadata.coverage列出的必达事件；若没有该字段，按metadata.acceptance中的交互要求识别目标。不要把其他Case的事件套到本题。只检查交互发生与顺序，Agent内容正确性由conversation检查。
++
++用queryRun定位实际用户和助手文本，再用readEvidence读取相关部分。忽略工具、思考和Simulator内部记录；simulator_done、轮数或Agent自行提到某条件不能证明用户真的追问。按语义识别同义表达，保留事件顺序与对应非空回答。用户否定或取消某条件不等于追加它；要求两次独立追问时，合并或倒序不满足。只问“怎么样”不等于题目指定事件。
++
++完整对话可读且全部必达事件按顺序出现、各有Agent非空回答：completed+score=1。缺事件、缺回答或顺序错误：completed+score=0，说明已经发生与缺失的事件。非空但质量差的回答仍算覆盖；拒绝不当要求也算回答。没有发生的追问不算Agent质量失败。
++
++必要对话证据读取失败或被截断且无法补读：error，error.code=insufficient_evidence，不给score。不能因为Case不是retain-constraints而返回not_applicable；每道题都有自己的覆盖目标。通过submitEvaluation严格按schema提交，reason简短列出事件对应的真实消息，evidence仅引用实际读到的对象。
+--- a/benchmarks/single-turn/judges/evidence.judge.md
++++ b/benchmarks/single-turn/judges/evidence.judge.md
+@@ -1 +1 @@
+-通过 queryRun/readEvidence 检查 search_sources 的实际调用结果与最后简报。1 分：至少一次成功检索取得可用正文，主要事实与引用能在返回正文中找到支持，来源局限已说明，没有伪造引用。0 分：没有有效检索、编造事实/引文，或主要结论与引用正文不符。不能仅检查链接存在。空结果/网络失败且无资料不通过证据覆盖，但如实说明不应被指为编造。Judge 无权访问外网，只评价此次捕获的证据；读取失败或证据超限应报 error，不能猜测通过。
++证据可用性是给1的必要条件，先于诚实性与事实核对：至少一次 search_sources/read_source 成功返回可用正文，才可能 completed+score=1。没有编造、如实说检索失败、没有提出实质性事实，都不能替代这个条件。全部检索/读取调用均 output-error 或必要正文不可读取时，提交 error、error.code=insufficient_evidence，不填score；工具成功完整返回空结果时判0。发现已有正文的明确引用/事实错配时判0。不因其他维度表现好而给证据1分。
+@@ -3 +3 @@
+-先核对三个最重要的事实，逐条记录“报告原句 → 实际返回的来源摘录”。标题、链接和 60 字搜索摘要不能证明未返回的全文内容；没有逐项对应的引用不能凭主题相似视为支持。观察学生、减脂博主、营销账号的摘录时，不得当作城市通勤者的整体事实。若报告只在末尾罗列来源、无法识别关键结论的支持材料，或来源没有支持核心事实，给 0 分。
++证据读取计划：先使用提示中已给出的完整Case和最终输出；只有出现截断标记才用readEvidence补读缺失区间，不重复读取已有内容。queryRun每次显式limit=1或2，按当前要核对的确切URL或原句定位，再用messageId、partIndex和matchOffset读取相关正文，必要时按nextOffset继续。不要无筛选地一次列20条工具调用或反复拉取整段对话；预览有截断不等于正文不可读。已经发现一处证据充分的违规即可提交0，不需为判0继续证明其余内容；判1仍须完成本规则要求的全部核查。reason只写决定分数的证据，避免复述整篇报告。
+@@ -5 +5,7 @@
+-通过 submitEvaluation 提交结果，严格遵循工具 schema。status 使用 completed、not_applicable 或 error（不是 passed/failed）；score 仅在已完成判定时填写 0 或 1。reason 放文字解释，evidence 是实际读取到的证据引用对象数组，不能填字符串、伪造 messageId 或把解释文字塞入 evidence。判据失败是 completed + score=0；读取失败或无法执行才是 error。
++用 queryRun/readEvidence 读取 Case、最终报告以及 search_sources/read_source 捕获的来源正文。禁止访问外网或凭背景知识补正文。完整枚举报告的实质性事实：价格/份量/促销条件、日期、人群、地点、比例、引用原话及核心结论；逐项核对“报告原句→紧邻引用的确切URL→该URL捕获的原文→适用日期/样本范围”。核对时必须区分商品、份量与渠道；不要自行把不同方案认定成同一组合，也不要把一个渠道的组合价套给另一组商品。不能只检查URL属于搜索结果，也不能用同一批结果中另一个URL的正文替错误引用开脱。
++
++任一实质性事实对应的引用正文不支持它、日期张冠李戴、组合价格算错、学生或营销样本冒充通勤者整体，即为0；不要以“只是链接瑕疵”“别的页面有这句话”“大体正确”放行。多个来源均有正确链接且归属明确可以联合支持。只有来源列表而关键事实不能定位支持材料也为0。明确未知价格/日期且不声称已符合条件、仅对实际样本作限定结论不是错误。来源身份相符与事实支持是两件事。
++
++先确认读取链路：工具返回完整但无结果，是Agent没有有效证据，判0且不必称为编造；只剩标题、摘要、textLength、被截断片段或正文被标记 unavailable，无法核对必要事实时为error，不猜测0或1。可补读的内容必须补读。证据充分时1要求至少一次成功检索取得可用正文且各实质性事实、引用和范围均相符；发现任一明确错配判0。reason简短列出导致结论的原句、对应URL和正文支持或冲突，不用大段复述代替判断。
++
++通过 submitEvaluation 严格按schema提交：status=completed且score=0或1；无法读取必要证据使用status=error、error.code=insufficient_evidence且不填score。reason纯文字，不夹XML标签；evidence只用真实读到的引用对象。不要合成字段或引用。
+--- a/benchmarks/single-turn/judges/inference.judge.md
++++ b/benchmarks/single-turn/judges/inference.judge.md
+@@ -0,0 +1,2 @@
++证据读取计划：先使用提示中已给出的完整Case和最终输出；只有出现截断标记才用readEvidence补读缺失区间，不重复读取已有内容。queryRun每次显式limit=1或2，按当前要核对的确切URL或原句定位，再用messageId、partIndex和matchOffset读取相关正文，必要时按nextOffset继续。不要无筛选地一次列20条工具调用或反复拉取整段对话；预览有截断不等于正文不可读。已经发现一处证据充分的违规即可提交0，不需为判0继续证明其余内容；判1仍须完成本规则要求的全部核查。reason只写决定分数的证据，避免复述整篇报告。
++
+--- a/benchmarks/single-turn/judges/scope.judge.md
++++ b/benchmarks/single-turn/judges/scope.judge.md
+@@ -1 +1 @@
+-使用 queryRun/readEvidence 读取本次 Case 的 input、metadata.acceptance 与实际回答。按这道题明确要求的交付判定，不强迫所有题都套完整报告模板。1 分：完成本题关键任务并尊重人群、场景、预算、日期等限制，明确标记资料缺口。0 分：遗漏关键要求、违背约束、偏题，或条件已齐全仍反复追问。给出具体回答片段和未满足的验收项。元数据是评审标准，不代表 Agent 已看到它。
++证据读取计划：先使用提示中已给出的完整Case和最终输出；只有出现截断标记才用readEvidence补读缺失区间，不重复读取已有内容。queryRun每次显式limit=1或2，按当前要核对的确切URL或原句定位，再用messageId、partIndex和matchOffset读取相关正文，必要时按nextOffset继续。不要无筛选地一次列20条工具调用或反复拉取整段对话；预览有截断不等于正文不可读。已经发现一处证据充分的违规即可提交0，不需为判0继续证明其余内容；判1仍须完成本规则要求的全部核查。reason只写决定分数的证据，避免复述整篇报告。
+@@ -3 +3,7 @@
+-通过 submitEvaluation 提交结果，严格遵循工具 schema。status 使用 completed、not_applicable 或 error（不是 passed/failed）；score 仅在已完成判定时填写 0 或 1。reason 放文字解释，evidence 是实际读取到的证据引用对象数组，不能填字符串、伪造 messageId 或把解释文字塞入 evidence。判据失败是 completed + score=0；读取失败或无法执行才是 error。
++评价当前 Case 的任务和约束。先用 queryRun/readEvidence 读 input、metadata.acceptance 和完整最终回答；不得把截断预览当作完整证据。不要要求本题未要求的交付，也不要把 metadata 当作 Agent 已见的提示。
++
++逐项列出本题实际约束：人群、场景、单份/组合份量、预算、日期/资料时段。对回答中每一个“符合条件/预算以内”的方案核对全部适用约束；重新计算组合总价、单份换算和促销条件。不只抽查最重要三条。大部分正确不能抵消一处把超预算组合归类为预算内。例如上限8元而“8元以内案例”含8.5元，scope必须为0，即使其他段落承认资料有限。只把超限方案作为明确标注的比较对象不违规；价格未知且明确不能确认达标不违规，不能强迫其编价格。日期未知同理。完整回答中互相矛盾的分类也应判0。
++
++1：本题交付完整且所有明确约束满足，或如实标记无法确认的资料缺口；0：漏掉关键交付、违反任一约束、错算份量价格、将未知当满足，或条件充分仍反复追问。约束须结合语义判断，不能仅检查某些词出现。reason用简短“约束→回答原句→核对结论”，有反例就点明，不输出长篇复述。
++
++证据读取失败、只拿到截断内容且无法补读时，submitEvaluation 使用 status=error、error.code=insufficient_evidence，不给score。已读完整且存在违规时 status=completed、score=0；符合时 status=completed、score=1。严格按工具schema提交，reason仅纯文字，evidence仅真实读到的证据引用对象，不夹XML标签，不编造引用或字段。不得将not_applicable作为逃避本题约束的方式。
+--- a/scripts/dev.mjs
++++ b/scripts/dev.mjs
+@@ -12 +12 @@
+-    JSON.stringify({ cwd: ".", modelSource: "hosted" }),
++    JSON.stringify({ cwd: ".", modelSource: "local" }),
+--- a/versions/v1-research/agent.ts
++++ b/versions/v1-research/agent.ts
+@@ -11 +11 @@
+-  model: "gea-pro",
++  model: "creative-reasoning-1.5",
+--- a/versions/v3-feishu/agent.ts
++++ b/versions/v3-feishu/agent.ts
+@@ -13 +13 @@
+-  model: "gea-pro",
++  model: "creative-reasoning-1.5",

@@ -48,6 +48,11 @@ test("a newly created snapshot includes the dependencies needed to materialize a
       },
     );
     const source = path.join(project, "iterations/99-test/source");
+    await mkdir(path.join(source, ".gea"));
+    await writeFile(path.join(source, ".gea", "runtime.json"), "{}");
+    execFileSync(process.execPath,
+      [path.join(project, "scripts/snapshot-iteration.mjs"), "verify", "99-test"],
+      { cwd: project, stdio: "pipe" });
     const target = path.join(temp, "stage");
     execFileSync(
       process.execPath,
@@ -64,6 +69,10 @@ test("a newly created snapshot includes the dependencies needed to materialize a
         await readFile(path.join(target, file), "utf8"),
         await readFile(path.join(root, file), "utf8"),
       );
+    await writeFile(path.join(source, "instructions.ts"), "changed");
+    assert.throws(() => execFileSync(process.execPath,
+      [path.join(project, "scripts/snapshot-iteration.mjs"), "verify", "99-test"],
+      { cwd: project, stdio: "pipe" }), /source changed/);
   } finally {
     await rm(temp, { recursive: true, force: true });
   }

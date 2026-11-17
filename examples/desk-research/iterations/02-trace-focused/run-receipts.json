@@ -1,0 +1,42 @@
+[
+  {
+    "suite": "single-turn",
+    "runId": "d32f6c02-9a29-47eb-bd6c-4448b4bd0c64",
+    "runStatus": "completed",
+    "evaluationId": "4df275a8-8db5-4a93-ac88-fe5a778904f2",
+    "evaluationStatus": "completed",
+    "configuredModel": "creative-reasoning-1.5",
+    "modelSource": "local",
+    "executionExitCode": 0,
+    "judgeExitCode": 0,
+    "runtime": {
+      "defaultComputerBackend": "virtual",
+      "location": "local",
+      "nodeVersion": "v24.3.0",
+      "os": "darwin"
+    },
+    "nativeRunSha256": "9199bd038213c2f4e85ad4d3d1e5907da3782c92977fc72d8845d6539c28bcce",
+    "nativeEvaluationSha256": "82627a6904348ba9e4b8725cb89a7db2906aa80274a6bc0d737b55b27d520814",
+    "localEvidence": "private/candidate-runs/02-trace-focused/single-turn/20261117T043136.246Z-d32f6c02"
+  },
+  {
+    "suite": "multi-turn",
+    "runId": "585eca40-93d9-40cc-80c5-90953c4a2853",
+    "runStatus": "completed",
+    "evaluationId": "8a00017b-d8da-472b-8385-83ba79fec295",
+    "evaluationStatus": "completed",
+    "configuredModel": "creative-reasoning-1.5",
+    "modelSource": "local",
+    "executionExitCode": 0,
+    "judgeExitCode": 0,
+    "runtime": {
+      "defaultComputerBackend": "virtual",
+      "location": "local",
+      "nodeVersion": "v24.3.0",
+      "os": "darwin"
+    },
+    "nativeRunSha256": "742e9fb3059c5c44b0b8fc545dc76ff6d1249120d8eb787f4fe5e439b9791b6f",
+    "nativeEvaluationSha256": "6a1147b9e6b4681c1d195ccd32faf696821d09c08f2e30e1f1e7c60863ccf0fa",
+    "localEvidence": "private/candidate-runs/02-trace-focused/multi-turn/20261117T043903.451Z-585eca40"
+  }
+]

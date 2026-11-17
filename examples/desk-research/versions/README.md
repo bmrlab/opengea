@@ -1,10 +1,12 @@
-# 同一个研究助手的三个阶段
+# 功能扩展示例：工作台与飞书
+
+这些目录用于讲功能组成与交付入口，与 [Baseline → 看结果 → 看 Trace](../iterations/README.md) 三轮质量迭代无关。质量 Baseline 已包含 DO 存储；这里的 v1/v2/v3 只是功能模板名，不是质量版本。
 
 业务任务始终是“上班族早餐产品机会研究”。三个阶段共用原始单轮 / 多轮 Cases 和 Judges；功能增加本身不代表质量变好。根目录是完整工作台版本，飞书按 [FEISHU.md](../FEISHU.md) 挂载；`v3-feishu` 已预先完成挂载。
 
 | 阶段         | 能力                                                | 适合展示                                  |
 | ------------ | --------------------------------------------------- | ----------------------------------------- |
-| v1-research  | 搜索 Connector、证据处理、研究简报、单轮 / 多轮题集 | 一个小 Agent 和第一条评测基线             |
+| v1-research  | 搜索 Connector、证据处理、研究简报、单轮 / 多轮题集 | 搜索 / 读取的精简功能模板             |
 | v2-workbench | 增加共享 DO、Session 读写与本地前端                 | coding agent 增加业务能力，原题集检查退化 |
 | v3-feishu    | 在 v2 上挂载飞书 Channel，复用同一 DO               | 新入口接入、消息和存储链路验收            |
 
@@ -30,9 +32,9 @@ gea agent validate --json '{"cwd":"."}'
 gea agent pack --json '{"cwd":"."}'
 ```
 
-生成器拒绝已有目标，避免覆盖 coding agent 的修改。它不复制登录、搜索授权、环境变量、运行结果或依赖。各项目按 Quick Start 配置登录和 Connection；v2/v3 先 `pnpm prepare:local` 再 `pnpm dev`。v3 还需按 [FEISHU.md](../FEISHU.md) 完成测试机器人配置。v1 没有工作台，用 Eval 或本地 Agents API 验证，不运行 v2 的 app 命令。
+生成器拒绝已有目标，避免覆盖 coding agent 的修改。它不复制登录、搜索授权、环境变量、运行结果或依赖。各项目按[根目录说明](../README.md#配置-cr-api-key)注入 `CREATIVE_REASONING_API_KEY`，按 Quick Start 配置登录和 Connection；生成项目的 Agent、Simulator 与 dev 使用相同的 CR 直连配置，Eval 显式使用 `modelSource: "local"` 和 `judgeModel: "creative-reasoning-1.5"`。v2/v3 先 `pnpm prepare:local` 再 `pnpm dev`。v3 还需按 [FEISHU.md](../FEISHU.md) 完成测试机器人配置。v1 没有工作台，用 Eval 或本地 Agents API 验证，不运行 v2 的 app 命令。
 
-## 演示 coding agent 升级
+## 功能扩展的 coding agent 任务
 
 先生成 v1，运行单轮与多轮 Eval，保存原始结果。另生成 v2/v3 仅作为验收参考；让 coding agent 在自己的 v1 项目中实际实现升级，而不是展示一次文件覆盖。
 

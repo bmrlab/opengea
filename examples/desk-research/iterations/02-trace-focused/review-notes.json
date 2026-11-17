@@ -1,0 +1,334 @@
+{
+  "schemaVersion": "opengea.manual-review.v1",
+  "reviewer": "Codex",
+  "boundary": "本地人工复核，不是 Builder Annotation；R4 历史分数不进入本次结果。",
+  "cases": [
+    {
+      "caseId": "breakfast-scope",
+      "suite": "single-turn",
+      "runId": "1d67c6ae-3177-4b5d-bc2f-4e58854f863f",
+      "executionAndScoringStatus": "passed",
+      "answerQuote": "有足够素材了，保存并输出报告。## 中国城市上班族办公室早餐场景——机会简报\n\n### 研究范围\n检索了豆瓣、PTT（台湾）讨论帖及艾媒咨询、饿了么的早餐消费行业报告。样本均为公开论坛帖子和行业调查，不构成全体通勤者的代表性抽样。\n\n### 关键发现\n\n**1. 艾媒咨询全国随机抽样调查（2024-09-03）**：92.97%受访者有吃早餐习惯，65.55%早餐时间在7-8点；跳过早餐的主要自述原因是\"上课/上班来不及\"（23.26%）和\"不知道吃什么\"（18.60%）。早餐食物以面食类（50.62%）、奶制品/豆制品/蛋类（约46.40%）为主。该报告未细分办公室场景，不能直接推断全体上班",
+      "capturedSourceCount": 10,
+      "searchCalls": 4,
+      "readSourceCalls": 3,
+      "saveCalls": 2,
+      "toolErrors": [
+        {
+          "name": "search_sources",
+          "state": "output-error",
+          "error": "Agent execution failed. Diagnostic ID: b3441ab0-5080-4d8d-adbe-063d693673eb"
+        },
+        {
+          "name": "search_sources",
+          "state": "output-error",
+          "error": "Agent execution failed. Diagnostic ID: 72670864-2a3d-4e10-9173-e7fa5af561b9"
+        }
+      ],
+      "automaticJudges": [
+        {
+          "id": "evidence",
+          "kind": "markdown",
+          "status": "completed",
+          "score": 1,
+          "reason": "多次 search_sources/read_source 成功返回可用正文（如iimedia.cn艾媒咨询页面、100ec.cn饿了么报告页面、douban帖子正文），满足证据可用性前提。核对报告关键事实：艾媒咨询数据（92.97%有早餐习惯、23.26%因上班来不及不吃等）与读取正文一致且标注为未细分办公室场景；饿了么报告中“周末更偏好外卖早餐”“上海早餐工程”“智能取餐柜”等表述与读取正文（p_1a09614ba297c8d2, p_96b198c563811dab）一致；豆瓣帖子中楼主通勤远、担心同事反感气味、评论区“全公司都在办公室吃，互相发无所谓”等引用与读取正文（p_f87f666d9a2f7d66, p_1fd7edcf3d9fbfb9）一致。报告对样本局限性（非代表性抽样、非全国最新数据）如实标注，未将营销/论坛样本冒充整体结论。未发现引用URL与正文事实错配。"
+        },
+        {
+          "id": "inference",
+          "kind": "markdown",
+          "status": "completed",
+          "score": 1,
+          "reason": "报告中的强结论均带有范围限定和证据说明,未出现无根据泛化。如“92.97%受访者有吃早餐习惯”“65.55%早餐时间在7-8点”直接给出全国随机抽样调查的具体比例来源,并明确注明“该报告未细分办公室场景，不能直接推断全体上班族痛点”；豆瓣帖讨论气味问题时写明“评论区观点分裂”,并明确声明“这只代表该帖参与者的意见分布，不能推断为普遍社交规范”；饿了么报告说明“属2021年、上海为代表案例的观察，非全国最新现状”。机会假设A、B均附带可执行验证方法和放弃信号，未被当作已证实需求。信息缺口部分也明确说明“未找到专门针对‘办公室内早餐消费’的量化调查”。整体未见把个体评论泛化为普遍结论、也未将营销主张当作用户研究，强结论均有对应证据和范围限定。"
+        },
+        {
+          "id": "scope",
+          "kind": "markdown",
+          "status": "completed",
+          "score": 1,
+          "reason": "任务为早餐场景调研简报（非价格/预算类任务），验收要求覆盖人群、场景、现有方案、机会假设、待验证问题，且条件充分时不反复追问。核对最终输出：人群为中国城市上班族，场景为办公室早餐；现有方案涵盖艾媒咨询调查、饿了么早餐数字化报告、豆瓣/PTT用户讨论；机会假设A/B均给出验证方法与放弃信号；信息缺口部分明确标注未检索到的数据（企业早餐福利、专门办公室早餐量化调查），且对样本代表性局限（如豆瓣帖、PTT台湾数据不代表大陆上班族)做了如实说明，未将未知资料当作已验证结论。输出未再向用户提澄清问题，符合\"信息不足请注明，不需要再向我澄清\"的要求。未发现价格、份量、促销等计算类约束适用于本题，也未发现将超限/未知情况误判为达标的矛盾分类。整体满足交付完整性与约束如实标注的要求。"
+        }
+      ],
+      "manualAssessment": "需逐项核对回答、Judge理由与原生证据；自动分数不替代人工复核。",
+      "hypothesis": "区分工具失败/等待、正文读取与模型输出阶段；当前信息不足以归因到 Exa 服务或 CR 协议。",
+      "historicalRiskChecklist": "../R4-FINDINGS.md",
+      "manualDisputes": [],
+      "manualFindings": [
+        {
+          "type": "trace_finding",
+          "quote": "有足够素材了，保存并输出报告。",
+          "assessment": "4次搜索（含一次追加）、3次read_source、2次保存；最终3个引用均匹配捕获来源。实际发生正文读取，但仍需核对每条结论和验证方法，不由身份匹配推定事实正确。"
+        }
+      ],
+      "saveOutcomes": [
+        {
+          "state": "output-available",
+          "error": null,
+          "saved": false,
+          "rejection": "Use [[sourceId]] citations, not typed URLs",
+          "reportReturned": false
+        },
+        {
+          "state": "output-available",
+          "error": null,
+          "saved": null,
+          "rejection": null,
+          "reportReturned": true
+        }
+      ]
+    },
+    {
+      "caseId": "budget-ceiling",
+      "suite": "single-turn",
+      "runId": "48e8c763-9904-4d41-9834-83f0b6e98d01",
+      "executionAndScoringStatus": "passed",
+      "answerQuote": "## 中国城市通勤者工作日早餐研究（预算≤8元，办公室食用）\n\n### 关键发现\n\n**1. 北京CBD个案：完整套餐常超8元，仅单品能压到8元以内**\n北京日报2023年6月实地走访报道显示，北京国贸/CBD区域常见早餐组合\"烧饼夹鸡蛋+豆浆\"约10元；便利店9元套餐（豆浆+鸡蛋+玉米）；街边有8元青椒鸡肉卷、9元杂粮煎饼。严格落在≤8元的多是单品，完整套餐普遍9-11元。报道转引《白领早餐报告》称94.2%受访者费用控制在10元以内，但该数据样本方法未公开，阈值是10元而非8元。（[北京日报](https://xinwen.bjd.com.cn/content/s649d0c04e4b04",
+      "capturedSourceCount": 10,
+      "searchCalls": 2,
+      "readSourceCalls": 2,
+      "saveCalls": 1,
+      "toolErrors": [],
+      "automaticJudges": [
+        {
+          "id": "evidence",
+          "kind": "markdown",
+          "status": "completed",
+          "score": 1,
+          "reason": "检索工具成功返回可用正文（北京日报、上海青浦政府网页面均被read_source完整抓取）。核对报告关键事实：北京CBD\"烧饼夹鸡蛋+豆浆约10元\"对应原文\"烧饼夹鸡蛋7元+豆浆3元\"；\"8元青椒鸡肉卷、9元杂粮煎饼\"与原文一致；\"94.2%受访者控制在10元以内\"为原文直接引用且报告正确标注为转引、未验证方法、阈值为10元而非8元；青浦\"百佳好手抓饼+豆浆6.5元\"与原文\"一份手抓饼加一袋豆浆只需6.5元\"一致；\"全家便利店套餐8.8、9.8、10、12元\"与原文\"8.8元、10元、12元套餐\"及\"两个鲜肉大包+拿铁9.8元\"一致。报告未将未知价格当作满足8元预算，且明确区分单品/组合/促销口径及样本范围（个案报道，非全国代表性）。未发现引用与正文的错配。"
+        },
+        {
+          "id": "inference",
+          "kind": "markdown",
+          "status": "completed",
+          "score": 1,
+          "reason": "报告将发现严格限定为\"北京CBD个案\"\"上海青浦个案\"两个地区性样本，未出现\"普遍接受度高\"\"多数吐槽者\"等无证据支撑的泛化强结论；对转引数据（94.2%控制在10元以内）明确指出\"样本方法未公开\"\"不能作为8元预算的直接支持证据\"，区分了阈值差异；机会假设部分明确标注\"待验证，非结论\"并给出具体验证方法（实地核价3-5家、访谈10-15名白领及不成立的判据）；结尾说明清楚限定\"不代表全国通勤者普遍预算或行为\"。价格区分了单品/组合/促销口径（如6.5元手抓饼+豆浆 vs 8.8-12元便利店套餐），未知价格未被当作满足预算。符合1分标准。"
+        },
+        {
+          "id": "scope",
+          "kind": "markdown",
+          "status": "completed",
+          "score": 1,
+          "reason": "约束：预算≤8元/单份或组合、办公室食用、价格须有来源、未知价格不可声称满足。回答原句：8元青椒鸡肉卷、6.5元手抓饼+豆浆均标注为≤8元可行；8.8/9.8/10/12元套餐被明确归类为\"超出8元预算\"；9元便利店套餐、10元烧饼夹鸡蛋+豆浆均标为超预算。核对结论：未发现把超预算方案误判为预算内或把未知价格当满足预算的情况，所有价格均附来源链接与日期，证据缺口处如实注明\"未找到清单/未验证方法\"。回答完整覆盖比较已有方案和机会假设，无强制编造价格或日期。符合acceptance与约束。"
+        }
+      ],
+      "manualAssessment": "需逐项核对回答、Judge理由与原生证据；自动分数不替代人工复核。",
+      "hypothesis": "区分工具失败/等待、正文读取与模型输出阶段；当前信息不足以归因到 Exa 服务或 CR 协议。",
+      "historicalRiskChecklist": "../R4-FINDINGS.md",
+      "manualDisputes": [
+        {
+          "type": "manual_dispute",
+          "judge": "evidence",
+          "quote": "仅单品能压到8元以内",
+          "assessment": "北京日报同一来源的search_sources与read_source均返回6.6元完整套餐，反驳该绝对断言。三项自动1分保留；这是正文读到、链接正确却漏掉反例的实质质量问题。",
+          "sourceId": "src_9a9609c344f03384",
+          "sourceUrl": "https://xinwen.bjd.com.cn/content/s649d0c04e4b042ca9e8e6a19.html",
+          "capturedEvidenceQuote": "店里在早餐时段售卖两款只需6.6元的超值套餐。",
+          "toolEvidence": "Both search_sources and read_source(offset=0) contain the 6.6-yuan set meal in this exact run."
+        }
+      ],
+      "manualFindings": [
+        {
+          "type": "manual_dispute",
+          "judge": "evidence",
+          "quote": "仅单品能压到8元以内",
+          "assessment": "北京日报同一来源的search_sources与read_source均返回6.6元完整套餐，反驳该绝对断言。三项自动1分保留；这是正文读到、链接正确却漏掉反例的实质质量问题。",
+          "sourceId": "src_9a9609c344f03384",
+          "sourceUrl": "https://xinwen.bjd.com.cn/content/s649d0c04e4b042ca9e8e6a19.html",
+          "capturedEvidenceQuote": "店里在早餐时段售卖两款只需6.6元的超值套餐。",
+          "toolEvidence": "Both search_sources and read_source(offset=0) contain the 6.6-yuan set meal in this exact run."
+        }
+      ],
+      "saveOutcomes": [
+        {
+          "state": "output-available",
+          "error": null,
+          "saved": null,
+          "rejection": null,
+          "reportReturned": true
+        }
+      ]
+    },
+    {
+      "caseId": "counter-evidence",
+      "suite": "single-turn",
+      "runId": "5f5108bc-cc6b-4248-92b6-d44d372f1920",
+      "executionAndScoringStatus": "passed",
+      "answerQuote": "The source needs a quoteId from passage. Let me retry with proper quoteId.## 办公室即食早餐产品研究（中国城市通勤人群）\n\n**核心发现**\n\n1. **便利店已是主流替代方案，\"快捷+卫生\"优先于营养**。便利蜂2020年对全国20个城市1600余家门店的顾客调查显示：60.78%受访白领以便利店为早餐就餐场所，选择原因依次为快捷(85.84%)、卫生(70.69%)、营养(48.53%)；94.2%早餐花费在10元以内。31.09%靠外卖，25.34%仍选择路边摊（即使存在卫生争议）。注意：该样本来自便利蜂自身渠道",
+      "capturedSourceCount": 10,
+      "searchCalls": 2,
+      "readSourceCalls": 0,
+      "saveCalls": 5,
+      "toolErrors": [],
+      "automaticJudges": [
+        {
+          "id": "evidence",
+          "kind": "markdown",
+          "status": "completed",
+          "score": 1,
+          "reason": "核心事实（60.78%便利店占比、85.84%/70.69%/48.53%理由排序、94.2%早餐≤10元、31.09%外卖、25.34%路边摊、10.37%从不吃早餐、82.71%/35.68%不吃早餐原因）均可在partIndex=7读取的read_source正文（src_b2053b796f99c8ff，21财经2020-11-26便利蜂调查）中逐一对应确认，且报告明确标注该样本为便利蜂渠道顾客，非全体通勤人群，未夸大适用范围。第二项顾虑（添加剂/营养）因来源未能完整落地链接，报告如实降级为背景参考，未冒充正式引用或编造，符合反向证据如实呈现的验收要求。至少一次search_sources/read_source成功返回可用正文，且未发现引用与正文的事实错配，日期、样本范围标注准确。"
+        },
+        {
+          "id": "inference",
+          "kind": "markdown",
+          "status": "completed",
+          "score": 1,
+          "reason": "报告中的强结论均带有明确样本范围与保留措辞：便利店数据注明来源为便利蜂自身1600+门店渠道调查并声明\"不代表全体通勤人群\"；\"没时间\"结论标注为\"待验证假设，不是结论\"；营养/添加剂顾虑明确写\"证据缺口\"、\"不能当作顾虑已被证实\"，未被包装成已证实需求；机会假设部分均附带可操作的验证方法和放弃标准。未发现将个体评论泛化为普遍结论，或将营销主张当用户研究的情况。符合1分标准。"
+        },
+        {
+          "id": "scope",
+          "kind": "markdown",
+          "status": "completed",
+          "score": 1,
+          "reason": "该案例的验收标准是：检索并呈现反向线索与替代方案，区分观察/推断/待验证假设，不编造反对意见，不只挑支持性资料。实际回答符合：明确列出便利店/外卖/路边摊/自制等已有替代方案；将\"没时间是首因\"标注为待验证假设而非结论；对营养/添加剂顾虑明确说明\"检索到但未能稳定引用，仅作背景参考，不作为正式事实使用\"，并列为\"明确的证据缺口\"，未编造反对证据；给出可验证/可推翻的假设及验证方式。未发现将未知资料当作已证实、也未发现自相矛盾的分类（价格类约束检查不适用于本案例，因该案例无预算/份量约束）。符合验收标准，无需追问（用户已声明不需要追问）。"
+        }
+      ],
+      "manualAssessment": "需逐项核对回答、Judge理由与原生证据；自动分数不替代人工复核。",
+      "hypothesis": "区分工具失败/等待、正文读取与模型输出阶段；当前信息不足以归因到 Exa 服务或 CR 协议。",
+      "historicalRiskChecklist": "../R4-FINDINGS.md",
+      "manualDisputes": [],
+      "manualFindings": [
+        {
+          "type": "trace_finding",
+          "quote": "The source needs a quoteId from passage. Let me retry with proper quoteId.",
+          "assessment": "2次搜索、0次read_source、5次保存；前4次因未捕获身份或引用未列入sources被明确拒绝，最后保存成功。工具限制实际生效，但“逐一读正文”未在此题执行，且最终回答含内部重试叙述。不能声称每题过程要求均已落实。"
+        }
+      ],
+      "saveOutcomes": [
+        {
+          "state": "output-available",
+          "error": null,
+          "saved": false,
+          "rejection": "Uncaptured source identity",
+          "reportReturned": false
+        },
+        {
+          "state": "output-available",
+          "error": null,
+          "saved": false,
+          "rejection": "Uncaptured source identity",
+          "reportReturned": false
+        },
+        {
+          "state": "output-available",
+          "error": null,
+          "saved": false,
+          "rejection": "Every citation must select a captured source in sources",
+          "reportReturned": false
+        },
+        {
+          "state": "output-available",
+          "error": null,
+          "saved": false,
+          "rejection": "Uncaptured source identity",
+          "reportReturned": false
+        },
+        {
+          "state": "output-available",
+          "error": null,
+          "saved": null,
+          "rejection": null,
+          "reportReturned": true
+        }
+      ]
+    },
+    {
+      "caseId": "validation-plan",
+      "suite": "single-turn",
+      "runId": "2ea424b0-cf71-43fe-b7eb-e680d4f9ec18",
+      "executionAndScoringStatus": "passed",
+      "answerQuote": "已获得三篇可用资料，足够支撑发现和假设，直接整理报告。## 中国通勤者到办公室后吃早餐——研究简报\n\n### 关键发现\n\n**1. 早餐重视度在上升，但\"到岗后吃\"无独立数据**\n前程无忧2024年问卷调查显示，该样本中83%受访者几乎每天吃早餐（相较其2018年调研不足50%有所上升）；不吃早餐主因是\"工作日时间太紧张\"（56%）、\"懒得准备\"（34%）、\"起不来\"（28%）。该调查未单独统计\"到办公室后才吃早餐\"的比例。([中新社北京分社，2024](https://www.bj.chinanews.com.cn/news/2024/0928/96611.html))\n\n**2. \"在家吃",
+      "capturedSourceCount": 10,
+      "searchCalls": 2,
+      "readSourceCalls": 3,
+      "saveCalls": 1,
+      "toolErrors": [],
+      "automaticJudges": [
+        {
+          "id": "evidence",
+          "kind": "markdown",
+          "status": "completed",
+          "score": 1,
+          "reason": "核对报告中的实质性事实均有可用正文支撑且归属准确：83%/56%/34%/28%数据对应中新社北京分社2024文章原文；64.87%在家自备早餐及张先生个案均对应劳动报2021文章原文，报告正确将张先生描述为\"单一个案\"而非普遍现象；10.37%白领不吃早餐数据正确归属于报告中提到的全国20城《白领早餐报告》（劳动报引用部分）；新京报2026文章中\"通勤时间较长的人，也可以先在家吃一部分，到办公室后再补充水果或奶类\"原句与报告引用一致，且报告正确指出该文含商业信息、属软文性质。三次search/read_source调用均成功返回可用正文，满足证据可用性门槛，且未发现引用错配或日期张冠李戴。假设与验证计划建立在证据缺口之上，未将假设写成已确认结论。"
+        },
+        {
+          "id": "inference",
+          "kind": "markdown",
+          "status": "completed",
+          "score": 1,
+          "reason": "报告中的强结论均附带具体样本来源与范围限定，未出现无证据支撑的泛化。例如\"83%受访者几乎每天吃早餐\"明确标注为前程无忧2024年问卷样本比例，并注明\"未单独统计'到岗后才吃早餐'的比例\"；\"64.87%受访职工在家自备早餐\"明确来自闵行区总工会近6000人问卷，且把张先生办公室进食案例明确标注为\"该报道中单一个案的做法，不能代表普遍现象\"，未泛化为普遍现象；\"新京报\"条目被明确标注\"含商业信息...非独立调查数据\"，未当作市场研究证据。结论边界部分明确写\"没有找到专门针对...的定量调查...不能据此判断该现象普遍或罕见\"，符合\"明确说无法判断\"的要求。两个机会假设均附验证对象、具体动作（访谈人数、实验设计）及可观察的推翻条件（如\"多数人早餐一次性解决\"\"复购率低\"），未将假设写成已证实需求。结尾\"待验证缺口\"进一步说明样本局限于上海、北京，不可外推全国，划定了范围而非笼统免责声明。整体符合1分标准：观察、推断与待验证机会区分清晰，强结论有对应证据和范围限定。"
+        },
+        {
+          "id": "scope",
+          "kind": "markdown",
+          "status": "completed",
+          "score": 1,
+          "reason": "两个机会假设均包含明确验证对象、动作（访谈/小实验）、可观察结果和否定（推翻）条件，且与检索到的资料缺口对应，未将假设包装为已确认结论（多次强调\"待验证\"\"结论边界\"）。符合acceptance要求。"
+        }
+      ],
+      "manualAssessment": "需逐项核对回答、Judge理由与原生证据；自动分数不替代人工复核。",
+      "hypothesis": "区分工具失败/等待、正文读取与模型输出阶段；当前信息不足以归因到 Exa 服务或 CR 协议。",
+      "historicalRiskChecklist": "../R4-FINDINGS.md",
+      "manualDisputes": [],
+      "manualFindings": [
+        {
+          "type": "trace_finding",
+          "quote": "这是该报道中单一个案的做法，不能代表普遍现象",
+          "assessment": "2次搜索、3次read_source、1次保存，3个引用匹配。具体数据与单一个案分开描述；假设A“缺乏专门产品”和假设B“10元价位难满足”的前提仍应作为待验证问题，非工具已证明的事实。"
+        }
+      ],
+      "saveOutcomes": [
+        {
+          "state": "output-available",
+          "error": null,
+          "saved": null,
+          "rejection": null,
+          "reportReturned": true
+        }
+      ]
+    },
+    {
+      "caseId": "clarify-breakfast",
+      "suite": "multi-turn",
+      "runId": "673d8042-895f-47c5-b0bd-16a3082ed667",
+      "executionAndScoringStatus": "passed",
+      "answerQuote": "这个条件很关键——排除了需要加热/冲泡的品类（粥、冲泡麦片、速食汤面等），产品必须是常温可直接食用的。让我补充针对性调研。# 补充研究：办公室无微波炉、无热水 — 更新简报\n\n新约束把这个问题收窄到了一个更具体的场景：\"不能加热\"\"不能冲泡\"，这直接排除了粥、冲泡麦片、速食汤面、需现场加热的包子油条等品类。\n\n## 关键发现\n\n**1. 现有主流早餐方案多依赖加热/冲泡，与新约束不匹配**\n便利蜂《白领早餐报告》（2020年，20城1600余家门店调查）显示，白领最常吃的组合是\"豆浆+油条+茶叶蛋\"\"粥\"\"咖啡\"等，这些均依赖便利店现场的加热/冲泡设备。[21财经](https://m.21j",
+      "capturedSourceCount": 19,
+      "searchCalls": 4,
+      "readSourceCalls": 3,
+      "saveCalls": 3,
+      "toolErrors": [],
+      "automaticJudges": [
+        {
+          "id": "conversation",
+          "kind": "markdown",
+          "status": "completed",
+          "score": 1,
+          "reason": "对话顺序：用户模糊请求→Agent合理澄清（人群/场景/品类/限制）→用户补充人群为通勤上班族，关注方便和价格→Agent完成初版研究（引用便利蜂报告、地铁早餐新模式等，保留价格≤10元、方便等约束）→用户追加\"办公室无微波炉无热水\"→Agent（messageId d0ae7a20...,partIndex2/17）正确识别新约束排除加热/冲泡品类，给出常温即食方向的补充调研，明确区分事实（报告数据）/推断（标注\"推断\"）/假设（机会假设待验证），未违背此前人群、价格等约束。两轮观察到的回答均完成交付，无违规证据。"
+        },
+        {
+          "id": "coverage",
+          "kind": "markdown",
+          "status": "completed",
+          "score": 1,
+          "reason": "对话顺序完整：用户请求研究→Agent澄清问题→用户回应必要澄清(目标人群)→Agent给出初始研究(messageId 19905d04 part12)→用户追加\"办公室没有微波炉也没有热水\"条件(messageId 1b846437)→Agent非空回答确认约束并给出更新研究(messageId d0ae7a20 part2和part17)。覆盖目标中要求的追问与回答均实际发生且顺序正确。"
+        }
+      ],
+      "manualAssessment": "需逐项核对回答、Judge理由与原生证据；自动分数不替代人工复核。",
+      "hypothesis": "区分工具失败/等待、正文读取与模型输出阶段；当前信息不足以归因到 Exa 服务或 CR 协议。",
+      "historicalRiskChecklist": "../R4-FINDINGS.md",
+      "manualDisputes": [],
+      "manualFindings": [
+        {
+          "type": "coverage_review",
+          "observedUserTurns": [
+            "我们想做一个早餐新品，你先帮忙研究一下。",
+            "目标人群是中国城市通勤上班族，到办公室后吃早餐，主要关注方便和价格。",
+            "补充一个条件：办公室没有微波炉，也没有热水。"
+          ],
+          "firstAssistantExcerpt": "用户给的信息不够具体，我需要先了解几个关键条件才能有效研究：\n\n1. **目标人群**是谁？（比如：上班通勤族、学生、健身人群、老年人、宝妈群体等）\n2. **使用场景**是什么？（比如：家庭早餐、办公室即食早餐、路上边走边吃、外卖早餐等）\n3. 有没有**品类方向**的初步想法？（比如：饮品类、谷物/麦片类、三明治/饭团类、预包装烘焙类等）\n4. 有什么**限制条件**？（比如：预算、渠道——线下便利店/商超/外卖平台/自营、健康诉求如低糖低卡、制作/配送能力限制等）\n\n你",
+          "assessment": "三条用户消息依次为模糊需求、澄清后补充人群/场景、追加无微波炉和无热水。三个目标轮次均产生回答；本题conversation与coverage均为1，simulator_done本身不作通过依据。"
+        }
+      ]
+    }
+  ],
+  "manualReviewScope": "阅读四题最终回答与Judge理由，核对工具调用及保存拒绝；针对错链、来源样本归属、6.6元反例回查原生证据。多轮人工核对澄清、追加条件及回答顺序，不声称逐字复核全部外部来源。"
+}

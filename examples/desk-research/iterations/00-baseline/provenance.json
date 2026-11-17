@@ -1,0 +1,12 @@
+{
+  "originalBaseline": "5b43037847ec8093ad5e5e4a7b24d23d59c5c547",
+  "originalManifest": "../history/00-exa-baseline/original-manifest.json",
+  "restoredFiles": 63,
+  "originalHashesMatched": 63,
+  "commonOverlay": {
+    "benchmarkCommit": "4f4f51cdeb765027baa2cdf2be55ce93a33c5f02",
+    "model": "creative-reasoning-1.5",
+    "modelSource": "local"
+  },
+  "qualityChanges": []
+}

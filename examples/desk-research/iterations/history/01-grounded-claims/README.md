@@ -1,28 +1,48 @@
-# 01 — 普通文本澄清与证据边界
+# 01：让关键事实与原始来源一一对应
 
-> 历史探索：本轮使用 social-search，保留原始源码与结果。正式示例现使用 Exa；本轮不能作为 Exa 基线。
+## 改动来自哪里
 
-## 改动依据
+00 的 `budget-ceiling` 已完成执行。轨迹里，搜索实际返回的便利店测评是 `yuejiaxmz.com/news/view/446047`，报告却引用了 `tbv.cn`；青浦的具体报道也被缩成政府网站首页。报告还把午餐福利资料扩展成“早餐基本自费、无补贴”的结论。这些不是多接一个工具能解决的问题。
 
-对应 00 的 R01/R02 真实纠错，仅修改完整项目与 v1 的 instructions：必要澄清不用 askUser，已知条件足够则研究；保持未变的用户限制；关键观察直接引用；强判断不能靠文末免责声明补救。模型、Cases、Judges 和搜索适配器不变。源码与工具链见 manifest.json。
+首次内置 evidence Judge 的判定文字也指出引用域名错配，但提交参数缺少合法的 status，所以该次结果是 Judge error，不能当作自动 0 分。改动依据是已经完成的回答和实际检索轨迹的逐项复核，不是替 Judge 修补分数。01 启动时 00 的其余题目和评分仍在运行；完整开发集仍全部保留，不挑题。
 
-## 同一 6 题的真实结果
+## 单一假设
 
-| 范围 | 通过 | 质量失败 | 执行错误 | Judge 错误/缺失 |
-| --- | ---: | ---: | ---: | ---: |
-| 单轮 4 题 | 2 | 0 | 0 | 2 |
-| 多轮 2 题 | 2 | 0 | 0 | 0 |
+如果写作前核对三个关键事实的正文依据、来源 URL 和适用范围，Agent 应减少“事实可能来自真实资料，但链接或结论范围被自己改写”的错误。
 
-- 单轮 Run fcd3532f-a985-439d-8f05-5a4732d3bc47：audience-transfer、willingness-to-pay 三项 Judge 均通过；validation-plan 的 scope 返回非法 status；breakfast-scope 已有回答但缺最终评分文件。Run 清单标 completed，外层 CLI 却报 execution_backend_unavailable、退出 1，两者分别保留。
-- 多轮 Run d9ad72a1-be9e-448b-b6cb-f6f3adf4dbf8：两题都实际走到第二轮，以 simulator_done 结束，conversation=1。预算从15元收紧到8元、引用追问均真实出现。产物完成后外层任务仍 running，收尾异常单独记录，不能称命令端到端成功。
-- 对单轮两项不完整结果尝试官方 gea eval judge（judgeSource=snapshot），Task 1400ff9d-a6e8-4b0a-b319-c62dce3e067a 未产生评分进度；取消请求超时，随后终止该任务自己的 CLI。没有重新执行研究，也没有覆盖首次记录。
+只给 instructions 增加一段事实核对要求：直接复制实际来源链接；保留时间、地点、人群限制；无依据的数字或市场判断删除或降为假设。没有新增 Tool，没有更换模型，没有放宽 Judge，也没有给 Agent 标准答案。
 
-见 [首次单轮结果](results/single-turn-first.json)、[多轮结果](results/multi-turn.json)。本轮是 4/6 自动通过、2/6 未完成，不能说 6/6。
+`instructions.ts` 与无 DO 阶段的同名文件同步修改；完整项目实际使用前者。相邻 manifest 的 Benchmark 摘要相同。
 
-## 人工复核与下一轮
+## 如何判断是否改善
 
-[review-notes.json](review-notes.json) 的 R03 明确保留人工与 Judge 分歧：预算题从单条标价推断“价格稳定、商业可持续”，缺少相应证据，即使自动评分为1也不能当作已解决。R03 仍未收口。
+逐题检查原来错配的链接是否消失、主要事实是否能对应到本次返回正文，以及历史/局部材料有没有再次被写成当前普遍结论。同时保留 8 元预算、反向证据和可推翻的验证计划等原有要求，避免为了谨慎只输出“证据不足”。
 
-R04 记录搜索卡片约60字与真实笔记文本367字的信息差。02 增加关键来源文本读取，验证补充上下文的收益与可靠性；不能预设分数一定上涨。原始多轮回应虽已能完成，还存在引用拼合后需要用户追问才能纠正的问题。
+实时搜索可能返回不同资料，因此不能要求新旧报告引用同一个页面。比较的是相同规则下的行为，并查看实际证据。
 
-CLI 与任务最终状态见 [lifecycle.json](results/lifecycle.json)；取消/退出不改写此前的逐题结果。
+## 本轮实际结果
+
+Run：`424119d3-9ee8-48de-bb94-13f2a16ebb80`；运行状态：`failed`。以下是首次结果，没有用重试覆盖。
+
+| Case | scope | evidence | inference | 状态 | 检索 / 读原文 | 未匹配 URL / 提取 URL |
+| --- | --- | --- | --- | --- | --- | --- |
+| breakfast-scope | — | — | — | execution_error | 12 / 0 | 0 / 0 |
+| budget-ceiling | error | 1 | error | incomplete | 6 / 0 | 1 / 7 |
+| counter-evidence | error | 1 | error | incomplete | 7 / 0 | 0 / 6 |
+| validation-plan | — | — | — | execution_error | 7 / 0 | 0 / 0 |
+
+`error` / `—` 是错误或缺失，不能补成 0。空输出、部分输出或 0 个链接不能凭 URL 检查获得质量通过。URL 能在结果中找到，也不等于正文支持对应主张。
+
+[逐题回答与 trajectory](results.json) · [Codex 复核与争议](review-notes.json) · [当前源码](source/instructions.ts) · [相邻版本的完整差异](changes.diff)
+
+## 2026-11-16 修复
+
+当前 `source/` 已同步预算核对、精确引用、短摘录保存和独立多轮覆盖检查。各题必达交互记录在metadata.coverage，与Agent回答质量分开。首次 `results.json` 与 `changes.diff` 对应 [原始清单](original-manifest.json)，不代表当前源码的验收结果；[当前清单](manifest.json) 记录修复后的哈希。教学与复验步骤见 [评测校准说明](../../evaluation/README.md)。完整验收结果另行保存，不覆盖首次失败。
+
+## 同规则重评首次轨迹
+
+[独立重评分](rescored-20261116.json)使用2026-11-16的新scope/evidence/inference规则，保留首次运行与评分。它检查旧回答，不是当前修复源码的执行验收。评分错误与旧执行失败均未补分；不能仅比较已完成项的平均分推导质量提升。
+
+## 2026-11-16 R2独立验收
+
+当前源码包含共同正确性修复；首次results和original-manifest保持不变。[新指令定向结果](r2-targeted-20261116.json)与[完整R2状态](../../VALIDATION.md)分别记录执行、质量和评分错误，不拼分。

@@ -56,3 +56,40 @@ test("rejects arbitrary upstream origins before reading credentials", () => {
     /loopback/,
   );
 });
+
+test("workbench uses the local Session contract and exposes Run completion lookup", async () => {
+  const id = "00000000-0000-4000-8000-000000000002";
+  const server = createWorkbench({
+    agentId: id,
+    apiOrigin: "http://127.0.0.1:18001",
+    workerOrigin: "http://127.0.0.1:18002",
+    apiKey: "test",
+    viewToken: "test",
+    fetch: async (url, init) => {
+      if (new URL(url).pathname === "/api/v1/sessions") {
+        const body = JSON.parse(init.body);
+        return body.environment === "local"
+          ? Response.json({ id }, { status: 201 })
+          : Response.json({ error: "invalid environment" }, { status: 400 });
+      }
+      if (new URL(url).pathname === `/api/v1/runs/${id}`)
+        return Response.json({ id, status: "finished" });
+      return Response.json({ error: "unexpected route" }, { status: 404 });
+    },
+  });
+  await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
+  const origin = `http://127.0.0.1:${server.address().port}`;
+  try {
+    const created = await fetch(origin + "/api/sessions", {
+      method: "POST",
+      headers: { origin },
+      body: "{}",
+    });
+    assert.equal(created.status, 201);
+    const run = await fetch(origin + "/api/runs/" + id);
+    assert.equal(run.status, 200);
+    assert.equal((await run.json()).status, "finished");
+  } finally {
+    await new Promise((resolve) => server.close(resolve));
+  }
+});

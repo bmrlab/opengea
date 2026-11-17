@@ -1,3 +1,7 @@
+# 本次三轮重整的验收边界
+
+2026-11-17 的新三轮真实运行、错误与复核见 [iterations](iterations/README.md)。下面全部是历史验收记录；旧 00–03 与新 Baseline / 看结果 / 看 Trace 不是同一切分，分数不混用。根目录保留三轮之后的继续改进。
+
 # 验收记录
 
 源码、实际运行、自动质量评分和仓库发布状态分别记录。
@@ -9,16 +13,16 @@
 | 批次 | 代码 / SDK | 通过 | 质量失败 | 评分不完整 | 执行失败 |
 | --- | --- | ---: | ---: | ---: | ---: |
 | [03 已失败四题](evaluation/results/r2-quality-four-share.json) | 60f9e1c / 5bd4093e | 4 | 0 | 0 | 0 |
-| [03 其余八单轮](iterations/03-scoped-inference/r2-remaining-single-20261116.json) | 60f9e1c / 5bd4093e | 6 | 1 | 1 | 0 |
-| [03 六多轮](iterations/03-scoped-inference/r2-multi-20261116.json) | 60f9e1c / 5bd4093e | 6 | 0 | 0 | 0 |
-| [00 四开发题](iterations/00-exa-baseline/r2-results-20261116.json) | 60f9e1c / 5bd4093e | 3 | 0 | 1 | 0 |
-| [01 四开发题](iterations/01-grounded-claims/r2-results-20261116.json) | 60f9e1c / 5bd4093e | 3 | 1 | 0 | 0 |
-| [02 四开发题](iterations/02-focused-evidence/r2-results-20261116.json) | 60f9e1c / 5bd4093e | 1 | 0 | 3 | 0 |
-| [原03 breakfast证据独立重评分](iterations/03-scoped-inference/r2-sdk-regrade-20261116.json) | 60f9e1c / f92f4f5357 | 0 | 1 | 0 | 0 |
-| [00 新指令定向题](iterations/00-exa-baseline/r2-targeted-20261116.json) | d14bdb3 / f92f4f5357 | 0 | 0 | 0 | 1 |
-| [01 新指令定向题](iterations/01-grounded-claims/r2-targeted-20261116.json) | d14bdb3 / f92f4f5357 | 2 | 0 | 0 | 0 |
-| [02 新指令定向题](iterations/02-focused-evidence/r2-targeted-20261116.json) | d14bdb3 / f92f4f5357 | 1 | 0 | 0 | 0 |
-| [03 新指令定向题](iterations/03-scoped-inference/r2-targeted-20261116.json) | d14bdb3 / f92f4f5357 | 1 | 1 | 0 | 0 |
+| [03 其余八单轮](iterations/history/03-scoped-inference/r2-remaining-single-20261116.json) | 60f9e1c / 5bd4093e | 6 | 1 | 1 | 0 |
+| [03 六多轮](iterations/history/03-scoped-inference/r2-multi-20261116.json) | 60f9e1c / 5bd4093e | 6 | 0 | 0 | 0 |
+| [00 四开发题](iterations/history/00-exa-baseline/r2-results-20261116.json) | 60f9e1c / 5bd4093e | 3 | 0 | 1 | 0 |
+| [01 四开发题](iterations/history/01-grounded-claims/r2-results-20261116.json) | 60f9e1c / 5bd4093e | 3 | 1 | 0 | 0 |
+| [02 四开发题](iterations/history/02-focused-evidence/r2-results-20261116.json) | 60f9e1c / 5bd4093e | 1 | 0 | 3 | 0 |
+| [原03 breakfast证据独立重评分](iterations/history/03-scoped-inference/r2-sdk-regrade-20261116.json) | 60f9e1c / f92f4f5357 | 0 | 1 | 0 | 0 |
+| [00 新指令定向题](iterations/history/00-exa-baseline/r2-targeted-20261116.json) | d14bdb3 / f92f4f5357 | 0 | 0 | 0 | 1 |
+| [01 新指令定向题](iterations/history/01-grounded-claims/r2-targeted-20261116.json) | d14bdb3 / f92f4f5357 | 2 | 0 | 0 | 0 |
+| [02 新指令定向题](iterations/history/02-focused-evidence/r2-targeted-20261116.json) | d14bdb3 / f92f4f5357 | 1 | 0 | 0 | 0 |
+| [03 新指令定向题](iterations/history/03-scoped-inference/r2-targeted-20261116.json) | d14bdb3 / f92f4f5357 | 1 | 1 | 0 | 0 |
 
 03首轮12单轮合计10通过、1质量失败、1评分不完整，六多轮全部通过。新的定向题使用改过的Agent指令，并独立执行和评分；SDK重评分仅改变评测运行时，使用原回答。不能混成同一次全量实验，也不从旧evaluation补分。[机器可读摘要](evaluation/results/r2-final-summary.json)。本轮用已知失败开发修复，不声称盲测或独立泛化效果。
 
@@ -34,7 +38,7 @@ gea #1362（f92f4f5357）仅在无Artifact时收紧模型可见readEvidence来�
 
 ## 2026-11-15 Exa 质量迭代
 
-当前示例对应 [03：限制推断范围](iterations/03-scoped-inference/README.md)。新主线 00–03 从 Exa 开始，只修改研究 instructions；Cases/Judges、模型、Connector、工具、DO 和前端保持一致。旧的 00–05 在 history 中保留原始源码与哈希，不混入新分数。
+当前示例对应 [03：限制推断范围](iterations/history/03-scoped-inference/README.md)。新主线 00–03 从 Exa 开始，只修改研究 instructions；Cases/Judges、模型、Connector、工具、DO 和前端保持一致。旧的 00–05 在 history 中保留原始源码与哈希，不混入新分数。
 
 每轮重跑同一组 4 个开发题；最终版本另选 2 个单轮与 2 个多轮做回归。18 题是完整题库，本次没有声称 18 题全部验证。逐题结果、完整报告与精简 trajectory 见 [iterations](iterations/README.md)，执行失败、评分失败、质量失败分别记录。
 
@@ -46,7 +50,7 @@ gea #1362（f92f4f5357）仅在无Artifact时收紧模型可见readEvidence来�
 
 当前 CLI、SDK、Feishu 包更新为 npm registry 最新 `0.2.261114-alpha.0`；npm 最新仍为 `12.2.2`。历史 00–04 快照保留原依赖与证据，不改写历史分数。
 
-完整项目与三个重新生成阶段均完成 frozen install、类型检查及测试，分别为 11/5/9/9 项、0 跳过。全部四个项目用公开 CLI 的 validate/pack 通过。新增 [05 快照](iterations/history/05-published-toolchain/README.md)，旧快照保持不变。发布工作流重复这些离线检查，并校验历史快照哈希；不在 CI 调用模型、Exa 或飞书。
+完整项目与三个重新生成阶段均完成 frozen install、类型检查及测试，分别为 11/5/9/9 项、0 跳过。全部四个项目用公开 CLI 的 validate/pack 通过。新增 [05 快照](iterations/history/social-search/05-published-toolchain/README.md)，旧快照保持不变。发布工作流重复这些离线检查，并校验历史快照哈希；不在 CI 调用模型、Exa 或飞书。
 
 Quick Start 面向 coding agent 独立开发，本完整示例增加独立的 [飞书接入说明](FEISHU.md)。仓库更新由 PR 合并记录证明；以下真实服务验收缺口仍然保留。
 
@@ -76,6 +80,6 @@ Quick Start 面向 coding agent 独立开发，本完整示例增加独立的 [�
 
 Simulator Benchmark 与多轮结果在当前源码仍拒绝托管发布/上传（hosted_multi_turn_not_supported），多轮演示使用本地路径。CI 只安装、类型检查和测试，不访问模型、搜索或飞书。原始运行证据保留在私有 .gea，分享版迭代结果不包含上游账户与访问参数。
 
-当前源码和 Quick Start 已恢复 Exa；仅配置本机环境变量不会自动创建 GEA Connection，需使用 `gea agent connect` 授权。详见 [04 接入记录](iterations/history/04-exa-ready/README.md)。
+当前源码和 Quick Start 已恢复 Exa；仅配置本机环境变量不会自动创建 GEA Connection，需使用 `gea agent connect` 授权。详见 [04 接入记录](iterations/history/social-search/04-exa-ready/README.md)。
 
 Quick Start 的 coding-agent 任务现使用自行生成的 4 单轮 + 2 多轮小题集，与本完整示例的 18 题分别描述。文档命令、内链、JSON 与构建检查通过；尚未执行新的 coding-agent 从空项目到真实评测的完整验收。
