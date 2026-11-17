@@ -1,15 +1,27 @@
 # 产品创新 Desk Research：早餐产品机会
 
-这是可独立运行的完整 Desk Research 示例；Quick Start 则面向 coding agent，从空项目自行构建，两者不互相依赖。任务是研究上班族早餐的使用场景、困难与已有方案，输出带来源的机会简报，并区分观察、推断和待验证假设。
+这是可独立运行的完整 Desk Research 示例；Quick Start 面向 coding agent，提供五步迭代索引，并以当前 ProductResearch 为起点增加 DO。任务是研究上班族早餐的使用场景、困难与已有方案，输出带来源的机会简报，并区分观察、推断和待验证假设。
 
-- [Coding Agent Quick Start](./QUICKSTART.md)：从创建 Project 开始的官方 walkthrough。
+- [Coding Agent Quick Start](./QUICKSTART.md)：建题、跑分、定位失分、改 Agent、再跑分的五步索引与 DO 扩展任务。
 - [验收记录](./VALIDATION.md)：已执行的本地检查与尚未完成的真实验收。
 - [English tutorial](./QUICKSTART.en.md)。
 - [18 道题与验收标准](./BENCHMARKS.md)。
 - [质量迭代记录](./iterations/README.md)：源码快照、固定题集、真实结果与改动说明。
-- [阶段版本与 coding agent 升级任务](./versions/README.md)：生成三个独立项目，用同一套 Benchmark 比较。
+- [功能扩展示例](./versions/README.md)：工作台和飞书入口；不属于三轮质量迭代。
 
-当前源码对应 Exa 质量主线的 [03 版本](iterations/03-scoped-inference/README.md)。历史快照与实际结果用于展示从失败中迭代；研究结论由运行时检索产生。环境问题、未完成评分与已知质量缺陷在验收记录中单列。
+## 五步主线
+
+| 步骤 | 阅读入口 | 产物 |
+| --- | --- | --- |
+| 1. 建题 | [8 元预算题](BENCHMARKS.md#1-建题从业务风险到-casejson) | 一道可执行的 Case 与三个 Judge |
+| 2. 跑分 | [默认评测](#2-跑分) | Run 与结果目录 |
+| 3. 定位失分 | [先看结果，再看 Trace](evaluation/README.md#3-定位失分) | Case、原句、证据、假设 |
+| 4. 改 Agent | [三轮与任务文本](iterations/README.md#4-改-agent) | 一个可复核的 diff |
+| 5. 再跑分 | [同条件对照](iterations/README.md#5-再跑分) | Case × Judge 对照表 |
+
+质量主线只有三轮：[Baseline](iterations/00-baseline/README.md) → [看结果](iterations/01-result-focused/README.md) → [看 Trace](iterations/02-trace-focused/README.md)。Baseline 已有搜索、读正文和 DO 存储。工作台与飞书属于 [功能扩展示例](versions/README.md)，不计作质量迭代。
+
+根目录保留三轮之后的继续改进：结构化 observations / subject / fit / constraint、按原文片段生成观察和更完整的追问规则。它不等于第 2 轮源码；复现比较必须进入对应的 `iterations/<轮次>/source/`。旧四轮原始文件与分数在 [history](iterations/history/README.md)，不作为新轮次分数。
 
 ## 从完整源码启动
 
@@ -24,7 +36,19 @@ pnpm test
 
 SDK 与 Feishu Extension 固定在 `0.2.261114-alpha.0`，锁文件独立于 GEA monorepo。CLI/本地 Runtime 需要另外安装匹配版本；不要将 SDK 已安装等同于 Simulator 可以在任意旧 CLI 运行。`VALIDATION.md` 记录本次实际工具链。
 
-按教程完成 GEA 登录与 Workspace 选择、确认 `gea-pro` 可用，授权 Exa 搜索 Connection：
+### 配置 CR API key
+
+当前 Agent、Judge 和 Simulator 统一使用 CR 模型 `creative-reasoning-1.5`；dev 和 Eval 显式选择 `modelSource: "local"`。在运行 CLI 的同一终端，通过本机凭据管理工具注入有该模型访问权限的 CR key。以下仅展示占位变量，真实 key 不要放进源码、提示词、终端历史或报告：
+
+```bash
+export CREATIVE_REASONING_API_KEY="<YOUR_CR_API_KEY>"
+```
+
+PowerShell 使用 `$env:CREATIVE_REASONING_API_KEY = "<YOUR_CR_API_KEY>"`。CLI 内置直连读取此变量，不读取 `CR_API_KEY` 别名；默认 CR 地址由 CLI 设置，不需要在 `gea.worker.json` 增加模型 key。普通启动使用内置配置。三轮候选验收另用显式 `evaluation/cr-local.catalog.json`，它会优先于内置配置，详见 [运行条件](iterations/README.md#运行器和批次边界)。完整说明见[模型选择与配置](https://musegea.com/developers/agent-models)。
+
+`local` 表示 Agent 在本机运行并直接请求远端 CR。GEA 登录用于 Project、上传结果等平台操作，Exa Connection 用于搜索；CR key、`GEA_API_KEY` 和 Exa key 各自独立。模型 key 不发给前端，不随 Agent 打包上传。缺 key、无模型权限或直连错误会报错；修正配置后重启 dev。
+
+按教程完成 GEA 登录与 Workspace 选择，再单独授权 Exa 搜索 Connection：
 
 ```bash
 gea agent connect --json '{"cwd":".","connectorKey":"research-search"}'
@@ -33,7 +57,7 @@ pnpm prepare:local
 pnpm dev
 ```
 
-搜索使用 Exa，Connector key 为 `research-search`。通过本机授权流程配置 API key；单独设置环境变量不会创建 Connection。返回有长度上限的网页文本，缺失和截断会明确标记。新的质量迭代从 Exa baseline 开始；早期 social-search 与功能接入记录放在 `iterations/history/`，不参与新分数比较。
+搜索使用 Exa，Connector key 为 `research-search`。通过本机授权流程配置 API key；本地运行可在当前进程设置 `GEA_CONNECTOR_RESEARCH_SEARCH_API_KEY` 为已授权的 Exa key；它供 Connector 读取，不创建持久化 Connection。不要把 key 写进源码或命令参数。返回有长度上限的网页文本，缺失和截断会明确标记。当前三轮统一使用 Exa；旧 Exa 四轮记录位于 `iterations/history/`，不参与新分数比较。
 
 搜索每次最多返回3页、每页600字符预览，供选择来源。`read_source` 按完整URL读取最多12000字符的提取文本，每次展示2000字符；可用`query`定位原句或按`nextOffset`继续。`queryFound:false`只表示当前提取未找到，`nextOffset:null`也不保证网页全文已读完；仍须检查`extractionTruncated`。原文窗口始终保留对应URL和范围，不能把其他页面的事实配到这个链接。
 
@@ -56,18 +80,23 @@ pnpm app
 
 工作台仅绑定回环地址，供本机操作者查看当前演示 Worker 的研究记录。它没有个人用户隔离，不得直接作为多租户门户部署。Agent 的存储 Tool 只能访问自己的 Session 记录；后端读取 token 则能读取该示例 DO 中最近 100 条记录，故仅在演示项目里使用公开研究内容。
 
-## 评测
+## 2. 跑分
+
+先完成 CR 与 Exa 配置。在所选轮次的 `source/` 中，默认只执行同一组四题。当前已记录的候选批次另需 [相同本地工具链与 SDK](iterations/runtime-candidate.json)；公开 npm 版本对应失败的首次批次，不能替代候选验收：
 
 ```bash
-gea agent eval --json '{"cwd":".","benchmarkPath":"benchmarks/single-turn","modelSource":"hosted","judgeModel":"gea-pro","concurrency":1}'
-gea agent eval --json '{"cwd":".","benchmarkPath":"benchmarks/multi-turn","modelSource":"hosted","judgeModel":"gea-pro","concurrency":1}'
+gea agent eval --json '{"benchmarkPath":"benchmarks/single-turn","caseIds":["breakfast-scope","budget-ceiling","counter-evidence","validation-plan"],"modelSource":"local","executeOnly":true,"concurrency":2,"overrides":{"engine":{"maxSteps":16,"timeout":{"totalMs":240000}}}}'
 ```
 
-第一条是 12 Case × 3 Markdown Judge，第二条是 6 个 Simulator Case × 2 个 Judge（coverage 与 conversation）。每题的 `maxTurns` 包含首条用户消息；Simulator done 不是 Judge 通过。
+保存命令返回的 `resultDirectory`（默认位于本项目 `.gea/` 下；指定 `outDir` 时以返回路径为准）。其中 `run.json` 记录运行身份，`executions/` 保存逐题回答和 Trace。然后对同一目录评分：
 
-两套 Benchmark 保持分开。单轮结果可以按教程推到 Studio 做 Trace Annotation；当前基线明确拒绝发布 Simulator Benchmark 与上传多轮结果，不通过删字段绕过。
+```bash
+gea eval judge --json '{"run":"/absolute/path/from/resultDirectory","judgeSource":"snapshot","judgeModel":"creative-reasoning-1.5","modelSource":"local","concurrency":2,"maxSteps":12,"timeoutMs":300000}'
+```
 
-修改模型时同时修改 `agent.ts`、多轮 Case 的 `simulator.model` 和命令里的 `judgeModel`。修改质量标准需要记录新的 Benchmark Snapshot，不能和仅修改 Agent 的回归混为一谈。
+执行完成、评分完成、质量通过分别记录。退出成功或 `completed` 不等于通过；三项有效 1 分才算单轮通过，执行错误、Judge 错误和缺失评分不补成 0。分享版导出及错误分流见 [定位失分](evaluation/README.md)。
+
+[多轮示例](BENCHMARKS.md#多轮意图识别与追加条件)用同样参数单独执行 `benchmarks/multi-turn` 的 `clarify-breakfast`，再对其结果目录评分。Simulator done 仅表示停止；coverage 与 conversation 都通过才算完整场景通过。其余题集未执行时明确记为未覆盖。当前 CLI 的单轮上传和多轮支持边界见 [验收记录](VALIDATION.md)。
 
 ## 文件对应
 
@@ -93,3 +122,7 @@ gea agent eval --json '{"cwd":".","benchmarkPath":"benchmarks/multi-turn","model
 本仓库只依赖公开 npm 包，标准安装不需要 GEA 私有源码。版本生成器仅复制源码与固定题集，不复制 `.gea/`、凭据、构建产物或依赖；不会覆盖已有目录。
 
 后续只询问解释、取舍或引用核对时，直接回答所问部分，不重复生成整份报告。更新简报时复用同一会话的来源标识和片段；读取记录的模型视图不重复发送已经包含在report中的摘录，工作台保存的完整记录不变。
+
+2026-11-17 定向修复：02 预算题加入反例核对后仅补跑一次，新回答承认6.6元套餐；scope=1、inference=1、evidence Judge error，整体 incomplete。旧批次保留且不混分；[补跑记录](iterations/02-trace-focused/README.md#2026-11-17-预算题定向修复与一次补跑)列出原生证据与残余质量问题。
+
+r2 后续：预算题累计3次真实尝试全部保留；最新 scope=1、evidence=1、inference=1，判分3/3，read_source=3，最终无 sourceId 占位符。北京6.6元套餐及来源已对应，仍有其他人工争议，详见 [r2汇总](iterations/02-trace-focused/budget-ceiling-r2-summary.json)。

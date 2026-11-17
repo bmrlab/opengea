@@ -1,0 +1,555 @@
+{
+  "schemaVersion": "opengea.iteration-report.v1",
+  "runId": "9b1e892b-bf74-4f6d-af35-424e844ecdfd",
+  "status": "failed",
+  "startedAt": "2026-11-17T04:09:38.459Z",
+  "completedAt": "2026-11-17T04:17:40.072Z",
+  "judgeModel": null,
+  "runtime": {
+    "defaultComputerBackend": "virtual",
+    "location": "local",
+    "nodeVersion": "v24.3.0",
+    "os": "darwin"
+  },
+  "targets": [
+    {
+      "key": "product-research",
+      "agentSnapshotHash": "sha256:970e6249d6e3f22540d5b8639018d37e9869767bbcfce9ac80141ff3ea58981b",
+      "applicationContentHash": "sha256:58c6252911f9e2cbe03e978dbaf96c5f085de447b520415661192d78507f9c88",
+      "selectedCaseIds": [
+        "breakfast-scope",
+        "budget-ceiling",
+        "counter-evidence",
+        "validation-plan"
+      ]
+    }
+  ],
+  "counts": {
+    "passed": 0,
+    "failed": 0,
+    "incomplete": 0,
+    "execution_error": 4,
+    "unscored": 0,
+    "missing": 0
+  },
+  "judging": {
+    "required": 12,
+    "completedRequired": 0,
+    "errors": 0
+  },
+  "sharing": "Tool payloads are reduced to queries and source metadata; raw evidence stays local. Review generated answer/Judge text before sharing.",
+  "cases": [
+    {
+      "id": "breakfast-scope",
+      "agentKey": "product-research",
+      "status": "execution_error",
+      "error": {
+        "code": "agent_execution_failed",
+        "message": "Agent Run ended with status \"error\""
+      },
+      "runId": "0d9fc1b3-6c46-4018-86d2-fe6b1e014ee4",
+      "benchmarkHash": "sha256:87ab0dd0a364070be62e2149a1283de96dbe37222ff080179e702483c9d0683d",
+      "input": {
+        "message": "研究中国城市上班族到办公室后吃早餐的场景。检索公开用户讨论、现有产品和行业资料，形成带来源的机会简报。信息不足请注明，不需要再向我澄清。"
+      },
+      "acceptance": "覆盖人群、场景、现有方案、机会和待验证问题；条件充分时不反复追问。",
+      "judges": [],
+      "judging": {
+        "required": 3,
+        "completedRequired": 0,
+        "errors": 0
+      },
+      "output": "",
+      "trajectory": [
+        {
+          "messageId": "0d9fc1b3-6c46-4018-86d2-fe6b1e014ee4-input",
+          "role": "user",
+          "type": "text",
+          "text": "研究中国城市上班族到办公室后吃早餐的场景。检索公开用户讨论、现有产品和行业资料，形成带来源的机会简报。信息不足请注明，不需要再向我澄清。"
+        },
+        {
+          "messageId": "4a07ea77-b562-4e3d-93ed-22ed62e89f14",
+          "role": "assistant",
+          "type": "tool",
+          "name": "read_research",
+          "state": "output-available"
+        },
+        {
+          "messageId": "4a07ea77-b562-4e3d-93ed-22ed62e89f14",
+          "role": "assistant",
+          "type": "tool",
+          "name": "search_sources",
+          "state": "output-available",
+          "input": {
+            "query": "上班族 到公司后 吃早餐 办公室早餐 讨论"
+          },
+          "sources": [
+            {
+              "url": "https://www.douban.com/group/topic/218709501/",
+              "title": "大家会反感在办公室吃早饭的同事吗😢",
+              "publishedAt": "2021-04-02T00:00:00.000Z",
+              "textLength": 6000,
+              "textScope": "search-text",
+              "truncated": true
+            },
+            {
+              "url": "https://v2ex.ih06.com/t/457549",
+              "title": "在办公室吃早餐是怎么一种体验？ - V2EX",
+              "publishedAt": "2018-05-24T11:26:34.000Z",
+              "textLength": 866,
+              "textScope": "search-text",
+              "truncated": false
+            },
+            {
+              "url": "https://www.ptt.cc/bbs/WomenTalk/M.1661182659.A.C65.html",
+              "title": "[閒聊] 上班族的早餐都怎麼解決？ - 看板 WomenTalk - 批踢踢實業坊",
+              "publishedAt": null,
+              "textLength": 2466,
+              "textScope": "search-text",
+              "truncated": false
+            },
+            {
+              "url": "https://www.douban.com/group/topic/283268764/",
+              "title": "办公室早餐记录",
+              "publishedAt": "2023-02-13T00:00:00.000Z",
+              "textLength": 3204,
+              "textScope": "search-text",
+              "truncated": false
+            },
+            {
+              "url": "https://disp.cc/ptt/WomenTalk/1dN3SYhP",
+              "title": "[閒聊] 會在辦公室吃早餐嗎？ - WomenTalk板 - Disp BBS",
+              "publishedAt": "2024-12-13T00:00:00.000Z",
+              "textLength": 912,
+              "textScope": "search-text",
+              "truncated": false
+            }
+          ],
+          "retrievedAt": "2026-11-17T04:09:44.874Z"
+        },
+        {
+          "messageId": "4a07ea77-b562-4e3d-93ed-22ed62e89f14",
+          "role": "assistant",
+          "type": "tool",
+          "name": "search_sources",
+          "state": "output-error",
+          "input": {
+            "query": "办公室早餐 市场 便利店 早餐产品 趋势"
+          },
+          "error": "Agent execution failed."
+        },
+        {
+          "messageId": "4a07ea77-b562-4e3d-93ed-22ed62e89f14",
+          "role": "assistant",
+          "type": "tool",
+          "name": "search_sources",
+          "state": "output-error",
+          "input": {
+            "query": "年轻人 不吃早饭 上班 早餐外卖 数据报告"
+          },
+          "error": "Agent execution failed."
+        },
+        {
+          "messageId": "4a07ea77-b562-4e3d-93ed-22ed62e89f14",
+          "role": "assistant",
+          "type": "tool",
+          "name": "readToolOutput",
+          "state": "output-available"
+        },
+        {
+          "messageId": "4a07ea77-b562-4e3d-93ed-22ed62e89f14",
+          "role": "assistant",
+          "type": "tool",
+          "name": "search_sources",
+          "state": "output-available",
+          "input": {
+            "query": "早餐市场 行业报告 中国 消费趋势"
+          },
+          "sources": [
+            {
+              "url": "https://www.iimedia.cn/c1061/102392.html",
+              "title": "艾媒咨询 | 中国早餐消费行为大数据调查-艾媒网",
+              "publishedAt": "2024-09-03T01:00:00.000Z",
+              "textLength": 5369,
+              "textScope": "search-text",
+              "truncated": false
+            },
+            {
+              "url": "https://www.iimedia.cn/c1061/119698.html",
+              "title": "2026年中国消费者早餐购买考虑因素数据分析：卫生与营养是早餐消费首要考量-艾媒网",
+              "publishedAt": "2026-11-06T10:37:11.000Z",
+              "textLength": 3659,
+              "textScope": "search-text",
+              "truncated": false
+            },
+            {
+              "url": "https://www.bjnews.com.cn/detail/1782615251129440.html",
+              "title": "《2026抖音电商国民早餐地图》：地域特色早点走红，健康速食迎增长 — 新京报",
+              "publishedAt": "2026-06-28T00:00:00.000Z",
+              "textLength": 1520,
+              "textScope": "search-text",
+              "truncated": false
+            },
+            {
+              "url": "https://www.huxiu.com/article/4872775.html",
+              "title": "门店现烤蛋挞、三明治，茶咖巨头们，集体抢起了早餐生意-虎嗅网",
+              "publishedAt": "2026-07-05T12:40:41.000Z",
+              "textLength": 3278,
+              "textScope": "search-text",
+              "truncated": false
+            },
+            {
+              "url": "http://word.baidu.com/view/180016c8ed06eff9aef8941ea76e58fafbb04594.html",
+              "title": "2025年中国早餐行业市场规模及投资前景预测分析报告",
+              "publishedAt": "2025-10-16T16:11:17.000Z",
+              "textLength": 2603,
+              "textScope": "search-text",
+              "truncated": false
+            }
+          ],
+          "retrievedAt": "2026-11-17T04:11:49.968Z"
+        },
+        {
+          "messageId": "4a07ea77-b562-4e3d-93ed-22ed62e89f14",
+          "role": "assistant",
+          "type": "tool",
+          "name": "search_sources",
+          "state": "input-available",
+          "input": {
+            "query": "年轻人不吃早饭 原因 调查"
+          }
+        }
+      ],
+      "citationAudit": {
+        "method": "Compare Markdown and plain HTTP(S) citation URLs in run.output with URLs actually returned by search_sources/read_source. Ignore fragments only. This checks source identity, not whether a claim is supported.",
+        "toolCalls": {
+          "read_research": 1,
+          "search_sources": 5,
+          "readToolOutput": 1
+        },
+        "outputCharacters": 0,
+        "capturedSourceCount": 10,
+        "citationCount": 0,
+        "unmatched": [],
+        "invalid": []
+      },
+      "rawArtifactSha256": "28643e8692ae15bddb1232bbf049c1c034ac2cf8a482b65e38f0735a87b5f2a4"
+    },
+    {
+      "id": "budget-ceiling",
+      "agentKey": "product-research",
+      "status": "execution_error",
+      "error": {
+        "code": "agent_execution_failed",
+        "message": "Agent Run ended with status \"error\""
+      },
+      "runId": "c1662924-5ab9-4e20-bddb-ddb203fa246e",
+      "benchmarkHash": "sha256:87ab0dd0a364070be62e2149a1283de96dbe37222ff080179e702483c9d0683d",
+      "input": {
+        "message": "为中国城市通勤者研究工作日早餐，单次预算最多 8 元，通常在办公室食用。比较已有方案和可能机会；价格找不到就注明，别把未知价格当作满足预算。请直接检索。"
+      },
+      "acceptance": "价格要有来源并区分单份、组合和促销口径；未知价格不能声称已满足 8 元上限。",
+      "judges": [],
+      "judging": {
+        "required": 3,
+        "completedRequired": 0,
+        "errors": 0
+      },
+      "output": "",
+      "trajectory": [
+        {
+          "messageId": "c1662924-5ab9-4e20-bddb-ddb203fa246e-input",
+          "role": "user",
+          "type": "text",
+          "text": "为中国城市通勤者研究工作日早餐，单次预算最多 8 元，通常在办公室食用。比较已有方案和可能机会；价格找不到就注明，别把未知价格当作满足预算。请直接检索。"
+        },
+        {
+          "messageId": "6050e57a-90f5-4ac3-afee-22b56ea76e69",
+          "role": "assistant",
+          "type": "tool",
+          "name": "read_research",
+          "state": "output-available"
+        },
+        {
+          "messageId": "6050e57a-90f5-4ac3-afee-22b56ea76e69",
+          "role": "assistant",
+          "type": "tool",
+          "name": "search_sources",
+          "state": "output-error",
+          "input": {
+            "query": "中国城市通勤者 办公室早餐 8元预算"
+          },
+          "error": "Agent execution failed."
+        },
+        {
+          "messageId": "6050e57a-90f5-4ac3-afee-22b56ea76e69",
+          "role": "assistant",
+          "type": "tool",
+          "name": "search_sources",
+          "state": "output-error",
+          "input": {
+            "query": "早餐市场 便利店 早餐 价格 上班族 2023"
+          },
+          "error": "Agent execution failed."
+        },
+        {
+          "messageId": "6050e57a-90f5-4ac3-afee-22b56ea76e69",
+          "role": "assistant",
+          "type": "tool",
+          "name": "search_sources",
+          "state": "input-available",
+          "input": {
+            "query": "中国城市通勤者 办公室早餐 8元预算"
+          }
+        },
+        {
+          "messageId": "6050e57a-90f5-4ac3-afee-22b56ea76e69",
+          "role": "assistant",
+          "type": "tool",
+          "name": "search_sources",
+          "state": "input-available",
+          "input": {
+            "query": "便利店早餐 价格 上班族"
+          }
+        }
+      ],
+      "citationAudit": {
+        "method": "Compare Markdown and plain HTTP(S) citation URLs in run.output with URLs actually returned by search_sources/read_source. Ignore fragments only. This checks source identity, not whether a claim is supported.",
+        "toolCalls": {
+          "read_research": 1,
+          "search_sources": 4
+        },
+        "outputCharacters": 0,
+        "capturedSourceCount": 0,
+        "citationCount": 0,
+        "unmatched": [],
+        "invalid": []
+      },
+      "rawArtifactSha256": "6897f081e643dc38f21f84eb247d09a9a10c6c6c8b8556e1615d4925fc5d99d7"
+    },
+    {
+      "id": "counter-evidence",
+      "agentKey": "product-research",
+      "status": "execution_error",
+      "error": {
+        "code": "agent_execution_failed",
+        "message": "Agent Run ended with status \"error\""
+      },
+      "runId": "b138c024-f1e5-4d27-9d66-b7a66dcf1fb2",
+      "benchmarkHash": "sha256:87ab0dd0a364070be62e2149a1283de96dbe37222ff080179e702483c9d0683d",
+      "input": {
+        "message": "研究办公室即食早餐产品。请同时寻找便捷以外的顾虑与已有替代方案，区分资料中的观察、推断和待验证假设，不能只挑支持新品的资料。范围为中国城市通勤人群，不需要追问。"
+      },
+      "acceptance": "明确检索和呈现反向线索与替代方案；没有找到时说明缺口，不编造反对意见。",
+      "judges": [],
+      "judging": {
+        "required": 3,
+        "completedRequired": 0,
+        "errors": 0
+      },
+      "output": "",
+      "trajectory": [
+        {
+          "messageId": "b138c024-f1e5-4d27-9d66-b7a66dcf1fb2-input",
+          "role": "user",
+          "type": "text",
+          "text": "研究办公室即食早餐产品。请同时寻找便捷以外的顾虑与已有替代方案，区分资料中的观察、推断和待验证假设，不能只挑支持新品的资料。范围为中国城市通勤人群，不需要追问。"
+        },
+        {
+          "messageId": "49e793f3-4c36-42bf-a077-c01937974fe8",
+          "role": "assistant",
+          "type": "tool",
+          "name": "read_research",
+          "state": "output-available"
+        },
+        {
+          "messageId": "49e793f3-4c36-42bf-a077-c01937974fe8",
+          "role": "assistant",
+          "type": "tool",
+          "name": "search_sources",
+          "state": "output-available",
+          "input": {
+            "query": "办公室 即食早餐 通勤 上班族 调查"
+          },
+          "sources": [
+            {
+              "url": "https://www.iimedia.cn/c1061/102392.html",
+              "title": "艾媒咨询 | 中国早餐消费行为大数据调查-艾媒网",
+              "publishedAt": "2024-09-03T01:00:00.000Z",
+              "textLength": 5369,
+              "textScope": "search-text",
+              "truncated": false
+            },
+            {
+              "url": "https://news.qq.com/rain/a/20210809A067ML00",
+              "title": "六成白领每周吃3次速食 京东生鲜联合上百商家推3分钟营养解决方案_腾讯新闻",
+              "publishedAt": "2021-08-09T13:28:44.000Z",
+              "textLength": 1662,
+              "textScope": "search-text",
+              "truncated": false
+            },
+            {
+              "url": "https://survey.shangpu-china.com/scdc/43892.html",
+              "title": "尚普咨询_市场调研_IPO咨询_投融资咨询_企业战略咨询_涉外调查许可机构",
+              "publishedAt": "2026-03-01T00:00:00.000Z",
+              "textLength": 3081,
+              "textScope": "search-text",
+              "truncated": false
+            },
+            {
+              "url": "https://finance.sina.com.cn/chanjing/cyxw/2020-11-25/doc-iiznctke3229684.shtml",
+              "title": "便利蜂发布《白领早餐报告》：仅5成白领每天吃早餐",
+              "publishedAt": "2020-11-25T09:10:54.000Z",
+              "textLength": 2140,
+              "textScope": "search-text",
+              "truncated": false
+            },
+            {
+              "url": "https://www.bj.chinanews.com.cn/news/2024/0928/96611.html",
+              "title": "职场人用餐调查：早餐正在受重视，带饭上班渐流行_中新社_北京分社",
+              "publishedAt": "2024-09-28T00:00:00.000Z",
+              "textLength": 1452,
+              "textScope": "search-text",
+              "truncated": false
+            }
+          ],
+          "retrievedAt": "2026-11-17T04:13:44.898Z"
+        },
+        {
+          "messageId": "49e793f3-4c36-42bf-a077-c01937974fe8",
+          "role": "assistant",
+          "type": "tool",
+          "name": "search_sources",
+          "state": "output-error",
+          "input": {
+            "query": "中国 早餐 市场 外卖 代餐 趋势 报告"
+          },
+          "error": "Agent execution failed."
+        },
+        {
+          "messageId": "49e793f3-4c36-42bf-a077-c01937974fe8",
+          "role": "assistant",
+          "type": "tool",
+          "name": "readToolOutput",
+          "state": "output-available"
+        },
+        {
+          "messageId": "49e793f3-4c36-42bf-a077-c01937974fe8",
+          "role": "assistant",
+          "type": "tool",
+          "name": "search_sources",
+          "state": "input-available",
+          "input": {
+            "query": "早餐 代餐 健康 顾虑 添加剂 食品安全"
+          }
+        }
+      ],
+      "citationAudit": {
+        "method": "Compare Markdown and plain HTTP(S) citation URLs in run.output with URLs actually returned by search_sources/read_source. Ignore fragments only. This checks source identity, not whether a claim is supported.",
+        "toolCalls": {
+          "read_research": 1,
+          "search_sources": 3,
+          "readToolOutput": 1
+        },
+        "outputCharacters": 0,
+        "capturedSourceCount": 5,
+        "citationCount": 0,
+        "unmatched": [],
+        "invalid": []
+      },
+      "rawArtifactSha256": "33ccc446dcc3834aca6549b6d87d21098323cb58b686e773c954aa99910ae55a"
+    },
+    {
+      "id": "validation-plan",
+      "agentKey": "product-research",
+      "status": "execution_error",
+      "error": {
+        "code": "agent_execution_failed",
+        "message": "Agent Run ended with status \"error\""
+      },
+      "runId": "e69fbb32-38d2-4840-b421-07251beae4c8",
+      "benchmarkHash": "sha256:87ab0dd0a364070be62e2149a1283de96dbe37222ff080179e702483c9d0683d",
+      "input": {
+        "message": "围绕中国通勤者到办公室后吃早餐，先检索真实公开资料，再提出最多两个机会假设。每个假设附证据、反例或缺口、可执行的访谈或小实验，以及什么结果会推翻假设。"
+      },
+      "acceptance": "假设和验证计划对应实际资料；明确对象、动作、可观察结果和否定条件，避免把假设写成已确认需求。",
+      "judges": [],
+      "judging": {
+        "required": 3,
+        "completedRequired": 0,
+        "errors": 0
+      },
+      "output": "",
+      "trajectory": [
+        {
+          "messageId": "e69fbb32-38d2-4840-b421-07251beae4c8-input",
+          "role": "user",
+          "type": "text",
+          "text": "围绕中国通勤者到办公室后吃早餐，先检索真实公开资料，再提出最多两个机会假设。每个假设附证据、反例或缺口、可执行的访谈或小实验，以及什么结果会推翻假设。"
+        },
+        {
+          "messageId": "adcc2071-1a6a-45c6-9288-a7267d6616b9",
+          "role": "assistant",
+          "type": "tool",
+          "name": "read_research",
+          "state": "output-available"
+        },
+        {
+          "messageId": "adcc2071-1a6a-45c6-9288-a7267d6616b9",
+          "role": "assistant",
+          "type": "tool",
+          "name": "search_sources",
+          "state": "output-error",
+          "input": {
+            "query": "中国 通勤者 早餐 办公室 调查"
+          },
+          "error": "Agent execution failed."
+        },
+        {
+          "messageId": "adcc2071-1a6a-45c6-9288-a7267d6616b9",
+          "role": "assistant",
+          "type": "tool",
+          "name": "search_sources",
+          "state": "output-error",
+          "input": {
+            "query": "白领 早餐 到公司后吃 现象"
+          },
+          "error": "Agent execution failed."
+        },
+        {
+          "messageId": "adcc2071-1a6a-45c6-9288-a7267d6616b9",
+          "role": "assistant",
+          "type": "tool",
+          "name": "search_sources",
+          "state": "input-available",
+          "input": {
+            "query": "中国 通勤者 早餐 办公室 调查"
+          }
+        },
+        {
+          "messageId": "adcc2071-1a6a-45c6-9288-a7267d6616b9",
+          "role": "assistant",
+          "type": "tool",
+          "name": "search_sources",
+          "state": "input-available",
+          "input": {
+            "query": "白领 早餐 到公司后吃 现象"
+          }
+        }
+      ],
+      "citationAudit": {
+        "method": "Compare Markdown and plain HTTP(S) citation URLs in run.output with URLs actually returned by search_sources/read_source. Ignore fragments only. This checks source identity, not whether a claim is supported.",
+        "toolCalls": {
+          "read_research": 1,
+          "search_sources": 4
+        },
+        "outputCharacters": 0,
+        "capturedSourceCount": 0,
+        "citationCount": 0,
+        "unmatched": [],
+        "invalid": []
+      },
+      "rawArtifactSha256": "38d0a68464f2fadc14cef9bf5e80935672dd5c204aa4dbc44c9e6c921ee23ae8"
+    }
+  ]
+}

@@ -63,8 +63,8 @@ async function refresh() {
     const messages = await api(`/api/sessions/${sessionId}/messages`);
     const container = byId("messages");
     container.replaceChildren();
-    for (const message of messages.data ?? []) {
-      const text = (message.parts ?? message.content?.parts ?? [])
+    for (const message of [...messages.items].reverse()) {
+      const text = (message.parts ?? [])
         .filter((part) => part.type === "text")
         .map((part) => part.text)
         .join("\n");
@@ -77,6 +77,21 @@ async function refresh() {
         );
     }
   }
+}
+async function waitForRun(id) {
+  const deadline = Date.now() + 300000;
+  while (Date.now() < deadline) {
+    const run = await api(`/api/runs/${id}`);
+    if (run.status === "finished") return;
+    if (["error", "aborted", "interrupted"].includes(run.status))
+      throw new Error(
+        `本轮未完成（${run.status}）。先刷新消息，检查原因后再提交。`,
+      );
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+  }
+  throw new Error(
+    "仍未确认本轮结束。请先刷新消息和记录，不要重复提交研究要求。",
+  );
 }
 byId("new").onclick = () => {
   if (busy) return;
@@ -106,11 +121,14 @@ byId("form").onsubmit = async (event) => {
       localStorage.setItem("product-research-session", sessionId);
       label();
     }
-    await api(`/api/sessions/${sessionId}/runs`, {
+    const run = await api(`/api/sessions/${sessionId}/runs`, {
       input: byId("input").value,
     });
+    if (typeof run.id !== "string")
+      throw new Error("未取得 Run ID，请刷新消息确认状态，不要重复提交。");
+    await waitForRun(run.id);
     await refresh();
-    notice("本轮请求已返回。查看回复及研究记录；若助手正在澄清，可继续回答。");
+    notice("本轮已完成。查看回复及研究记录；若助手正在澄清，可继续回答。");
   } catch (error) {
     notice(error.message);
   } finally {

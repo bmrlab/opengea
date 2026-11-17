@@ -9,7 +9,7 @@ const child = spawn(
     "agent",
     "dev",
     "--json",
-    JSON.stringify({ cwd: ".", modelSource: "hosted" }),
+    JSON.stringify({ cwd: ".", modelSource: "local" }),
   ],
   {
     cwd: new URL("..", import.meta.url),

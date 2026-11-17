@@ -1,0 +1,63 @@
+{
+  "schemaVersion": "opengea.iteration-protocol.v1",
+  "searchProvider": "Exa",
+  "model": "gea-pro",
+  "judgeModel": "gea-pro",
+  "modelSource": "hosted",
+  "cli": "0.2.261114-alpha.0",
+  "sdk": "0.2.261114-alpha.0",
+  "developmentCases": [
+    "breakfast-scope",
+    "budget-ceiling",
+    "counter-evidence",
+    "validation-plan"
+  ],
+  "singleTurnRegressionCases": [
+    "alternatives-not-products",
+    "audience-transfer",
+    "conflicting-findings",
+    "freshness-limits",
+    "marketing-vs-users",
+    "no-microwave",
+    "weak-market-size",
+    "willingness-to-pay"
+  ],
+  "multiTurnCases": [
+    "audience-revision",
+    "budget-revision",
+    "challenge-citation",
+    "clarify-breakfast",
+    "resist-false-certainty",
+    "retain-constraints"
+  ],
+  "concurrency": 2,
+  "overrides": {
+    "engine": {
+      "maxSteps": 16,
+      "timeout": {
+        "totalMs": 240000
+      }
+    }
+  },
+  "comparison": "Keep Cases, Judges, model aliases, tool implementations and run options fixed. Change only evidence-supported Agent behavior. Retain original attempts; separate rescoring and execution retries.",
+  "sourceDrift": "Exa is live search. Preserve actual query/source metadata; a single-run score change does not establish statistical significance. Model aliases may change upstream; no underlying model fingerprint is claimed.",
+  "annotation": "Review notes are local analysis of actual trajectories, not hosted Builder Annotation exports.",
+  "runner": {
+    "entry": "GEA CLI source through Node + jiti",
+    "geaCommit": "6cdc48bf3698c128ffc3f46842a68a3ff7e15712",
+    "node": "24.16.0",
+    "nativeBinaries": "published @gea-ai/cli-darwin-arm64@0.2.261114-alpha.0",
+    "reason": "Published Bun CLI stalls sending Exa POST requests in this environment; all formal quality rounds use the same unmodified source CLI with Node. This is not validation of the published CLI Exa path."
+  },
+  "selectedRegressionCases": {
+    "singleTurn": [
+      "audience-transfer",
+      "freshness-limits"
+    ],
+    "multiTurn": [
+      "challenge-citation",
+      "retain-constraints"
+    ]
+  },
+  "regressionScope": "Run these four cases on the final version only. They are regression checks, not a before/after improvement claim. The remaining ten cases in the 18-case suite are not executed in this iteration batch."
+}

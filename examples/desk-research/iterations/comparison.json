@@ -1,0 +1,712 @@
+{
+  "schemaVersion": "opengea.three-round-comparison.v1",
+  "conditions": {
+    "schemaVersion": "opengea.iteration-protocol.v2",
+    "searchProvider": "Exa",
+    "model": "creative-reasoning-1.5",
+    "judgeModel": "creative-reasoning-1.5",
+    "modelSource": "local",
+    "cli": "local candidate cbbfffcbf2",
+    "sdk": "local candidate d73861da7a6ef702407f8576e7cd6289a00713c2",
+    "developmentCases": [
+      "breakfast-scope",
+      "budget-ceiling",
+      "counter-evidence",
+      "validation-plan"
+    ],
+    "singleTurnRegressionCases": [
+      "alternatives-not-products",
+      "audience-transfer",
+      "conflicting-findings",
+      "freshness-limits",
+      "marketing-vs-users",
+      "no-microwave",
+      "weak-market-size",
+      "willingness-to-pay"
+    ],
+    "multiTurnCases": [
+      "clarify-breakfast"
+    ],
+    "concurrency": 2,
+    "overrides": {
+      "engine": {
+        "maxSteps": 16,
+        "timeout": {
+          "totalMs": 240000
+        }
+      }
+    },
+    "comparison": "Records agreed comparison conditions; the runner does not read this file. Keep Cases, Judges, model and execution options identical. Round 01 changes instructions only; round 02 changes the documented process and citation tools. Retain every attempt and error; do not select reruns.",
+    "sourceDrift": "Exa is live search. Preserve actual query/source metadata; a single-run score change does not establish statistical significance. Model aliases may change upstream; no underlying model fingerprint is claimed.",
+    "annotation": "Review notes are local analysis of actual trajectories, not hosted Builder Annotation exports.",
+    "runner": {
+      "runner": "R4 handoff local candidate copied into this task; not a published CLI acceptance",
+      "cliSource": "cbbfffcbf2",
+      "appServerSource": "cb24e7e3fb",
+      "sdkSource": "d73861da7a6ef702407f8576e7cd6289a00713c2",
+      "cliSha256": "1fcd89e91aa7d0e6b87f47a6e4edc48cfa7d17bb8d9ca47901bbc551d4595d06",
+      "appServerSha256": "c0727ba187af35dcbec85e974af0f60aab9fb34961e1a3be9aa4b9002f2ed324",
+      "workerRuntimeSha256": "72dea76400d3869ec50d2bd0caceb71a4815c36505ea258d254d8a833c57cc80",
+      "sdkTarSha256": "95d45871d88a06c28f0345a9df8d2e0e33cec55b74378e4dbd65503b424021ad",
+      "contractTarSha256": "1672a54139cb0d8de9923c9d4fe6de5571a7a1e95dc8452c020b61683a0cfc0f",
+      "catalogSha256": "2f47faa15c1fc567c0594f9c9c6e0f024e23a019d9fac81441ec7d7352b8f345",
+      "installedCopyVerification": {
+        "agent-sdk": {
+          "filesCompared": 387,
+          "mismatches": 0
+        },
+        "contract": {
+          "filesCompared": 438,
+          "mismatches": 0
+        }
+      },
+      "maxOutputTokens": 4096,
+      "thinkingBudgetTokens": 1024,
+      "simulatorMaxOutputTokens": 2048,
+      "agentMaxSteps": 16,
+      "agentTimeoutMs": 240000,
+      "judgeMaxSteps": 12,
+      "judgeTimeoutMs": 300000
+    },
+    "regressionScope": "All three rounds execute the same four development cases and clarify-breakfast. Other 8 single-turn and 5 multi-turn cases are not run in this comparison; this is not full-suite acceptance.",
+    "benchmarkCommit": "4f4f51cdeb765027baa2cdf2be55ce93a33c5f02",
+    "snapshotGuarantee": "Manifest verification checks this round source content only, excluding generated node_modules/.gea/dist. It does not enforce experiment conditions or verify outcomes.",
+    "trace": "Published traces are cropped sharing exports; complete native evidence stays local. Missing text in a sharing export does not establish absence in the native trace.",
+    "judgeOptions": {
+      "judgeSource": "snapshot",
+      "maxSteps": 12,
+      "timeoutMs": 300000,
+      "concurrency": 2
+    },
+    "declaredPackageVersion": "0.2.261114-alpha.0",
+    "modelConfiguration": {
+      "catalog": "../evaluation/cr-local.catalog.json",
+      "sha256": "2f47faa15c1fc567c0594f9c9c6e0f024e23a019d9fac81441ec7d7352b8f345",
+      "maxOutputTokens": 4096,
+      "thinkingBudgetTokens": 1024,
+      "simulatorMaxOutputTokens": 2048
+    },
+    "priorAttempt": {
+      "protocol": "published-attempt-protocol.json",
+      "scope": "All three original four-case executions retained; published CLI grading interrupted before any case grading artifacts. No comparison mixes these with the candidate batch."
+    },
+    "runtimeDependencyOverlay": "Source snapshots and lockfiles remain original. Candidate execution copies the exact manifest files and uses a separately installed local SDK/contract build, identical for all three rounds. Runtime hashes, not package version text alone, identify this batch."
+  },
+  "rows": [
+    {
+      "round": "00-baseline",
+      "suite": "single-turn",
+      "caseId": "breakfast-scope",
+      "judge": "scope",
+      "executionStatus": "passed",
+      "judgeStatus": "completed",
+      "score": 1,
+      "reason": "任务要求形成带来源的早餐场景机会简报，覆盖人群（CBD/写字楼白领）、场景（上班路上买、工位食用）、现有方案（便利店、夫妻店、自提柜、企业福利）、机会假设（A-D四项）及待验证问题（下一步验证清单），均已给出且附来源链接。全文未出现预算/组合价格类计算，故不存在超预算误判问题。末尾仅提出可选深挖方向，未强制用户澄清，符合“信息不足注明、不反复追问”的要求。核对完整文本（partIndex12+15）与声明一致，无矛盾或漏项。",
+      "error": null,
+      "comparable": true
+    },
+    {
+      "round": "00-baseline",
+      "suite": "single-turn",
+      "caseId": "breakfast-scope",
+      "judge": "evidence",
+      "executionStatus": "passed",
+      "judgeStatus": "completed",
+      "score": 1,
+      "reason": "检索成功返回可用正文（北京日报CBD早餐调查全文、中国青年报2018年调查全文、知识星球“快饭”摘要、罗戈网京东便利店烘焙复合店报道均被完整读取）。核对报告关键事实：15分钟内完成早餐(81%)、10元以内消费(94.2%)、60.78%选择便利店、52.26%每天吃/10.37%从不吃(便利蜂数据)、未婚47.5%/已婚69.2%每天吃早餐、食材欠多样56.5%/营养欠丰富54.1%、8000亿元市场规模、夫妻店6-7平米月租2万示例、“快饭”自提柜模式、京东便利店烘焙复合业态——均能在对应URL捕获正文中找到对应数据和原句，日期、归属与引用链接基本一致，未发现张冠李戴或组合价格错误，也未将学生样本冒充通勤者整体（报告仅引用中国青年报2018年针对未婚/已婚整体调查数据，未借用文中提及的大学生个案）。证据充分且事实相符，满足给1的必要条件。",
+      "error": null,
+      "comparable": true
+    },
+    {
+      "round": "00-baseline",
+      "suite": "single-turn",
+      "caseId": "breakfast-scope",
+      "judge": "inference",
+      "executionStatus": "passed",
+      "judgeStatus": "completed",
+      "score": 1,
+      "reason": "简报对强结论均附带具体比例/分母及来源，而非泛化营销语：如“81%受访者早餐耗时在15分钟内（《中国居民早餐饮食状况调查报告》，北京日报2023）”“94.2%受访者早餐花费控制在10元以内”“仅47.5%未婚人士每天吃早餐（已婚69.2%），10.37%白领从不吃早餐（便利蜂数据）”，均给出分母和来源，未将个体评论泛化为普遍结论。市场规模结论“在外早餐市场规模超8000亿元，但分散、无头部品牌”同样附带来源（澎湃新闻/罗戈网）并未用“接受度高”类无依据断言。机会部分单独列为“机会假设（待验证）”，四条假设均标注需验证内容（如复购率、痛点优先级、预算区间），并在“建议下一步验证”给出具体验证方法，未把假设当作已证实需求。研究范围开头即声明“非系统性抽样统计”，保持了证据范围的诚实披露。整体符合1分标准：个体经历未被泛化，强结论有比例/来源支持，机会假设带验证方法。",
+      "error": null,
+      "comparable": true
+    },
+    {
+      "round": "00-baseline",
+      "suite": "single-turn",
+      "caseId": "budget-ceiling",
+      "judge": "scope",
+      "executionStatus": "failed",
+      "judgeStatus": "completed",
+      "score": 1,
+      "reason": "各价格案例分类与8元上限一致:夫妻店卷饼8元、连锁套餐8元、武汉套餐6.6元、早餐车鸡肉卷8元均标注\"符合/压线\"(≤8元无误);烧饼+豆浆10元、便利店9元套餐、杂粮煎饼9元均标注\"超预算/略超\"。未知价格(台湾企业订阅)明确标注\"个人单次成本未披露,不能确认符合8元预算\",未强行当作满足。两版回答分类前后一致,无自相矛盾,也未将超预算方案误判为预算内。满足约束,判1。",
+      "error": null,
+      "comparable": true
+    },
+    {
+      "round": "00-baseline",
+      "suite": "single-turn",
+      "caseId": "budget-ceiling",
+      "judge": "evidence",
+      "executionStatus": "failed",
+      "judgeStatus": "completed",
+      "score": 1,
+      "reason": "检索成功返回可用正文（北京日报CBD调查 2023-06-29，21财经《白领早餐报告》2020-11-26）。报告中关键价格事实与来源原文一致：卷饼夹鸡蛋8元(无饮品)、大包+煎蛋+豆浆套餐8元、武汉套餐6.6元、早餐车鸡肉卷8元均为≤8元案例，烧饼+豆浆10元、便利店9元套餐、杂粮煎饼9元为超预算案例，与bjd原文逐一对应；94.2%、60.78%等比例数据与两篇原文一致。报告未将未知价格当作满足预算，对台湾企业订阅方案等明确标注\"价格场景不同/未披露\"，符合acceptance要求。未发现实质性事实与来源正文的错配。",
+      "error": null,
+      "comparable": true
+    },
+    {
+      "round": "00-baseline",
+      "suite": "single-turn",
+      "caseId": "budget-ceiling",
+      "judge": "inference",
+      "executionStatus": "failed",
+      "judgeStatus": "completed",
+      "score": 0,
+      "reason": "最终输出实际是两段报告拼接。第一段中出现未经证据支撑的强结论：“华南（广州、深圳）消费者更精打细算，5元以下套餐占比最高，说明低价市场在南方更成熟”——仅凭一条“占比最高”的单一数据点就得出“南方市场更成熟”的比较性结论，缺乏对多个城市/渠道的系统市场扫描或明确的成熟度定义和证据，属于把营销式归纳当结论。该表述出现在“行为痛点”一节（非明确“推断”小节），且未注明“样本有限，整体未知”等范围限定，违反规则中“多数人/多数吐槽者”“覆盖不普遍”等强结论需要分母、比较排序或充分市场扫描证据的要求。一处无支持的强结论即应判0，其余内容（如8元价格案例、假设部分标注为“未经证实”）即便处理较好也不能抵消此问题。",
+      "error": null,
+      "comparable": true
+    },
+    {
+      "round": "00-baseline",
+      "suite": "single-turn",
+      "caseId": "counter-evidence",
+      "judge": "scope",
+      "executionStatus": "failed",
+      "judgeStatus": "completed",
+      "score": 1,
+      "reason": "任务要求：聚焦中国城市通勤人群办公室即食早餐场景，需同时呈现便捷以外的顾虑与已有替代方案，区分观察/推断/假设，不可只挑支持新品资料,且无需追问。回答按观察/推断/待验证假设三段式组织,明确给出反向证据(南都测评\"不扛饿\"\"交智商税\"、消费者报\"躺瘦夸大导致便秘脱发\"、香港消委会\"即食=健康误解\")及已有替代方案(路边摊6.6-11元、企业早餐车、便利店配送等),并在末尾如实说明资料局限(仅获摘要、部分案例年代较早),未追问用户、未编造反对意见。范围聚焦中国城市白领通勤场景,与题目一致。未发现超约束或分类自相矛盾之处,未涉及价格预算类数值错算问题(该议题与本案例无关)。整体满足交付与约束。",
+      "error": null,
+      "comparable": true
+    },
+    {
+      "round": "00-baseline",
+      "suite": "single-turn",
+      "caseId": "counter-evidence",
+      "judge": "evidence",
+      "executionStatus": "failed",
+      "judgeStatus": "completed",
+      "score": 1,
+      "reason": "核心事实均有可用检索正文支持且归属正确：启承资本2023年调研原文确认中式主食占比近九成、西式13%、麦片类2~3%、咖啡渗透率15%；北京日报2023年CBD调查原文确认10元以内早餐普遍及6.6元套餐（武汉小吃店）；南都2020年代餐测评原文确认\"不扛饿\"\"交智商税\"等评价；中国消费者报2026年报道原文确认七成受访者依赖社媒种草及便秘脱发等副作用，且白领/学生样本区分清楚，报告未将学生样本冒充通勤整体；香港消委会原文确认高糖高钠、果干糖浓缩、坚果高热量等观点；猩便利2018年报道原文确认\"工位即餐桌\"早餐外卖+团餐及上海\"早餐工程\"。报告将观察/推断/假设分层清晰，未发现引用与正文的错配或日期张冠李戴。多次search_sources调用成功返回可用正文，满足证据可用性前提。",
+      "error": null,
+      "comparable": true
+    },
+    {
+      "round": "00-baseline",
+      "suite": "single-turn",
+      "caseId": "counter-evidence",
+      "judge": "inference",
+      "executionStatus": "failed",
+      "judgeStatus": "completed",
+      "score": 0,
+      "reason": "报告将\"便捷之外的核心顾虑集中在口味、饱腹感、营养真实性\"列为\"观察\"（有资料直接支持），但其证据仅为南都2020年6款产品测评、中国消费者报2026年调查及香港消委会关于谷物早餐糖钠的说明——样本量小且未说明覆盖范围、未给出\"核心\"或排序的比较依据，也没有像rubric要求的那样明确声明\"本次有限样本中出现，整体情况未知\"。这是将零散测评/营销报道泛化为有普遍性的强结论（\"核心痛点\"），且未提供排序或分母支持。同样，\"替代方案已很成熟\"一节仅罗列几个案例（猩便利2018、福斯润滑油2025、北京CBD调查2023）即断言渗透率/成熟度，缺乏系统性市场扫描证据。这些强结论被放在\"观察\"标题下却未达到观察应有的证据标准，符合rubric中\"把个体评论泛化\"\"未经充分证据支持的强结论\"判0条件。报告末尾仅有一句笼统的\"局限说明\"（非代表性抽样），不足以弥补具体结论处缺失的范围限定。",
+      "error": null,
+      "comparable": true
+    },
+    {
+      "round": "00-baseline",
+      "suite": "single-turn",
+      "caseId": "validation-plan",
+      "judge": "scope",
+      "executionStatus": "passed",
+      "judgeStatus": "completed",
+      "score": 1,
+      "reason": "任务要求：先检索真实公开资料，再给出最多两个机会假设，每个假设附证据、反例/缺口、可执行访谈或小实验、以及推翻条件。回答给出两个假设，均完整包含证据（引用北京日报、中国青年报等公开报道及数据）、反例/缺口（如\"也可能已用现有产品满足需求\"\"缺乏量化效果数据\"）、可执行验证方法（驻点观察+拦访+包装原型测试；HR访谈+员工意愿访谈）、及明确的推翻条件（如\"观察/访谈显示用户对现有方式无不满则假设不成立\"）。资料缺口已如实标注（样本年份跨度大、缺专门细分数据），未将未知当作已确认需求。两段输出（partIndex 11正文与14总结）内容一致，无自相矛盾。未发现超出资料支持的武断断言或违反任务约束之处。",
+      "error": null,
+      "comparable": true
+    },
+    {
+      "round": "00-baseline",
+      "suite": "single-turn",
+      "caseId": "validation-plan",
+      "judge": "evidence",
+      "executionStatus": "passed",
+      "judgeStatus": "completed",
+      "score": 1,
+      "reason": "核查关键数据点：94.2%低于10元、60.78%便利店占比、19.4%单位吃早餐、56.5%/54.1%食材与营养问题、外资与大型企业餐饮福利表现突出，均在对应URL捕获正文中找到原话支持，且日期、人群（白领/职场人）与引用一致，未发现把学生样本当通勤者整体或渠道/组合价格混淆的情况。至少两次search_sources/read_source成功返回可用正文，证据链完整，报告的核心事实与引用一致。",
+      "error": null,
+      "comparable": true
+    },
+    {
+      "round": "00-baseline",
+      "suite": "single-turn",
+      "caseId": "validation-plan",
+      "judge": "inference",
+      "executionStatus": "passed",
+      "judgeStatus": "completed",
+      "score": 1,
+      "reason": "简报将观察、推断与待验证机会分层清晰：所有比例性结论（如\"59.5%/56.7%没时间吃早餐\"\"94.2%花费10元以内\"\"19.4%在单位吃早餐\"）均标注具体调查来源和年份，未出现\"接受度高\"\"多数人\"\"未见成熟方案\"等无分母、无比较依据的空泛强结论。报告明确指出\"调查多为全国性问卷或特定CBD截面观察,样本量、年份不一...需视为待验证推断居多\"，保留了范围限定。两个机会假设均附证据、反例/缺口、具体验证方法（驻点观察+拦访/HR及员工访谈）和明确的推翻条件（如\"若观察/访谈显示用户对现有方式无明显不满...则假设不成立\"），未将营销主张或个体评论当作已证实需求。符合1分标准。",
+      "error": null,
+      "comparable": true
+    },
+    {
+      "round": "00-baseline",
+      "suite": "multi-turn",
+      "caseId": "clarify-breakfast",
+      "judge": "conversation",
+      "executionStatus": "passed",
+      "judgeStatus": "completed",
+      "score": 1,
+      "reason": "对话顺序核查完整：1)首轮Agent提出必要澄清（人群/场景/品类/限制）；2)用户回应后Agent给出有来源的初始调研简报（10元价位、便利店渠道等）；3)用户追加\"办公室无微波炉无热水\"约束；4)Agent给出非空修订回答，明确排除需加热/冲泡品类，保留原价格(8-15元对标)和方便性约束，提出常温早餐方案并给出来源(京东消费决策中心2024等)，且在\"区分说明\"部分明确区分已观察事实与推断待验证内容。各已发生轮次均完成交付，未违背仍有效约束，无未支持断言被当作事实陈述。满足rubric关于已观察轮次的要求。",
+      "error": null,
+      "comparable": true
+    },
+    {
+      "round": "00-baseline",
+      "suite": "multi-turn",
+      "caseId": "clarify-breakfast",
+      "judge": "coverage",
+      "executionStatus": "passed",
+      "judgeStatus": "completed",
+      "score": 1,
+      "reason": "对话顺序完整：1) 用户提出早餐新品请求(f4b0fad3); 2) 助手澄清问题(18cb8e49); 3) 用户回应澄清给出目标人群/场景(4f1f015e); 4) 助手给出初始调研简报(b884f9f5); 5) 用户追加新约束“办公室没有微波炉也没有热水”(cf7bfb78); 6) 助手针对该约束给出非空的更新调研回答(81d46cdd, partIndex2&9)。所有coverage要求的事件均按顺序发生且有对应非空回答，满足acceptance标准。",
+      "error": null,
+      "comparable": true
+    },
+    {
+      "round": "01-result-focused",
+      "suite": "single-turn",
+      "caseId": "breakfast-scope",
+      "judge": "scope",
+      "executionStatus": "failed",
+      "judgeStatus": "completed",
+      "score": 1,
+      "reason": "任务要求：人群(上班族)、场景(到办公室后吃早餐)、现有产品/方案、机会与待验证问题，均需有来源且信息不足需注明、不得反复追问。回答按研究范围→主要发现(带来源链接，标注\"企业口径/低置信度/待验证\")→机会假设A/B/C(含验证对象与放弃条件)→下一步(信息缺口说明)组织，完整覆盖人群、场景、现有方案(便利店早餐数据)、机会(三个待验证假设)及待验证问题(样本量、调查主体未知等)，且未将未知数据当作已确认结论，也未向用户追问澄清，符合\"信息不足请注明，不需要再向我澄清\"的约束。未发现将超出约束范围的结论误判为达标，亦无内部矛盾分类。",
+      "error": null,
+      "comparable": true
+    },
+    {
+      "round": "01-result-focused",
+      "suite": "single-turn",
+      "caseId": "breakfast-scope",
+      "judge": "evidence",
+      "executionStatus": "failed",
+      "judgeStatus": "completed",
+      "score": 0,
+      "reason": "报告第1点关于便利店早餐（8:30-9:30高峰、绝大多数写字楼白领、便利蜂20-25%、全家蒸包五成/饭团三成）均能在read_source抓取的腾讯新闻正文（news.qq.com/rain/a/20200722A0XO6R00）中找到对应原句支持，证据可用。但报告第2点\"该报道标题提及'仅5成白领每天吃早餐、两成深圳男性从不吃早餐'\"将此标题/数据归为与第1点相同的\"该报道\"（即qq.com文章），实际该标题和数据来自另一篇独立来源——21财经《便利店里的早餐：仅5成白领每天吃早餐，两成深圳男性从不吃早餐》（search_sources第11条抓取），而非qq.com文章的标题或内容。报告未给出21财经文章的URL，却把其标题数据挂在前一条qq.com来源之下，造成引用来源张冠李戴，属于明确的引用/事实错配。",
+      "error": null,
+      "comparable": true
+    },
+    {
+      "round": "01-result-focused",
+      "suite": "single-turn",
+      "caseId": "breakfast-scope",
+      "judge": "inference",
+      "executionStatus": "failed",
+      "judgeStatus": "completed",
+      "score": 1,
+      "reason": "报告中的强结论均附带明确范围限定：\\\"便利店早餐是上海部分商务区白领的常见选择\\\"标注为\\\"个案/企业口径\\\"，并说明\\\"这些数字来自企业口径，仅限上海这些门店，不能推广至全国\\\"；\\\"仅5成白领每天吃早餐、两成深圳男性从不吃早餐\\\"被明确标注为\\\"待验证引用\\\"，说明\\\"调查方法、样本量未见于摘录\\\"；PTT帖子回复和豆瓣帖子讨论均注明\\\"仅为单帖自选样本，不代表整体比例\\\"/\\\"仅为该帖讨论范围内的观点分布\\\"。未出现无支持的\\\"接受度高\\\"\\\"真正/核心痛点是\\\"\\\"覆盖不普遍\\\"\\\"未见成熟方案\\\"等泛化表述；检索空白被明确说明为\\\"信息空白，不等于市场空白\\\"而非当作已验证结论。机会假设部分（A/B/C）均附带验证对象、动作和放弃条件，符合\\\"待验证机会带验证方法\\\"的要求。整体符合1分标准：观察、推断与待验证机会区分清晰，强结论范围明确或标注为待验证。",
+      "error": null,
+      "comparable": true
+    },
+    {
+      "round": "01-result-focused",
+      "suite": "single-turn",
+      "caseId": "budget-ceiling",
+      "judge": "scope",
+      "executionStatus": "passed",
+      "judgeStatus": "completed",
+      "score": 1,
+      "reason": "约束：早餐、办公室场景、单次预算≤8元、价格需标注来源且未知价格不可算满足预算。核对回答：芝士三明治8.9元被明确列为“已超出8元上限”而非归类为预算内；北京地铁8元套餐（包子+豆浆+茶叶蛋=8元）准确计为组合总价刚好8元，14.5元汉堡套餐被标注为“已超预算”；2016年外卖调查数据被标注为时效性存疑，不作为现状结论；资料缺口部分明确承认未找到专门调研，未将未知价格当作满足预算。未发现把超预算组合错误归类为“预算内”的情况，各价格均注明来源（URL）及单份/组合/促销口径。符合 acceptance 要求。",
+      "error": null,
+      "comparable": true
+    },
+    {
+      "round": "01-result-focused",
+      "suite": "single-turn",
+      "caseId": "budget-ceiling",
+      "judge": "evidence",
+      "executionStatus": "passed",
+      "judgeStatus": "completed",
+      "score": 1,
+      "reason": "报告中引用的三组关键事实均有可用检索正文支持且归属准确：(1) 北京地铁\"食光机\"8元包子+豆浆+茶叶蛋组合、14.5元汉堡套餐、2025-11-13发布、自7月上线累计超10万人次/17万单，均与partIndex=4/8检索到的中国网原文逐句对应，报告也如实标注\"仅限北京地铁\"\"累计数据不代表全国/长期趋势\"；(2) 2016年英敏特调查的4个一线+6个二三线城市、3000名消费者、26%/37%/31%/35%等数字与原文一致，报告标注发布于2016年、不能直接套用现状；(3) 便利店包子2.2-3.5元/个、饭团4.5元等与partIndex=3/7检索正文一致，报告注明价格为参考价、三明治等单品易超预算。未发现报告把未知价格当作已满足8元上限，也未发现引用与正文的事实错配。满足“至少一次成功检索取得可用正文+事实相符”的判1条件。",
+      "error": null,
+      "comparable": true
+    },
+    {
+      "round": "01-result-focused",
+      "suite": "single-turn",
+      "caseId": "budget-ceiling",
+      "judge": "inference",
+      "executionStatus": "passed",
+      "judgeStatus": "completed",
+      "score": 1,
+      "reason": "该简报将观察、推断与待验证机会假设明确分节标注，强结论处均附带来源与范围限定：便利店单品价格援引具体文章并标明来源URL，同时指出部分单品(三明治5.8元、8.9元)已超预算，未做无依据概括；地铁8元套餐明确限定“仅限北京地铁”“这是该服务自身的累计数据，不能推论为全国常态”；外卖意愿数据标注发布于2016年并提示“不能直接套用现在的市场”。推断部分用“推断（未验证）”标题并说明“缺乏直接数字支撑”；机会假设部分均附具体验证方法（如“观察套餐送达工位后10-30分钟的温度/口感变化”“若多数人10秒内完成选择且满意，放弃假设”），未将假设写成已证实需求。资料缺口部分也说明“这是检索空白，不代表市场本身不存在相关供给或需求”，范围表述谨慎。未发现“接受度高”“核心痛点”“多数人”等无支撑强结论，价格来源区分单份/组合/促销口径，未知价格均标注说明。符合1分标准。",
+      "error": null,
+      "comparable": true
+    },
+    {
+      "round": "01-result-focused",
+      "suite": "single-turn",
+      "caseId": "counter-evidence",
+      "judge": "scope",
+      "executionStatus": "passed",
+      "judgeStatus": "completed",
+      "score": 1,
+      "reason": "任务要求：检索便捷以外的顾虑、已有替代方案，区分观察/推断/待验证假设，不得只挑支持新品资料，范围为中国城市通勤人群，不需追问。回答逐条给出观察1-4（北京CBD调查、杭州预制半成品质疑、代餐健康争议、速食通用顾虑），均标注来源及地域局限（如\"北京CBD样本，不代表全国\"），列出已有替代方案（路边摊、便利店套餐、代餐、自制、早餐工程），单独列\"推断\"段落与\"机会假设与验证建议\"段落区分推断/假设，结论范围说明明确承认资料地域局限、不能得出全国结论。未发现编造反对意见或将未知当已知的情况，未违反\"不需追问\"（未反复追问）。符合acceptance标准。",
+      "error": null,
+      "comparable": true
+    },
+    {
+      "round": "01-result-focused",
+      "suite": "single-turn",
+      "caseId": "counter-evidence",
+      "judge": "evidence",
+      "executionStatus": "passed",
+      "judgeStatus": "completed",
+      "score": 1,
+      "reason": "多次search_sources调用成功返回可用正文（北京日报CBD早餐调查全文、福建省市场监管局代餐消费提示全文含\"非法添加泻药\"、艾媒咨询代餐市场476.2亿元数据、新华社预制菜报道、中山/珠海能量棒科普），report引用与正文逐项核对一致：94.2%/81%/60.78%/10.37%等数字准确对应北京日报原文且报告明确标注\"北京CBD样本，不代表全国\"；代餐泻药案例与福建市场监管提示原文吻合；代餐市场规模476.2亿元与艾媒网原文一致；预制菜知情权表述与新华社原文一致。未发现引用URL与正文错配或日期/样本张冠李戴。证据可用性条件满足，事实核对通过。",
+      "error": null,
+      "comparable": true
+    },
+    {
+      "round": "01-result-focused",
+      "suite": "single-turn",
+      "caseId": "counter-evidence",
+      "judge": "inference",
+      "executionStatus": "passed",
+      "judgeStatus": "completed",
+      "score": 1,
+      "reason": "简报全文检查：观察部分逐条标注样本来源及局限（“这是北京CBD样本，不代表全国通勤者”“这是个案声音，非系统调查”），未将个体评论泛化为普遍结论；“推断”部分明确标注“非直接证据”且说明“缺乏全国性专项调查验证其普遍程度和排序”，未使用“接受度高”“核心痛点是”“多数人”等无支撑强结论；“机会假设”均附具体验证方法（选择实验、A/B测试、多城市访谈）且未写成已证实需求；结尾“结论范围说明”明确指出资料地域集中、不能得出“普遍痛点”或“市场空白”结论。三类标题下内容与标题一致，未发现把营销主张当用户研究或把待验证假设写成已证实需求的情况。满足1分标准。",
+      "error": null,
+      "comparable": true
+    },
+    {
+      "round": "01-result-focused",
+      "suite": "single-turn",
+      "caseId": "validation-plan",
+      "judge": "scope",
+      "executionStatus": "passed",
+      "judgeStatus": "completed",
+      "score": 1,
+      "reason": "任务要求：先检索真实公开资料，再提出最多两个机会假设，每个附证据、反例/缺口、可执行验证方法、推翻条件。回答引用4份具体公开资料（含链接），逐条标注样本局限性（如\"单一个案不能代表普遍现象\"\"未单独统计到公司吃比例\"\"未拆分早餐场景数据\"），明确证据缺口段落。两个假设均完整包含证据铺垫、验证方法（访谈/观察/试点）、可量化推翻条件（如\"观察占比<10%\"\"复购率低\"），未将假设包装为已确认需求，结论段也如实声明资料不足以支撑结论。未发现超约束或自相矛盾分类问题，交付完整对应任务要求。",
+      "error": null,
+      "comparable": true
+    },
+    {
+      "round": "01-result-focused",
+      "suite": "single-turn",
+      "caseId": "validation-plan",
+      "judge": "evidence",
+      "executionStatus": "passed",
+      "judgeStatus": "completed",
+      "score": 1,
+      "reason": "Agent成功调用search_sources/read_source并取得可用正文（partIndex 3/4/7/8/11等均返回完整网页文本，非error/unavailable），满足证据可用性门槛。核对关键事实：①闵行区报道原文确认“近6000人”“38.55%认为点位偏少”“心理价位10元左右”及张先生个案（同事带早餐到工位吃），报告将其明确标注为“单一个案，不能代表普遍现象”，未冒充总体结论；②便利蜂数据10.37%/82.71%/94.2%与正文逐字吻合；③51job正文确认83%几乎每天吃早餐、2018年不到50%、56%因时间紧张，报告同样准确引用且加注方法差异的谨慎提示；④CBNData来源确认该报告聚焦全天外卖健康，未拆分早餐/办公室场景，报告如实注明此缺口。各引用URL与紧邻正文、日期对应准确，未发现张冠李戴或夸大样本代表性，未将个案或促销样本冒充为通勤者整体结论。",
+      "error": null,
+      "comparable": true
+    },
+    {
+      "round": "01-result-focused",
+      "suite": "single-turn",
+      "caseId": "validation-plan",
+      "judge": "inference",
+      "executionStatus": "passed",
+      "judgeStatus": "completed",
+      "score": 1,
+      "reason": "简报将个案（张先生带早餐到工位）明确标注为\"单一个案，不能代表普遍现象\"；各项数据均注明样本范围（上海闵行区6000份问卷、全国20城便利蜂、51job招聘平台用户、CBNData全天外卖未拆分早餐场景），未将营销/调查主张泛化为普遍结论。两个机会假设均附具体验证方法（现场观察进食比例、访谈、2周自提柜试点）和明确的推翻条件（如\"观察占比<10%\"\"复购率低\"），未将待验证假设写成已证实需求。结论段明确声明\"现有资料不足以支撑'到公司吃早餐'是普遍痛点或市场空白\"，保持了范围限定，符合1分标准。",
+      "error": null,
+      "comparable": true
+    },
+    {
+      "round": "01-result-focused",
+      "suite": "multi-turn",
+      "caseId": "clarify-breakfast",
+      "judge": "conversation",
+      "executionStatus": "passed",
+      "judgeStatus": "completed",
+      "score": 1,
+      "reason": "对话包含两轮:首轮用户补充人群/场景/预算后,Agent给出有来源的调研简报,聚焦办公室场景、价格敏感、方便的需求,未引入加热依赖的产品(符合预算和场景约束)。第二轮用户追加\"办公室没有微波炉也没有热水\"条件,Agent明确承认该约束会排除依赖加热的方案,并给出补充调研,逐条标注来源可信度,区分\"个人叙事/导购内容不可作为结论\"\"个别用户经验不能推广\"\"英文资料非中国本土证据\"等事实/推断区分,并在产品假设部分明确标注\"均待验证\"\"资料未验证\"等假设性表述，没有将不满足无加热约束的方案（如需微波的包子、需热水冲泡的麦片）推荐为达标方案，反而在\"下一步建议\"中明确排除这些品类。两轮回答均完成了该轮要求的交付，未违背此前仍然有效的人群、场景、预算等约束。仅评估已观察到的两轮，未涉及后续未发生的追问。",
+      "error": null,
+      "comparable": true
+    },
+    {
+      "round": "01-result-focused",
+      "suite": "multi-turn",
+      "caseId": "clarify-breakfast",
+      "judge": "coverage",
+      "executionStatus": "passed",
+      "judgeStatus": "completed",
+      "score": 1,
+      "reason": "对话顺序完整：用户提出早餐新品需求(50e6e952) → 助手澄清问题(27d07921) → 用户回答目标人群/场景(28dcda7c) → 助手给出初始调研报告(3afeaa8c, partIndex8/11) → 用户追加“办公室没有微波炉也没有热水”条件(19d74c64) → 助手给出非空补充调研回答(82465ef5, partIndex2/10)，明确针对新条件修订方案并保留原有人群/场景等约束。覆盖目标中的必达事件均按顺序出现且有非空回答。",
+      "error": null,
+      "comparable": true
+    },
+    {
+      "round": "02-trace-focused",
+      "suite": "single-turn",
+      "caseId": "breakfast-scope",
+      "judge": "scope",
+      "executionStatus": "passed",
+      "judgeStatus": "completed",
+      "score": 1,
+      "reason": "任务为早餐场景调研简报（非价格/预算类任务），验收要求覆盖人群、场景、现有方案、机会假设、待验证问题，且条件充分时不反复追问。核对最终输出：人群为中国城市上班族，场景为办公室早餐；现有方案涵盖艾媒咨询调查、饿了么早餐数字化报告、豆瓣/PTT用户讨论；机会假设A/B均给出验证方法与放弃信号；信息缺口部分明确标注未检索到的数据（企业早餐福利、专门办公室早餐量化调查），且对样本代表性局限（如豆瓣帖、PTT台湾数据不代表大陆上班族)做了如实说明，未将未知资料当作已验证结论。输出未再向用户提澄清问题，符合\"信息不足请注明，不需要再向我澄清\"的要求。未发现价格、份量、促销等计算类约束适用于本题，也未发现将超限/未知情况误判为达标的矛盾分类。整体满足交付完整性与约束如实标注的要求。",
+      "error": null,
+      "comparable": true
+    },
+    {
+      "round": "02-trace-focused",
+      "suite": "single-turn",
+      "caseId": "breakfast-scope",
+      "judge": "evidence",
+      "executionStatus": "passed",
+      "judgeStatus": "completed",
+      "score": 1,
+      "reason": "多次 search_sources/read_source 成功返回可用正文（如iimedia.cn艾媒咨询页面、100ec.cn饿了么报告页面、douban帖子正文），满足证据可用性前提。核对报告关键事实：艾媒咨询数据（92.97%有早餐习惯、23.26%因上班来不及不吃等）与读取正文一致且标注为未细分办公室场景；饿了么报告中“周末更偏好外卖早餐”“上海早餐工程”“智能取餐柜”等表述与读取正文（p_1a09614ba297c8d2, p_96b198c563811dab）一致；豆瓣帖子中楼主通勤远、担心同事反感气味、评论区“全公司都在办公室吃，互相发无所谓”等引用与读取正文（p_f87f666d9a2f7d66, p_1fd7edcf3d9fbfb9）一致。报告对样本局限性（非代表性抽样、非全国最新数据）如实标注，未将营销/论坛样本冒充整体结论。未发现引用URL与正文事实错配。",
+      "error": null,
+      "comparable": true
+    },
+    {
+      "round": "02-trace-focused",
+      "suite": "single-turn",
+      "caseId": "breakfast-scope",
+      "judge": "inference",
+      "executionStatus": "passed",
+      "judgeStatus": "completed",
+      "score": 1,
+      "reason": "报告中的强结论均带有范围限定和证据说明,未出现无根据泛化。如“92.97%受访者有吃早餐习惯”“65.55%早餐时间在7-8点”直接给出全国随机抽样调查的具体比例来源,并明确注明“该报告未细分办公室场景，不能直接推断全体上班族痛点”；豆瓣帖讨论气味问题时写明“评论区观点分裂”,并明确声明“这只代表该帖参与者的意见分布，不能推断为普遍社交规范”；饿了么报告说明“属2021年、上海为代表案例的观察，非全国最新现状”。机会假设A、B均附带可执行验证方法和放弃信号，未被当作已证实需求。信息缺口部分也明确说明“未找到专门针对‘办公室内早餐消费’的量化调查”。整体未见把个体评论泛化为普遍结论、也未将营销主张当作用户研究，强结论均有对应证据和范围限定。",
+      "error": null,
+      "comparable": true
+    },
+    {
+      "round": "02-trace-focused",
+      "suite": "single-turn",
+      "caseId": "budget-ceiling",
+      "judge": "scope",
+      "executionStatus": "passed",
+      "judgeStatus": "completed",
+      "score": 1,
+      "reason": "约束：预算≤8元/单份或组合、办公室食用、价格须有来源、未知价格不可声称满足。回答原句：8元青椒鸡肉卷、6.5元手抓饼+豆浆均标注为≤8元可行；8.8/9.8/10/12元套餐被明确归类为\"超出8元预算\"；9元便利店套餐、10元烧饼夹鸡蛋+豆浆均标为超预算。核对结论：未发现把超预算方案误判为预算内或把未知价格当满足预算的情况，所有价格均附来源链接与日期，证据缺口处如实注明\"未找到清单/未验证方法\"。回答完整覆盖比较已有方案和机会假设，无强制编造价格或日期。符合acceptance与约束。",
+      "error": null,
+      "comparable": true
+    },
+    {
+      "round": "02-trace-focused",
+      "suite": "single-turn",
+      "caseId": "budget-ceiling",
+      "judge": "evidence",
+      "executionStatus": "passed",
+      "judgeStatus": "completed",
+      "score": 1,
+      "reason": "检索工具成功返回可用正文（北京日报、上海青浦政府网页面均被read_source完整抓取）。核对报告关键事实：北京CBD\"烧饼夹鸡蛋+豆浆约10元\"对应原文\"烧饼夹鸡蛋7元+豆浆3元\"；\"8元青椒鸡肉卷、9元杂粮煎饼\"与原文一致；\"94.2%受访者控制在10元以内\"为原文直接引用且报告正确标注为转引、未验证方法、阈值为10元而非8元；青浦\"百佳好手抓饼+豆浆6.5元\"与原文\"一份手抓饼加一袋豆浆只需6.5元\"一致；\"全家便利店套餐8.8、9.8、10、12元\"与原文\"8.8元、10元、12元套餐\"及\"两个鲜肉大包+拿铁9.8元\"一致。报告未将未知价格当作满足8元预算，且明确区分单品/组合/促销口径及样本范围（个案报道，非全国代表性）。未发现引用与正文的错配。",
+      "error": null,
+      "comparable": true
+    },
+    {
+      "round": "02-trace-focused",
+      "suite": "single-turn",
+      "caseId": "budget-ceiling",
+      "judge": "inference",
+      "executionStatus": "passed",
+      "judgeStatus": "completed",
+      "score": 1,
+      "reason": "报告将发现严格限定为\"北京CBD个案\"\"上海青浦个案\"两个地区性样本，未出现\"普遍接受度高\"\"多数吐槽者\"等无证据支撑的泛化强结论；对转引数据（94.2%控制在10元以内）明确指出\"样本方法未公开\"\"不能作为8元预算的直接支持证据\"，区分了阈值差异；机会假设部分明确标注\"待验证，非结论\"并给出具体验证方法（实地核价3-5家、访谈10-15名白领及不成立的判据）；结尾说明清楚限定\"不代表全国通勤者普遍预算或行为\"。价格区分了单品/组合/促销口径（如6.5元手抓饼+豆浆 vs 8.8-12元便利店套餐），未知价格未被当作满足预算。符合1分标准。",
+      "error": null,
+      "comparable": true
+    },
+    {
+      "round": "02-trace-focused",
+      "suite": "single-turn",
+      "caseId": "counter-evidence",
+      "judge": "scope",
+      "executionStatus": "passed",
+      "judgeStatus": "completed",
+      "score": 1,
+      "reason": "该案例的验收标准是：检索并呈现反向线索与替代方案，区分观察/推断/待验证假设，不编造反对意见，不只挑支持性资料。实际回答符合：明确列出便利店/外卖/路边摊/自制等已有替代方案；将\"没时间是首因\"标注为待验证假设而非结论；对营养/添加剂顾虑明确说明\"检索到但未能稳定引用，仅作背景参考，不作为正式事实使用\"，并列为\"明确的证据缺口\"，未编造反对证据；给出可验证/可推翻的假设及验证方式。未发现将未知资料当作已证实、也未发现自相矛盾的分类（价格类约束检查不适用于本案例，因该案例无预算/份量约束）。符合验收标准，无需追问（用户已声明不需要追问）。",
+      "error": null,
+      "comparable": true
+    },
+    {
+      "round": "02-trace-focused",
+      "suite": "single-turn",
+      "caseId": "counter-evidence",
+      "judge": "evidence",
+      "executionStatus": "passed",
+      "judgeStatus": "completed",
+      "score": 1,
+      "reason": "核心事实（60.78%便利店占比、85.84%/70.69%/48.53%理由排序、94.2%早餐≤10元、31.09%外卖、25.34%路边摊、10.37%从不吃早餐、82.71%/35.68%不吃早餐原因）均可在partIndex=7读取的read_source正文（src_b2053b796f99c8ff，21财经2020-11-26便利蜂调查）中逐一对应确认，且报告明确标注该样本为便利蜂渠道顾客，非全体通勤人群，未夸大适用范围。第二项顾虑（添加剂/营养）因来源未能完整落地链接，报告如实降级为背景参考，未冒充正式引用或编造，符合反向证据如实呈现的验收要求。至少一次search_sources/read_source成功返回可用正文，且未发现引用与正文的事实错配，日期、样本范围标注准确。",
+      "error": null,
+      "comparable": true
+    },
+    {
+      "round": "02-trace-focused",
+      "suite": "single-turn",
+      "caseId": "counter-evidence",
+      "judge": "inference",
+      "executionStatus": "passed",
+      "judgeStatus": "completed",
+      "score": 1,
+      "reason": "报告中的强结论均带有明确样本范围与保留措辞：便利店数据注明来源为便利蜂自身1600+门店渠道调查并声明\"不代表全体通勤人群\"；\"没时间\"结论标注为\"待验证假设，不是结论\"；营养/添加剂顾虑明确写\"证据缺口\"、\"不能当作顾虑已被证实\"，未被包装成已证实需求；机会假设部分均附带可操作的验证方法和放弃标准。未发现将个体评论泛化为普遍结论，或将营销主张当用户研究的情况。符合1分标准。",
+      "error": null,
+      "comparable": true
+    },
+    {
+      "round": "02-trace-focused",
+      "suite": "single-turn",
+      "caseId": "validation-plan",
+      "judge": "scope",
+      "executionStatus": "passed",
+      "judgeStatus": "completed",
+      "score": 1,
+      "reason": "两个机会假设均包含明确验证对象、动作（访谈/小实验）、可观察结果和否定（推翻）条件，且与检索到的资料缺口对应，未将假设包装为已确认结论（多次强调\"待验证\"\"结论边界\"）。符合acceptance要求。",
+      "error": null,
+      "comparable": true
+    },
+    {
+      "round": "02-trace-focused",
+      "suite": "single-turn",
+      "caseId": "validation-plan",
+      "judge": "evidence",
+      "executionStatus": "passed",
+      "judgeStatus": "completed",
+      "score": 1,
+      "reason": "核对报告中的实质性事实均有可用正文支撑且归属准确：83%/56%/34%/28%数据对应中新社北京分社2024文章原文；64.87%在家自备早餐及张先生个案均对应劳动报2021文章原文，报告正确将张先生描述为\"单一个案\"而非普遍现象；10.37%白领不吃早餐数据正确归属于报告中提到的全国20城《白领早餐报告》（劳动报引用部分）；新京报2026文章中\"通勤时间较长的人，也可以先在家吃一部分，到办公室后再补充水果或奶类\"原句与报告引用一致，且报告正确指出该文含商业信息、属软文性质。三次search/read_source调用均成功返回可用正文，满足证据可用性门槛，且未发现引用错配或日期张冠李戴。假设与验证计划建立在证据缺口之上，未将假设写成已确认结论。",
+      "error": null,
+      "comparable": true
+    },
+    {
+      "round": "02-trace-focused",
+      "suite": "single-turn",
+      "caseId": "validation-plan",
+      "judge": "inference",
+      "executionStatus": "passed",
+      "judgeStatus": "completed",
+      "score": 1,
+      "reason": "报告中的强结论均附带具体样本来源与范围限定，未出现无证据支撑的泛化。例如\"83%受访者几乎每天吃早餐\"明确标注为前程无忧2024年问卷样本比例，并注明\"未单独统计'到岗后才吃早餐'的比例\"；\"64.87%受访职工在家自备早餐\"明确来自闵行区总工会近6000人问卷，且把张先生办公室进食案例明确标注为\"该报道中单一个案的做法，不能代表普遍现象\"，未泛化为普遍现象；\"新京报\"条目被明确标注\"含商业信息...非独立调查数据\"，未当作市场研究证据。结论边界部分明确写\"没有找到专门针对...的定量调查...不能据此判断该现象普遍或罕见\"，符合\"明确说无法判断\"的要求。两个机会假设均附验证对象、具体动作（访谈人数、实验设计）及可观察的推翻条件（如\"多数人早餐一次性解决\"\"复购率低\"），未将假设写成已证实需求。结尾\"待验证缺口\"进一步说明样本局限于上海、北京，不可外推全国，划定了范围而非笼统免责声明。整体符合1分标准：观察、推断与待验证机会区分清晰，强结论有对应证据和范围限定。",
+      "error": null,
+      "comparable": true
+    },
+    {
+      "round": "02-trace-focused",
+      "suite": "multi-turn",
+      "caseId": "clarify-breakfast",
+      "judge": "conversation",
+      "executionStatus": "passed",
+      "judgeStatus": "completed",
+      "score": 1,
+      "reason": "对话顺序：用户模糊请求→Agent合理澄清（人群/场景/品类/限制）→用户补充人群为通勤上班族，关注方便和价格→Agent完成初版研究（引用便利蜂报告、地铁早餐新模式等，保留价格≤10元、方便等约束）→用户追加\"办公室无微波炉无热水\"→Agent（messageId d0ae7a20...,partIndex2/17）正确识别新约束排除加热/冲泡品类，给出常温即食方向的补充调研，明确区分事实（报告数据）/推断（标注\"推断\"）/假设（机会假设待验证），未违背此前人群、价格等约束。两轮观察到的回答均完成交付，无违规证据。",
+      "error": null,
+      "comparable": true
+    },
+    {
+      "round": "02-trace-focused",
+      "suite": "multi-turn",
+      "caseId": "clarify-breakfast",
+      "judge": "coverage",
+      "executionStatus": "passed",
+      "judgeStatus": "completed",
+      "score": 1,
+      "reason": "对话顺序完整：用户请求研究→Agent澄清问题→用户回应必要澄清(目标人群)→Agent给出初始研究(messageId 19905d04 part12)→用户追加\"办公室没有微波炉也没有热水\"条件(messageId 1b846437)→Agent非空回答确认约束并给出更新研究(messageId d0ae7a20 part2和part17)。覆盖目标中要求的追问与回答均实际发生且顺序正确。",
+      "error": null,
+      "comparable": true
+    }
+  ],
+  "improvements": [
+    {
+      "caseId": "breakfast-scope",
+      "judge": "evidence",
+      "from": "01-result-focused",
+      "to": "02-trace-focused"
+    },
+    {
+      "caseId": "budget-ceiling",
+      "judge": "inference",
+      "from": "00-baseline",
+      "to": "01-result-focused"
+    },
+    {
+      "caseId": "counter-evidence",
+      "judge": "inference",
+      "from": "00-baseline",
+      "to": "01-result-focused"
+    }
+  ],
+  "regressions": [
+    {
+      "caseId": "breakfast-scope",
+      "judge": "evidence",
+      "from": "00-baseline",
+      "to": "01-result-focused"
+    }
+  ],
+  "unfinished": [],
+  "manualDisputes": [
+    {
+      "round": "00-baseline",
+      "caseId": "validation-plan",
+      "type": "manual_dispute",
+      "judge": "evidence",
+      "quote": "https://zqb.cyol.com/html/2011-09/06",
+      "assessment": "最终答案把2011年来源深链接截成目录，该URL未出现在本次捕获来源中。自动evidence=1保留；引用身份审计不同意该引用已核对无误。",
+      "evidence": "citationAudit.unmatched in results.json"
+    },
+    {
+      "round": "01-result-focused",
+      "caseId": "counter-evidence",
+      "type": "manual_dispute",
+      "judge": "evidence",
+      "quote": "这是北京CBD样本，不代表全国通勤者",
+      "assessment": "上一句94.2%费用等数据在北京日报正文中明确转引《白领早餐报告》，不能因为报道地点在CBD就把报告样本改成CBD。自动evidence=1保留；这是来源样本归属争议。",
+      "sourceUrl": "https://xinwen.bjd.com.cn/content/s649d0c04e4b042ca9e8e6a19.html",
+      "capturedEvidenceQuote": "据《白领早餐报告》，94.2%的受访者早餐费用控制在10元以内。"
+    },
+    {
+      "round": "02-trace-focused",
+      "caseId": "budget-ceiling",
+      "type": "manual_dispute",
+      "judge": "evidence",
+      "quote": "仅单品能压到8元以内",
+      "assessment": "北京日报同一来源的search_sources与read_source均返回6.6元完整套餐，反驳该绝对断言。三项自动1分保留；这是正文读到、链接正确却漏掉反例的实质质量问题。",
+      "sourceId": "src_9a9609c344f03384",
+      "sourceUrl": "https://xinwen.bjd.com.cn/content/s649d0c04e4b042ca9e8e6a19.html",
+      "capturedEvidenceQuote": "店里在早餐时段售卖两款只需6.6元的超值套餐。",
+      "toolEvidence": "Both search_sources and read_source(offset=0) contain the 6.6-yuan set meal in this exact run."
+    }
+  ],
+  "sourceIdentityBoundary": "Original comparison remains unchanged; 02 uses pre-fix-manifest.json. Budget-only follow-up is separate, not a new four-case aggregate.",
+  "budgetCeilingFollowUp": {
+    "round": "02-trace-focused",
+    "sourceSha256": "3f4601c9719c8d97b4d57294b77095e8e8f18ac6871c429e7b8bb1716705576a",
+    "results": "02-trace-focused/budget-ceiling-follow-up-results.json",
+    "receipt": "02-trace-focused/budget-ceiling-follow-up.json",
+    "counts": {
+      "passed": 0,
+      "failed": 0,
+      "incomplete": 1,
+      "execution_error": 0,
+      "unscored": 0,
+      "missing": 0
+    },
+    "judging": {
+      "required": 3,
+      "completedRequired": 2,
+      "errors": 1
+    },
+    "scores": {
+      "scope": 1,
+      "inference": 1,
+      "evidence": null
+    },
+    "evidenceStatus": "error",
+    "status": "incomplete",
+    "originalAggregateReplaced": false
+  },
+  "r2BudgetCeiling": {
+    "summary": "02-trace-focused/budget-ceiling-r2-summary.json",
+    "attemptsIncludingR1": 3,
+    "latestAttempt": 3,
+    "latestSourceSha256": "df0561ed495d58fe2d1e82d29bc26651be2c16bb4cbaaf4d06eaf78c7ef93341",
+    "scores": {
+      "evidence": 1,
+      "inference": 1,
+      "scope": 1
+    },
+    "status": "passed",
+    "judging": {
+      "required": 3,
+      "completedRequired": 3,
+      "errors": 0
+    },
+    "readSourceCalls": 3,
+    "unrenderedMarkers": [],
+    "originalAggregateReplaced": false,
+    "businessAcceptance": false
+  }
+}

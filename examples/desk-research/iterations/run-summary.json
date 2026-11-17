@@ -1,0 +1,133 @@
+{
+  "batch": "candidate-before-budget-fix",
+  "casesPerRound": {
+    "singleTurn": 4,
+    "multiTurn": 1
+  },
+  "rounds": [
+    {
+      "round": "00-baseline",
+      "singleTurn": {
+        "passed": 2,
+        "failed": 2,
+        "incomplete": 0,
+        "execution_error": 0,
+        "unscored": 0,
+        "missing": 0
+      },
+      "multiTurn": {
+        "passed": 1,
+        "failed": 0,
+        "incomplete": 0,
+        "execution_error": 0,
+        "unscored": 0,
+        "missing": 0
+      },
+      "judgesCompleted": 14,
+      "judgesRequired": 14,
+      "manualDisputes": 1
+    },
+    {
+      "round": "01-result-focused",
+      "singleTurn": {
+        "passed": 3,
+        "failed": 1,
+        "incomplete": 0,
+        "execution_error": 0,
+        "unscored": 0,
+        "missing": 0
+      },
+      "multiTurn": {
+        "passed": 1,
+        "failed": 0,
+        "incomplete": 0,
+        "execution_error": 0,
+        "unscored": 0,
+        "missing": 0
+      },
+      "judgesCompleted": 14,
+      "judgesRequired": 14,
+      "manualDisputes": 1
+    },
+    {
+      "round": "02-trace-focused",
+      "singleTurn": {
+        "passed": 4,
+        "failed": 0,
+        "incomplete": 0,
+        "execution_error": 0,
+        "unscored": 0,
+        "missing": 0
+      },
+      "multiTurn": {
+        "passed": 1,
+        "failed": 0,
+        "incomplete": 0,
+        "execution_error": 0,
+        "unscored": 0,
+        "missing": 0
+      },
+      "judgesCompleted": 14,
+      "judgesRequired": 14,
+      "manualDisputes": 1
+    }
+  ],
+  "historicalPublishedAttempt": {
+    "singleExecutions": 12,
+    "executionErrors": 12,
+    "caseGradesProduced": 0,
+    "gradingInterrupted": true
+  },
+  "acceptance": "Automatic outcomes and manual disputes are separate. Not full 18-case acceptance or published-toolchain acceptance.",
+  "agentRuntimeSourcesUnchangedAcrossRuntimeBatches": true,
+  "nonRuntimeNormalization": "The final newline of the round 02 store test was normalized before the candidate manifest freeze; Agent runtime sources, Cases and Judges did not change.",
+  "sourceIdentityBoundary": "Original 02 results use 02-trace-focused/pre-fix-manifest.json; current manifest is the repaired source. Follow-up is separate; no aggregate replacement.",
+  "budgetCeilingFollowUp": {
+    "round": "02-trace-focused",
+    "sourceSha256": "3f4601c9719c8d97b4d57294b77095e8e8f18ac6871c429e7b8bb1716705576a",
+    "results": "02-trace-focused/budget-ceiling-follow-up-results.json",
+    "receipt": "02-trace-focused/budget-ceiling-follow-up.json",
+    "counts": {
+      "passed": 0,
+      "failed": 0,
+      "incomplete": 1,
+      "execution_error": 0,
+      "unscored": 0,
+      "missing": 0
+    },
+    "judging": {
+      "required": 3,
+      "completedRequired": 2,
+      "errors": 1
+    },
+    "scores": {
+      "scope": 1,
+      "inference": 1,
+      "evidence": null
+    },
+    "evidenceStatus": "error",
+    "status": "incomplete",
+    "originalAggregateReplaced": false
+  },
+  "r2BudgetCeiling": {
+    "summary": "02-trace-focused/budget-ceiling-r2-summary.json",
+    "attemptsIncludingR1": 3,
+    "latestAttempt": 3,
+    "latestSourceSha256": "df0561ed495d58fe2d1e82d29bc26651be2c16bb4cbaaf4d06eaf78c7ef93341",
+    "scores": {
+      "evidence": 1,
+      "inference": 1,
+      "scope": 1
+    },
+    "status": "passed",
+    "judging": {
+      "required": 3,
+      "completedRequired": 3,
+      "errors": 0
+    },
+    "readSourceCalls": 3,
+    "unrenderedMarkers": [],
+    "originalAggregateReplaced": false,
+    "businessAcceptance": false
+  }
+}

@@ -22,6 +22,7 @@ async function inventory(directory, prefix = "") {
   for (const name of (
     await readdir(path.join(directory, prefix), { withFileTypes: true })
   ).sort((a, b) => a.name.localeCompare(b.name, "en"))) {
+    if (["node_modules", ".gea", "dist"].includes(name.name)) continue;
     const relative = path.join(prefix, name.name);
     if (name.isSymbolicLink())
       throw new Error(`Snapshot cannot contain a symlink: ${relative}`);

@@ -1,0 +1,56 @@
+{
+  "schemaVersion": "opengea.iteration-protocol.v2",
+  "searchProvider": "Exa",
+  "model": "creative-reasoning-1.5",
+  "judgeModel": "creative-reasoning-1.5",
+  "modelSource": "local",
+  "cli": "0.2.261114-alpha.0",
+  "sdk": "0.2.261114-alpha.0",
+  "developmentCases": [
+    "breakfast-scope",
+    "budget-ceiling",
+    "counter-evidence",
+    "validation-plan"
+  ],
+  "singleTurnRegressionCases": [
+    "alternatives-not-products",
+    "audience-transfer",
+    "conflicting-findings",
+    "freshness-limits",
+    "marketing-vs-users",
+    "no-microwave",
+    "weak-market-size",
+    "willingness-to-pay"
+  ],
+  "multiTurnCases": [
+    "clarify-breakfast"
+  ],
+  "concurrency": 2,
+  "overrides": {
+    "engine": {
+      "maxSteps": 16,
+      "timeout": {
+        "totalMs": 240000
+      }
+    }
+  },
+  "comparison": "Records agreed comparison conditions; the runner does not read this file. Keep Cases, Judges, model and execution options identical. Round 01 changes instructions only; round 02 changes the documented process and citation tools. Retain every attempt and error; do not select reruns.",
+  "sourceDrift": "Exa is live search. Preserve actual query/source metadata; a single-run score change does not establish statistical significance. Model aliases may change upstream; no underlying model fingerprint is claimed.",
+  "annotation": "Review notes are local analysis of actual trajectories, not hosted Builder Annotation exports.",
+  "runner": {
+    "entry": "published gea CLI",
+    "version": "0.2.261114-alpha.0",
+    "nodeShell": "24.16.0",
+    "policy": "One runner for all three rounds; runtime reported version is recorded in each native run. No platform fixes are attributed to Agent improvement."
+  },
+  "regressionScope": "All three rounds execute the same four development cases and clarify-breakfast. Other 8 single-turn and 5 multi-turn cases are not run in this comparison; this is not full-suite acceptance.",
+  "benchmarkCommit": "4f4f51cdeb765027baa2cdf2be55ce93a33c5f02",
+  "snapshotGuarantee": "Manifest verification checks this round source content only, excluding generated node_modules/.gea/dist. It does not enforce experiment conditions or verify outcomes.",
+  "trace": "Published traces are cropped sharing exports; complete native evidence stays local. Missing text in a sharing export does not establish absence in the native trace.",
+  "judgeOptions": {
+    "judgeSource": "snapshot",
+    "maxSteps": 12,
+    "timeoutMs": 300000,
+    "concurrency": 2
+  }
+}
