@@ -1,6 +1,6 @@
 # Agent Builder Quick Start: five steps
 
-Start from the [complete example](README.md). The quality baseline already searches with Exa, reads source bodies and stores research in a Durable Object. Workbench and Feishu are [functional extensions](versions/README.md), not quality rounds.
+Start from the [complete example](README.md). The quality baseline already searches with Exa, reads source bodies and stores research in a Durable Object.
 
 ## Baseline task for a coding agent
 
@@ -30,4 +30,4 @@ Copy the task from [baseline](iterations/00-baseline/README.md), [result-focused
 
 ## 5. Run again
 
-Compare by Case × Judge, including improvements, regressions, unfinished grading and manual disagreements. Retain all attempts; never select only good reruns or fill missing scores. `protocol.json` records agreed conditions and is not read by the runner. Manifests verify source content only; shared Traces are cropped, with full evidence kept locally.
+Compare by Case × Judge, including improvements, regressions, unfinished grading and manual disagreements. Retain all attempts; never select only good reruns or fill missing scores. See the [reproduction notes](iterations/REPRODUCING.md) for runtime requirements and source-to-result mapping. Shared Traces are cropped, with full evidence kept locally.

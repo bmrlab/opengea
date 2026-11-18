@@ -1,0 +1,22 @@
+{
+  "sourceSha256": "de902f79829931b753d76e4f5ac40fec7ed18413c2e73aee86d57103d309b436",
+  "benchmarkSha256": "64fcbc74d423c24a62be441e0532849b39d36aa578669db90d7487d75e6f94b9",
+  "sourceTypecheck": {
+    "passed": true
+  },
+  "sourceTests": {
+    "passed": 21,
+    "failed": 0,
+    "skipped": 0
+  },
+  "policyReplay": {
+    "scope": "Offline replay of the current step policy over all seven archived tool-result prefixes of budget-ceiling attempt 3.",
+    "allEqual": true,
+    "modelRequests": 0,
+    "exaRequests": 0,
+    "judgeRequests": 0
+  },
+  "modelRerunRequired": false,
+  "conclusion": "Type check and 21 source tests pass; the policy replay matches attempt 3. No new model execution or score; existing scores stay bound to their original manifests.",
+  "knownQualityLimitations": "All existing manual disputes, failed executions and Judge errors remain in their original records."
+}

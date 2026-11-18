@@ -6,13 +6,11 @@ import path from "node:path";
 const [action, id] = process.argv.slice(2);
 if (
   !["create", "verify"].includes(action) ||
-  !/^(?:history\/)?[0-9]{2}-[a-z0-9-]+$/u.test(id ?? "")
+  !/^[0-9]{2}-[a-z0-9-]+$/u.test(id ?? "")
 )
   throw new Error(
     "Usage: node scripts/snapshot-iteration.mjs create|verify 00-baseline (from example root)",
   );
-if (action === "create" && id.startsWith("history/"))
-  throw new Error("Historical snapshots are read-only.");
 const root = process.cwd();
 const directory = path.join(root, "iterations", id);
 const source = path.join(directory, "source");
@@ -62,7 +60,6 @@ if (action === "create") {
     "app",
     "scripts",
     "tests",
-    "versions",
   ];
   for (const file of files)
     await cp(path.join(root, file), path.join(source, file), {

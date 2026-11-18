@@ -1,6 +1,6 @@
 # Agent Builder Quick Start：五步做一轮迭代
 
-从[完整项目](README.md)启动，或把下面任务交给 coding agent 建立 Baseline。Baseline 包含搜索、正文读取和 DO 存储；工作台、飞书是之后的功能扩展。
+从[完整项目](README.md)启动，或把下面任务交给 coding agent 建立 Baseline。Baseline 包含搜索、正文读取和 DO 存储。
 
 ## 建立 Baseline 的任务
 
@@ -26,10 +26,10 @@
 
 ## 4. 改 Agent
 
-复制对应轮次任务：[Baseline](iterations/00-baseline/README.md)、[看结果](iterations/01-result-focused/README.md)、[看 Trace](iterations/02-trace-focused/README.md)。一次只处理已定位的问题，保留原题、Judge、模型与预算。第 2 轮只加入过程与引用工具改动，不加入根目录结构化观察规则。
+复制对应轮次任务：[Baseline](iterations/00-baseline/README.md)、[第一次迭代（专注结果）](iterations/01-result-focused/README.md)、[第二次迭代（专注 Trace）](iterations/02-trace-focused/README.md)。一次只处理已定位的问题，保留原题、Judge、模型与预算。第二次迭代只加入过程与引用工具改动，不加入根目录结构化观察规则。
 
 ## 5. 再跑分
 
-用同条件执行新版本，按 Case × Judge 对照改善、退化、未完成和人工争议。不要挑重跑结果、手工补分或将更换 Judge 算成 Agent 提升。源码 manifest 仅证明快照内容；protocol 记录约定，执行器不读取它。
+用同条件执行新版本，按 Case × Judge 对照改善、退化、未完成和人工争议。不要挑重跑结果、手工补分或将更换 Judge 算成 Agent 提升。复现条件与源码对应关系见[运行说明](iterations/REPRODUCING.md)。
 
-[功能扩展：工作台、飞书](versions/README.md) · [详细题集](BENCHMARKS.md) · [三轮结果](iterations/README.md)
+[详细题集](BENCHMARKS.md) · [三轮结果](iterations/README.md)

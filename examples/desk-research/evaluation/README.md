@@ -16,11 +16,9 @@
 
 先读结果：最终回答哪些句子越过输入或证据边界，Judge 为什么给 0？再读 Trace：搜了什么、读了哪些正文、URL 和来源 ID 从哪里来？失败记录至少包含 Case、Run、原句、Judge 理由、工具证据、改动假设和无法确认的部分。
 
-历史定位例（不是新三轮结果）：旧 00 `counter-evidence` 把局部线索写成“核心顾虑”，inference 给 0；先沿原句找到对应来源，再核对 search_sources / read_source 的具体文本、人群和范围。来源存在只能证明抓取过，不能证明它代表全体通勤者。历史记录在 [旧 Exa 四轮](../iterations/history/EXA-ITERATIONS.md)；本次实际诊断与失败原句在各轮 review-notes.json。
-
 ### 本次例子：从预算题原句走到工具证据
 
-第 2 轮候选批次 `budget-ceiling`，目标 Run `48e8c763-9904-4d41-9834-83f0b6e98d01`：
+第二次迭代（专注 Trace）首批 `budget-ceiling`，目标 Run `48e8c763-9904-4d41-9834-83f0b6e98d01`：
 
 1. **结果原句**：标题写“北京CBD个案：完整套餐常超8元，仅单品能压到8元以内”。三项 Judge 自动都是 1。
 2. **回到 Trace**：本题搜索 2 次、read_source 2 次、保存 1 次；北京日报来源是 `src_9a9609c344f03384`。
@@ -40,14 +38,14 @@ node iterations/analyze-eval.mjs /absolute/path/to/run /new/path/results.json /a
 
 ## 本次真实比较的运行条件
 
-三轮候选批次使用 [runtime-candidate.json](../iterations/runtime-candidate.json) 中的 CLI / App Server / SDK / contract 构件，Agent 和 Judge 预算未提高。先在示例根目录设置同一非秘密模型配置，再进入各轮 source（或它的逐文件一致执行副本）：
+三轮使用的工具链见[运行条件](../iterations/REPRODUCING.md#工具链与批次)，Agent 和 Judge 预算未提高。先在示例根目录设置同一非秘密模型配置，再进入各轮 source：
 
 ```bash
 export CREATIVE_REASONING_BASE_URL="https://api.creative-reasoning.com/v1"
 export LLM_MODEL_CATALOG_JSON="$(cat evaluation/cr-local.catalog.json)"
 ```
 
-凭据仍只由本机授权环境注入，Catalog 只含变量名。总输出 4096、思考 1024，Simulator 自身 2048 上限仍优先。候选 SDK/contract 用隔离的本地安装覆盖执行副本依赖，三轮相同；不要在该覆盖目录运行会自动重装公开锁文件的 pnpm 命令。核对实际构件哈希后用该候选 `gea` 执行默认命令。源码 manifest 与运行器条件分别校验；普通公开 npm 安装对应已保留的失败首次批次，不是候选结果的复现证明。
+凭据仍只由本机授权环境注入，Catalog 只含变量名。总输出 4096、思考 1024，Simulator 自身 2048 上限仍优先。
 
 ## 评测规则校准与完整验收
 
@@ -90,7 +88,7 @@ node iterations/analyze-eval.mjs /tmp/copied-native-run /tmp/rescore-share.json 
 
 ## 完整示例验收
 
-这里执行当前示例根目录。新三轮 `iterations/00-baseline/source`、`01-result-focused/source`、`02-trace-focused/source` 已统一 CR。`iterations/history/*/source` 才是旧 Exa 四轮历史快照，overlay 不会迁移其 Agent 模型；若要用旧快照做新的 CR 直连执行，先在新工作副本统一 Agent、Simulator 和 Judge 的 CR 模型 ID，并记录新基线。
+这里执行当前示例根目录。三轮比较使用各轮 `source/`，源码与成绩对应关系见[复现说明](../iterations/REPRODUCING.md)。
 
 在修复后的项目运行全部 12 道单轮题和 6 道多轮题，不传 caseIds 即全选：
 
@@ -109,22 +107,12 @@ executeOnly退出成功仅证明执行完成；必须继续查看evaluation中�
 
 retain-constraints 必须发生两次独立追问：先增加携带防漏条件并得到回答，再要求两个优先验证方向及理由并得到回答。多轮题均以 coverage 和 conversation 两项必过。`summarize.mjs conversation` 可额外拆分 retain-constraints 的覆盖、已观察质量及执行/评分错误。
 
-Exa、模型别名和网页内容会变化。记录实际模型、工具链、运行目录、来源及全部失败；保留首次运行和复验，不能通过挑选重跑、降低阈值或只看平均分证明改进。本轮的候选 CLI 修复尚未发布，正式版本的可用性要在对应发布后另行验收。
+Exa、模型别名和网页内容会变化。记录实际模型、工具链、运行目录、来源及全部失败；保留首次运行和复验，不能通过挑选重跑、降低阈值或只看平均分证明改进。
 
-Judge预算与Agent执行预算分开：这里为完整证据核对设300秒Judge预算、12步；Agent仍为240秒。此前90秒Judge试跑超时记录保留，增加评分预算不能证明Agent超时问题已修复。
+Judge预算与Agent执行预算分开：这里为完整证据核对设300秒Judge预算、12步；Agent仍为240秒。增加评分预算不能证明 Agent 执行问题已修复。
 
-保存研究记录时，工作台会核对报告与来源列表中的URL是否由本次对话的真实搜索或读取返回。错误链接会拒绝保存并反馈给Agent纠正；不会自动替换链接，也不会因为链接存在就判定事实正确。纯研究阶段不保存记录，仍依靠独立evidence Judge核对。
+保存研究记录时，工作台会核对报告与来源列表中的URL是否由本次对话的真实搜索或读取返回。错误链接会拒绝保存并反馈给Agent纠正；不会自动替换链接，也不会因为链接存在就判定事实正确。
 
 正文读取保留同一完整URL，按最多2000字符的窗口返回；query定位原句，nextOffset继续当前提取。未找到与提取截断都不是事实不存在的证明。搜索仅返回最多3页、每页600字符预览；范围、价格、人群等结论需要当前来源的具体支持。
 
-## 2026-11-16 R2 有界复验
-
-源码60f9e1c使用同一gea-pro、Agent 16步/240秒、Judge 12步/300秒；Judge规则未改。此前四道质量失败题（alternatives-not-products、audience-transfer、counter-evidence、validation-plan）本轮全部执行完成，12项严格Judge全部为1。[逐题回答与评分](results/r2-quality-four-share.json)。这仅关闭这四题当前候选的已观察失败，不代表全部题集或所有版本已经通过。
-
-coverage在126203c到60f9e1c期间规则和Case目标相同。本轮19个固定正反例全部匹配，覆盖六类场景，not_applicable=0、error=0。[原生评分摘要](results/r2-coverage-summary.json)。这些是合成对话的真实Judge校准，不是Agent多轮实跑。
-
-验收使用未发布的候选CLI（gea #1355，4015a5665，二进制SHA-256 a2874ae7f24404b6cd0802cd4fbab17c1961f7d0bfdff11b57090e521b55d357）和本地构建的SDK/contract（gea 5bd4093e）。公开npm版本本身尚未通过同一验收；未合并、发包或部署。
-
-2026-11-17 定向修复：02 预算题加入反例核对后仅补跑一次，新回答承认6.6元套餐；scope=1、inference=1、evidence Judge error，整体 incomplete。旧批次保留且不混分；[补跑记录](../iterations/02-trace-focused/README.md#2026-11-17-预算题定向修复与一次补跑)列出原生证据与残余质量问题。
-
-r2 后续：预算题累计3次真实尝试全部保留；最新 scope=1、evidence=1、inference=1，判分3/3，read_source=3，最终无 sourceId 占位符。北京6.6元套餐及来源已对应，仍有其他人工争议，详见 [r2汇总](../iterations/02-trace-focused/budget-ceiling-r2-summary.json)。
+预算题后续三次尝试及残余质量问题见[独立记录](../iterations/02-trace-focused/README.md#预算题后续尝试)，不与首批三轮分数混算。

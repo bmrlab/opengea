@@ -16,8 +16,7 @@
       "os": "darwin"
     },
     "nativeRunSha256": "fecd1f6f5aebccb7cc89f81dfba4523a12d2ceb48745afb94cdef37895f9b78c",
-    "nativeEvaluationSha256": "cf33dfe65a9170d95bd95f7fe447f06b400787105de8c3aac2f3b3d84eac9c1e",
-    "localEvidence": "private/candidate-runs/00-baseline/single-turn/20261117T043127.546Z-b370a6ea"
+    "nativeEvaluationSha256": "cf33dfe65a9170d95bd95f7fe447f06b400787105de8c3aac2f3b3d84eac9c1e"
   },
   {
     "suite": "multi-turn",
@@ -36,7 +35,6 @@
       "os": "darwin"
     },
     "nativeRunSha256": "fa034ec429f435e40423c8ff764c966598bb71f5b33ae48e51637ee2cb1dfdf8",
-    "nativeEvaluationSha256": "7c1a3b845e27eb8216b27f158f4e720ddfcf657d95d5b425b68722b8aa433c33",
-    "localEvidence": "private/candidate-runs/00-baseline/multi-turn/20261117T043805.806Z-0fb93112"
+    "nativeEvaluationSha256": "7c1a3b845e27eb8216b27f158f4e720ddfcf657d95d5b425b68722b8aa433c33"
   }
 ]

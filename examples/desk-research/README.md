@@ -7,7 +7,6 @@
 - [English tutorial](./QUICKSTART.en.md)。
 - [18 道题与验收标准](./BENCHMARKS.md)。
 - [质量迭代记录](./iterations/README.md)：源码快照、固定题集、真实结果与改动说明。
-- [功能扩展示例](./versions/README.md)：工作台和飞书入口；不属于三轮质量迭代。
 
 ## 五步主线
 
@@ -19,9 +18,9 @@
 | 4. 改 Agent | [三轮与任务文本](iterations/README.md#4-改-agent) | 一个可复核的 diff |
 | 5. 再跑分 | [同条件对照](iterations/README.md#5-再跑分) | Case × Judge 对照表 |
 
-质量主线只有三轮：[Baseline](iterations/00-baseline/README.md) → [看结果](iterations/01-result-focused/README.md) → [看 Trace](iterations/02-trace-focused/README.md)。Baseline 已有搜索、读正文和 DO 存储。工作台与飞书属于 [功能扩展示例](versions/README.md)，不计作质量迭代。
+质量主线只有三轮：[Baseline](iterations/00-baseline/README.md) → [第一次迭代（专注结果）](iterations/01-result-focused/README.md) → [第二次迭代（专注 Trace）](iterations/02-trace-focused/README.md)。Baseline 已有搜索、读正文和 DO 存储。
 
-根目录保留三轮之后的继续改进：结构化 observations / subject / fit / constraint、按原文片段生成观察和更完整的追问规则。它不等于第 2 轮源码；复现比较必须进入对应的 `iterations/<轮次>/source/`。旧四轮原始文件与分数在 [history](iterations/history/README.md)，不作为新轮次分数。
+根目录保留三轮之后的继续改进：结构化 observations / subject / fit / constraint、按原文片段生成观察和更完整的追问规则。它不等于第二次迭代的源码；复现比较必须进入对应的 `iterations/<轮次>/source/`。
 
 ## 从完整源码启动
 
@@ -34,7 +33,7 @@ pnpm type-check
 pnpm test
 ```
 
-SDK 与 Feishu Extension 固定在 `0.2.261114-alpha.0`，锁文件独立于 GEA monorepo。CLI/本地 Runtime 需要另外安装匹配版本；不要将 SDK 已安装等同于 Simulator 可以在任意旧 CLI 运行。`VALIDATION.md` 记录本次实际工具链。
+SDK 固定在 `0.2.261114-alpha.0`，锁文件独立于 GEA monorepo。CLI/本地 Runtime 需要另外安装匹配版本；不要将 SDK 已安装等同于 Simulator 可以在任意旧 CLI 运行。`VALIDATION.md` 记录本次实际工具链。
 
 ### 配置 CR API key
 
@@ -44,7 +43,7 @@ SDK 与 Feishu Extension 固定在 `0.2.261114-alpha.0`，锁文件独立于 GEA
 export CREATIVE_REASONING_API_KEY="<YOUR_CR_API_KEY>"
 ```
 
-PowerShell 使用 `$env:CREATIVE_REASONING_API_KEY = "<YOUR_CR_API_KEY>"`。CLI 内置直连读取此变量，不读取 `CR_API_KEY` 别名；默认 CR 地址由 CLI 设置，不需要在 `gea.worker.json` 增加模型 key。普通启动使用内置配置。三轮候选验收另用显式 `evaluation/cr-local.catalog.json`，它会优先于内置配置，详见 [运行条件](iterations/README.md#运行器和批次边界)。完整说明见[模型选择与配置](https://musegea.com/developers/agent-models)。
+PowerShell 使用 `$env:CREATIVE_REASONING_API_KEY = "<YOUR_CR_API_KEY>"`。CLI 内置直连读取此变量，不读取 `CR_API_KEY` 别名；默认 CR 地址由 CLI 设置，不需要在 `gea.worker.json` 增加模型 key。普通启动使用内置配置。三轮记录所用的工具链与模型配置见[运行条件](iterations/REPRODUCING.md#工具链与批次)。完整说明见[模型选择与配置](https://musegea.com/developers/agent-models)。
 
 `local` 表示 Agent 在本机运行并直接请求远端 CR。GEA 登录用于 Project、上传结果等平台操作，Exa Connection 用于搜索；CR key、`GEA_API_KEY` 和 Exa key 各自独立。模型 key 不发给前端，不随 Agent 打包上传。缺 key、无模型权限或直连错误会报错；修正配置后重启 dev。
 
@@ -57,14 +56,13 @@ pnpm prepare:local
 pnpm dev
 ```
 
-搜索使用 Exa，Connector key 为 `research-search`。通过本机授权流程配置 API key；本地运行可在当前进程设置 `GEA_CONNECTOR_RESEARCH_SEARCH_API_KEY` 为已授权的 Exa key；它供 Connector 读取，不创建持久化 Connection。不要把 key 写进源码或命令参数。返回有长度上限的网页文本，缺失和截断会明确标记。当前三轮统一使用 Exa；旧 Exa 四轮记录位于 `iterations/history/`，不参与新分数比较。
+搜索使用 Exa，Connector key 为 `research-search`。通过本机授权流程配置 API key；本地运行可在当前进程设置 `GEA_CONNECTOR_RESEARCH_SEARCH_API_KEY` 为已授权的 Exa key；它供 Connector 读取，不创建持久化 Connection。不要把 key 写进源码或命令参数。返回有长度上限的网页文本，缺失和截断会明确标记。三轮统一使用 Exa。
 
 搜索每次最多返回3页、每页600字符预览，供选择来源。`read_source` 按完整URL读取最多12000字符的提取文本，每次展示2000字符；可用`query`定位原句或按`nextOffset`继续。`queryFound:false`只表示当前提取未找到，`nextOffset:null`也不保证网页全文已读完；仍须检查`extractionTruncated`。原文窗口始终保留对应URL和范围，不能把其他页面的事实配到这个链接。
 
 工作台阶段的搜索/正文结果包含同一对话内的 `sourceId` 与 `passages[{passageId,text}]`。`save_research` 接收结构化 `observations`：用 `subject` 点名本条讨论的具体产品、组合或行为，选择来源及原文片段 `quoteId`，再针对用户条件填写 `fit` 与直接依据 `constraintEvidenceId`；缺乏条件依据必须保持 `unknown`。一份短简报选择最多4条关键观察；`hypotheses` 最多2个，以`basedOn`中的观察序号（从1开始）指向本简报已收录的证据，单独记录待验证问题、验证对象/动作、指标和放弃条件，`gaps` 记录本次资料缺口。工具从已捕获片段生成原文和规范 URL，不让模型重抄长链接或引文；未知、跨来源、跨对话标识均拒绝。身份与原文校验不等于事实相关性或适配语义已验证，仍需严格 Judge 与来源核对。
 
-保存记录继续提供 `report` 和 `sources` 给工作台，保留片段标识供追问复用；最终交付采用生成的简报。只读 v1 没有研究存储，仍返回有界原文文本，不提供保存能力。
-
+保存记录继续提供 `report` 和 `sources` 给工作台，保留片段标识供追问复用；最终交付采用生成的简报。
 
 第二个终端进入此目录，将 dev 输出的两个 origin 和 key 文件路径交给配置脚本：
 
@@ -82,7 +80,7 @@ pnpm app
 
 ## 2. 跑分
 
-先完成 CR 与 Exa 配置。在所选轮次的 `source/` 中，默认只执行同一组四题。当前已记录的候选批次另需 [相同本地工具链与 SDK](iterations/runtime-candidate.json)；公开 npm 版本对应失败的首次批次，不能替代候选验收：
+先完成 CR 与 Exa 配置。在所选轮次的 `source/` 中，默认只执行同一组四题（三轮记录的工具链见[运行条件](iterations/REPRODUCING.md#工具链与批次)）：
 
 ```bash
 gea agent eval --json '{"benchmarkPath":"benchmarks/single-turn","caseIds":["breakfast-scope","budget-ceiling","counter-evidence","validation-plan"],"modelSource":"local","executeOnly":true,"concurrency":2,"overrides":{"engine":{"maxSteps":16,"timeout":{"totalMs":240000}}}}'
@@ -113,16 +111,12 @@ gea eval judge --json '{"run":"/absolute/path/from/resultDirectory","judgeSource
 | `app/`                                        | 本地前端和 Node 后端，不包含真实凭据                 |
 | `tests/`                                      | 搜索失败/证据边界、记录隔离与更新、本地后端访问边界     |
 
-示例默认不启用飞书，避免普通本地启动要求 Channel 凭据。按[飞书接入说明](./FEISHU.md)生成 `v3-feishu`，或在当前项目挂载官方 Channel；保留原有研究能力。Preview 推送、真实飞书操作和生产发布是独立步骤，本地校验不会执行这些动作。
-
 ## 修改与复现
 
 更新后执行 `pnpm type-check`、`pnpm test`，以及匹配 CLI 的 `gea agent validate --json '{"cwd":"."}'` / `gea agent pack --json '{"cwd":"."}'`。
 
-本仓库只依赖公开 npm 包，标准安装不需要 GEA 私有源码。版本生成器仅复制源码与固定题集，不复制 `.gea/`、凭据、构建产物或依赖；不会覆盖已有目录。
+本仓库只依赖公开 npm 包，标准安装不需要 GEA 私有源码。分享或复制项目时，不要包含 `.gea/`、凭据、构建产物或依赖。
 
 后续只询问解释、取舍或引用核对时，直接回答所问部分，不重复生成整份报告。更新简报时复用同一会话的来源标识和片段；读取记录的模型视图不重复发送已经包含在report中的摘录，工作台保存的完整记录不变。
 
-2026-11-17 定向修复：02 预算题加入反例核对后仅补跑一次，新回答承认6.6元套餐；scope=1、inference=1、evidence Judge error，整体 incomplete。旧批次保留且不混分；[补跑记录](iterations/02-trace-focused/README.md#2026-11-17-预算题定向修复与一次补跑)列出原生证据与残余质量问题。
-
-r2 后续：预算题累计3次真实尝试全部保留；最新 scope=1、evidence=1、inference=1，判分3/3，read_source=3，最终无 sourceId 占位符。北京6.6元套餐及来源已对应，仍有其他人工争议，详见 [r2汇总](iterations/02-trace-focused/budget-ceiling-r2-summary.json)。
+预算题后续三次尝试及残余质量问题见[独立记录](iterations/02-trace-focused/README.md#预算题后续尝试)，不与首批三轮分数混算。

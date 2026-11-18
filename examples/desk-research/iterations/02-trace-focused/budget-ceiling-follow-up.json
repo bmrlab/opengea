@@ -17,13 +17,7 @@
   "caseSnapshotUnchanged": true,
   "judgeRuntimeHashUnchanged": "sha256:4130d40b5e5bee94b6eedeb83cd648878a108d2ce9a2acfbf9e93718fbe04cc5",
   "runtime": "../runtime-candidate.json",
-  "runtimeCopyVerification": {
-    "cliSha256": "1fcd89e91aa7d0e6b87f47a6e4edc48cfa7d17bb8d9ca47901bbc551d4595d06",
-    "appServerSha256": "c0727ba187af35dcbec85e974af0f60aab9fb34961e1a3be9aa4b9002f2ed324",
-    "workerRuntimeSha256": "72dea76400d3869ec50d2bd0caceb71a4815c36505ea258d254d8a833c57cc80",
-    "catalogSha256": "2f47faa15c1fc567c0594f9c9c6e0f024e23a019d9fac81441ec7d7352b8f345",
-    "dependencyFilesMatched": 12082
-  },
+  "runtimeCopyVerification": "Same candidate toolchain and CR Catalog as ../runtime-candidate.json, checked before execution.",
   "configuredModel": "creative-reasoning-1.5",
   "modelSource": "local",
   "execution": {
@@ -31,7 +25,7 @@
     "suite": "single-turn",
     "stage": "execute",
     "options": {
-      "cwd": "/Users/zhuo/gea-tasks/fix-opengea-42-r1-20261117/private/candidate-projects/02-trace-focused",
+      "cwd": "<execution-project>",
       "benchmarkPath": "benchmarks/single-turn",
       "caseIds": [
         "budget-ceiling"
@@ -47,7 +41,7 @@
           }
         }
       },
-      "outDir": "/Users/zhuo/gea-tasks/fix-opengea-42-r1-20261117/private/candidate-runs/02-trace-focused/single-turn"
+      "outDir": "<execution-output>"
     },
     "exitCode": 0,
     "wallSeconds": 85.015,
@@ -61,8 +55,8 @@
     "suite": "single-turn",
     "stage": "judge",
     "options": {
-      "cwd": "/Users/zhuo/gea-tasks/fix-opengea-42-r1-20261117/private/candidate-projects/02-trace-focused",
-      "run": "/Users/zhuo/gea-tasks/fix-opengea-42-r1-20261117/private/candidate-runs/02-trace-focused/single-turn/20261117T055249.944Z-205f72a6",
+      "cwd": "<execution-project>",
+      "run": "<native-run-directory>",
       "judgeSource": "snapshot",
       "judgeModel": "creative-reasoning-1.5",
       "modelSource": "local",
@@ -119,11 +113,9 @@
     "evaluation": "b375c127cab5d2a66a99f9357f24e1adb3ba1cc9475ac980fb87d36583795afd",
     "gradedCase": "25c0125dd4d5e21f32d004215ffe95ed15735d43d95ebaf0502cb2eb4c525b79"
   },
-  "localEvidence": "/Users/zhuo/gea-tasks/fix-opengea-42-r1-20261117/private/candidate-runs/02-trace-focused/single-turn/20261117T055249.944Z-205f72a6",
   "results": "budget-ceiling-follow-up-results.json",
   "originalResults": "results.json",
-  "originalManifest": "pre-fix-manifest.json",
-  "currentManifest": "r1-manifest.json",
+  "currentManifest": "budget-attempt-1-manifest.json",
   "manualReview": {
     "originalFailure": "仅单品能压到8元以内",
     "currentAnswerQuote": "CBD场景下的**套餐**多在9-13元，仅个别（6.6元）满足8元——不能笼统说\"套餐都超预算\"或\"单品都够用\"，需按具体商品判断；",
@@ -142,5 +134,6 @@
     "businessAcceptance": false
   },
   "boundary": "Only this one case was rerun after changing Agent instructions. No resampling, regrading, manual scores, changed Cases/Judges or mixed four-case aggregate. evidence error is preserved.",
-  "manifestReferenceNote": "This points to the r1 source used for this immutable result; r2 now has a separate current manifest."
+  "manifestReferenceNote": "This identifies the source used for this result; later changes have separate manifests.",
+  "originalManifest": "pre-fix-manifest.json"
 }

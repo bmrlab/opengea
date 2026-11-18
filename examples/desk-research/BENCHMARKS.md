@@ -1,6 +1,6 @@
 # Benchmark cases and acceptance criteria
 
-18 cases: 12 single-turn research tasks and 6 multi-turn conversations. Cases share one product-research scenario so changes can be compared consistently. RAG and multimodal specialist examples are separate release work.
+18 cases: 12 single-turn research tasks and 6 multi-turn conversations. Cases share one product-research scenario so changes can be compared consistently.
 
 ## 1. 建题：从业务风险到 case.json
 
@@ -82,7 +82,7 @@ gea agent eval --json '{"benchmarkPath":"benchmarks/multi-turn","caseIds":["clar
 
 ## Evaluation scope
 
-The current Exa development subset is breakfast-scope, budget-ceiling, counter-evidence and validation-plan. The other 8 single-turn Cases and 6 multi-turn Cases are regression coverage, reported separately. The previous four Exa iterations remain in [history](iterations/history/README.md); they are not the current baseline. See the [fixed protocol and actual iterations](iterations/README.md).
+The three-round comparison uses breakfast-scope, budget-ceiling, counter-evidence and validation-plan, plus the multi-turn clarify-breakfast case. The other 8 single-turn and 5 multi-turn cases are not covered by this comparison. See the [iterations and results](iterations/README.md).
 
 Each single-turn Case requires scope, evidence and inference to pass. Multi-turn Cases require both coverage and conversation. Each Case's metadata.coverage names its required user events and responses; coverage checks their actual occurrence and order. Conversation grades the Agent's observed answers. Missing coverage prevents a full pass while preserving observed answer quality. Simulator done is not a quality pass.
 
@@ -100,11 +100,9 @@ Case acceptance criteria guide the Judge; they are not shown to the Agent. After
 
 三个维度都必须通过，一题才通过。`[1,0,1]` 仍然失败，不能用平均分 0.67 把引用问题藏起来。执行超时不是 0 分；Judge 无法读取证据或提交格式错误也不是 0 分，分别记执行错误和评分不完整。
 
-## 历史结果：为什么还要复核 Judge
+## 为什么还要核对 Judge
 
-[旧四轮历史](iterations/history/EXA-ITERATIONS.md)中 Exa baseline 的 `counter-evidence` 首次结果：evidence 为 **1**，inference 为 **0**，scope 为 **error**。搜索确实取得了反向线索，但报告把这些局部线索升格为整体“核心顾虑”，因此已知存在质量失败，同时仍有一项未完成评分。不能把这个结果描述为完整的三项评分。
-
-01 的预算题则暴露了 Judge 自身的问题：evidence 给了 **1**，理由中却承认引用链接错配，并将其视为小瑕疵。这与 rubric 的来源对应要求冲突。逐项复核应保留这一分歧；不能为了演示漂亮而静默接受高分，也不能直接改写原始 Judge 结果。
+第二次迭代的预算题自动三项均为 1，但回答说“仅单品能压到8元以内”，与已读取的 6.6 元完整套餐正文矛盾。自动评分没有识别这项错误。原始分数与人工争议都保留，详见[从原句到 Trace 的核对过程](evaluation/README.md#本次例子从预算题原句走到工具证据)。
 
 本例另外报告一个可重复的诊断值：最终简报中有多少个 引用 URL 未出现在本次搜索/读取结果里。它能定位错配链接，但不能证明事实有依据，也不统计存储记录里的链接；分母为本次报告中可提取的 Markdown 与纯文本 HTTP(S) 引用数。无链接的空报告不会因此自动通过 evidence。
 

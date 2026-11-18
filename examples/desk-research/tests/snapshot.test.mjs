@@ -6,7 +6,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 
 const root = path.resolve(import.meta.dirname, "..");
-test("a newly created snapshot includes the dependencies needed to materialize a stage", async () => {
+test("a newly created snapshot preserves evaluation tools and detects source changes", async () => {
   const temp = await mkdtemp(path.join(tmpdir(), "research-snapshot-"));
   try {
     const project = path.join(temp, "project");
@@ -53,12 +53,6 @@ test("a newly created snapshot includes the dependencies needed to materialize a
     execFileSync(process.execPath,
       [path.join(project, "scripts/snapshot-iteration.mjs"), "verify", "99-test"],
       { cwd: project, stdio: "pipe" });
-    const target = path.join(temp, "stage");
-    execFileSync(
-      process.execPath,
-      [path.join(source, "scripts/materialize.mjs"), "v1-research", target],
-      { stdio: "pipe" },
-    );
     for (const file of [
       "evaluation/summarize.mjs",
       "evaluation/evaluation.test.mjs",
@@ -66,7 +60,7 @@ test("a newly created snapshot includes the dependencies needed to materialize a
       "iterations/analyze-eval.test.mjs",
     ])
       assert.equal(
-        await readFile(path.join(target, file), "utf8"),
+        await readFile(path.join(source, file), "utf8"),
         await readFile(path.join(root, file), "utf8"),
       );
     await writeFile(path.join(source, "instructions.ts"), "changed");

@@ -197,13 +197,3 @@
 @@ -12 +12 @@
 -    JSON.stringify({ cwd: ".", modelSource: "hosted" }),
 +    JSON.stringify({ cwd: ".", modelSource: "local" }),
---- a/versions/v1-research/agent.ts
-+++ b/versions/v1-research/agent.ts
-@@ -11 +11 @@
--  model: "gea-pro",
-+  model: "creative-reasoning-1.5",
---- a/versions/v3-feishu/agent.ts
-+++ b/versions/v3-feishu/agent.ts
-@@ -13 +13 @@
--  model: "gea-pro",
-+  model: "creative-reasoning-1.5",

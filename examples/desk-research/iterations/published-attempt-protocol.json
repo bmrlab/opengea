@@ -12,7 +12,7 @@
     "counter-evidence",
     "validation-plan"
   ],
-  "singleTurnRegressionCases": [
+  "notCoveredCases": [
     "alternatives-not-products",
     "audience-transfer",
     "conflicting-findings",
@@ -43,7 +43,7 @@
     "nodeShell": "24.16.0",
     "policy": "One runner for all three rounds; runtime reported version is recorded in each native run. No platform fixes are attributed to Agent improvement."
   },
-  "regressionScope": "All three rounds execute the same four development cases and clarify-breakfast. Other 8 single-turn and 5 multi-turn cases are not run in this comparison; this is not full-suite acceptance.",
+  "regressionScope": "The plan included the four development cases and clarify-breakfast in each round. The published CLI recorded four single-turn executions per round, all ending in execution errors (12 total). The recorded clarify-breakfast runs belong to the subsequent candidate toolchain batch. The other eight single-turn cases and five multi-turn cases were outside the comparison.",
   "benchmarkCommit": "4f4f51cdeb765027baa2cdf2be55ce93a33c5f02",
   "snapshotGuarantee": "Manifest verification checks this round source content only, excluding generated node_modules/.gea/dist. It does not enforce experiment conditions or verify outcomes.",
   "trace": "Published traces are cropped sharing exports; complete native evidence stays local. Missing text in a sharing export does not establish absence in the native trace.",

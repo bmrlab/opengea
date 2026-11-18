@@ -1,7 +1,7 @@
 {
   "schemaVersion": "opengea.manual-review.v1",
-  "reviewer": "Codex",
-  "boundary": "本地人工复核，不是 Builder Annotation；R4 历史分数不进入本次结果。",
+  "reviewer": "manual review",
+  "boundary": "本地人工核对，不是 Builder Annotation；不同批次分数不混用。",
   "cases": [
     {
       "caseId": "breakfast-scope",
@@ -39,7 +39,6 @@
       ],
       "manualAssessment": "需逐项核对回答、Judge理由与原生证据；自动分数不替代人工复核。",
       "hypothesis": "区分工具失败/等待、正文读取与模型输出阶段；当前信息不足以归因到 Exa 服务或 CR 协议。",
-      "historicalRiskChecklist": "../R4-FINDINGS.md",
       "manualDisputes": [],
       "manualFindings": [
         {
@@ -110,7 +109,6 @@
       ],
       "manualAssessment": "需逐项核对回答、Judge理由与原生证据；自动分数不替代人工复核。",
       "hypothesis": "区分工具失败/等待、正文读取与模型输出阶段；当前信息不足以归因到 Exa 服务或 CR 协议。",
-      "historicalRiskChecklist": "../R4-FINDINGS.md",
       "manualDisputes": [],
       "manualFindings": [
         {
@@ -178,7 +176,6 @@
       ],
       "manualAssessment": "需逐项核对回答、Judge理由与原生证据；自动分数不替代人工复核。",
       "hypothesis": "区分工具失败/等待、正文读取与模型输出阶段；当前信息不足以归因到 Exa 服务或 CR 协议。",
-      "historicalRiskChecklist": "../R4-FINDINGS.md",
       "manualDisputes": [],
       "manualFindings": [
         {
@@ -241,7 +238,6 @@
       ],
       "manualAssessment": "需逐项核对回答、Judge理由与原生证据；自动分数不替代人工复核。",
       "hypothesis": "区分工具失败/等待、正文读取与模型输出阶段；当前信息不足以归因到 Exa 服务或 CR 协议。",
-      "historicalRiskChecklist": "../R4-FINDINGS.md",
       "manualDisputes": [
         {
           "type": "manual_dispute",
@@ -299,7 +295,6 @@
       ],
       "manualAssessment": "需逐项核对回答、Judge理由与原生证据；自动分数不替代人工复核。",
       "hypothesis": "区分工具失败/等待、正文读取与模型输出阶段；当前信息不足以归因到 Exa 服务或 CR 协议。",
-      "historicalRiskChecklist": "../R4-FINDINGS.md",
       "manualDisputes": [],
       "manualFindings": [
         {

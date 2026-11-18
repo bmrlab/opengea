@@ -1,0 +1,160 @@
+{
+  "schemaVersion": "opengea.budget-ceiling-attempt.v1",
+  "attemptIncludingR1": 2,
+  "round": "02-trace-focused",
+  "caseId": "budget-ceiling",
+  "sourceSha256": "6b364f0af7099ca93c7661e9a662b73c5380dcb29984481035735b4c4674d4f2",
+  "benchmarkSha256": "64fcbc74d423c24a62be441e0532849b39d36aa578669db90d7487d75e6f94b9",
+  "caseSnapshotUnchanged": true,
+  "judgeRuntimeHashUnchanged": "sha256:4130d40b5e5bee94b6eedeb83cd648878a108d2ce9a2acfbf9e93718fbe04cc5",
+  "runtime": "../runtime-candidate.json",
+  "executionReceipt": {
+    "attemptIncludingR1": 2,
+    "round": "02-trace-focused",
+    "suite": "single-turn",
+    "stage": "execute",
+    "options": {
+      "cwd": "<execution-project>",
+      "benchmarkPath": "benchmarks/single-turn",
+      "caseIds": [
+        "budget-ceiling"
+      ],
+      "modelSource": "local",
+      "executeOnly": true,
+      "concurrency": 2,
+      "overrides": {
+        "engine": {
+          "maxSteps": 16,
+          "timeout": {
+            "totalMs": 240000
+          }
+        }
+      },
+      "outDir": "<execution-output>"
+    },
+    "exitCode": 0,
+    "wallSeconds": 125.781,
+    "sourceSha256": "6b364f0af7099ca93c7661e9a662b73c5380dcb29984481035735b4c4674d4f2",
+    "credentialValuesPersisted": false,
+    "model": "creative-reasoning-1.5",
+    "modelSource": "local"
+  },
+  "judgeReceipt": {
+    "attemptIncludingR1": 2,
+    "round": "02-trace-focused",
+    "suite": "single-turn",
+    "stage": "judge",
+    "options": {
+      "cwd": "<execution-project>",
+      "run": "<native-run-directory>",
+      "judgeSource": "snapshot",
+      "judgeModel": "creative-reasoning-1.5",
+      "modelSource": "local",
+      "concurrency": 2,
+      "maxSteps": 12,
+      "timeoutMs": 300000,
+      "trace": true
+    },
+    "exitCode": 0,
+    "wallSeconds": 112.185,
+    "sourceSha256": "6b364f0af7099ca93c7661e9a662b73c5380dcb29984481035735b4c4674d4f2",
+    "credentialValuesPersisted": false,
+    "model": "creative-reasoning-1.5",
+    "modelSource": "local"
+  },
+  "runId": "81196d81-814d-46b6-b7cf-b016bd8b6e3c",
+  "targetRunId": "b4230fd4-c00a-469e-bb52-13945726dbc0",
+  "evaluationId": "a2effef3-0252-4689-89c6-53590ca563ff",
+  "runStatus": "completed",
+  "evaluationStatus": "completed",
+  "resultStatus": "passed",
+  "judging": {
+    "required": 3,
+    "completedRequired": 3,
+    "errors": 0
+  },
+  "judges": [
+    {
+      "id": "evidence",
+      "kind": "markdown",
+      "status": "completed",
+      "score": 1,
+      "reason": "检索链路成功返回可用正文（三个来源：北京日报2023-06-29、青浦政府2025-01-17、悦家生活2024-12-11），抽查的实质性事实均与正文吻合：北京CBD烧饼7+豆浆3=10元、便利店9元套餐、武汉小吃店两款6.6元套餐、国贸桥8元青椒鸡肉卷、94.2%比例及其\"10元以内\"口径的澄清均与原文一致；上海青浦手抓饼+豆浆6.5元、全家8.8/10/12元套餐、\"两个鲜肉大包+中杯拿铁\"9.8元均准确对应且未将不同渠道/套餐混淆；便利蜂/全家/罗森/711各单品价格（饭团4.5、破酥包3.8、鸡丸串5.5、菜团子2.6、豆腐素包2.2、牛肉饼4.8、三明治5.8+、司康6.5、蛋黄流沙包2.5、紫薯地瓜7.8、粉丝包2.5、溏心蛋3.5、恶魔饭团3.6-4.5、薯仔包3.5、鱼香肉丝包2.5、关东煮2-3.5、厚烧吐司13元+）均与原文逐条匹配，且报告如实标注\"价格仅为参考\"及样本局限性，未将未知价格当作满足预算，也未将促销/套餐价格与单品价格混淆。未发现引用错配或事实冒用，满足证据可用性及事实核对要求。"
+    },
+    {
+      "id": "inference",
+      "kind": "markdown",
+      "status": "completed",
+      "score": 1,
+      "reason": "报告将价格来源逐条列出并注明单份/套餐/促销口径（如\"9元(豆浆+鸡蛋+玉米)\"vs\"全家套餐8.8/9.8/10/12元超预算\"vs\"武汉小吃店6.6元套餐\"），未知价格明确标注\"原文未给出，无法判断\"而非默认满足预算。强结论均配有具体证据和范围限定：如\"94.2%受访者10元以内\"被明确指出\"针对10元以内而非8元以内，不能直接当作本预算覆盖率证据\"；\"已有可行方案并不稀缺\"附有具体价格点支持且未声称普遍覆盖；\"价格存在地域差异\"明确说明\"两篇资料样本量小…不能代表全国通勤者的普遍情况，仅为局部观察\"。两条待验证假设(A/B)均给出了具体验证方法（3-5城市比价、5家连锁抽样统计占比）和假设被推翻的条件，未将其写成已证实需求。结尾\"结论范围说明\"进一步明确样本局限和不可代表整体，与各分节内的范围限定一致，非仅套用免责声明模板。整体符合观察/推断/待验证区分及证据范围要求。"
+    },
+    {
+      "id": "scope",
+      "kind": "markdown",
+      "status": "completed",
+      "score": 1,
+      "reason": "逐条核对：北京CBD烧饼+豆浆10元、便利店套餐9元均被正确标注\"超出/略超8元\"；武汉套餐6.6元、国贸桥8元单品、上海手抓饼+豆浆6.5元均在预算内且标注正确；上海全家套餐8.8/9.8/10/12元被正确排除在预算内方案之外；该门店单品价格未知时明确注明\"原文未给出，无法判断\"而非默认达标；便利店单品清单（便利蜂/全家/罗森/711）逐项价格均≤8元，司康6.5、紫薯地瓜7.8元等均未超限，711厚烧吐司13元正确标注超预算排除。未发现将超预算组合或单份误归为\"预算内\"的情况，也未出现把未知价格当作满足预算的表述，且结尾对样本局限性做了如实说明。满足acceptance关于来源、口径区分、未知价格处理的要求。"
+    }
+  ],
+  "judgeAttempts": {
+    "evidence": [
+      {
+        "attempt": 1,
+        "delayMs": 0,
+        "elapsedMs": 49377
+      }
+    ],
+    "inference": [
+      {
+        "attempt": 1,
+        "delayMs": 0,
+        "elapsedMs": 19214
+      }
+    ],
+    "scope": [
+      {
+        "attempt": 1,
+        "delayMs": 0,
+        "elapsedMs": 34880
+      }
+    ]
+  },
+  "sourceChecks": {
+    "readSourceCalls": 0,
+    "successfulReadSourceCalls": 0,
+    "unrenderedSourceMarkers": [],
+    "finalEqualsSavedReport": false,
+    "citationAudit": {
+      "method": "Compare Markdown and plain HTTP(S) citation URLs in run.output with URLs actually returned by search_sources/read_source. Ignore fragments only. This checks source identity, not whether a claim is supported.",
+      "toolCalls": {
+        "read_research": 1,
+        "search_sources": 2,
+        "readToolOutput": 2,
+        "save_research": 2
+      },
+      "outputCharacters": 1682,
+      "capturedSourceCount": 10,
+      "citationCount": 2,
+      "unmatched": [],
+      "invalid": []
+    },
+    "readEvidence": []
+  },
+  "nativeHashes": {
+    "run": "05f1db491a232f196ee07d031b92513596e1cd1745d96b21d41bca9950f44f83",
+    "evaluation": "86f1a1d4dfe2d4d4712e67b8445e544a0f55973ba34ddd4b8e1f9e7ad9b1c6ef",
+    "gradedCase": "402bff69989bc75d0cff4b27bf4b21ecdc35af265f7a7fd9f7889205bdfb95b0"
+  },
+  "results": "budget-ceiling-attempt-2-results.json",
+  "boundary": "Single authorized follow-up attempt. All previous outputs, failed Judge and scores are preserved; no aggregate replacement or manually assigned score.",
+  "manifest": "budget-attempt-2-manifest.json",
+  "manualReview": {
+    "meetsR2Goal": false,
+    "findings": [
+      "read_source=0；文字指令未促成真实正文读取。",
+      "最终报告没有占位符，但未逐字交付保存后的报告。北京日报6.6元套餐段落错误引用上海青浦网页。",
+      "总结将上海郊区价格写为6.5–6.6元，混入北京报道的6.6元；正文前段两款套餐组成完整。",
+      "三项自动1分原样保留，人工争议不手动改分；因此继续修 Agent，而非把本次当成成功结果。"
+    ]
+  }
+}
