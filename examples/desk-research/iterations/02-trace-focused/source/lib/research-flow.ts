@@ -3,7 +3,7 @@ import { z } from "zod";
 import { webUrl } from "./evidence.ts";
 
 const searchOutput = z.object({ sources: z.array(z.object({ url: webUrl })) });
-// v1 returns the text window; workbench stages return captured passages.
+// Without a research store read_source returns the text window; with one it returns captured passages.
 const readOutput = z.object({ source: z.object({
   url: webUrl,
   text: z.string().optional(),

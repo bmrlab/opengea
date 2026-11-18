@@ -281,7 +281,7 @@
 +import { webUrl } from "./evidence.ts";
 +
 +const searchOutput = z.object({ sources: z.array(z.object({ url: webUrl })) });
-+// v1 returns the text window; workbench stages return captured passages.
++// Without a research store read_source returns the text window; with one it returns captured passages.
 +const readOutput = z.object({ source: z.object({
 +  url: webUrl,
 +  text: z.string().optional(),
@@ -393,8 +393,8 @@
 +
 @@ -21,0 +79,72 @@
 +
-+// The read-only v1 stage has no store. Workbench stages record provider URLs,
-+// never URLs proposed by the model, before returning the search result.
++// Without a research store, sources are returned unchanged. Otherwise record
++// provider URLs, never URLs proposed by the model, before returning the search result.
 +export async function captureSourceUrls<
 +  T extends {
 +    url: string;

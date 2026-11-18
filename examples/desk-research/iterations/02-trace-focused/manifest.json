@@ -3,7 +3,7 @@
   "createdAt": "2026-11-17T07:12:33.456Z",
   "node": "v24.16.0",
   "cli": "0.2.261114-alpha.0",
-  "sourceSha256": "57d4d0cc275890508940772b1f84573f31aef7e1882985c30db91ea9f5804c9c",
+  "sourceSha256": "de902f79829931b753d76e4f5ac40fec7ed18413c2e73aee86d57103d309b436",
   "executedSourceSha256": "2924e1c4eb71201afda3abf74ee1d99980bd7c17fb9fc0e54ac8731d815d6462",
   "benchmarkSha256": "64fcbc74d423c24a62be441e0532849b39d36aa578669db90d7487d75e6f94b9",
   "files": [
@@ -161,11 +161,11 @@
     },
     {
       "path": "lib/research-flow.ts",
-      "sha256": "d3f2151024263d001d84faca7dd7e1e7576ad8a86e341ed56e23153cd440ab4e"
+      "sha256": "63aacdacf8f6b5ca91265c4baac61df24342530de90d4ce24dd1a8e59fcb0464"
     },
     {
       "path": "lib/research.ts",
-      "sha256": "2ed28861183446da17aeb6fb92a686582a4f9c1722d702f7b5a973e95501c104"
+      "sha256": "2ab3fa1806531f08ce1e8ba07a559690871795feed835d148731f3f869a66eb7"
     },
     {
       "path": "lib/source-passages.ts",

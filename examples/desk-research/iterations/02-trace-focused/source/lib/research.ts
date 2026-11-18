@@ -77,8 +77,8 @@ export type ResearchInput = z.infer<typeof researchInput>;
 export type ResearchRecord = ResearchInput & { id: string; updatedAt: string };
 export const RESEARCH_OBJECT = "quick-start";
 
-// The read-only v1 stage has no store. Workbench stages record provider URLs,
-// never URLs proposed by the model, before returning the search result.
+// Without a research store, sources are returned unchanged. Otherwise record
+// provider URLs, never URLs proposed by the model, before returning the search result.
 export async function captureSourceUrls<
   T extends {
     url: string;

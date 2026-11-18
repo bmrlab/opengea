@@ -16,7 +16,7 @@ Agent 为 16 步 / 240 秒，Judge 为 12 步 / 300 秒，并发为 2；Catalog 
 - 第二次迭代首批结果对应 `pre-fix-manifest.json`；预算题三次后续尝试依次对应 `budget-attempt-1-manifest.json`、`budget-attempt-2-manifest.json`、`budget-attempt-3-manifest.json`。
 - 第二次迭代当前 `manifest.json` 对应后续读取策略修正后的源码。该版本只有已记录的离线验证，没有新的模型分数，不能将旧结果改标为当前源码的成绩。
 
-`source/` 保存三轮的完整源码快照。为与对外示例一致，快照已移除与三轮质量比较无关的旧阶段与功能扩展文件（`versions/`、`scripts/materialize.mjs` 及对应 stages / materialize 测试）和未使用的扩展依赖；这些文件不参与 Agent 执行与评分。各 manifest 按移除后的文件重算 `sourceSha256`，执行时的原始哈希保留在 `executedSourceSha256`，与运行记录中的 `sourceSha256` 对应；移除前的完整快照见 main 上的 commit `5d6f385d014d6965e29b35e9eecb4951e19c7ad2`。根目录完整示例包含后续结构化观察能力，不能用它替代三轮源码。源码历史可通过 `provenance.json` 和 `changes.diff` 追溯。
+`source/` 保存三轮的完整源码快照。为与对外示例一致，快照已移除与三轮质量比较无关的旧阶段与功能扩展文件（`versions/`、`scripts/materialize.mjs` 及对应 stages / materialize 测试）和未使用的扩展依赖；这些文件不参与 Agent 执行与评分。各 manifest 按移除后的文件重算 `sourceSha256`，执行时的原始哈希保留在 `executedSourceSha256`，与运行记录中的 `sourceSha256` 对应；移除前的完整快照见 main 上的 commit `5d6f385d014d6965e29b35e9eecb4951e19c7ad2`。根目录完整示例包含后续结构化观察能力，不能用它替代三轮源码。源码历史可通过 `provenance.json` 和 `changes.diff` 追溯：01、02 的 `changes.diff` 可在前一轮 `source/` 的副本中用 `git apply --unidiff-zero` 应用，结果与本轮 `source/` 一致；00 的 `changes.diff` 相对原始基线 `5b43037847ec8093ad5e5e4a7b24d23d59c5c547`（不含上面移除的文件）。`tests/iteration-diffs.test.mjs` 会检查这一点。
 
 在示例根目录校验快照：
 
