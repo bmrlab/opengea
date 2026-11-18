@@ -1,6 +1,6 @@
 {
   "schemaVersion": "opengea.manual-review.v1",
-  "reviewer": "Codex",
+  "reviewer": "manual review",
   "boundary": "本地人工核对，不是 Builder Annotation；不同批次分数不混用。",
   "cases": [
     {

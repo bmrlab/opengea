@@ -16,9 +16,9 @@ Baseline 已具备 Exa 搜索、正文读取和 DO 存储。它提供一个完�
 
 [source](source/) · [源码差异](changes.diff) · [运行条件](../REPRODUCING.md) · [逐项对照](../comparison.md)
 
-按[默认命令](../../README.md#2-跑分)执行并评分。每轮相同四题与一道澄清题；其余题未覆盖。公开 CLI 首次四题全部执行错误，评分未产出逐题结果，见 [首次执行](published-execution-results.json)和[评分中断](published-attempt.json)。下述成绩来自三轮统一候选工具链的独立批次。
+按[默认命令](../../README.md#2-跑分)执行并评分。每轮相同四题与一道澄清题；其余题未覆盖。工具链与首批发布版失败记录见[运行条件](../REPRODUCING.md#工具链与批次)。
 
-四道单轮自动通过 2/4，预算题和反例题的 inference 为 0；没有执行或评分错误。澄清题 conversation 与 coverage 均为 1，判分完成 14/14。
+四道单轮自动通过 2/4，预算题和反例题的 inference 为 0；没有执行或评分错误。澄清题 conversation 与 coverage 均为 1，判分完成 14/14（单轮 12 + 澄清题 2）。
 
 这些失分提示下一轮应先处理结论与证据的关系：不能把局部材料推广成总体判断，也不能把待验证推断写成事实。
 

@@ -6,15 +6,15 @@
     "model": "creative-reasoning-1.5",
     "judgeModel": "creative-reasoning-1.5",
     "modelSource": "local",
-    "cli": "local candidate cbbfffcbf2",
-    "sdk": "local candidate d73861da7a6ef702407f8576e7cd6289a00713c2",
+    "cli": "unpublished local candidate",
+    "sdk": "unpublished local candidate",
     "developmentCases": [
       "breakfast-scope",
       "budget-ceiling",
       "counter-evidence",
       "validation-plan"
     ],
-    "singleTurnRegressionCases": [
+    "notCoveredCases": [
       "alternatives-not-products",
       "audience-transfer",
       "conflicting-findings",
@@ -40,26 +40,7 @@
     "sourceDrift": "Exa is live search. Preserve actual query/source metadata; a single-run score change does not establish statistical significance. Model aliases may change upstream; no underlying model fingerprint is claimed.",
     "annotation": "Review notes are local analysis of actual trajectories, not hosted Builder Annotation exports.",
     "runner": {
-      "runner": "Local candidate toolchain; not a published CLI acceptance",
-      "cliSource": "cbbfffcbf2",
-      "appServerSource": "cb24e7e3fb",
-      "sdkSource": "d73861da7a6ef702407f8576e7cd6289a00713c2",
-      "cliSha256": "1fcd89e91aa7d0e6b87f47a6e4edc48cfa7d17bb8d9ca47901bbc551d4595d06",
-      "appServerSha256": "c0727ba187af35dcbec85e974af0f60aab9fb34961e1a3be9aa4b9002f2ed324",
-      "workerRuntimeSha256": "72dea76400d3869ec50d2bd0caceb71a4815c36505ea258d254d8a833c57cc80",
-      "sdkTarSha256": "95d45871d88a06c28f0345a9df8d2e0e33cec55b74378e4dbd65503b424021ad",
-      "contractTarSha256": "1672a54139cb0d8de9923c9d4fe6de5571a7a1e95dc8452c020b61683a0cfc0f",
-      "catalogSha256": "2f47faa15c1fc567c0594f9c9c6e0f024e23a019d9fac81441ec7d7352b8f345",
-      "installedCopyVerification": {
-        "agent-sdk": {
-          "filesCompared": 387,
-          "mismatches": 0
-        },
-        "contract": {
-          "filesCompared": 438,
-          "mismatches": 0
-        }
-      },
+      "runner": "Unpublished local candidate toolchain (CLI, App Server, SDK, contract); not distributed with this example and not a published CLI acceptance. See REPRODUCING.md.",
       "maxOutputTokens": 4096,
       "thinkingBudgetTokens": 1024,
       "simulatorMaxOutputTokens": 2048,
@@ -90,7 +71,7 @@
       "protocol": "published-attempt-protocol.json",
       "scope": "All three original four-case executions retained; published CLI grading interrupted before any case grading artifacts. No comparison mixes these with the candidate batch."
     },
-    "runtimeDependencyOverlay": "Source snapshots and lockfiles remain original. Candidate execution copies the exact manifest files and uses a separately installed local SDK/contract build, identical for all three rounds. Runtime hashes, not package version text alone, identify this batch."
+    "runtimeDependencyOverlay": "Source snapshots and lockfiles stay as recorded. Candidate execution used an exact copy of the manifest files with the same separately installed local SDK/contract build for all three rounds."
   },
   "rows": [
     {

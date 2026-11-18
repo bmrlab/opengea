@@ -18,9 +18,9 @@
 | 4. 改 Agent | [三轮与任务文本](iterations/README.md#4-改-agent) | 一个可复核的 diff |
 | 5. 再跑分 | [同条件对照](iterations/README.md#5-再跑分) | Case × Judge 对照表 |
 
-质量主线只有三轮：[Baseline](iterations/00-baseline/README.md) → [看结果](iterations/01-result-focused/README.md) → [看 Trace](iterations/02-trace-focused/README.md)。Baseline 已有搜索、读正文和 DO 存储。
+质量主线只有三轮：[Baseline](iterations/00-baseline/README.md) → [第一次迭代（专注结果）](iterations/01-result-focused/README.md) → [第二次迭代（专注 Trace）](iterations/02-trace-focused/README.md)。Baseline 已有搜索、读正文和 DO 存储。
 
-根目录保留三轮之后的继续改进：结构化 observations / subject / fit / constraint、按原文片段生成观察和更完整的追问规则。它不等于第 2 轮源码；复现比较必须进入对应的 `iterations/<轮次>/source/`。
+根目录保留三轮之后的继续改进：结构化 observations / subject / fit / constraint、按原文片段生成观察和更完整的追问规则。它不等于第二次迭代的源码；复现比较必须进入对应的 `iterations/<轮次>/source/`。
 
 ## 从完整源码启动
 
@@ -33,7 +33,7 @@ pnpm type-check
 pnpm test
 ```
 
-SDK 与 Feishu Extension 固定在 `0.2.261114-alpha.0`，锁文件独立于 GEA monorepo。CLI/本地 Runtime 需要另外安装匹配版本；不要将 SDK 已安装等同于 Simulator 可以在任意旧 CLI 运行。`VALIDATION.md` 记录本次实际工具链。
+SDK 固定在 `0.2.261114-alpha.0`，锁文件独立于 GEA monorepo。CLI/本地 Runtime 需要另外安装匹配版本；不要将 SDK 已安装等同于 Simulator 可以在任意旧 CLI 运行。`VALIDATION.md` 记录本次实际工具链。
 
 ### 配置 CR API key
 
@@ -43,7 +43,7 @@ SDK 与 Feishu Extension 固定在 `0.2.261114-alpha.0`，锁文件独立于 GEA
 export CREATIVE_REASONING_API_KEY="<YOUR_CR_API_KEY>"
 ```
 
-PowerShell 使用 `$env:CREATIVE_REASONING_API_KEY = "<YOUR_CR_API_KEY>"`。CLI 内置直连读取此变量，不读取 `CR_API_KEY` 别名；默认 CR 地址由 CLI 设置，不需要在 `gea.worker.json` 增加模型 key。普通启动使用内置配置。三轮已记录的候选批次另用显式 `evaluation/cr-local.catalog.json`，它会优先于内置配置，详见 [运行条件](iterations/REPRODUCING.md#工具链与批次)。完整说明见[模型选择与配置](https://musegea.com/developers/agent-models)。
+PowerShell 使用 `$env:CREATIVE_REASONING_API_KEY = "<YOUR_CR_API_KEY>"`。CLI 内置直连读取此变量，不读取 `CR_API_KEY` 别名；默认 CR 地址由 CLI 设置，不需要在 `gea.worker.json` 增加模型 key。普通启动使用内置配置。三轮记录所用的工具链与模型配置见[运行条件](iterations/REPRODUCING.md#工具链与批次)。完整说明见[模型选择与配置](https://musegea.com/developers/agent-models)。
 
 `local` 表示 Agent 在本机运行并直接请求远端 CR。GEA 登录用于 Project、上传结果等平台操作，Exa Connection 用于搜索；CR key、`GEA_API_KEY` 和 Exa key 各自独立。模型 key 不发给前端，不随 Agent 打包上传。缺 key、无模型权限或直连错误会报错；修正配置后重启 dev。
 
@@ -80,7 +80,7 @@ pnpm app
 
 ## 2. 跑分
 
-先完成 CR 与 Exa 配置。在所选轮次的 `source/` 中，默认只执行同一组四题。当前已记录的候选批次另需 [相同本地工具链与 SDK](iterations/runtime-candidate.json)；公开 npm 版本对应失败的首次批次，不能替代候选验收：
+先完成 CR 与 Exa 配置。在所选轮次的 `source/` 中，默认只执行同一组四题（三轮记录的工具链见[运行条件](iterations/REPRODUCING.md#工具链与批次)）：
 
 ```bash
 gea agent eval --json '{"benchmarkPath":"benchmarks/single-turn","caseIds":["breakfast-scope","budget-ceiling","counter-evidence","validation-plan"],"modelSource":"local","executeOnly":true,"concurrency":2,"overrides":{"engine":{"maxSteps":16,"timeout":{"totalMs":240000}}}}'

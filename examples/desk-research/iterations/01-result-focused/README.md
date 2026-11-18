@@ -18,11 +18,11 @@ Baseline 的回答暴露了事实与来源错配、个案结论扩大等风险�
 
 [source](source/) · [源码差异](changes.diff) · [运行条件](../REPRODUCING.md) · [逐项对照](../comparison.md)
 
-按[默认命令](../../README.md#2-跑分)执行并评分。每轮相同四题与一道澄清题；其余题未覆盖。公开 CLI 首次四题全部执行错误，评分未产出逐题结果，见 [首次执行](published-execution-results.json)和[评分中断](published-attempt.json)。下述成绩来自三轮统一候选工具链的独立批次。
+按[默认命令](../../README.md#2-跑分)执行并评分。每轮相同四题与一道澄清题；其余题未覆盖。工具链与首批发布版失败记录见[运行条件](../REPRODUCING.md#工具链与批次)。
 
-四道单轮自动通过 3/4，判分完成 14/14；澄清题 conversation 与 coverage 均为 1。相对 Baseline，预算题与反例题的 inference 从 0 变 1，但早餐范围题的 evidence 从 1 降为 0。
+四道单轮自动通过 3/4，判分完成 14/14（单轮 12 + 澄清题 2）；澄清题 conversation 与 coverage 均为 1。相对 Baseline，预算题与反例题的 inference 从 0 变 1，但早餐范围题的 evidence 从 1 降为 0。
 
-结果说明收紧指令可以改善推断边界，但仅规定“核对来源”还不能保证执行过程和引用交付正确。下一轮因此继续追到 Trace 中检查证据怎样进入回答。
+结果说明收紧指令可以改善推断边界，但仅规定“核对来源”还不能保证执行过程和引用交付正确。Trace 给出了具体证据：预算题 `read_source` 0 次，只靠 `readToolOutput` 读取折叠的搜索预览；早餐范围题把 21 财经的数据挂在腾讯新闻来源下，evidence 从 1 降为 0（见[工具调用观察](../trace-observations.json)与[单轮结果](results.json)）。第二次迭代因此专注 Trace，检查证据怎样进入回答。
 
 人工另发现 `counter-evidence` 把报道转引的《白领早餐报告》误称为“北京CBD样本”。报道地点不能替代调查样本范围；自动 evidence=1 保留，该争议仍未解决。
 

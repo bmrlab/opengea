@@ -18,7 +18,7 @@
 
 ### 本次例子：从预算题原句走到工具证据
 
-第 2 轮候选批次 `budget-ceiling`，目标 Run `48e8c763-9904-4d41-9834-83f0b6e98d01`：
+第二次迭代（专注 Trace）首批 `budget-ceiling`，目标 Run `48e8c763-9904-4d41-9834-83f0b6e98d01`：
 
 1. **结果原句**：标题写“北京CBD个案：完整套餐常超8元，仅单品能压到8元以内”。三项 Judge 自动都是 1。
 2. **回到 Trace**：本题搜索 2 次、read_source 2 次、保存 1 次；北京日报来源是 `src_9a9609c344f03384`。
@@ -38,14 +38,14 @@ node iterations/analyze-eval.mjs /absolute/path/to/run /new/path/results.json /a
 
 ## 本次真实比较的运行条件
 
-三轮候选批次使用 [runtime-candidate.json](../iterations/runtime-candidate.json) 中的 CLI / App Server / SDK / contract 构件，Agent 和 Judge 预算未提高。先在示例根目录设置同一非秘密模型配置，再进入各轮 source（或它的逐文件一致执行副本）：
+三轮使用的工具链见[运行条件](../iterations/REPRODUCING.md#工具链与批次)，Agent 和 Judge 预算未提高。先在示例根目录设置同一非秘密模型配置，再进入各轮 source：
 
 ```bash
 export CREATIVE_REASONING_BASE_URL="https://api.creative-reasoning.com/v1"
 export LLM_MODEL_CATALOG_JSON="$(cat evaluation/cr-local.catalog.json)"
 ```
 
-凭据仍只由本机授权环境注入，Catalog 只含变量名。总输出 4096、思考 1024，Simulator 自身 2048 上限仍优先。候选 SDK/contract 用隔离的本地安装覆盖执行副本依赖，三轮相同；不要在该覆盖目录运行会自动重装公开锁文件的 pnpm 命令。核对实际构件哈希后用该候选 `gea` 执行默认命令。源码 manifest 与运行器条件分别校验；普通公开 npm 安装对应已保留的失败首次批次，不是候选结果的复现证明。
+凭据仍只由本机授权环境注入，Catalog 只含变量名。总输出 4096、思考 1024，Simulator 自身 2048 上限仍优先。
 
 ## 评测规则校准与完整验收
 
@@ -107,7 +107,7 @@ executeOnly退出成功仅证明执行完成；必须继续查看evaluation中�
 
 retain-constraints 必须发生两次独立追问：先增加携带防漏条件并得到回答，再要求两个优先验证方向及理由并得到回答。多轮题均以 coverage 和 conversation 两项必过。`summarize.mjs conversation` 可额外拆分 retain-constraints 的覆盖、已观察质量及执行/评分错误。
 
-Exa、模型别名和网页内容会变化。记录实际模型、工具链、运行目录、来源及全部失败；保留首次运行和复验，不能通过挑选重跑、降低阈值或只看平均分证明改进。已记录结果来自本地候选工具链，不能用来证明正式版本可用。
+Exa、模型别名和网页内容会变化。记录实际模型、工具链、运行目录、来源及全部失败；保留首次运行和复验，不能通过挑选重跑、降低阈值或只看平均分证明改进。
 
 Judge预算与Agent执行预算分开：这里为完整证据核对设300秒Judge预算、12步；Agent仍为240秒。增加评分预算不能证明 Agent 执行问题已修复。
 

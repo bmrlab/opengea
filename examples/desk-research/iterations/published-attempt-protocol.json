@@ -12,7 +12,7 @@
     "counter-evidence",
     "validation-plan"
   ],
-  "singleTurnRegressionCases": [
+  "notCoveredCases": [
     "alternatives-not-products",
     "audience-transfer",
     "conflicting-findings",

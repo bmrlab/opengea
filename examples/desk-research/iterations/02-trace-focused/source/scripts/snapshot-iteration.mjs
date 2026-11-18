@@ -58,7 +58,6 @@ if (action === "create") {
     "app",
     "scripts",
     "tests",
-    "versions",
   ];
   for (const file of files)
     await cp(path.join(root, file), path.join(source, file), {

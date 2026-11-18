@@ -502,41 +502,6 @@
 +  }
 +  return passages;
 +}
---- a/scripts/materialize.mjs
-+++ b/scripts/materialize.mjs
-@@ -28,0 +29,3 @@
-+  "lib/research.ts",
-+  "lib/research-flow.ts",
-+  "lib/source-passages.ts",
-@@ -31,0 +35 @@
-+  "tests/research-flow.test.mjs",
-@@ -36 +39,0 @@
--  "lib/research.ts",
---- a/tests/materialize.test.mjs
-+++ b/tests/materialize.test.mjs
-@@ -0,0 +1,22 @@
-+import assert from "node:assert/strict";
-+import test from "node:test";
-+import { execFileSync } from "node:child_process";
-+import { mkdtemp, rm, symlink } from "node:fs/promises";
-+import { tmpdir } from "node:os";
-+import path from "node:path";
-+import { fileURLToPath } from "node:url";
-+
-+const root = fileURLToPath(new URL("../", import.meta.url));
-+for (const stage of ["v1-research", "v2-workbench", "v3-feishu"]) {
-+  test(`materialized ${stage} type-checks with the locked dependencies`, async () => {
-+    const temp = await mkdtemp(path.join(tmpdir(), "desk-research-materialize-"));
-+    const target = path.join(temp, stage);
-+    try {
-+      execFileSync(process.execPath, ["scripts/materialize.mjs", stage, target], { cwd: root });
-+      await symlink(path.join(root, "node_modules"), path.join(target, "node_modules"), "dir");
-+      assert.equal(execFileSync(process.execPath, [path.join(root, "node_modules/typescript/bin/tsc"), "--noEmit"], { cwd: target, encoding: "utf8" }), "");
-+    } finally {
-+      await rm(temp, { recursive: true, force: true });
-+    }
-+  });
-+}
 --- a/tests/research-flow.test.mjs
 +++ b/tests/research-flow.test.mjs
 @@ -0,0 +1,80 @@
@@ -884,30 +849,3 @@
 +      ),
 +    };
 +  },
---- a/versions/v1-research/agent.ts
-+++ b/versions/v1-research/agent.ts
-@@ -0,0 +1,2 @@
-+import { agentCore } from "@gea-ai/agent-sdk/agent-core";
-+import { researchStep } from "./lib/research-flow";
-@@ -13,0 +16 @@
-+  engine: agentCore({ prepareStep: researchStep }),
---- a/versions/v1-research/instructions.ts
-+++ b/versions/v1-research/instructions.ts
-@@ -3 +3 @@
--根据用户给定的人群、场景和限制开展研究，使用 search_sources 检索资料，必要时用 read_source 读取正文。
-+根据用户给定的人群、场景和限制开展研究。先用 search_sources 发现来源，再对报告将采用的关键来源逐一调用 read_source 读取正文；搜索预览即使带有正文，也不能替代这一步。用原文短语或价格作为 query 定位上下文，核对后再写报告。
-@@ -7 +7,3 @@
--写结论前，逐条核对三个最重要的事实：当前工具实际返回的哪段正文支持它，原文限定了什么时间、地点和人群。每项事实就近附对应来源的完整 URL，直接复制工具返回值，不凭记忆重建链接或缩成首页。没有正文支持的数字、因果和市场判断删掉，或明确降为待验证假设。历史价格、局部样本和品牌宣传只在其原有范围内成立；未搜到方案不等于市场空白，午餐福利资料不证明早餐没有福利。
-+写结论前，逐条核对三个最重要的事实：当前工具实际返回的哪段正文支持它，原文限定了什么时间、地点和人群。每项事实只能引用承载该段正文的 read_source 输出中的同一个 sourceId / URL，不能拿另一个来源的 ID 配上这段事实；完整 URL 直接复制工具返回值，不凭记忆重建链接或缩成首页。没有正文支持的数字、因果和市场判断删掉，或明确降为待验证假设。历史价格、局部样本和品牌宣传只在其原有范围内成立；未搜到方案不等于市场空白，午餐福利资料不证明早餐没有福利。
-+
-+涉及预算或可行性时，先从已返回的搜索正文和读取片段逐项核对：价格对应单品还是完整套餐、每项内容及数量（尤其是套餐中的多件主食）、适用时间地点和购买条件，以及是否满足用户的限制。写“仅有、只能、没有、不存在、无法满足”等排他结论前，必须检查这些片段中是否已有反例；若有，明确列出该方案及其限定条件，修正结论，不能把套餐降成单品或因它不是主流而忽略。若套餐内容或条件尚不清楚，读取对应片段核实，仍不明确就保留为待核实项，不作排他断言。机会假设与验证计划必须以核对后的事实为前提，并和已有可行方案比较。
-@@ -12 +14 @@
--简报控制在约 1000 字，包含研究范围、发现、机会假设、验证方法与来源。`;
-+采用小证据集完成研究，不要先堆积大量搜索结果：先用最多三个针对性查询覆盖用户问题、现有替代方案和反向线索；从实际结果选最多三个关键来源，逐一 read_source。若正文缺失或不支持待写事实，换一个实际返回的来源，或把该事实降为缺口，不继续凭印象补全。围绕读到的正文写最多三个关键发现、最多两个机会假设；每条发现保留来源的完整 URL、时间与范围。报告约 600–900 字；仅在证据明显不足时追加一次针对性搜索。读到资料不是得出结论，验证计划仍应对应假设。不要在保存前后各输出一篇报告；完成工具调用后只给用户一份最终简报。`;
---- a/versions/v3-feishu/agent.ts
-+++ b/versions/v3-feishu/agent.ts
-@@ -0,0 +1,2 @@
-+import { agentCore } from "@gea-ai/agent-sdk/agent-core";
-+import { researchStep } from "./lib/research-flow";
-@@ -15,0 +18 @@
-+  engine: agentCore({ prepareStep: researchStep }),

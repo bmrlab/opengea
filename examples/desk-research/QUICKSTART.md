@@ -26,7 +26,7 @@
 
 ## 4. 改 Agent
 
-复制对应轮次任务：[Baseline](iterations/00-baseline/README.md)、[看结果](iterations/01-result-focused/README.md)、[看 Trace](iterations/02-trace-focused/README.md)。一次只处理已定位的问题，保留原题、Judge、模型与预算。第 2 轮只加入过程与引用工具改动，不加入根目录结构化观察规则。
+复制对应轮次任务：[Baseline](iterations/00-baseline/README.md)、[第一次迭代（专注结果）](iterations/01-result-focused/README.md)、[第二次迭代（专注 Trace）](iterations/02-trace-focused/README.md)。一次只处理已定位的问题，保留原题、Judge、模型与预算。第二次迭代只加入过程与引用工具改动，不加入根目录结构化观察规则。
 
 ## 5. 再跑分
 

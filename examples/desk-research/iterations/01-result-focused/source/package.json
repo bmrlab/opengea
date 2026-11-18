@@ -10,7 +10,6 @@
     "dev": "node scripts/dev.mjs"
   },
   "dependencies": {
-    "@gea-ai/agent-extension-feishu": "0.2.261114-alpha.0",
     "@gea-ai/agent-sdk": "0.2.261114-alpha.0",
     "zod": "4.6.5"
   },

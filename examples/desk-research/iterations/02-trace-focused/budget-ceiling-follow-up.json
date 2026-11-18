@@ -17,13 +17,7 @@
   "caseSnapshotUnchanged": true,
   "judgeRuntimeHashUnchanged": "sha256:4130d40b5e5bee94b6eedeb83cd648878a108d2ce9a2acfbf9e93718fbe04cc5",
   "runtime": "../runtime-candidate.json",
-  "runtimeCopyVerification": {
-    "cliSha256": "1fcd89e91aa7d0e6b87f47a6e4edc48cfa7d17bb8d9ca47901bbc551d4595d06",
-    "appServerSha256": "c0727ba187af35dcbec85e974af0f60aab9fb34961e1a3be9aa4b9002f2ed324",
-    "workerRuntimeSha256": "72dea76400d3869ec50d2bd0caceb71a4815c36505ea258d254d8a833c57cc80",
-    "catalogSha256": "2f47faa15c1fc567c0594f9c9c6e0f024e23a019d9fac81441ec7d7352b8f345",
-    "dependencyFilesMatched": 12082
-  },
+  "runtimeCopyVerification": "Same candidate toolchain and CR Catalog as ../runtime-candidate.json, checked before execution.",
   "configuredModel": "creative-reasoning-1.5",
   "modelSource": "local",
   "execution": {

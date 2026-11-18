@@ -3,7 +3,8 @@
   "createdAt": "2026-11-17T06:11:13.889Z",
   "node": "v24.16.0",
   "cli": "0.2.261114-alpha.0",
-  "sourceSha256": "df0561ed495d58fe2d1e82d29bc26651be2c16bb4cbaaf4d06eaf78c7ef93341",
+  "sourceSha256": "0562d37e618b756a4d51d415580c7aeb3e54fba3c428b6d7d827c956cd97c6cf",
+  "executedSourceSha256": "df0561ed495d58fe2d1e82d29bc26651be2c16bb4cbaaf4d06eaf78c7ef93341",
   "benchmarkSha256": "64fcbc74d423c24a62be441e0532849b39d36aa578669db90d7487d75e6f94b9",
   "files": [
     {
@@ -172,15 +173,15 @@
     },
     {
       "path": "package.json",
-      "sha256": "30e573788f6408a7dbf9bdecdb59aa6bb7ae22ceede345840ec177bd330bd0b8"
+      "sha256": "e344d09ab9c974d14e3378aa2ae9ebfaa4d19e2f3963960bf0eff82fd9326096"
     },
     {
       "path": "pnpm-lock.yaml",
-      "sha256": "080211ef5f42a24b66dcbbcea30770b1624b12fb6a7cbe12bc08ab9fdd75ea64"
+      "sha256": "920c8a37dce9f021efbeb7d113316f222e545983a9cdae5549e15ce990b75a2c"
     },
     {
       "path": "pnpm-workspace.yaml",
-      "sha256": "5b53c80ac4be35c7d719800195a318088d3918815d8ee0c487239f010f87c335"
+      "sha256": "1499e74156c7f6b8f795685283eb45c84480c9838af976f186e917fc87c55b32"
     },
     {
       "path": "scripts/configure-app.mjs",
@@ -189,10 +190,6 @@
     {
       "path": "scripts/dev.mjs",
       "sha256": "f319258bd217ce0cbddd405a88d02d4648bbb141c23047581d27cf3bf05fa7ad"
-    },
-    {
-      "path": "scripts/materialize.mjs",
-      "sha256": "fb38809664b883fa2d91c498b4cc1c58520ea9c39a7ea813a9003e063bd256cf"
     },
     {
       "path": "scripts/prepare-local.mjs",
@@ -223,10 +220,6 @@
       "sha256": "19e7c2f1a6adac39f0ca9ffd13f8e2d49f579b6a47a467644b1b92c34d2d213a"
     },
     {
-      "path": "tests/stages.test.mjs",
-      "sha256": "1e0129b23b2f78a00d7edc3d81bc63bd3a12956a05f3709ffa24fe5c89083eaf"
-    },
-    {
       "path": "tests/store.test.mjs",
       "sha256": "b6eb672990684690484aff710044868ee23acca29eca2b8bfaa1b94bab93d54d"
     },
@@ -245,34 +238,6 @@
     {
       "path": "tsconfig.json",
       "sha256": "ccb8fa3c203de91c564fcf60f41bd054b53f0d94625be9518037d12a8a6275b1"
-    },
-    {
-      "path": "versions/README.md",
-      "sha256": "0dfeefa13ce3b925dce88f09a89a97c79ff3b0044b8349aebe9b00db4a5f59e6"
-    },
-    {
-      "path": "versions/v1-research/agent.ts",
-      "sha256": "647d1e759710f75fe5bb42cb054dbcf56452dc53885aab47fc27e7e41c484513"
-    },
-    {
-      "path": "versions/v1-research/gea.worker.json",
-      "sha256": "041d54bc08b04fdda615aaca10466053399f7c641eccdda2174cde44dd6b7a9a"
-    },
-    {
-      "path": "versions/v1-research/instructions.ts",
-      "sha256": "92d61dcd1ae1699e4e0042ea050a594083433761a6724a7703d018becf9d2cd4"
-    },
-    {
-      "path": "versions/v1-research/worker.ts",
-      "sha256": "7db95e617a42e493924427096e85fc46b07dce87c6b92bbbb9203a0d5585ff55"
-    },
-    {
-      "path": "versions/v2-workbench/README.md",
-      "sha256": "fb32a127c54d44ea95a67a4f7b1e247ee3817304832236d9f27c7b0a4d13eda2"
-    },
-    {
-      "path": "versions/v3-feishu/agent.ts",
-      "sha256": "b9c6f5710fa3a97805e50c61a92a03688d00c7464ee899fa89b2990bb30dd220"
     },
     {
       "path": "worker.ts",
