@@ -69,5 +69,5 @@
     "protocol": "published-attempt-protocol.json",
     "scope": "All three original four-case executions retained; published CLI grading interrupted before any case grading artifacts. No comparison mixes these with the candidate batch."
   },
-  "runtimeDependencyOverlay": "Source snapshots and lockfiles stay as recorded. Candidate execution used an exact copy of the manifest files with the same separately installed local SDK/contract build for all three rounds."
+  "runtimeDependencyOverlay": "Historical runs used the source files and lockfiles available at the time. Each manifest records the execution-time source hash in executedSourceSha256. Verify the published files against sourceSha256. All three candidate rounds used the same separately installed local SDK/contract build."
 }

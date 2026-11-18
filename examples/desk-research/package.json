@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test tests/*.test.mjs evaluation/*.test.mjs iterations/analyze-eval.test.mjs",
+    "test": "node --test tests/*.test.mjs evaluation/*.test.mjs iterations/*.test.mjs",
     "type-check": "tsc --noEmit",
     "app": "node app/server.mjs",
     "prepare:local": "node scripts/prepare-local.mjs",

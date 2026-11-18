@@ -6,7 +6,7 @@ import { execFileSync } from "node:child_process";
 import { tmpdir } from "node:os";
 import path from "node:path";
 
-const iterations = path.resolve(import.meta.dirname, "../iterations");
+const iterations = import.meta.dirname;
 const ids = ["00-baseline", "01-result-focused", "02-trace-focused"];
 const sha = (value) => createHash("sha256").update(value).digest("hex");
 async function inventory(directory, prefix = "") {
@@ -15,7 +15,7 @@ async function inventory(directory, prefix = "") {
     await readdir(path.join(directory, prefix), { withFileTypes: true })
   ).sort((a, b) => a.name.localeCompare(b.name, "en"))) {
     if (["node_modules", ".gea", "dist"].includes(name.name)) continue;
-    const relative = path.join(prefix, name.name);
+    const relative = path.posix.join(prefix, name.name);
     if (name.isDirectory())
       entries.push(...(await inventory(directory, relative)));
     else
